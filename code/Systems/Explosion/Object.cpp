@@ -1,0 +1,149 @@
+//internal
+#include "Base/Compat.hpp"
+#include "Base/Platform.hpp"
+#include "Interfaces/Interface.hpp"
+#include "Systems/Explosion/Object.hpp"
+
+
+///////////////////////////////////////////////////////////////////////////////
+// ExplosionObject - Constructor
+ExplosionObject::ExplosionObject( ISystemScene* pSystemScene, pcstr pszName ) : ISystemObject( pSystemScene, pszName )
+{
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// ~ExplosionObject - Destructor
+ExplosionObject::~ExplosionObject( void )
+{
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// GetSystemType - Returns System type for this Object
+System::Type ExplosionObject::GetSystemType( void )
+{
+    return System::Types::Explosion;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Initialize - Initializes this Object with the given properties
+Error ExplosionObject::Initialize( std::vector<Properties::Property> Properties )
+{
+    // Set this set as initialized.
+    m_bInitialized = True;
+
+    // Set properties
+    SetProperties( Properties );
+
+    return Errors::Success;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// GetProperties - Properties for this Object are returned in Properties
+void ExplosionObject::GetProperties( Properties::Array& Properties )
+{
+    UNREFERENCED_PARAM( Properties );
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// SetProperties - Set properties for this Object
+void ExplosionObject::SetProperties( Properties::Array Properties )
+{
+    ASSERT( m_bInitialized );
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// GetDesiredSystemChanges - Returns the systems changes this Object 
+//                           is intrested in hearing about
+System::Types::BitMask ExplosionObject::GetDesiredSystemChanges( void )
+{
+    return System::Changes::None;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// ChangeOccurred - Notify this Object a change occured (change handler)
+Error ExplosionObject::ChangeOccurred( ISubject* pSubject, System::Changes::BitMask ChangeType )
+{
+    ASSERT( m_bInitialized );
+
+    if( ChangeType & System::Changes::Geometry::Position )
+    {
+        m_Position = *dynamic_cast<IGeometryObject*>(pSubject)->GetPosition();
+    }
+
+    if( ChangeType & System::Changes::Geometry::Orientation )
+    {
+        m_Orientation = *dynamic_cast<IGeometryObject*>(pSubject)->GetOrientation();
+    }
+
+    if( ChangeType & System::Changes::Geometry::Scale )
+    {
+        m_Scale = *dynamic_cast<IGeometryObject*>(pSubject)->GetScale();
+    }
+
+    return Errors::Success;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// GetPotentialSystemChanges - Returns systems changes possible for this Object
+System::Changes::BitMask ExplosionObject::GetPotentialSystemChanges( void )
+{
+    return ( System::Changes::Geometry::Position
+           | System::Changes::Geometry::Orientation
+           | System::Changes::Physics::Velocity );
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// GetPosition - Returns the position of this Object
+const Math::Vector3* ExplosionObject::GetPosition( void )
+{
+    return &m_Position;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// GetOrientation - Returns the orientation of this Object
+const Math::Quaternion* ExplosionObject::GetOrientation( void )
+{
+    return &m_Orientation;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// GetScale - Returns the scale of this Object
+const Math::Vector3* ExplosionObject::GetScale( void )
+{
+    return &m_Scale;
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// PreUpdate - PreUpdate processing
+void ExplosionObject::PreUpdate( f32 DeltaTime )
+{
+    UNREFERENCED_PARAM( DeltaTime );
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// Update - Main update
+void ExplosionObject::Update( f32 DeltaTime )
+{
+    m_State.UpdateTime( DeltaTime );
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
+// PostUpdate - PostUpdate processing
+void ExplosionObject::PostUpdate( f32 DeltaTime )
+{
+    UNREFERENCED_PARAM( DeltaTime );
+}
