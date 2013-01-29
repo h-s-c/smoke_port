@@ -233,14 +233,14 @@ OGREGraphicsObjectMesh::OGREGraphicsObjectMesh(
     pcstr pszName
     )
     : OGREGraphicsObject( pSystemScene, pszName )
-    , m_pEntity( NULL )
-    , isProcedural( false )
-    , m_strStaticGrpName ( "" )
     , m_Position( Math::Vector3::Zero )
     , m_Orientation( Math::Quaternion::Zero )
     , m_Scale( Math::Vector3::One )
+    , m_pEntity( NULL )
     , m_pCaption( NULL )
+    , m_strStaticGrpName ( "" )
     , m_Dirty( True )    // Force Instanced Geom update initially
+    , isProcedural( false )
 {
     ASSERT( Property_Count == sizeof sm_kapszPropertyNames / sizeof sm_kapszPropertyNames[ 0 ] );
     ASSERT( Property_Count == sizeof sm_kaDefaultProperties / sizeof sm_kaDefaultProperties[ 0 ] );
