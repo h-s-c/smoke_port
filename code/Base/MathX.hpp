@@ -15,7 +15,7 @@
 #pragma once
 #include "Base/Math.hpp"
 
-#include <stdexcept>
+#include <iostream>
 #include <xmmintrin.h>
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -819,7 +819,7 @@ namespace Math
 
         XVector3 Rotate( const XVector3& a )
         {
-            LOG("This still needs to be implemented!!!" );
+            std::cerr << "This still needs to be implemented!!!" << std::endl;
             return XVector3();
         }
 

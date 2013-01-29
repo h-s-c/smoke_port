@@ -1,7 +1,6 @@
 #include "Base/Compat.hpp"
-#include "Base/Log.hpp"
-#include "Base/Math.hpp"
 #include "Base/Platform.hpp"
+#include "Base/Math.hpp"
 
 #include <math.h>
 #include <stdexcept>
