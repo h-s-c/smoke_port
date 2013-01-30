@@ -39,9 +39,12 @@ class IBehaviorObject
 {
 public:
 
-	/// <summary>
+    /// <summary>
     /// Gets the current behavior of this object.
-	/// </summary>
-	/// <returns>Behavior of this object.</returns>
-	virtual const Behavior GetBehavior( void ) = 0;
+    /// </summary>
+    /// <returns>Behavior of this object.</returns>
+    virtual Behavior GetBehavior() 
+    {
+        return e_Behavior_None;
+    }
 };

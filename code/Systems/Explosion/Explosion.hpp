@@ -6,13 +6,14 @@
 /// <summary>
 /// ExplosionType enum of possible explosions.
 /// </summary>
-namespace ExplosionType {
+namespace ExplosionType 
+{
     enum ExplosionType
     {
         e_None,
         e_MeteorImpact,
     };
-};
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -72,7 +73,7 @@ public:
     /// <returns>Velocity of the object.
     /// </returns>
     /// <seealso cref="IMoveObject::GetVelocity"/>
-    virtual const Math::Vector3* GetVelocity( void );
+    virtual const Math::Vector3* GetVelocity();
 
     /// <summary cref="Explosion::GetPosition">
     /// Implementation of the <c>IMoveObject::GetPosition</c> method.
@@ -88,7 +89,7 @@ public:
     /// <returns>Magnitude of the velocity of the object.
     /// </returns>
     /// <seealso cref="IMoveObject::GetMaxVelocity"/>
-    virtual const f32 GetMaxVelocity( void ) { return m_Velocity.Magnitude(); }
+    virtual f32 GetMaxVelocity() { return m_Velocity.Magnitude(); }
 
 protected:
 

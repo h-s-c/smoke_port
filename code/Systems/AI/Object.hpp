@@ -32,15 +32,15 @@ class AIState
 #define STATEFLAG_NEW 0x00000001
 
 public:
-	AIState( void ) 
-	{ 
-		m_State = -1;
-		m_PreviousState = -1;
-		m_Flags = 0;
-		m_Duration = 0.0f; 
-	}
+    AIState( void ) 
+    { 
+        m_State = -1;
+        m_PreviousState = -1;
+        m_Flags = 0;
+        m_Duration = 0.0f; 
+    }
 
-	~AIState( void ) {}
+    ~AIState( void ) {}
 
     /// <summary cref="AIState::SetState">
     /// Sets the current state.  
@@ -48,31 +48,31 @@ public:
     /// If the previous state that State are different, this counts as "Triggering" a state change.
     /// </summary>
     /// <param name="State">The desired state.</param>
-	inline void SetState( u32 State )
-	{
-		m_PreviousState = m_State;
-		m_State = State;
-		if( m_PreviousState != m_State )
-		{
-			m_Flags |= STATEFLAG_NEW;
-		}
-		m_Duration = 0.0f;
-	}
+    inline void SetState( u32 State )
+    {
+        m_PreviousState = m_State;
+        m_State = State;
+        if( m_PreviousState != m_State )
+        {
+            m_Flags |= STATEFLAG_NEW;
+        }
+        m_Duration = 0.0f;
+    }
 
     /// <summary cref="AIState::Triggered">
     /// Returns True if the state has changed since Tiggered was last changed.
     /// </summary>
     /// <returns>Bool - Recent state change</returns>
-	inline Bool Triggered( void )
-	{
-		if( m_Flags & STATEFLAG_NEW )
-		{
-			m_Flags &= ~STATEFLAG_NEW;
-			return True;
-		}
+    inline Bool Triggered( void )
+    {
+        if( m_Flags & STATEFLAG_NEW )
+        {
+            m_Flags &= ~STATEFLAG_NEW;
+            return True;
+        }
 
-		return False;
-	}
+        return False;
+    }
 
     /// <summary cref="AIState::InitState">
     /// Sets the state.  
@@ -80,32 +80,32 @@ public:
     /// This does not counts as "Triggering" a state change.
     /// </summary>
     /// <param name="State">The desired state.</param>
-	inline void InitState( i32 State ) { m_State = m_PreviousState = State; }
-	
+    inline void InitState( i32 State ) { m_State = m_PreviousState = State; }
+    
     /// <summary cref="AIState::GetState">
     /// Returns the current state.
     /// </summary>
     /// <returns>i32</returns>
     inline i32 GetState( void ) { return m_State; }
-	
+    
     /// <summary cref="AIState::GetPreviousState">
     /// Returns the previous state. 
     /// </summary>
     /// <returns>i32 - previous state</returns>
     inline i32 GetPreviousState( void ) { return m_PreviousState; }
-	
+    
     /// <summary cref="AIState::GetFlags">
     /// Returns internal flags.  You should not have to use this function.
     /// </summary>
     /// <returns>i32 - internal flags</returns>
     inline i32 GetFlags( void ) { return m_Flags; }
-	
+    
     /// <summary cref="AIState::GetTime">
     /// Returns the duration of the current state.
     /// </summary>
     /// <returns>f32 - time in seconds</returns>
     inline f32 GetTime( void ) { return m_Duration; }
-	
+    
     /// <summary cref="AIState::UpdateTime">
     /// Updates the internal timer.
     /// </summary>
@@ -114,10 +114,10 @@ public:
     inline void UpdateTime( f32 DeltaTime ) { m_Duration += DeltaTime; }
 
 private:
-	i32 m_State;          // Current state
-	i32 m_PreviousState;  // Previous state
-	i32 m_Flags;          // Flags about this state
-	f32 m_Duration;       // Time in the current state
+    i32 m_State;          // Current state
+    i32 m_PreviousState;  // Previous state
+    i32 m_Flags;          // Flags about this state
+    f32 m_Duration;       // Time in the current state
 };
 
 
@@ -198,21 +198,21 @@ protected:
     /// </summary>
     /// <returns>Math::Vector3* - Returns the position for this AI object.</returns>
     /// <seealso cref="IGeometryObject::GetPosition"/>
-	virtual const Math::Vector3* GetPosition( void );
+    virtual const Math::Vector3* GetPosition( void );
 
     /// <summary cref="AIObject::GetOrientation">
     ///   Implementation of the <c>IGeometryObject::GetOrientation</c> function.
     /// </summary>
     /// <returns>Math::Quaternion* - Returns the orientation quaternion for this AI object.</returns>
     /// <seealso cref="IGeometryObject::GetOrientation"/>
-	virtual const Math::Quaternion* GetOrientation( void );
+    virtual const Math::Quaternion* GetOrientation( void );
 
     /// <summary cref="AIObject::GetScale">
     ///   Implementation of the <c>IGeometryObject::GetScale</c> function.
     /// </summary>
     /// <returns>Math::Vector3* - Returns the scale for this AI object.</returns>
     /// <seealso cref="IGeometryObject::GetScale"/>
-	virtual const Math::Vector3* GetScale( void );
+    virtual const Math::Vector3* GetScale( void );
 
 
     /// <summary cref="AIObject::GetBehavior">
@@ -220,33 +220,33 @@ protected:
     /// </summary>
     /// <returns>Returns the current behavior of this AI object.</returns>
     /// <seealso cref="IBehaviorObject::GetScale"/>
-    virtual const Behavior GetBehavior( void );
+    virtual Behavior GetBehavior();
 
 public:
     /// <summary cref="AIObject::PreUpdate">
     /// This method is called before each <c>Update</c> call to perform pre-processing.
     /// </summary>
     /// <param name="DeltaTime">Elapsed time since the last frame.</param>
-	virtual void PreUpdate( f32 DeltaTime );
+    virtual void PreUpdate( f32 DeltaTime );
 
     /// <summary cref="AIObject::Update">
     /// Implementation of the <c>ISystemTask::Update</c> method.
     /// </summary>
     /// <param name="DeltaTime">Elapsed time since the last frame.</param>
     /// <seealso cref="ISystemTask::Update"/>
-	virtual void Update( f32 DeltaTime );
+    virtual void Update( f32 DeltaTime );
 
     /// <summary cref="AIObject::PostUpdate">
     /// This method is called after each <c>Update</c> call to perform post-processing.
     /// </summary>
     /// <param name="DeltaTime">Elapsed time since the last frame.</param>
-	virtual void PostUpdate( f32 DeltaTime );
+    virtual void PostUpdate( f32 DeltaTime );
 
     /// <summary cref="AIObject::GetState">
     ///   Returns the state of the AI object.
     /// </summary>
     /// <returns>i32 - Returns the state for this AI.</returns>
-	inline i32 GetState( void ) { return m_State.GetState(); }
+    inline i32 GetState( void ) { return m_State.GetState(); }
 
     Math::Vector3       m_Position;     // Position of AI object
     Math::Quaternion    m_Orientation;  // Orientation of AI object
@@ -260,7 +260,7 @@ protected:
     /// <param name="Behavior">The desired behavior.</param>
     void SetBehavior( Interface::Behavior Behavior );
 
-	AIState             m_State;        // State of AI (internal use)
+    AIState             m_State;        // State of AI (internal use)
     Interface::Behavior m_Behavior;     // Behavior of AI (for external referece by other systems)
 };
 

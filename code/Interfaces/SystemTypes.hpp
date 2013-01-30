@@ -101,7 +101,7 @@ namespace System
         INLINE u32 MakeCustom( u32 Index )
         {
             return 1 << (16 + Index);
-        };
+        }
 
         //////////////////////////////////////////////////////////////////////////
         /// <summary>
@@ -117,7 +117,7 @@ namespace System
         INLINE u32 GetIndex( u32 SystemType )
         {
             return Base::BitScanForward(SystemType);
-        };
+        }
 
         typedef u32 BitMask;
     }

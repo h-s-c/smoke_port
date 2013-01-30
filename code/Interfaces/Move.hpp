@@ -26,13 +26,18 @@ class IMoveObject
 public:
     /// <summary>
     /// Gets the velocity of the object.
-	/// </summary>
-	/// <returns>A constant pointer to the velocity.</returns>
-    virtual const Math::Vector3* GetVelocity( void ) = 0;
-
+    /// </summary>
+    /// <returns>A constant pointer to the velocity.</returns>
+    virtual const Math::Vector3* GetVelocity()    
+    {
+        return nullptr;
+    }
     /// <summary>
     /// Gets the max velocity of the object.
-	/// </summary>
+    /// </summary>
     /// <returns>The max velocity (a scalar).</returns>
-    virtual const f32 GetMaxVelocity( void ) = 0;
+    virtual f32 GetMaxVelocity()
+    {
+        return 0.0f;
+    }
 };

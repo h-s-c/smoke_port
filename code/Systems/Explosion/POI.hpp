@@ -18,14 +18,15 @@
 /// <summary>
 /// POIType enum: denotes the type of point of interest
 /// </summary>
-namespace POIType {
+namespace POIType 
+{
     enum POIType
     {
         e_POI_Contact,
 
         e_POI_None
     };
-};
+}
 
 /*******************************************************************************
 * CLASS: POI (Point of Interest)

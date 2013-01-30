@@ -16,7 +16,7 @@ namespace BotType {
         e_Horse,
         e_Swallow,
     };
-};
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 /// <summary>
@@ -72,7 +72,7 @@ public:
     /// </summary>
     /// <returns>Math::Vector3* - Velocity of this Bot</returns>
     /// <seealso cref="IMoveObject::GetVelocity"/>
-    virtual const Math::Vector3* GetVelocity( void ) { return &m_Velocity; }
+    virtual const Math::Vector3* GetVelocity() { return &m_Velocity; }
 
     /// <summary cref="Bot::GetMaxVelocity">
     /// Implementation of the <c>IMoveObject::GetMaxVelocity</c> function.
@@ -80,7 +80,7 @@ public:
     /// </summary>
     /// <returns>f32 - Max speed of this Bot</returns>
     /// <seealso cref="IMoveObject::GetMaxVelocity"/>
-    virtual const f32 GetMaxVelocity( void ) { return m_MaxSpeed; }
+    virtual f32 GetMaxVelocity() { return m_MaxSpeed; }
 
 protected:
     /// <summary cref="Bot::GetPotentialSystemChanges">

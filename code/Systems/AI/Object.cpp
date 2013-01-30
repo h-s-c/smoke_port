@@ -131,7 +131,7 @@ const Math::Vector3* AIObject::GetScale( void )
 
 ///////////////////////////////////////////////////////////////////////////////
 // GetBehavior - Returns the current behavior of this Object
-const Behavior AIObject::GetBehavior( void )
+Behavior AIObject::GetBehavior()
 {
     return m_Behavior;
 }

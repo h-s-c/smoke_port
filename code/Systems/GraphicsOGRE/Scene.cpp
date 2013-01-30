@@ -533,7 +533,7 @@ OGREGraphicsScene::GlobalSceneStatusChanged( GlobalSceneStatus Status )
             }
         }
     }
-};
+}
 
 
 //
