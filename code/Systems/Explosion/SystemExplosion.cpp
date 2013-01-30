@@ -1,19 +1,22 @@
-//internal
+//core
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
+//interface
 #include "Interfaces/Interface.hpp"
+//system
 #include "Systems/Explosion/System.hpp"
+
 
 #if defined(COMPILER_MSVC)
 #include <windows.h>
 
-///////////////////////////////////////////////////////////////////////////////
-// DllMain - API entry point for SystemExplosion DLL
-BOOL APIENTRY DllMain( HMODULE hModule, DWORD Reason, LPVOID pReserved )
+BOOL APIENTRY
+DllMain(
+    HMODULE hModule,
+    DWORD Reason,
+    LPVOID pReserved
+    )
 {
-    UNREFERENCED_PARAM( hModule );
-    UNREFERENCED_PARAM( pReserved );
-
     switch ( Reason )
     {
     case DLL_PROCESS_ATTACH:
@@ -25,33 +28,36 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD Reason, LPVOID pReserved )
 
     return TRUE;
 }
+}
 #endif
 
 ManagerInterfaces   g_Managers;
 
-///////////////////////////////////////////////////////////////////////////////
-// InitializeNewtonPhysicsCollision - Initialize the Explosion system
-extern "C" void STDCALL InitializeSystemLib( ManagerInterfaces* pManagers )
+void STDCALL
+InitExplosionSystem( ManagerInterfaces* pManagers)
 {
     g_Managers = *pManagers;
 }
 
 
-
-///////////////////////////////////////////////////////////////////////////////
-// CreateAISystem - Create the Explosion system
-extern "C" ISystem* STDCALL CreateSystem()
+ISystem* STDCALL
+CreateExplosionSystem()
 {
-    // Create the Explosion system
     return new ExplosionSystem();
 }
 
 
-///////////////////////////////////////////////////////////////////////////////
-// DestroyAISystem - Release all resources allocated for the given SystemAI
-extern "C" void STDCALL DestroySystem( ISystem* pSystem )
+void STDCALL
+DestroyExplosionSystem( ISystem* pSystem)
 {
-    ExplosionSystem* pExplosionSystem = reinterpret_cast<ExplosionSystem*>(pSystem);
-    SAFE_DELETE( pExplosionSystem );
+    delete reinterpret_cast<ExplosionSystem*>( pSystem );
 }
 
+extern "C" 
+{
+    struct SystemFuncs SystemExplosion = {
+        &InitExplosionSystem,
+        &CreateExplosionSystem,
+        &DestroyExplosionSystem
+    };
+}

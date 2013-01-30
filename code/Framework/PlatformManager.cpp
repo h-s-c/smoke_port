@@ -37,16 +37,16 @@ PlatformManager::FileSystem::~FileSystem(
     for ( it=m_SystemLibs.begin(); it!=m_SystemLibs.end(); it++ )
     {
         Windows::HMODULE hLib = reinterpret_cast<Windows::HMODULE>(it->hLib);
-
-        // Get the system destruction function.
-        DestroySystemFunction fnDestroySystem =
-            reinterpret_cast<DestroySystemFunction>(
-                Windows::GetProcAddress( hLib, "DestroySystem" )
-                );
-
-        if ( fnDestroySystem != NULL )
+        
+        // Get the system functions struct.
+        struct SystemFuncs *systemFuncs = reinterpret_cast<SystemFuncs*>(Windows::GetProcAddress(hLib, it->pSystem->GetName()));
+        if ( systemFuncs != NULL )
         {
-            fnDestroySystem( it->pSystem );
+            systemFuncs->DestroySystem( it->pSystem );
+        }
+        else
+        {
+            std::cerr << dlerror() << std::endl;
         }
 
         Windows::FreeLibrary( hLib );
@@ -66,36 +66,20 @@ PlatformManager::FileSystem::LoadSystemLibrary( const char* pszSysLib, ISystem**
 
     if ( hLib != NULL )
     {
-        // Get the system initialization function.
-        InitializeSystemLibFunction fnInitSystemLib =
-            reinterpret_cast<InitializeSystemLibFunction>(
-                Windows::GetProcAddress( hLib, "InitializeSystemLib" )
-                );
-
-        if ( fnInitSystemLib != NULL )
+        // Get the system functions struct.
+        struct SystemFuncs *systemFuncs = reinterpret_cast<SystemFuncs*>(dlsym(hLib, pszSysLib));
+        if ( systemFuncs != NULL )
         {
             ManagerInterfaces Managers;
             Managers.pEnvironment = &Singletons::EnvironmentManager;
             Managers.pService     = &Singletons::ServiceManager;
             Managers.pTask        = g_pTaskManager;
 
-            fnInitSystemLib( &Managers );
-        }
-        else
-        {
-            std::cerr << "Could not get the system initialization function from " << pszSysLib << std::endl;
-        }
+            // Initialize the system.
+            systemFuncs->InitSystem( &Managers );
 
-        // Get the system creation function.
-        CreateSystemFunction fnCreateSystem =
-            reinterpret_cast<CreateSystemFunction>(
-                Windows::GetProcAddress( hLib, "CreateSystem" )
-                );
-
-        if ( fnCreateSystem != NULL )
-        {
             // Create the system.
-            ISystem* pSystem = fnCreateSystem( );
+            ISystem* pSystem = systemFuncs->CreateSystem( );
 
             if ( pSystem != NULL )
             {
@@ -156,21 +140,16 @@ PlatformManager::FileSystem::~FileSystem( void)
     for ( it=m_SystemLibs.begin(); it!=m_SystemLibs.end(); it++ )
     {
         void* hLib = reinterpret_cast<void*>(it->hLib);
-
-        #ifdef COMPILER_GCC
-        //dlsym collides with the C++ standard
-        //"ISO C++ forbids casting between pointer-to-function and pointer-to-object"
-        __extension__
-        #endif
-        // Get the system destruction function.
-        DestroySystemFunction fnDestroySystem =
-            reinterpret_cast<DestroySystemFunction>(
-                dlsym( hLib, "DestroySystem" )
-                );
-
-        if ( fnDestroySystem != NULL )
+        
+        // Get the system functions struct.
+        struct SystemFuncs *systemFuncs = reinterpret_cast<SystemFuncs*>(dlsym(hLib, it->pSystem->GetName()));
+        if ( systemFuncs != NULL )
         {
-            fnDestroySystem( it->pSystem );
+            systemFuncs->DestroySystem( it->pSystem );
+        }
+        else
+        {
+            std::cerr << dlerror() << std::endl;
         }
 
         dlclose( hLib );
@@ -196,46 +175,20 @@ PlatformManager::FileSystem::LoadSystemLibrary(
 
     if ( hLib != NULL )
     {
-        #ifdef COMPILER_GCC
-        //dlsym collides with the C++ standard
-        //"ISO C++ forbids casting between pointer-to-function and pointer-to-object"
-        __extension__
-        #endif
-        // Get the system initialization function.
-        InitializeSystemLibFunction fnInitSystemLib =
-            reinterpret_cast<InitializeSystemLibFunction>(
-                dlsym( hLib, "InitializeSystemLib" )
-                );
-
-        if ( fnInitSystemLib != NULL )
+        // Get the system functions struct.
+        struct SystemFuncs *systemFuncs = reinterpret_cast<SystemFuncs*>(dlsym(hLib, pszSysLib));
+        if ( systemFuncs != NULL )
         {
             ManagerInterfaces Managers;
             Managers.pEnvironment = &EnvironmentManager::getInstance();
             Managers.pService     = &ServiceManager::getInstance();
             Managers.pTask        = g_pTaskManager;
 
-            fnInitSystemLib( &Managers );
-        }
-        else
-        {
-            std::cerr << dlerror() << std::endl;
-        }
-        
-        #ifdef COMPILER_GCC
-        //dlsym collides with the C++ standard
-        //"ISO C++ forbids casting between pointer-to-function and pointer-to-object"
-        __extension__
-        #endif
-        // Get the system creation function.
-        CreateSystemFunction fnCreateSystem =
-            reinterpret_cast<CreateSystemFunction>(
-                dlsym( hLib, "CreateSystem" )
-                );
+            // Initialize the system.
+            systemFuncs->InitSystem( &Managers );
 
-        if ( fnCreateSystem != NULL )
-        {
             // Create the system.
-            ISystem* pSystem = fnCreateSystem( );
+            ISystem* pSystem = systemFuncs->CreateSystem();
 
             if ( pSystem != NULL )
             {
@@ -264,7 +217,7 @@ PlatformManager::FileSystem::LoadSystemLibrary(
     }
     else
     {
-            std::cerr << dlerror() << std::endl;
+        std::cerr << dlerror() << std::endl;
     }
 
     return Err;

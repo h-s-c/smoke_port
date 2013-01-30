@@ -1,10 +1,11 @@
-//internal
+//core
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
+//interfaces
 #include "Interfaces/Interface.hpp"
+//system
 #include "Systems/AI/System.hpp"
 
-ManagerInterfaces   g_Managers;
 
 #if defined(COMPILER_MSVC)
 #include <windows.h>
@@ -16,9 +17,6 @@ DllMain(
     LPVOID pReserved
     )
 {
-    UNREFERENCED_PARAM( hModule );
-    UNREFERENCED_PARAM( pReserved );
-
     switch ( Reason )
     {
     case DLL_PROCESS_ATTACH:
@@ -30,32 +28,36 @@ DllMain(
 
     return TRUE;
 }
+}
 #endif
 
+ManagerInterfaces   g_Managers;
 
-///////////////////////////////////////////////////////////////////////////////
-// InitializeNewtonPhysicsCollision - Initialize the AI system
-extern "C" void STDCALL InitializeSystemLib( ManagerInterfaces* pManagers )
+void STDCALL
+InitAISystem( ManagerInterfaces* pManagers)
 {
     g_Managers = *pManagers;
 }
 
 
-
-///////////////////////////////////////////////////////////////////////////////
-// CreateAISystem - Create the AI system
-extern "C" ISystem* STDCALL CreateSystem()
+ISystem* STDCALL
+CreateAISystem()
 {
-    // Create the AI system
     return new AISystem();
 }
 
 
-///////////////////////////////////////////////////////////////////////////////
-// DestroyAISystem - Release all resources allocated for the given SystemAI
-extern "C" void STDCALL DestroySystem( ISystem* pSystem )
+void STDCALL
+DestroyAISystem( ISystem* pSystem)
 {
-    AISystem* pAISystem = reinterpret_cast<AISystem*>(pSystem);
-    SAFE_DELETE( pAISystem );
+    delete reinterpret_cast<AISystem*>( pSystem );
 }
 
+extern "C" 
+{
+    struct SystemFuncs SystemAI = {
+        &InitAISystem,
+        &CreateAISystem,
+        &DestroyAISystem
+    };
+}

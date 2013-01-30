@@ -1,5 +1,8 @@
 #pragma once
 
+//stdlib
+#include <functional>
+
 // Forward declarations
 class ISystem;
 class ISystemScene;
@@ -388,19 +391,10 @@ extern "C"
         ITaskManager*       pTask;
     };
 
-    typedef void (STDCALL* InitializeSystemLibFunction)(
-        ManagerInterfaces* pManagers
-        );
-
-    /// <summary>
-    ///   Function definition for calling into a system library for creating a system.
-    /// </summary>
-    /// <returns>The newly created system.</returns>
-    typedef ISystem* (STDCALL* CreateSystemFunction)();
-
-    /// <summary>
-    ///   Function definition for calling into a system library for destroying a system.
-    /// </summary>
-    /// <param name="pSystem">The system to destroy.</param>
-    typedef void (STDCALL* DestroySystemFunction)( ISystem* pSystem );
+    struct SystemFuncs 
+    {
+        std::function<void STDCALL(ManagerInterfaces* pManagers)> InitSystem;
+        std::function<ISystem* STDCALL()> CreateSystem;
+        std::function<void STDCALL(ISystem* pSystem)> DestroySystem;
+    };
 }

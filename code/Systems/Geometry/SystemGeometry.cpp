@@ -1,8 +1,11 @@
-//internal
+//core
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
+//interface
 #include "Interfaces/Interface.hpp"
+//system
 #include "Systems/Geometry/System.hpp"
+
 
 #if defined(COMPILER_MSVC)
 #include <windows.h>
@@ -14,9 +17,6 @@ DllMain(
     LPVOID pReserved
     )
 {
-    UNREFERENCED_PARAM( hModule );
-    UNREFERENCED_PARAM( pReserved );
-
     switch ( Reason )
     {
     case DLL_PROCESS_ATTACH:
@@ -28,29 +28,36 @@ DllMain(
 
     return TRUE;
 }
+}
 #endif
 
 ManagerInterfaces   g_Managers;
 
-extern "C" void STDCALL
-InitializeSystemLib( 
-    ManagerInterfaces* pManagers 
-    )
+void STDCALL
+InitGeometrySystem( ManagerInterfaces* pManagers)
 {
     g_Managers = *pManagers;
 }
 
-extern "C" ISystem* STDCALL
-CreateSystem()
+
+ISystem* STDCALL
+CreateGeometrySystem()
 {
     return new GeometrySystem();
 }
 
 
-extern "C" void STDCALL
-DestroySystem(
-    ISystem* pSystem
-    )
+void STDCALL
+DestroyGeometrySystem( ISystem* pSystem)
 {
     delete reinterpret_cast<GeometrySystem*>( pSystem );
+}
+
+extern "C" 
+{
+    struct SystemFuncs SystemGeometry = {
+        &InitGeometrySystem,
+        &CreateGeometrySystem,
+        &DestroyGeometrySystem
+    };
 }

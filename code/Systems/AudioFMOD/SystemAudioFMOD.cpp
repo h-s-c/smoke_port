@@ -1,7 +1,9 @@
-//internal
+//core
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
+//interface
 #include "Interfaces/Interface.hpp"
+//system
 #include "Systems/AudioFMOD/System.hpp"
 
 
@@ -15,9 +17,6 @@ DllMain(
     LPVOID pReserved
     )
 {
-    UNREFERENCED_PARAM( hModule );
-    UNREFERENCED_PARAM( pReserved );
-
     switch ( Reason )
     {
     case DLL_PROCESS_ATTACH:
@@ -29,30 +28,36 @@ DllMain(
 
     return TRUE;
 }
+}
 #endif
 
 ManagerInterfaces   g_Managers;
 
-extern "C" void STDCALL
-InitializeSystemLib( 
-    ManagerInterfaces* pManagers 
-    )
+void STDCALL
+InitFMODAudioSystem( ManagerInterfaces* pManagers)
 {
     g_Managers = *pManagers;
 }
 
-extern "C" ISystem* STDCALL
-CreateSystem()
+
+ISystem* STDCALL
+CreateFMODAudioSystem()
 {
     return new FMODSystem();
 }
 
 
-extern "C" void STDCALL
-DestroySystem(
-    ISystem* pSystem
-    )
+void STDCALL
+DestroyFMODAudioSystem( ISystem* pSystem)
 {
     delete reinterpret_cast<FMODSystem*>( pSystem );
 }
 
+extern "C" 
+{
+    struct SystemFuncs SystemAudioFMOD = {
+        &InitFMODAudioSystem,
+        &CreateFMODAudioSystem,
+        &DestroyFMODAudioSystem
+    };
+}

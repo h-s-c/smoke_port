@@ -9,13 +9,8 @@
 #include "Systems/GraphicsOGRE/System.hpp"
 
 
-ManagerInterfaces   g_Managers;
-
 #if defined(COMPILER_MSVC)
 #include <windows.h>
-
-void*               g_hInstance;
-
 
 BOOL APIENTRY
 DllMain(
@@ -24,14 +19,9 @@ DllMain(
     LPVOID pReserved
     )
 {
-    UNREFERENCED_PARAM( pReserved );
-
     switch ( Reason )
     {
     case DLL_PROCESS_ATTACH:
-        g_hInstance = hModule;
-        break;
-
     case DLL_THREAD_ATTACH:
     case DLL_THREAD_DETACH:
     case DLL_PROCESS_DETACH:
@@ -43,28 +33,33 @@ DllMain(
 }
 #endif
 
+ManagerInterfaces   g_Managers;
 
-extern "C" void STDCALL
-InitializeSystemLib(
-    ManagerInterfaces* pManagers
-    )
+void STDCALL
+InitOGREGraphicsSystem( ManagerInterfaces* pManagers)
 {
     g_Managers = *pManagers;
 }
 
 
-extern "C" ISystem* STDCALL
-CreateSystem( )
+ISystem* STDCALL
+CreateOGREGraphicsSystem()
 {
     return new OGREGraphicsSystem();
 }
 
 
-extern "C" void STDCALL
-DestroySystem(
-    ISystem* pSystem
-    )
+void STDCALL
+DestroyOGREGraphicsSystem( ISystem* pSystem)
 {
     delete reinterpret_cast<OGREGraphicsSystem*>( pSystem );
 }
 
+extern "C" 
+{
+    struct SystemFuncs SystemGraphicsOGRE = {
+        &InitOGREGraphicsSystem,
+        &CreateOGREGraphicsSystem,
+        &DestroyOGREGraphicsSystem
+    };
+}
