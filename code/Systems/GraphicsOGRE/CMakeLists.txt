@@ -29,16 +29,19 @@ project (SystemGraphicsOGRE)
     ##ogre
     find_package(OGRE REQUIRED)
     list(APPEND SYSTEM_INCLUDE_DIRS ${OGRE_INCLUDE_DIR})
-    list(APPEND SYSTEM_INCLUDE_DIRS ${OGRE_INCLUDE_DIR}/PagedGeometry)
     list(APPEND SYSTEM_INCLUDE_DIRS ${OGRE_RenderSystem_GL_INCLUDE_DIRS})
     list(APPEND SYSTEM_INCLUDE_DIRS ${OGRE_Plugin_ParticleFX_INCLUDE_DIRS})
     list(APPEND SYSTEM_LIBRARIES ${OGRE_LIBRARIES}) 
     list(APPEND SYSTEM_LIBRARIES ${OGRE_RenderSystem_GL_LIBRARIES})
     list(APPEND SYSTEM_LIBRARIES ${OGRE_Plugin_ParticleFX_LIBRARIES})
+    find_package(PagedGeometry REQUIRED)
+    list(APPEND SYSTEM_INCLUDE_DIRS ${PG_INCLUDE_DIR})
+    list(APPEND SYSTEM_LIBRARIES ${PG_LIBRARIES}) 
+
 
     list(APPEND SYSTEM_INCLUDE_DIRS ${CMAKE_SOURCE_DIR})
     
-    include_directories(${SYSTEM_INCLUDE_DIRS} )
+    include_directories(${SYSTEM_INCLUDE_DIRS})
     add_library (SystemGraphicsOGRE SHARED ${SYSTEM_SOURCE})
     target_link_libraries(SystemGraphicsOGRE ${SYSTEM_LIBRARIES})
     set_target_properties(SystemGraphicsOGRE PROPERTIES PREFIX "")
