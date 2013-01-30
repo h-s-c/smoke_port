@@ -46,9 +46,9 @@ PlatformManager::FileSystem::~FileSystem(
         }
         else
         {
-            std::cerr << dlerror() << std::endl;
+            std::cerr << "Could not get the system functions from " << it->pSystem->GetName() << std::endl;
         }
-
+        
         Windows::FreeLibrary( hLib );
     }
 
@@ -103,7 +103,7 @@ PlatformManager::FileSystem::LoadSystemLibrary( const char* pszSysLib, ISystem**
         }
         else
         {
-            std::cerr << "Could not get the system creation function from " << pszSysLib << std::endl;
+            std::cerr << "Could not get the system functions from " << pszSysLib << std::endl;
         }
     }
     else
