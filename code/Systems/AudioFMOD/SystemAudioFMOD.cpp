@@ -5,8 +5,6 @@
 #include "Systems/AudioFMOD/System.hpp"
 
 
-ManagerInterfaces   g_Managers;
-
 #if defined(COMPILER_MSVC)
 #include <windows.h>
 
@@ -32,6 +30,8 @@ DllMain(
     return TRUE;
 }
 #endif
+
+ManagerInterfaces   g_Managers;
 
 extern "C" void STDCALL
 InitializeSystemLib( 

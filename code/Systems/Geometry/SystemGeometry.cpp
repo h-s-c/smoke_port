@@ -30,6 +30,16 @@ DllMain(
 }
 #endif
 
+ManagerInterfaces   g_Managers;
+
+extern "C" void STDCALL
+InitializeSystemLib( 
+    ManagerInterfaces* pManagers 
+    )
+{
+    g_Managers = *pManagers;
+}
+
 extern "C" ISystem* STDCALL
 CreateSystem()
 {
