@@ -1,28 +1,17 @@
-// Copyright © 2008-2009 Intel Corporation
-// All Rights Reserved
-//
-// Permission is granted to use, copy, distribute and prepare derivative works of this
-// software for any purpose and without fee, provided, that the above copyright notice
-// and this statement appear in all copies.  Intel makes no representations about the
-// suitability of this software for any purpose.  THIS SOFTWARE IS PROVIDED "AS IS."
-// INTEL SPECIFICALLY DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, AND ALL LIABILITY,
-// INCLUDING CONSEQUENTIAL AND OTHER INDIRECT DAMAGES, FOR THE USE OF THIS SOFTWARE,
-// INCLUDING LIABILITY FOR INFRINGEMENT OF ANY PROPRIETARY RIGHTS, AND INCLUDING THE
-// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  Intel does not
-// assume any responsibility for any errors which may appear in this software nor any
-// responsibility to update it.
-
-// Prevent other headers from including any platform specific ones
-#define __PLATFORM_MANAGER
+// base
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
+// interface
 #include "Interfaces/Interface.hpp"
-
+// stdlib
+#include <iostream>
+// framework
 #include "Framework/PlatformManager.hpp"
 #include "Framework/SystemManager.hpp"
 #include "Framework/EnvironmentManager.hpp"
 #include "Framework/ServiceManager.hpp"
 #include "Framework/TaskManager.hpp"
+
 
 std::once_flag                   
 PlatformManager::only_one;
@@ -43,17 +32,13 @@ PlatformManager::FileSystem::~FileSystem(
     void
     )
 {
-    //
     // Iterate through all the loaded libraries.
-    //
     std::vector<SystemLib>::const_iterator it;
     for ( it=m_SystemLibs.begin(); it!=m_SystemLibs.end(); it++ )
     {
         Windows::HMODULE hLib = reinterpret_cast<Windows::HMODULE>(it->hLib);
 
-        //
         // Get the system destruction function.
-        //
         DestroySystemFunction fnDestroySystem =
             reinterpret_cast<DestroySystemFunction>(
                 Windows::GetProcAddress( hLib, "DestroySystem" )
@@ -72,23 +57,16 @@ PlatformManager::FileSystem::~FileSystem(
 
 
 Error
-PlatformManager::FileSystem::LoadSystemLibrary(
-    const char* pszSysLib,
-    ISystem** ppSystem
-    )
+PlatformManager::FileSystem::LoadSystemLibrary( const char* pszSysLib, ISystem** ppSystem)
 {
     Error   Err = Errors::Failure;
 
-    //
     // Load the dll.
-    //
     Windows::HMODULE hLib = Windows::LoadLibraryA( pszSysLib );
 
     if ( hLib != NULL )
     {
-        //
         // Get the system initialization function.
-        //
         InitializeSystemLibFunction fnInitSystemLib =
             reinterpret_cast<InitializeSystemLibFunction>(
                 Windows::GetProcAddress( hLib, "InitializeSystemLib" )
@@ -103,10 +81,12 @@ PlatformManager::FileSystem::LoadSystemLibrary(
 
             fnInitSystemLib( &Managers );
         }
+        else
+        {
+            std::cerr << "Could not get the system initialization function from " << pszSysLib << std::endl;
+        }
 
-        //
         // Get the system creation function.
-        //
         CreateSystemFunction fnCreateSystem =
             reinterpret_cast<CreateSystemFunction>(
                 Windows::GetProcAddress( hLib, "CreateSystem" )
@@ -114,16 +94,12 @@ PlatformManager::FileSystem::LoadSystemLibrary(
 
         if ( fnCreateSystem != NULL )
         {
-            //
             // Create the system.
-            //
             ISystem* pSystem = fnCreateSystem( );
 
             if ( pSystem != NULL )
             {
-                //
                 // Verify that there's no duplicate system type.
-                //
                 System::Type SystemType = pSystem->GetSystemType();
 
                 ISystem* pCurrSystem =
@@ -131,9 +107,7 @@ PlatformManager::FileSystem::LoadSystemLibrary(
 
                 if ( pCurrSystem == NULL )
                 {
-                    //
                     // Add the system to the collection.
-                    //
                     Singletons::SystemManager.Add( pSystem );
 
                     SystemLib sl = { reinterpret_cast<Handle>(hLib), pSystem };
@@ -143,19 +117,23 @@ PlatformManager::FileSystem::LoadSystemLibrary(
                 }
             }
         }
+        else
+        {
+            std::cerr << "Could not get the system creation function from " << pszSysLib << std::endl;
+        }
+    }
+    else
+    {
+        std::cerr << "Could not open " << pszSysLib << std::endl;
     }
 
     return Err;
 }
 
 void
-PlatformManager::WindowSystem::ProcessMessages(
-    void
-    )
+PlatformManager::WindowSystem::ProcessMessages( void)
 {
-    //
     // Process all messages in the queue.
-    //
     Windows::MSG    Msg;
 
     while ( Windows::PeekMessage( &Msg, NULL, 0, 0, PM_REMOVE ) )
@@ -167,23 +145,19 @@ PlatformManager::WindowSystem::ProcessMessages(
 
 #elif defined (PLATFORM_UNIX)
 
+// external
 #include <dlfcn.h>
+#include <boost/filesystem.hpp>
 
-PlatformManager::FileSystem::~FileSystem(
-    void
-    )
+PlatformManager::FileSystem::~FileSystem( void)
 {
-    //
     // Iterate through all the loaded libraries.
-    //
     std::vector<SystemLib>::const_iterator it;
     for ( it=m_SystemLibs.begin(); it!=m_SystemLibs.end(); it++ )
     {
         void* hLib = reinterpret_cast<void*>(it->hLib);
 
-        //
         // Get the system destruction function.
-        //
         DestroySystemFunction fnDestroySystem =
             reinterpret_cast<DestroySystemFunction>(
                 dlsym( hLib, "DestroySystem" )
@@ -208,17 +182,16 @@ PlatformManager::FileSystem::LoadSystemLibrary(
     )
 {
     Error   Err = Errors::Failure;
+    
+    // Prepare the .so path and name
+    std::string strSysLib = boost::filesystem::current_path().string() + "/" + std::string(pszSysLib) + ".so";
 
-    //
-    // Load the dll.
-    //
-    void* hLib = dlopen( pszSysLib, RTLD_NOW);
+    // Load the .so
+    void* hLib = dlopen( strSysLib.c_str(), RTLD_NOW);
 
     if ( hLib != NULL )
     {
-        //
         // Get the system initialization function.
-        //
         InitializeSystemLibFunction fnInitSystemLib =
             reinterpret_cast<InitializeSystemLibFunction>(
                 dlsym( hLib, "InitializeSystemLib" )
@@ -233,10 +206,12 @@ PlatformManager::FileSystem::LoadSystemLibrary(
 
             fnInitSystemLib( &Managers );
         }
+        else
+        {
+            std::cerr << dlerror() << std::endl;
+        }
 
-        //
         // Get the system creation function.
-        //
         CreateSystemFunction fnCreateSystem =
             reinterpret_cast<CreateSystemFunction>(
                 dlsym( hLib, "CreateSystem" )
@@ -244,16 +219,12 @@ PlatformManager::FileSystem::LoadSystemLibrary(
 
         if ( fnCreateSystem != NULL )
         {
-            //
             // Create the system.
-            //
             ISystem* pSystem = fnCreateSystem( );
 
             if ( pSystem != NULL )
             {
-                //
                 // Verify that there's no duplicate system type.
-                //
                 System::Type SystemType = pSystem->GetSystemType();
 
                 ISystem* pCurrSystem =
@@ -261,9 +232,7 @@ PlatformManager::FileSystem::LoadSystemLibrary(
 
                 if ( pCurrSystem == NULL )
                 {
-                    //
                     // Add the system to the collection.
-                    //
                     SystemManager::getInstance().Add( pSystem );
 
                     SystemLib sl = { reinterpret_cast<Handle>(hLib), pSystem };
@@ -273,6 +242,14 @@ PlatformManager::FileSystem::LoadSystemLibrary(
                 }
             }
         }
+        else
+        {
+            std::cerr << dlerror() << std::endl;
+        }
+    }
+    else
+    {
+            std::cerr << dlerror() << std::endl;
     }
 
     return Err;
@@ -283,9 +260,7 @@ PlatformManager::WindowSystem::ProcessMessages(
     void
     )
 {
-    //
     // Process all messages in the queue.
-    //
 }
 
 #endif
