@@ -157,6 +157,11 @@ PlatformManager::FileSystem::~FileSystem( void)
     {
         void* hLib = reinterpret_cast<void*>(it->hLib);
 
+        #ifdef COMPILER_GCC
+        //dlsym collides with the C++ standard
+        //"ISO C++ forbids casting between pointer-to-function and pointer-to-object"
+        __extension__
+        #endif
         // Get the system destruction function.
         DestroySystemFunction fnDestroySystem =
             reinterpret_cast<DestroySystemFunction>(
@@ -191,6 +196,11 @@ PlatformManager::FileSystem::LoadSystemLibrary(
 
     if ( hLib != NULL )
     {
+        #ifdef COMPILER_GCC
+        //dlsym collides with the C++ standard
+        //"ISO C++ forbids casting between pointer-to-function and pointer-to-object"
+        __extension__
+        #endif
         // Get the system initialization function.
         InitializeSystemLibFunction fnInitSystemLib =
             reinterpret_cast<InitializeSystemLibFunction>(
@@ -210,7 +220,12 @@ PlatformManager::FileSystem::LoadSystemLibrary(
         {
             std::cerr << dlerror() << std::endl;
         }
-
+        
+        #ifdef COMPILER_GCC
+        //dlsym collides with the C++ standard
+        //"ISO C++ forbids casting between pointer-to-function and pointer-to-object"
+        __extension__
+        #endif
         // Get the system creation function.
         CreateSystemFunction fnCreateSystem =
             reinterpret_cast<CreateSystemFunction>(
