@@ -1,8 +1,16 @@
-#include "External/tinyxml/tinyxml.h"
-//internal
+// base
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
+// interface
 #include "Interfaces/Interface.hpp"
+// stdlib
+#include <iostream>
+#include <stdexcept>
+#include <string>
+// external
+#include <boost/filesystem.hpp>
+#include "External/tinyxml/tinyxml.h"
+// framework
 #include "Framework/Universal.hpp"
 #include "Framework/SystemManager.hpp"
 #include "Framework/PlatformManager.hpp"
@@ -13,66 +21,45 @@
 #include "Framework/TaskManager.hpp"
 #include "Framework/TaskManagerTP.hpp"
 #include "Framework/Framework.hpp"
-//stdlib
-#include <iostream>
-#include <stdexcept>
-#include <string>
-//external
-#include <boost/filesystem.hpp>
+
 
 TaskManager*    g_pTaskManager = NULL;
 
-
 void
-EngineExecuteGDF(
-    pcstr pszGDF
-    )
+EngineExecuteGDF( pcstr pszGDF)
 {
-#ifndef _DEBUG
-    try
-#endif
-    {
-        Framework   Framework;
+    Framework   Framework;
 
-        pcstr GDF = (pszGDF != NULL) ? pszGDF : "engine.gdf";
-        if ( Framework.Initialize( GDF ) == Errors::Success )
-        {
-            Framework.Execute();
-            Framework.Shutdown();
-        }
-    }
-#ifndef _DEBUG
-    catch ( ... )
+    pcstr GDF = (pszGDF != NULL) ? pszGDF : "engine.gdf";
+    if ( Framework.Initialize( GDF ) == Errors::Success )
     {
-        // Display an error message.
+        Framework.Execute();
+        Framework.Shutdown();
     }
-#endif
 }
 
-
-Framework::Framework(
-    void
-    )
+Framework::Framework( void) 
     : m_pScheduler( NULL )
     , m_pSceneCCM( NULL )
     , m_pObjectCCM( NULL )
     , m_bExecuteLoop( True )
 {
-    //
     // g_pTaskManager and m_pScheduler are instantiated after the environment variables
     // in the config file are parsed
-    //
     m_pSceneCCM = new ChangeManager();
-    ASSERT( m_pSceneCCM != NULL );
+    if ( m_pSceneCCM == NULL)
+    {
+        std::cerr << "m_pSceneCCM == NULL" << std::endl;
+    }
 
     m_pObjectCCM = new ChangeManager();
-    ASSERT( m_pObjectCCM != NULL );
+    if ( m_pObjectCCM == NULL)
+    {
+        std::cerr << "m_pObjectCCM == NULL" << std::endl;
+    }
 }
 
-
-Framework::~Framework(
-    void
-    )
+Framework::~Framework( void)
 {
     SAFE_DELETE( m_pScheduler );
     //SAFE_DELETE( g_pTaskManager );
@@ -80,11 +67,8 @@ Framework::~Framework(
     SAFE_DELETE( m_pObjectCCM );
 }
 
-
 Error
-Framework::Initialize(
-    pcstr pszGDF
-    )
+Framework::Initialize( pcstr pszGDF)
 {
     std::clog << "Initializing Framework" << std::endl;
     if ( !boost::filesystem::exists( pszGDF ) )
@@ -93,32 +77,24 @@ Framework::Initialize(
         return Errors::File::NotFound;
     }    
     m_sGDF = pszGDF;
-    //
-    // Create the initial universal scene.
-    //
-    m_pScene = new UScene( m_pSceneCCM, m_pObjectCCM );
-    ASSERT( m_pScene != NULL );
 
+    // Create the initial universal scene.
+    m_pScene = new UScene( m_pSceneCCM, m_pObjectCCM );
     if ( m_pScene == NULL )
     {
+        std::cerr << "m_pScene == NULL" << std::endl;
         return Errors::Memory::OutOfMemory;
     }
 
-    //
     // Instantiate the parser, parse the environment variables in the GDF.
-    //
     GDFParser Parser( m_pScene );
     Parser.ParseEnvironment( pszGDF );
-
-    //
+    
     // Register the framework as the system access provider.  The system access provider gives the
-    //  ability for systems to set the properties in other systems.
-    //
+    // ability for systems to set the properties in other systems.
     ServiceManager::getInstance().RegisterSystemAccessProvider( this );
 
-    //
     // Instantiate the task manager.
-    //
     std::string sTaskManager = EnvironmentManager::getInstance().Variables().GetAsString( "TaskManager" );
 
     /*if ( sTaskManager == "TBB" || sTaskManager == "" )
@@ -135,7 +111,7 @@ Framework::Initialize(
     }
     else
     {
-        ASSERTMSG1( False, "Unknown TaskManager: %s", sTaskManager.c_str() );
+        std::cerr << "Unknown TaskManager: " << sTaskManager.c_str() << std::endl;
     }
 
     if ( g_pTaskManager != NULL )
@@ -143,57 +119,43 @@ Framework::Initialize(
         g_pTaskManager->Init();
     }
 
-    //
     // Instantiate the scheduler.
-    //
     m_pScheduler = new Scheduler( g_pTaskManager );
-    ASSERT( m_pScheduler != NULL );
-
     if ( m_pScheduler == NULL )
     {
+        std::cerr << "m_pScheduler == NULL" << std::endl;
         return Errors::Memory::OutOfMemory;
     }
 
-    //
     // Complete the parsing of the GDF and the initial scene.
-    //
+    std::clog << "test1" << std::endl;
     m_sNextScene = Parser.Parse( pszGDF );
+    std::clog << "test2" << std::endl;
     m_sNextScene = Parser.ParseScene( pszGDF, m_sNextScene );
+    std::clog << "test3" << std::endl;
 
-    //
     // Set the initial scene for the scheduler.
-    //
     m_pScheduler->SetScene( m_pScene );
 
     return Errors::Success;
 }
 
-
 void
-Framework::Shutdown(
-    void
-    )
+Framework::Shutdown( void)
 {
     std::clog << "Shutting down Framework" << std::endl;
-    //
+
     // Get rid of the scene.
-    //
     SAFE_DELETE( m_pScene );
 
-    //
     // De-register the framework as the system access provider.
-    //
     ServiceManager::getInstance().UnregisterSystemAccessProvider( this );
 
-    //
     // Free resources used for parallel execution by the change manager.
-    //
     m_pObjectCCM->ResetTaskManager();
     m_pSceneCCM->ResetTaskManager();
 
-    //
     // Free the task manager.
-    //
     if ( g_pTaskManager != NULL )
     {
         g_pTaskManager->Shutdown();
@@ -204,14 +166,10 @@ Framework::Shutdown(
 
 
 Error
-Framework::Execute(
-    void
-    )
+Framework::Execute( void)
 {
-    //
     // Process the link messages in the CCMs first, for both the object and scene CCMs.  The link
-    //  needs to be established before any other messages come through.
-    //
+    // needs to be established before any other messages come through.
     m_pObjectCCM->DistributeQueuedChanges(
         System::Types::All, System::Changes::Link | System::Changes::ParentLink
         );
@@ -219,78 +177,53 @@ Framework::Execute(
         System::Types::All, System::Changes::Link | System::Changes::ParentLink
         );
 
-    //
     // Distribute changes for object and scene CCMs.  The UObject propagates some object messages
-    //  up to the scene so it needs to go first.
-    //
+    // up to the scene so it needs to go first.
     m_pObjectCCM->DistributeQueuedChanges();
     m_pSceneCCM->DistributeQueuedChanges();
 
-    //
     // Set the runtime status to running.
-    //
     EnvironmentManager::getInstance().Runtime().SetStatus( IEnvironment::IRuntime::Status::Running );
 
-    //
     // Run through the main game loop.
-    //
     u32 StopAfterNFrames = EnvironmentManager::getInstance().Variables().GetAsInt( "StopAfterNFrames", 0 );
     u32 FrameCount = 0;
 
-
-    //
     // Initialize resources necessary for parallel change distribution.
-    //
     m_pObjectCCM->SetTaskManager(g_pTaskManager);
     m_pSceneCCM->SetTaskManager(g_pTaskManager);
 
     while ( m_bExecuteLoop )
     {
-        //
         // Process any pending window messages.
-        //
         PlatformManager::getInstance().WindowSystem().ProcessMessages();
 
-        //
         // Call the scheduler to have the systems internally update themselves.
-        //
         m_pScheduler->Execute();
 
-        //
         // Set any properties that may have been issued for change.  Any propeties that correlate
-        //  to system change notifications will be added to the change controller by the system.
+        // to system change notifications will be added to the change controller by the system.
         // NOTE: This is still untested as noone is using it.
-        //
         IssuePendingSystemPropertyChanges();
 
-        //
         // Distribute changes for object and scene CCMs.  The UObject propagates some object
-        //  messages up to the scene CCM so it needs to go first.
-        //
+        // messages up to the scene CCM so it needs to go first.
         m_pObjectCCM->DistributeQueuedChanges();
         m_pSceneCCM->DistributeQueuedChanges();
 
-        //
         // Check with the environment manager if there is a change in the runtime status to quit.
-        //
         if ( EnvironmentManager::getInstance().Runtime().GetStatus() ==
              IEnvironment::IRuntime::Status::Quit )
         {
-            //
             // Time to quit looping.
-            //
             m_bExecuteLoop = False;
         }
 
-        //
         // Increment the frame count and max frame limit for exit.
-        //
         FrameCount++;
         if ( StopAfterNFrames != 0 && FrameCount >= StopAfterNFrames )
         {
-            //
             // Time to quit looping.
-            //
             m_bExecuteLoop = False;
         }
     }
@@ -303,52 +236,39 @@ Framework::Execute(
 // IService::ISystemAccess Implementations.
 
 Handle
-Framework::GetSystem(
-    pcstr pszSystemName
-    )
+Framework::GetSystem( pcstr pszSystemName)
 {
-    //
-    // Get the pointer to the system from the system manager.  Handle is just a void* so it will
-    //  convert with any problems.  If you're one of those guys that will think of just casting
-    //  the handle back you'd better not as you'll break the threading when you try to make calls
-    //  into this interface directly.
-    //
+    /* Get the pointer to the system from the system manager.  Handle is just a void* so it will
+     * convert with any problems.  If you're one of those guys that will think of just casting
+     * the handle back you'd better not as you'll break the threading when you try to make calls
+     * into this interface directly.*/
     return SystemManager::getInstance().Get( pszSystemName );
 }
 
 
 Handle
-Framework::GetSystem(
-    System::Type Type
-    )
+Framework::GetSystem( System::Type Type)
 {
-    //
-    // Get the pointer to the system from the system manager.  Handle is just a void* so it will
-    //  convert with any problems.  If you're one of those guys that will think of just casting
-    //  the handle back you'd better not as you'll break the threading when you try to make calls
-    //  into this interface directly.
-    //
+
+    /* Get the pointer to the system from the system manager.  Handle is just a void* so it will
+     * convert with any problems.  If you're one of those guys that will think of just casting
+     * the handle back you'd better not as you'll break the threading when you try to make calls
+     * into this interface directly.*/
     return SystemManager::getInstance().Get( Type );
 }
 
 
 Handle
-Framework::GetScene(
-    pcstr pszSystemName
-    )
+Framework::GetScene( pcstr pszSystemName)
 {
     Handle hScene = NULL;
 
-    //
     // Get the system from the system manager to get the type.
-    //
     ISystem* pSystem = SystemManager::getInstance().Get( pszSystemName );
 
     if ( pSystem != NULL )
     {
-        //
         // Get the scene based on the type.
-        //
         hScene = GetScene( pSystem->GetSystemType() );
     }
 
@@ -357,15 +277,11 @@ Framework::GetScene(
 
 
 Handle
-Framework::GetScene(
-    System::Type Type
-    )
+Framework::GetScene( System::Type Type)
 {
     Handle hScene = NULL;
 
-    //
     // Find the scene extension in the universal scene.
-    //
     UScene::SystemScenes::const_iterator it = m_pScene->GetSystemScenes().find( Type );
 
     if ( it != m_pScene->GetSystemScenes().end() )
@@ -378,16 +294,11 @@ Framework::GetScene(
 
 
 Handle
-Framework::GetSystemObject(
-    pcstr pszSystemName,
-    pcstr pszName
-    )
+Framework::GetSystemObject( pcstr pszSystemName, pcstr pszName)
 {
     Handle hObject = NULL;
 
-    //
     // Get the system from the system manager to get the type.
-    //
     ISystem* pSystem = SystemManager::getInstance().Get( pszSystemName );
 
     if ( pSystem != NULL )
@@ -400,23 +311,16 @@ Framework::GetSystemObject(
 
 
 Handle
-Framework::GetSystemObject(
-    System::Type Type,
-    pcstr pszName
-    )
+Framework::GetSystemObject( System::Type Type, pcstr pszName)
 {
     Handle hObject = NULL;
 
-    //
     // Find the universal object in the scene.
-    //
     UObject* pUObject = m_pScene->FindObject( pszName );
 
     if ( pUObject != NULL )
     {
-        //
         // Get the system object extension of the universal object using the system type.
-        //
         ISystemObject* pObject = pUObject->GetExtension( Type );
 
         if ( pObject != NULL )
@@ -430,22 +334,18 @@ Framework::GetSystemObject(
 
 
 void
-Framework::GetSystemProperty(
-    Handle hSystem,
-    InOut Properties::Property& Property
-    )
+Framework::GetSystemProperty( Handle hSystem, InOut Properties::Property& Property)
 {
     std::string sPropertyName = Property.GetName();
 
-    //
     // Reinterpret the handle as an ISystem.
-    //
-    ASSERT( hSystem != NULL );
+    if ( hSystem == NULL)
+    {
+        std::cerr << "hSystem == NULL" << std::endl;
+    }
     ISystem* pSystem = reinterpret_cast<ISystem*>(hSystem);
 
-    //
     // Get the properties and find a match.
-    //
     Properties::Array aProperties;
     pSystem->GetProperties( aProperties );
 
@@ -458,7 +358,10 @@ Framework::GetSystemProperty(
             bFound = true;
         }
     }
-    ASSERTMSG( bFound, "The property does not exist." );
+    if ( bFound == false)
+    {
+        std::cerr << "The property does not exist." << std::endl;
+    }
 }
 
 
@@ -468,15 +371,17 @@ Framework::SetSystemProperty(
     In Properties::Property& Property
     )
 {
-    ASSERT( hSystem != NULL );
+    // Reinterpret the handle as an ISystem.
+    if ( hSystem == NULL)
+    {
+        std::cerr << "hSystem == NULL" << std::endl;
+    }
     ISystem* pSystem = reinterpret_cast<ISystem*>(hSystem);
 
 #ifdef _DEBUG
-    //
     // This will cause an assertion if the property doesn't exist.
-    //
-    Properties::Property TempProperty = Property;
-    GetSystemProperty( hSystem, TempProperty );
+    //Properties::Property TempProperty = Property;
+    //GetSystemProperty( hSystem, TempProperty );
 #endif
 
     PropertyIssue pi = { System::System, pSystem->GetSystemType(), hSystem, Property };
@@ -494,15 +399,14 @@ Framework::GetSceneProperty(
 {
     std::string sPropertyName = Property.GetName();
 
-    //
-    // Reinterpret the handle as an ISystemScene.
-    //
-    ASSERT( hScene != NULL );
+    // Reinterpret the handle as an ISystem.
+    if ( hScene == NULL)
+    {
+        std::cerr << "hScene == NULL" << std::endl;
+    }
     ISystemScene* pSystemScene = reinterpret_cast<ISystemScene*>(hScene);
 
-    //
     // Get the properties and find a match.
-    //
     Properties::Array aProperties;
     pSystemScene->GetProperties( aProperties );
 
@@ -515,7 +419,10 @@ Framework::GetSceneProperty(
             bFound = True;
         }
     }
-    ASSERTMSG( bFound, "The property does not exist." );
+    if ( bFound == false)
+    {
+        std::cerr << "The property does not exist." << std::endl;
+    }
 }
 
 
@@ -525,16 +432,18 @@ Framework::SetSceneProperty(
     In Properties::Property& Property
     )
 {
-    ASSERT( hScene != NULL );
+    // Reinterpret the handle as an ISystemScene.
+    if ( hScene == NULL)
+    {
+        std::cerr << "hScene == NULL" << std::endl;
+    }
     ISystemScene* pSystemScene = reinterpret_cast<ISystemScene*>(hScene);
 
 
 #ifdef _DEBUG
-    //
     // This will cause an assertion if the property doesn't exist.
-    //
-    Properties::Property TempProperty = Property;
-    GetSceneProperty( hScene, TempProperty );
+    //Properties::Property TempProperty = Property;
+    //GetSceneProperty( hScene, TempProperty );
 #endif
 
     PropertyIssue pi = { System::Scene, pSystemScene->GetSystemType(),
@@ -553,10 +462,11 @@ Framework::GetObjectProperty(
 {
     std::string sPropertyName = Property.GetName();
 
-    //
     // Reinterpret the handle as an ISystemScene.
-    //
-    ASSERT( hObject != NULL );
+    if ( hObject == NULL)
+    {
+        std::cerr << "hObject == NULL" << std::endl;
+    }
     ISystemObject* pSystemObject = reinterpret_cast<ISystemObject*>(hObject);
 
     //
@@ -574,7 +484,10 @@ Framework::GetObjectProperty(
             bFound = True;
         }
     }
-    ASSERTMSG( bFound, "The property does not exist." );
+    if ( bFound == false)
+    {
+        std::cerr << "The property does not exist." << std::endl;
+    }
 }
 
 
@@ -584,15 +497,17 @@ Framework::SetObjectProperty(
     In Properties::Property& Property
     )
 {
-    ASSERT( hObject != NULL );
+    // Reinterpret the handle as an ISystemObject.
+    if ( hObject == NULL)
+    {
+        std::cerr << "hObject == NULL" << std::endl;
+    }
     ISystemObject* pSystemObject = reinterpret_cast<ISystemObject*>(hObject);
 
 #ifdef _DEBUG
-    //
     // This will cause an assertion if the property doesn't exist.
-    //
-    Properties::Property TempProperty = Property;
-    GetObjectProperty( hObject, TempProperty );
+    //Properties::Property TempProperty = Property;
+    //GetObjectProperty( hObject, TempProperty );
 #endif
 
     PropertyIssue pi = { System::Object, pSystemObject->GetSystemType(),
@@ -645,7 +560,7 @@ Framework::IssuePendingSystemPropertyChanges(
                 break;
 
             default:
-                ASSERTMSG( False, "Unhandled case." );
+                std::cerr << "Unhandled case." << std::endl;
                 break;
             };
         }
@@ -667,29 +582,28 @@ Framework::GDFParser::GDFParser(
 
 
 void
-Framework::GDFParser::ParseEnvironment(
-    std::string sGDF
-    )
+Framework::GDFParser::ParseEnvironment( std::string sGDF)
 {
-    //
     // Load the gdf xml file.
-    //
     TiXmlDocument   XmlDoc( sGDF.c_str() );
 
     if ( XmlDoc.LoadFile() == False )
     {
-        ASSERTMSG1( False, "Parser was unable to load GDF file %s.", sGDF.c_str() );
+        std::cerr << "Parser was unable to load GDF file " << sGDF.c_str() << "." << std::endl;
     }
 
-    //
     // Find the "environment" element.
-    //
     TiXmlElement* pElement = XmlDoc.FirstChildElement();
-    ASSERT( pElement );
-    ASSERTMSG4( strcmp( pElement->Value(), "GlobalDefinition" ) == 0,
-                "Parser did not see <GlobablDefinition> as the root element" \
-                " instead it was <%s>.  File (%s), row (%d) column (%d)",
-                pElement->Value(), sGDF.c_str(), pElement->Row(), pElement->Column() );
+    if ( pElement == NULL )
+    {
+        std::cerr << "Parser could not load the first element in the GDF." << std::endl;
+    }
+    if (strcmp( pElement->Value(), "GlobalDefinition" ) != 0)
+    {
+        std::cerr << "Parser did not see <GlobablDefinition> as the root element instead it was " 
+                    <<  pElement->Value() << "." << " File " << sGDF.c_str() << ", Row " 
+                    <<  pElement->Row() << ", Column " << pElement->Column() << "." << std::endl;
+    }
 
     pElement = pElement->FirstChildElement();
 
@@ -706,31 +620,26 @@ Framework::GDFParser::ParseEnvironment(
 }
 
 
-const std::string
-Framework::GDFParser::Parse(
-    std::string sGDF
-    )
+const std::string 
+Framework::GDFParser::Parse( std::string sGDF)
 {
-    //
     // Load the gdf xml file.
-    //
     TiXmlDocument   XmlDoc( sGDF.c_str() );
 
     if ( XmlDoc.LoadFile() == False )
     {
-        ASSERTMSG1( False, "Parser was unable to load GDF file %s.", sGDF.c_str() );
+        std::cerr << "Parser was unable to load GDF file " << sGDF.c_str() << "." << std::endl;
     }
 
-    //
     // Set all the markers to false.
-    //
     m_GdfMarker = GDFM_None;
 
-    //
     // Get each element and attribute.
-    //
     TiXmlElement* pElement = XmlDoc.FirstChildElement();
-    ASSERTMSG( pElement != NULL, "Parser could not load the first element in the GDF." );
+    if ( pElement == NULL )
+    {
+        std::cerr << "Parser could not load the first element in the GDF." << std::endl;
+    }
 
     ParseElement( pElement );
 
@@ -739,32 +648,33 @@ Framework::GDFParser::Parse(
 
 
 const std::string
-Framework::GDFParser::ParseScene(
-    std::string sGDF,
-    std::string sScene
-    )
+Framework::GDFParser::ParseScene( std::string sGDF, std::string sScene)
 {
-    ASSERTMSG( sScene.empty() == False, "Parser does not have a scene to parse." );
+    if ( sScene.empty() == True )
+    {
+        std::cerr << "Parser does not have a scene to parse." << std::endl;
+    }
 
-    //
     // Load the gdf xml file.
-    //
     TiXmlDocument   XmlDoc( sGDF.c_str() );
 
     if ( XmlDoc.LoadFile() == False )
     {
-        ASSERTMSG1( False, "Parser was unable to load GDF file %s.", sGDF.c_str() );
+        std::cerr << "Parser was unable to load GDF file " << sGDF.c_str() << "."<< std::endl;
     }
 
-    //
     // Find the "scenes" element.
-    //
     TiXmlElement* pElement = XmlDoc.FirstChildElement();
-    ASSERT( pElement );
-    ASSERTMSG4( strcmp( pElement->Value(), "GlobalDefinition" ) == 0,
-                "Parser did not see <GlobablDefinition> as the root element" \
-                " instead it was <%s>.  File (%s), row (%d) column (%d)",
-                pElement->Value(), sGDF.c_str(), pElement->Row(), pElement->Column() );
+    if ( pElement == NULL )
+    {
+        std::cerr << "Parser could not load the first element in the GDF." << std::endl;
+    }
+    if (strcmp( pElement->Value(), "GlobalDefinition" ) != 0)
+    {
+        std::cerr << "Parser did not see <GlobablDefinition> as the root element instead it was " 
+                    <<  pElement->Value() << "." << " File " << sGDF.c_str() << ", Row " 
+                    <<  pElement->Row() << ", Column " << pElement->Column() << "." << std::endl;
+    }
 
     pElement = pElement->FirstChildElement();
 
@@ -777,15 +687,19 @@ Framework::GDFParser::ParseScene(
     {
         m_FirstObjectsMarker = True;
 
-        //
         // Find the selected scene.
-        //
         pElement = pElement->FirstChildElement();
-        ASSERT( pElement != NULL );
-        ASSERTMSG4( strcmp( pElement->Value(), "Scene" ) == 0,
-                    "Parser did not see the <Scene> element"\
-                    " instead it was <%s>.  File (%s), row (%d) column (%d)",
-                    pElement->Value(), sGDF.c_str(), pElement->Row(), pElement->Column() );
+        if ( pElement == NULL )
+        {
+            std::cerr << "Parser could not load the first element in the GDF." << std::endl;
+        }
+        if (strcmp( pElement->Value(), "Scene" ) != 0)
+        {
+            std::cerr << "Parser did not see <Scene> element instead it was " 
+                        <<  pElement->Value() << "." << " File " << sGDF.c_str() << ", Row " 
+                        <<  pElement->Row() << ", Column " << pElement->Column() << "." 
+                        << std::endl;
+        }
 
         while ( pElement != NULL )
         {
@@ -810,21 +724,14 @@ Framework::GDFParser::ParseScene(
 
 
 void
-Framework::GDFParser::ParseElement(
-    void* pElement,
-    Bool bAllowProcessSiblings
-    )
+Framework::GDFParser::ParseElement( void* pElement, Bool bAllowProcessSiblings)
 {
     TiXmlElement* pXmlElement = reinterpret_cast<TiXmlElement*>(pElement);
 
-    //
     // Do beginning element sequence.
-    //
     Bool bProcessChildren = BeginElement( pXmlElement );
 
-    //
     // Get the element's attributes and parse them.
-    //
     TiXmlAttribute* pXmlAttrib = pXmlElement->FirstAttribute();
 
     if ( pXmlAttrib != NULL )
@@ -834,9 +741,7 @@ Framework::GDFParser::ParseElement(
 
     if ( bProcessChildren )
     {
-        //
         // Get the element's first child and parse it.
-        //
         TiXmlElement* pXmlChildElement = pXmlElement->FirstChildElement();
 
         if ( pXmlChildElement != NULL )
@@ -845,16 +750,12 @@ Framework::GDFParser::ParseElement(
         }
     }
 
-    //
     // Do ending element sequence.
-    //
     Bool bProcessSiblings = EndElement( pXmlElement );
 
     if ( bProcessSiblings && bAllowProcessSiblings )
     {
-        //
         // Get the next element and parse it.
-        //
         TiXmlElement* pXmlNextElement = pXmlElement->NextSiblingElement();
 
         if ( pXmlNextElement != NULL )
@@ -866,9 +767,7 @@ Framework::GDFParser::ParseElement(
 
 
 Bool
-Framework::GDFParser::BeginElement(
-    void* pElement
-    )
+Framework::GDFParser::BeginElement( void* pElement)
 {
     Bool bProcessChildren = True;
 
@@ -878,37 +777,49 @@ Framework::GDFParser::BeginElement(
 
     if ( strcmp( pszName, "GlobalDefinition" ) == 0 )
     {
-        ASSERTMSG3( m_GdfMarker == GDFM_None,
-                    "Parser identified <GlobalDefinition> as not being at the root." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(), pXmlElement->Row(), pXmlElement->Column() );
+        if (m_GdfMarker != GDFM_None)
+        {
+            std::cerr << "Parser identified <GlobalDefinition> as not being at the root." 
+                        << " File " << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << "." 
+                        << std::endl;
+        }
 
         m_GdfMarker = GDFM_Gdf;
     }
     else if ( strcmp( pszName, "Environment" ) == 0 )
     {
-        ASSERTMSG3( m_GdfMarker == GDFM_Gdf,
-                    "Parser identified <Environment> as not being under <GlobalDefinition>." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(), pXmlElement->Row(), pXmlElement->Column() );
+        if (m_GdfMarker != GDFM_Gdf)
+        {
+            std::cerr << "Parser identified <Environment> as not being under <GlobalDefinition>." 
+                        << " File " << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << "." 
+                        << std::endl;
+        }
 
         m_GdfMarker = GDFM_Environment;
     }
     else if ( strcmp( pszName, "Variable" ) == 0 )
     {
-        ASSERTMSG3( m_GdfMarker == GDFM_Environment,
-                    "Parser identified <Variable> as not being under <Environment>." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(), pXmlElement->Row(), pXmlElement->Column() );
+        if (m_GdfMarker != GDFM_Environment)
+        {
+            std::cerr << "Parser identified <Variable> as not being under <Environment>." 
+                        << " File " << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << "." 
+                        << std::endl;
+        }
 
         m_GdfMarker = GDFM_EnvVar;
     }
     else if ( strcmp( pszName, "Systems" ) == 0 )
     {
-        ASSERTMSG3( m_GdfMarker == GDFM_Gdf,
-                    "Parser identified <Systems> as not being under <GlobalDefinition>." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(), pXmlElement->Row(), pXmlElement->Column() );
+        if (m_GdfMarker !=GDFM_Gdf)
+        {
+            std::cerr << "Parser identified <Systems> as not being under <GlobalDefinition>." 
+                        << " File " << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << "." 
+                        << std::endl;
+        }
 
         m_SystemLevel = 0;
 
@@ -916,26 +827,35 @@ Framework::GDFParser::BeginElement(
     }
     else if ( strcmp( pszName, "System" ) == 0 )
     {
-        ASSERTMSG3( m_GdfMarker == GDFM_Systems,
-                    "Parser identified <System> as not being under <Systems>." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(), pXmlElement->Row(), pXmlElement->Column() );
+        if (m_GdfMarker != GDFM_Systems)
+        {
+            std::cerr << "Parser identified <System> as not being under <Systems>." 
+                        << " File " << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << "." 
+                        << std::endl;
+        }
 
         if ( m_SystemLevel == 0 )
         {
             m_pszSystemType = "";
             m_pSystem = NULL;
         }
-        ASSERTMSG( m_pSystem == NULL, "Parser identified an error with using the CDF." );
+        if (m_pSystem != NULL)
+        {
+            std::cerr << "Parser identified an error with using the CDF." << std::endl;
+        }
 
         m_GdfMarker = GDFM_System;
     }
     else if ( strcmp( pszName, "Scenes" ) == 0 )
     {
-        ASSERTMSG3( m_GdfMarker == GDFM_Gdf,
-                    "Parser identified <Scenes> as not being under <GlobalDefinition>." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(), pXmlElement->Row(), pXmlElement->Column() );
+        if (m_GdfMarker != GDFM_Gdf)
+        {
+            std::cerr << "Parser identified <Scenes> as not being under <GlobalDefinition>." 
+                        << " File " << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << "." 
+                        << std::endl;
+        }
 
         bProcessChildren = False;
 
@@ -943,10 +863,13 @@ Framework::GDFParser::BeginElement(
     }
     else if ( strcmp( pszName, "Scene" ) == 0 )
     {
-        ASSERTMSG3( m_GdfMarker == GDFM_Scenes,
-                    "Parser identified <Scene> as not being under <Scenes>." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(), pXmlElement->Row(), pXmlElement->Column() );
+        if (m_GdfMarker != GDFM_Scenes)
+        {
+            std::cerr << "Parser identified <Scene> as not being under <Scenes>."
+                        << " File " << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << "." 
+                        << std::endl;
+        }
 
         if ( m_SceneLevel == 0 )
         {
@@ -972,10 +895,13 @@ Framework::GDFParser::BeginElement(
     }
     else if ( strcmp( pszName, "Objects" ) == 0 )
     {
-        ASSERTMSG3( m_GdfMarker == GDFM_Scene,
-                    "Parser identified <Objects> as not being under <Scene>." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(), pXmlElement->Row(), pXmlElement->Column() );
+        if (m_GdfMarker != GDFM_Scene)
+        {
+            std::cerr << "Parser identified <Objects> as not being under <Scene>."
+                        << " File " << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << "." 
+                        << std::endl;
+        }
 
         m_ObjectLevel = 0;
 
@@ -999,10 +925,13 @@ Framework::GDFParser::BeginElement(
     }
     else if ( strcmp( pszName, "Object" ) == 0 )
     {
-        ASSERTMSG3( m_GdfMarker == GDFM_Objects,
-                    "Parser identified <Object> as not being under <Objects>." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(), pXmlElement->Row(), pXmlElement->Column() );
+        if (m_GdfMarker != GDFM_Objects)
+        {
+            std::cerr << "Parser identified <Object> as not being under <Objects>."
+                        << " File " << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << "." 
+                        << std::endl;
+        }
 
         if ( m_ObjectLevel == 0 )
         {
@@ -1012,15 +941,25 @@ Framework::GDFParser::BeginElement(
             // Create the object and add the required geometry extension.
             //
             m_pUObject = m_pScene->CreateObject();
+            if (m_pUObject == NULL)
+            {
+                std::cerr << "m_pUObject == NULL" << std::endl;
+            }
             ASSERT( m_pUObject != NULL );
 
             UScene::SystemScenesConstIt it = 
                 m_pScene->GetSystemScenes().find( System::Types::Geometry );
-            ASSERTMSG( it != m_pScene->GetSystemScenes().end(),
-                       "The geometry system has to have already been loaded." );
+                
+            if (it == m_pScene->GetSystemScenes().end())
+            {
+                std::cerr << "The geometry system has to have already been loaded." << std::endl;
+            }
 
             ISystemScene* pGeometryScene = it->second;
-            ASSERT( pGeometryScene != NULL );
+            if (pGeometryScene == NULL)
+            {
+                std::cerr << "pGeometryScene == NULL" << std::endl;
+            }
 
             m_pUObject->Extend( pGeometryScene, NULL );
 
@@ -1429,12 +1368,14 @@ Framework::GDFParser::ReadAttributes(
 
             if ( strcmp( pszName, "Type" ) == 0 )
             {
-                ASSERTMSG4( m_SystemLevel == 0 ||
-                            strcmp( m_pszSystemType, pXmlAttrib->Value() ) == 0,
-                            "Parser identified an incorrect system type. It should be %s." \
-                            " File (%s), row (%d) column (%d).",
-                            pXmlAttrib->Value(), pXmlElement->GetDocument()->Value(),
-                            pXmlAttrib->Row(), pXmlAttrib->Column() );
+                if (m_SystemLevel != 0 || strcmp( m_pszSystemType, pXmlAttrib->Value() ) != 0)
+                {
+                    std::cerr << "Parser identified an incorrect system type. It should be " 
+                                << pXmlAttrib->Value()
+                                << " - File " << pXmlElement->GetDocument() << " ,row "  
+                                << pXmlAttrib->Row() << " ,column " << pXmlAttrib->Column()
+                                << "." << std::endl;
+                }
 
                 //
                 // Store the name of the library.
@@ -1446,25 +1387,28 @@ Framework::GDFParser::ReadAttributes(
                 //
                 // Load the system library.
                 //
-                PlatformManager::getInstance().FileSystem().LoadSystemLibrary(
-                    pXmlAttrib->Value(), &m_pSystem
-                    );
-                ASSERTMSG4( m_pSystem != NULL,
-                            "Parser could not load the system %s." \
-                            " File (%s), row (%d) column (%d).",
-                            pXmlAttrib->Value(), pXmlElement->GetDocument()->Value(),
-                            pXmlAttrib->Row(), pXmlAttrib->Column() );
+                PlatformManager::getInstance().FileSystem().LoadSystemLibrary(pXmlAttrib->Value(), &m_pSystem);
+                if (m_pSystem == NULL)
+                {
+                    std::cerr << "Parser could not load the system " <<  pXmlAttrib->Value()
+                                << " - File " << pXmlElement->GetDocument() << " ,row "  
+                                << pXmlAttrib->Row() << " ,column " << pXmlAttrib->Column()
+                                << "." << std::endl;
+                }
 
                 //
                 // Get the properties of the system.
                 //
                 m_pSystem->GetProperties( m_GetProperties );
-
-                ASSERTMSG4( strcmp( m_pszSystemType, m_pSystem->GetName() ) == 0,
-                            "Parser identified an incorrect system type. It should be %s." \
-                            " File (%s), row (%d) column (%d).",
-                            m_pszSystemType, pXmlElement->GetDocument()->Value(),
-                            pXmlAttrib->Row(), pXmlAttrib->Column() );
+                
+                if (strcmp( m_pszSystemType, m_pSystem->GetName() ) != 0)
+                {
+                    std::cerr << "Parser identified an incorrect system type. It should be " 
+                                <<  m_pszSystemType
+                                << " - file " << pXmlElement->GetDocument() << " ,row "  
+                                << pXmlAttrib->Row() << " ,column " << pXmlAttrib->Column()
+                                << "." << std::endl;
+                }
             }
             else if ( strcmp( pszName, "SDF" ) == 0 )
             {
@@ -1481,7 +1425,7 @@ Framework::GDFParser::ReadAttributes(
 
                 if ( XmlDoc.LoadFile() == False )
                 {
-                    ASSERTMSG1( False, "Parser failed to load the SDF file %s.", pszSDF );
+                    std::cerr << "Parser failed to load the SDF file" << pszSDF << "." << std::endl;
                 }
 
                 //
@@ -2057,10 +2001,6 @@ Framework::GDFParser::ReadPropertyAttributes(
 {
     TiXmlElement* pXmlElement = reinterpret_cast<TiXmlElement*>(pElement);
     TiXmlAttribute* pXmlAttrib = reinterpret_cast<TiXmlAttribute*>(pAttributes);
-
-#ifdef NDEBUG
-    UNREFERENCED_PARAM( pXmlElement );
-#endif
 
     Properties::ConstIterator GetPropIt = GetProperties.end();
     size_t iProp = 0xFFFFFFFF;
