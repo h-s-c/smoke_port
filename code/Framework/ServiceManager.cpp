@@ -1,7 +1,11 @@
+//core
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
+//interface
 #include "Interfaces/Interface.hpp"
-
+//stdlib
+#include <iostream>
+//framework
 #include "Framework/SystemManager.hpp"
 #include "Framework/ServiceManager.hpp"
 
@@ -28,8 +32,10 @@ ServiceManager::RegisterSystemAccessProvider(
     ISystemAccess* pSystemAccess
     )
 {
-    ASSERTMSG( m_pSystemAccess == NULL, 
-               "There is already an existing system access provider." );
+    if ( m_pSystemAccess != NULL )
+    {
+        std::cerr << "There is already an existing system access provider." << std::endl;
+    }
     m_pSystemAccess = pSystemAccess;
 }
 
@@ -39,12 +45,13 @@ ServiceManager::UnregisterSystemAccessProvider(
     ISystemAccess* pSystemAccess
     )
 {
-    ASSERTMSG( m_pSystemAccess == pSystemAccess,
-               "You are not the registered system access provider." );
-
     if ( m_pSystemAccess == pSystemAccess )
     {
         m_pSystemAccess = NULL;
+    }
+    else
+    {
+        std::cerr << "You are not the registered system access provider." << std::endl;
     }
 }
 
@@ -54,7 +61,11 @@ ServiceManager::Collision(
     void
     )
 {
-    ASSERT( m_pCollision != NULL );
+    if ( m_pCollision == NULL )
+    {
+        std::cerr << "m_pCollision == NULL." << std::endl;
+    }
+    
     return *m_pCollision;
 }
 
@@ -64,8 +75,11 @@ ServiceManager::RegisterCollisionProvider(
     ICollision* pCollision
     )
 {
-    ASSERTMSG( m_pCollision == NULL, 
-               "There is already an existing collision provider." );
+    if ( m_pCollision != NULL )
+    {
+        std::cerr << "There is already an existing collision provider." << std::endl;
+    }
+    
     m_pCollision = pCollision;
 }
 
@@ -75,11 +89,12 @@ ServiceManager::UnregisterCollisionProvider(
     ICollision* pCollision
     )
 {
-    ASSERTMSG( m_pCollision == pCollision, 
-               "You are not the registered collision provider." );
-
     if ( m_pCollision == pCollision )
     {
         m_pCollision = NULL;
+    }
+    else
+    {
+        std::cerr << "You are not the registered collision provider." << std::endl;
     }
 }

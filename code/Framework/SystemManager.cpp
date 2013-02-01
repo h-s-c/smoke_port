@@ -1,7 +1,11 @@
+//core
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
+//interface
 #include "Interfaces/Interface.hpp"
-
+//stdlib
+#include <iostream>
+//framework
 #include "Framework/SystemManager.hpp"
 
 
@@ -19,8 +23,11 @@ SystemManager::Add(
     )
 {
     System::Type SystemType = pSystem->GetSystemType();    
-    ASSERT( m_Systems.find( SystemType ) == m_Systems.end() );
-
+    if ( m_Systems.find( SystemType ) != m_Systems.end() )
+    {
+        std::cerr << "m_Systems.find( SystemType ) != m_Systems.end()" << std::endl;
+    }
+    
     m_Systems[ SystemType ] = pSystem;
 
     return Errors::Success;

@@ -22,6 +22,7 @@
 
 #include <algorithm>
 #include <utility>
+#include <iostream>
 
 ///////////////////////////////////////////////////////////////////////////////
 // ChangeManager - Default constructor 
@@ -119,7 +120,10 @@ ChangeManager::Register(
             {
                 // No zero ID should ever be assigned, so use pre-increment
                 uID = ++m_lastID;
-                ASSERT( uID == m_subjectsList.size() );
+                if( uID != m_subjectsList.size() ) 
+                {
+                    std::cerr << "uID != m_subjectsList.size()" << std::endl;
+                }
                 m_subjectsList.resize( uID + 1 );
             }
             else
@@ -160,7 +164,10 @@ ChangeManager::Unregister(
         {
             return Errors::Failure;
         }
-        ASSERT( m_subjectsList[uID].m_pSubject == pInSubject );
+        if( m_subjectsList[uID].m_pSubject != pInSubject)
+        {
+            std::cerr << "m_subjectsList[uID].m_pSubject != pInSubject" << std::endl;
+        }
 
         ObserversList &observersList = m_subjectsList[uID].m_observersList;
         ObserversList::iterator itObs = std::find( observersList.begin(), observersList.end(), pInObserver );
@@ -196,8 +203,14 @@ ChangeManager::RemoveSubject (
         std::lock_guard<std::mutex> lock(m_UpdateMutex);
 
         u32 uID = pSubject->GetID(this);
-        ASSERT( uID != CSubject::InvalidID );
-        ASSERT( m_subjectsList[uID].m_pSubject == pSubject );
+        if( uID == CSubject::InvalidID)
+        {
+            std::cerr << "uID == CSubject::InvalidID" << std::endl;
+        }
+        if( m_subjectsList[uID].m_pSubject != pSubject)
+        {
+            std::cerr << "m_subjectsList[uID].m_pSubject != pSubject" << std::endl;
+        }
 
         if ( m_subjectsList.size() <= uID  ||  m_subjectsList[uID].m_pSubject != pSubject )
         {
@@ -239,7 +252,6 @@ ChangeManager::ChangeOccurred(
 {
     Error curError = Errors::Undefined;
 
-    ASSERT( pInChangedSubject );
     if( pInChangedSubject )
     {
         if(!uInChangedBits)
@@ -264,6 +276,10 @@ ChangeManager::ChangeOccurred(
 
             curError = Errors::Success;            
         }
+    }
+    else
+    {
+        std::cerr << "pInChangedSubject == NULL" << std::endl;
     }
 
     return curError;
@@ -302,7 +318,10 @@ ChangeManager::DistributeQueuedChanges(
 
                 // Get subject for notification
                 u32 uID = notif.m_pSubject->GetID(this);
-                ASSERT( uID != CSubject::InvalidID );
+                if( uID == CSubject::InvalidID )
+                {
+                    std::cerr << "uID == CSubject::InvalidID" << std::endl;
+                }
 
                 if( uID != CSubject::InvalidID )
                 {
@@ -441,7 +460,10 @@ ChangeManager::SetTaskManager(
     if ( !pTaskManager )
         return Errors::Undefined;
 
-    ASSERT (!m_pTaskManager && "ChangeManager: Call ResetTaskManager before using SetTaskManager to set the new task manager");
+    if( m_pTaskManager )
+    {
+        std::cerr << "ChangeManager: Call ResetTaskManager before using SetTaskManager to set the new task manager" << std::endl;
+    }
 
     // Set up prethread NotiftyList
     if ( m_tlsNotifyList != TLS_OUT_OF_INDEXES )
@@ -486,8 +508,11 @@ void
 ChangeManager::InitThreadLocalData( 
     void* arg 
     )
-{
-    ASSERT( arg && "ChangeManager: No manager pointer passed to InitThreadLocalNotifyList" );
+{  
+    if( !arg )
+    {
+        std::cerr << "ChangeManager: No manager pointer passed to InitThreadLocalNotifyList" << std::endl;
+    }
 
     ChangeManager *mgr = (ChangeManager*)arg;
 
@@ -515,7 +540,10 @@ ChangeManager::FreeThreadLocalData(
     void* arg 
     )
 {
-    ASSERT( arg && "ChangeManager: No manager pointer passed to FreeThreadLocalNotifyList" );
+    if( !arg )
+    {
+        std::cerr << "ChangeManager: No manager pointer passed to FreeThreadLocalNotifyList" << std::endl;
+    }
     
     ChangeManager *mgr = (ChangeManager*)arg;
 

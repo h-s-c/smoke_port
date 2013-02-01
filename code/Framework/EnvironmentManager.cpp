@@ -1,7 +1,11 @@
+//core
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
+//interface
 #include "Interfaces/Interface.hpp"
-
+//stdlib
+#include <iostream>
+//framework
 #include "Framework/EnvironmentManager.hpp"
 
 std::once_flag             
@@ -88,7 +92,10 @@ EnvironmentManager::Variables::GetAsBool(
     pcstr pszValue;
     if ( GetValue( pszName, pszValue ) )
     {
-        ASSERT( !_stricmp( pszValue, "True" ) || !_stricmp( pszValue, "False" ) );
+        if((!_stricmp( pszValue, "False" ) || !_stricmp( pszValue, "True" )))
+        {
+            std::cerr << "Bool not True or False" << std::endl;
+        }
         bValue = _stricmp( pszValue, "True" ) == 0;
     }
 

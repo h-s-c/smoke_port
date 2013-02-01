@@ -1,21 +1,11 @@
-// Copyright © 2008-2009 Intel Corporation
-// All Rights Reserved
-//
-// Permission is granted to use, copy, distribute and prepare derivative works of this
-// software for any purpose and without fee, provided, that the above copyright notice
-// and this statement appear in all copies.  Intel makes no representations about the
-// suitability of this software for any purpose.  THIS SOFTWARE IS PROVIDED "AS IS."
-// INTEL SPECIFICALLY DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, AND ALL LIABILITY,
-// INCLUDING CONSEQUENTIAL AND OTHER INDIRECT DAMAGES, FOR THE USE OF THIS SOFTWARE,
-// INCLUDING LIABILITY FOR INFRINGEMENT OF ANY PROPRIETARY RIGHTS, AND INCLUDING THE
-// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  Intel does not
-// assume any responsibility for any errors which may appear in this software nor any
-// responsibility to update it.
-
+//core
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
+//interface
 #include "Interfaces/Interface.hpp"
-
+//stdlib
+#include <iostream>
+//framework
 #include "Framework/EnvironmentManager.hpp"
 #include "Framework/ServiceManager.hpp"
 #include "Framework/Universal.hpp"
@@ -59,8 +49,12 @@ Scheduler::SetScene(
     for ( SceneExecsIt it=m_SceneExecs.begin(); it != m_SceneExecs.end(); it++ )
     {
         ISystemScene* pSystemScene = it->second;
-
-        ASSERT( cScenesToWaitFor < System::Types::MAX );
+        
+        if ( cScenesToWaitFor > System::Types::MAX )
+        {
+                std::cerr << "cScenesToWaitFor > System::Types::MAX" << std::endl;
+        }
+        
         aScenesToWaitFor[ cScenesToWaitFor++ ] = pSystemScene->GetSystemTask();
     }
     m_SceneExecs.clear();
@@ -119,7 +113,10 @@ Scheduler::Execute(
 
         for ( SceneExecsIt it=m_SceneExecs.begin(); it != m_SceneExecs.end(); it++ )
         {
-            ASSERT( cScenesToExecute < System::Types::MAX );
+            if ( cScenesToExecute > System::Types::MAX )
+            {
+                std::cerr << "cScenesToExecute > System::Types::MAX" << std::endl;
+            }
             ISystemScene* pSystemScene = it->second;
             aScenesToExecute[ cScenesToExecute++ ] = pSystemScene->GetSystemTask();
         }
