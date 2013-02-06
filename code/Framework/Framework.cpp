@@ -974,7 +974,7 @@ Framework::GDFParser::BeginElement( void* pElement)
     }
     else if ( strcmp( pszName, "Properties" ) == 0 )
     {
-        if (m_GdfMarker != GDFM_System || m_GdfMarker != GDFM_Scene || m_GdfMarker != GDFM_Object)
+        if (m_GdfMarker != GDFM_System && m_GdfMarker && GDFM_Scene && m_GdfMarker != GDFM_Object)
         {
             std::cerr << "Parser identified <Properties> as not being under <System> or <Scene> or <Object>."
                         << " File " << pXmlElement->GetDocument()->Value() << ", Row " 
@@ -1010,7 +1010,7 @@ Framework::GDFParser::BeginElement( void* pElement)
     }
     else if ( strcmp( pszName, "Property" ) == 0 )
     {
-        if (m_GdfMarker != GDFM_SystemProperties || m_GdfMarker != GDFM_SceneProperties ||
+        if (m_GdfMarker != GDFM_SystemProperties && m_GdfMarker != GDFM_SceneProperties &&
                     m_GdfMarker != GDFM_ObjectProperties)
         {
             std::cerr << "Parser identified <Property> as not being under <Properties> for"
@@ -1388,15 +1388,13 @@ Framework::GDFParser::ReadAttributes(
 
             if ( strcmp( pszName, "Type" ) == 0 )
             {
-                if (m_SystemLevel != 0 || strcmp( m_pszSystemType, pXmlAttrib->Value() ) != 0)
+                if ( m_SystemLevel != 0 && strcmp( m_pszSystemType, pXmlAttrib->Value() ) != 0)
                 {
-                    std::cerr << "Parser identified an incorrect system type. It should be " 
-                                << pXmlAttrib->Value()
-                                << " - File " << pXmlElement->GetDocument() << " ,row "  
+                    std::cerr << "Parser could not load the system " <<  pXmlAttrib->Value()
+                                << ". (" << pXmlElement->GetDocument()->Value() << " ,row "  
                                 << pXmlAttrib->Row() << " ,column " << pXmlAttrib->Column()
-                                << "." << std::endl;
+                                << ")" << std::endl;
                 }
-
                 //
                 // Store the name of the library.
                 //
@@ -1411,9 +1409,9 @@ Framework::GDFParser::ReadAttributes(
                 if (m_pSystem == NULL)
                 {
                     std::cerr << "Parser could not load the system " <<  pXmlAttrib->Value()
-                                << " - File " << pXmlElement->GetDocument() << " ,row "  
+                                << ". (" << pXmlElement->GetDocument()->Value() << " ,row "  
                                 << pXmlAttrib->Row() << " ,column " << pXmlAttrib->Column()
-                                << "." << std::endl;
+                                << ")" << std::endl;
                 }
 
                 //
@@ -1423,16 +1421,19 @@ Framework::GDFParser::ReadAttributes(
                 
                 if (strcmp( m_pszSystemType, m_pSystem->GetName() ) != 0)
                 {
-                    std::cerr << "Parser identified an incorrect system type. It should be " 
-                                <<  m_pszSystemType
-                                << " - file " << pXmlElement->GetDocument() << " ,row "  
+                        std::cerr << "Parser identified an incorrect system type. It should be " 
+                                << m_pszSystemType << "." << " It is " << m_pSystem->GetName()
+                                << ". ("<< pXmlElement->GetDocument()->Value() << " ,row "  
                                 << pXmlAttrib->Row() << " ,column " << pXmlAttrib->Column()
-                                << "." << std::endl;
+                                << ")" << std::endl;
                 }
             }
             else if ( strcmp( pszName, "SDF" ) == 0 )
             {
-                ASSERT( m_pSystem == NULL );
+                if ( m_pSystem != NULL )
+                {
+                    std::cerr << "m_pSystem != NULL"<< std::endl;
+                }
 
                 //
                 // Create a new xml document for the sdf.

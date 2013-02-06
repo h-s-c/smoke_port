@@ -92,9 +92,9 @@ EnvironmentManager::Variables::GetAsBool(
     pcstr pszValue;
     if ( GetValue( pszName, pszValue ) )
     {
-        if((!_stricmp( pszValue, "False" ) || !_stricmp( pszValue, "True" )))
+        if(!_stricmp( pszValue, "False" ) && !_stricmp( pszValue, "True" ))
         {
-            std::cerr << "Bool not True or False" << std::endl;
+            std::cerr << "Bool '" << pszName << "' not True or False. It is " << pszValue << "." << std::endl;
         }
         bValue = _stricmp( pszValue, "True" ) == 0;
     }
