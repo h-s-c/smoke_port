@@ -82,21 +82,24 @@ UScene::Extend(
     ISystem* pSystem
     )
 {
-    ASSERT( pSystem != NULL );
+    if ( pSystem == NULL )
+    {
+        std::cerr << "pSystem == NULL" << std::endl;
+    }
 
     //
     // Get the system's type.
     //
     System::Type SystemType = pSystem->GetSystemType();
-    ASSERTMSG( m_SystemScenes.find( SystemType ) == m_SystemScenes.end(),
-               "The new scene to create for the selected system type already exists." );
+    if ( m_SystemScenes.find( SystemType ) != m_SystemScenes.end() )
+    {
+        std::cerr << "The new scene to create for the selected system type already exists." << std::endl;
+    }
 
     //
     // Have the system create it's scene.
     //
     ISystemScene* pScene = pSystem->CreateScene();
-    ASSERT( pScene != NULL );
-
     if ( pScene != NULL )
     {
         //
@@ -109,6 +112,10 @@ UScene::Extend(
         //
         m_pSceneCCM->Register( pScene, System::Changes::Generic::All, this );
     }
+    else
+    {
+        std::cerr << "pScene == NULL" << std::endl;
+    }
 
     return pScene;
 }
@@ -119,13 +126,19 @@ UScene::Unextend(
     ISystemScene* pScene
     )
 {
-    ASSERT( pScene != NULL );
+    if ( pScene == NULL )
+    {
+        std::cerr << "pScene == NULL" << std::endl;
+    }
 
     //
     // Get the system.
     //
     ISystem* pSystem = pScene->GetSystem();
-    ASSERT( pSystem != NULL );
+    if ( pSystem == NULL )
+    {
+        std::cerr << "pSystem == NULL" << std::endl;
+    }
 
     //
     // Get the system's type.
@@ -136,8 +149,10 @@ UScene::Unextend(
     // Find the system scene in the collection and remove it.
     //
     SystemScenesIt it = m_SystemScenes.find( SystemType );
-    ASSERTMSG( it != m_SystemScenes.end(),
-               "The scene to delete for its system type doesn't exist." );
+    if ( it == m_SystemScenes.end() )
+    {
+        std::cerr << "it == m_SystemScenes.end()" << std::endl;
+    }
 
     m_SystemScenes.erase( it );
 
@@ -164,7 +179,10 @@ UScene::CreateObject(
     // Create the new object.
     //
     UObject* pObject = new UObject( this, pszName );
-    ASSERT( pObject != NULL );
+    if ( pObject == NULL )
+    {
+        std::cerr << "pObject == NULL" << std::endl;
+    }
 
     pObject->m_pObjectCCM = m_pObjectCCM; 
 
@@ -189,7 +207,10 @@ UScene::DestroyObject(
     UObject* pObject
     )
 {
-    ASSERT( pObject != NULL );
+    if ( pObject == NULL )
+    {
+        std::cerr << "pObject == NULL" << std::endl;
+    }
 
     m_pSceneCCM->Unregister( pObject, this );
     m_Objects.remove( pObject );
@@ -296,10 +317,12 @@ UScene::ChangeOccurred(
         for ( IGenericScene::CreateObjectDataArrayConstIt it=aObjectsToCreate.begin();
               it != aObjectsToCreate.end(); it++ )
         {
-            ASSERT( FindObject( it->pszName ) == NULL );
+            if ( FindObject( it->pszName ) != NULL )
+            {
+                std::cerr << "FindObject( it->pszName ) != NULL" << std::endl;
+            }
 
             UObject* pObject = CreateObject( it->pszName );
-            ASSERT( pObject != NULL );
 
             if ( pObject != NULL )
             {
@@ -315,12 +338,16 @@ UScene::ChangeOccurred(
                         }
                         else
                         {
-                            ASSERT( False );
+                            std::cerr << "ssIt == m_SystemScenes.end()" << std::endl;
                         }
                     }
 
                     Type <<= 1;
                 }
+            }
+            else
+            {
+                std::cerr << "pObject == NULL" << std::endl;
             }
         }
         break;
@@ -427,8 +454,14 @@ UObject::Extend(
     pcstr pszSystemObjectType
     )
 {
-    ASSERT( pSystemScene != NULL );
-    ASSERT( m_ObjectExtensions.find( pSystemScene->GetSystemType() ) == m_ObjectExtensions.end() );
+    if ( pSystemScene == NULL )
+    {
+        std::cerr << "pSystemScene == NULL" << std::endl;
+    }
+    if ( m_ObjectExtensions.find( pSystemScene->GetSystemType() ) != m_ObjectExtensions.end() )
+    {
+        std::cerr << "m_ObjectExtensions.find( pSystemScene->GetSystemType() ) != m_ObjectExtensions.end()" << std::endl;
+    }
 
     ISystemObject* pSystemObject = NULL;
 
@@ -436,7 +469,10 @@ UObject::Extend(
     // Create the system object.
     //
     pSystemObject = pSystemScene->CreateObject( m_sName.c_str(), pszSystemObjectType );
-    ASSERT( pSystemObject != NULL );
+    if ( pSystemObject == NULL )
+    {
+        std::cerr << "pSystemObject == NULL" << std::endl;
+    }
 
     Extend( pSystemObject );
 
@@ -522,7 +558,10 @@ UObject::Extend(
         if ( SystemType == System::Types::Geometry )
         {
             m_pGeometryObject = dynamic_cast<IGeometryObject*>(pSystemObject);
-            ASSERT( m_pGeometryObject != NULL );
+            if ( m_pGeometryObject == NULL )
+            {
+                std::cerr << "m_pGraphicsObject == NULL" << std::endl;
+            }
         }
         else if ( SystemType == System::Types::Graphics )
         {
@@ -541,7 +580,10 @@ UObject::Unextend(
     ISystemScene* pSystemScene
     )
 {
-    ASSERT( pSystemScene != NULL );
+    if ( pSystemScene  == NULL )
+    {
+        std::cerr << "pSystemScene  == NULL" << std::endl;
+    }
 
     //
     // Get the iterator for the object.
@@ -549,8 +591,10 @@ UObject::Unextend(
     System::Type SystemType = pSystemScene->GetSystem()->GetSystemType();
 
     SystemObjectsIt SysObjIt = m_ObjectExtensions.find( SystemType );
-    ASSERTMSG( SysObjIt != m_ObjectExtensions.end(),
-               "The object to delete doesn't exist in the scene." );
+    if ( SysObjIt == m_ObjectExtensions.end() )
+    {
+        std::cerr << "The object to delete doesn't exist in the scene." << std::endl;
+    }
 
     ISystemObject* pSystemObject = SysObjIt->second;
 
@@ -673,7 +717,10 @@ UObject::GetPosition(
     void
     )
 {
-    ASSERT( m_pGeometryObject != NULL );
+    if ( m_pGeometryObject == NULL )
+    {
+        std::cerr << "m_pGraphicsObject == NULL" << std::endl;
+    }
 
     return m_pGeometryObject->GetPosition();
 }
@@ -684,7 +731,10 @@ UObject::GetOrientation(
     void
     )
 {
-    ASSERT( m_pGeometryObject != NULL );
+    if ( m_pGeometryObject == NULL )
+    {
+        std::cerr << "m_pGraphicsObject == NULL" << std::endl;
+    }
 
     return m_pGeometryObject->GetOrientation();
 }
@@ -695,7 +745,10 @@ UObject::GetScale(
     void
     )
 {
-    ASSERT( m_pGeometryObject != NULL );
+    if ( m_pGeometryObject == NULL )
+    {
+        std::cerr << "m_pGraphicsObject == NULL" << std::endl;
+    }
 
     return m_pGeometryObject->GetScale();
 }
@@ -706,7 +759,7 @@ UObject::GetSubMeshCount(
     void
     )
 {
-    ASSERTMSG( False, "Not applicable for UObject." );
+    std::cerr << "Not applicable for UObject." << std::endl;
     return 0;
 }
 
@@ -716,8 +769,7 @@ UObject::GetIndexDeclaration(
     In  u16 nSubMeshIndex
     )
 {
-    UNREFERENCED_PARAM( nSubMeshIndex );
-    ASSERTMSG( False, "Not applicable for UObject." );
+    std::cerr << "Not applicable for UObject." << std::endl;
     return 0;
 }
 
@@ -727,8 +779,7 @@ UObject::GetVertexDeclarationCount(
     In  u16 nSubMeshIndex
     )
 {
-    UNREFERENCED_PARAM( nSubMeshIndex );
-    ASSERTMSG( False, "Not applicable for UObject." );
+    std::cerr << "Not applicable for UObject." << std::endl;
     return 0;
 }
 
@@ -739,9 +790,7 @@ UObject::GetVertexDeclaration(
     In  u16 nSubMeshIndex
     )
 {
-    UNREFERENCED_PARAM( pVertexDecl );
-    UNREFERENCED_PARAM( nSubMeshIndex );
-    ASSERTMSG( False, "Not applicable for UObject." );
+    std::cerr << "Not applicable for UObject." << std::endl;
 }
 
 
@@ -750,8 +799,7 @@ UObject::GetIndexCount(
     In  u16 nSubMeshIndex
     )
 {
-    UNREFERENCED_PARAM( nSubMeshIndex );
-    ASSERTMSG( False, "Not applicable for UObject." );
+    std::cerr << "Not applicable for UObject." << std::endl;
     return 0;
 }
 
@@ -761,8 +809,7 @@ UObject::GetVertexCount(
     In  u16 nSubMeshIndex
     )
 {
-    UNREFERENCED_PARAM( nSubMeshIndex );
-    ASSERTMSG( False, "Not applicable for UObject." );
+    std::cerr << "Not applicable for UObject." << std::endl;
     return 0;
 }
 
@@ -773,9 +820,7 @@ UObject::GetIndices(
     In  u16 nSubMeshIndex
     )
 {
-    UNREFERENCED_PARAM( pIndices );
-    UNREFERENCED_PARAM( nSubMeshIndex );
-    ASSERTMSG( False, "Not applicable for UObject." );
+    std::cerr << "Not applicable for UObject." << std::endl;
 }
 
 
@@ -788,12 +833,7 @@ UObject::GetVertices(
     In  VertexDecl::Element* pVertexDecl
     )
 {
-    UNREFERENCED_PARAM( pVertices );
-    UNREFERENCED_PARAM( nSubMeshIndex );
-    UNREFERENCED_PARAM( nStreamIndex );
-    UNREFERENCED_PARAM( nVertexDeclCount );
-    UNREFERENCED_PARAM( pVertexDecl );
-    ASSERTMSG( False, "Not applicable for UObject." );
+    std::cerr << "Not applicable for UObject." << std::endl;
 }
 
 
@@ -802,7 +842,7 @@ UObject::GetStreamsChanged(
     void
     )
 {
-    ASSERTMSG( False, "Not applicable for UObject." );
+    std::cerr << "Not applicable for UObject." << std::endl;
     return 0;
 }
 
@@ -813,7 +853,10 @@ UObject::GetAABB(
     Out Math::Vector3& Max
     )
 {
-    ASSERT( m_pGraphicsObject != NULL );
+    if ( m_pGraphicsObject == NULL )
+    {
+        std::cerr << "m_pGraphicsObject == NULL" << std::endl;
+    }
 
     return m_pGraphicsObject->GetAABB( Min, Max );
 }

@@ -945,7 +945,6 @@ Framework::GDFParser::BeginElement( void* pElement)
             {
                 std::cerr << "m_pUObject == NULL" << std::endl;
             }
-            ASSERT( m_pUObject != NULL );
 
             UScene::SystemScenesConstIt it = 
                 m_pScene->GetSystemScenes().find( System::Types::Geometry );
@@ -975,20 +974,29 @@ Framework::GDFParser::BeginElement( void* pElement)
     }
     else if ( strcmp( pszName, "Properties" ) == 0 )
     {
-        ASSERTMSG3( m_GdfMarker == GDFM_System || m_GdfMarker == GDFM_Scene || m_GdfMarker == GDFM_Object,
-                    "Parser identified <Properties> as not being under <System> or <Scene> or <Object>." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(), pXmlElement->Row(), pXmlElement->Column() );
+        if (m_GdfMarker != GDFM_System || m_GdfMarker != GDFM_Scene || m_GdfMarker != GDFM_Object)
+        {
+            std::cerr << "Parser identified <Properties> as not being under <System> or <Scene> or <Object>."
+                        << " File " << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << "." 
+                        << std::endl;
+        }
 
         if ( m_GdfMarker == GDFM_System )
         {
-            ASSERTMSG( m_pSystem != NULL, "Parser could not find an instantiated system." );
+            if (m_pSystem == NULL)
+            {
+                std::cerr << "Parser could not find an instantiated system." << std::endl;
+            }
 
             m_GdfMarker = GDFM_SystemProperties;
         }
         else if ( m_GdfMarker == GDFM_Scene )
         {
-            ASSERTMSG( m_pSystem != NULL, "Parser could not find an instantiated system." );
+            if (m_pSystem == NULL)
+            {
+                std::cerr << "Parser could not find an instantiated system." << std::endl;
+            }
 
             m_GdfMarker = GDFM_SceneProperties;
         }
@@ -1002,12 +1010,15 @@ Framework::GDFParser::BeginElement( void* pElement)
     }
     else if ( strcmp( pszName, "Property" ) == 0 )
     {
-        ASSERTMSG3( m_GdfMarker == GDFM_SystemProperties || m_GdfMarker == GDFM_SceneProperties ||
-                    m_GdfMarker == GDFM_ObjectProperties,
-                    "Parser identified <Property> as not being under <Properties> for" \
-                    " <System> or <Scene> or <Object>." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(), pXmlElement->Row(), pXmlElement->Column() );
+        if (m_GdfMarker != GDFM_SystemProperties || m_GdfMarker != GDFM_SceneProperties ||
+                    m_GdfMarker != GDFM_ObjectProperties)
+        {
+            std::cerr << "Parser identified <Property> as not being under <Properties> for"
+                        << " <System> or <Scene> or <Object>."
+                        << " File " << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << "." 
+                        << std::endl;
+        }
 
         if ( m_GdfMarker == GDFM_SystemProperties )
         {
@@ -1024,38 +1035,47 @@ Framework::GDFParser::BeginElement( void* pElement)
     }
     else if ( strcmp( pszName, "Links" ) == 0 )
     {
-        ASSERTMSG3( m_GdfMarker == GDFM_Scene,
-                    "Parser identified <Links> as not being under <Scene>." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(), pXmlElement->Row(), pXmlElement->Column() );
+        if (m_GdfMarker != GDFM_Scene)
+        {
+            std::cerr << "Parser identified <Links> as not being under <Scene>."
+                        << " File " << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << "." 
+                        << std::endl;
+        }
 
         m_GdfMarker = GDFM_Links;
     }
     else if ( strcmp( pszName, "Link" ) == 0 )
     {
-        ASSERTMSG3( m_GdfMarker == GDFM_Links,
-                    "Parser identified <Link> as not being under <Links>." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(), pXmlElement->Row(), pXmlElement->Column() );
+        if (m_GdfMarker != GDFM_Links)
+        {
+            std::cerr << "Parser identified <Link> as not being under <Links>." 
+                        << " File " << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << "." 
+                        << std::endl;
+        }
 
         m_GdfMarker = GDFM_Link;
     }
     else if ( strcmp( pszName, "Include" ) == 0 )
     {
-        ASSERTMSG3( m_GdfMarker == GDFM_Scene,
-                    "Parser identified <Include> as not being under <Scene>." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(), pXmlElement->Row(), pXmlElement->Column() );
+        if (m_GdfMarker != GDFM_Scene)
+        {
+            std::cerr << "Parser identified <Include> as not being under <Scene>."
+                        << " File " << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << "." 
+                        << std::endl;
+        }
+
 
         m_GdfMarker = GDFM_Include;
     }
     else
     {
-        ASSERTMSG4( False,
-                    "Parser came across an unrecognized start marker <%s>." \
-                    " File (%s), row (%d) column (%d).",
-                    pszName, pXmlElement->GetDocument()->Value(), pXmlElement->Row(),
-                    pXmlElement->Column() );
+        std::cerr << "Parser came across an unrecognized start marker " <<  pszName << "."
+                    << " File " << pXmlElement->GetDocument()->Value() << ", Row " 
+                    << pXmlElement->Row() << ", Column " << pXmlElement->Column() << "." 
+                    << std::endl;
     }
 
 
@@ -2117,21 +2137,19 @@ Framework::GDFParser::ReadPropertyAttributes(
                 break;
 
             default:
-                ASSERTMSG3( False,
-                            "Parser encountered an unsupported property value." \
-                            " File (%s), row (%d) column (%d).",
-                            pXmlElement->GetDocument()->Value(),
-                            pXmlElement->Row(), pXmlElement->Column() );
+                std::cerr << "Parser encountered an unsupported property value."
+                            << " File " << pXmlElement->GetDocument()->Value() << ", Row " 
+                            << pXmlElement->Row() << ", Column " << pXmlElement->Column() << "." 
+                            << std::endl;
                 break;
             }
         }
         else
         {
-            ASSERTMSG4( False,
-                        "Parser encountered an unknown property attribute '%s'." \
-                        " File (%s), row (%d) column (%d).",
-                        pszName, pXmlElement->GetDocument()->Value(),
-                        pXmlAttrib->Row(), pXmlAttrib->Column() );
+            std::cerr << "Parser encountered an unknown property attribute " <<  pszName << "."
+                        << " File " << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << "." 
+                        << std::endl;
         }
 
         pXmlAttrib = pXmlAttrib->Next();
