@@ -14,8 +14,6 @@
 
 #pragma once
 
-#include "Base/Intrinsics.hpp"
-
 class ISubject;
 class IObserver;
 class IChangeManager;
@@ -363,14 +361,16 @@ public :
         {
     #if SUPPORT_CONCURRENT_ATTACH_DETACH_TO_SUBJECTS
             // We are under the lock in this case
-            it->m_interestBits |= inInterest;
+            it->m_interestBits |= uInIntrestBits;
     #else
             // No lock is used, but updates can happen concurrently. So use interlocked operation
-            long prevBits;
-            long newBits = long(it->m_interestBits | uInIntrestBits);
-            do {
-                prevBits = it->m_interestBits;
-            } while ( Base::InterlockedCompareExchange((long*)&it->m_interestBits, newBits, prevBits) != prevBits );
+            uint32_t prevBits; 
+            uint32_t newBits = uint32_t(it->m_interestBits | uInIntrestBits);
+            do
+            {
+                prevBits = it->m_interestBits.load();
+            }
+            while ( it->m_interestBits.compare_exchange_strong(prevBits, newBits)  != prevBits );
     #endif
             curError = Errors::Success;
         }
@@ -483,12 +483,17 @@ protected:
             : m_pObserver( pObserver )
             , m_interestBits( Interests )
             , m_myID( myID )
-        {
-        }
+        {}
+        //std::atomic requires explicit copy constructor
+        ObserverRequest( const ObserverRequest& other )
+            : m_pObserver( other.m_pObserver )
+            , m_interestBits( other.m_interestBits.load() )
+            , m_myID( other.m_myID )
+        {}
 
-        IObserver*  m_pObserver;
-        u32         m_interestBits;
-        u32         m_myID;
+        IObserver*              m_pObserver;
+        std::atomic<uint32_t>   m_interestBits; 
+        u32                     m_myID;
 
         bool operator == ( IObserver* rhs ) const
         {
@@ -517,7 +522,7 @@ private:
 
     friend INLINE u32 GetBitsToPost( CSubject::ObserverRequest& req, System::Changes::BitMask changedBits )
     {
-        u32 changedBitsOfInterest = req.m_interestBits & changedBits;
+        u32 changedBitsOfInterest = req.m_interestBits.load() & changedBits;
         return changedBitsOfInterest;
     }
 };

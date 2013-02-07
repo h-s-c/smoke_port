@@ -1,4 +1,6 @@
 #pragma once
+#include <stddef.h> 
+#include <atomic>
 #include <memory>
 #include <mutex>
 #include <string>
@@ -122,7 +124,7 @@ protected:
 
     Variables                                       m_Variables;
 
-    IEnvironment::IRuntime::Status                  m_RuntimeStatus;
+    std::atomic<IEnvironment::IRuntime::Status>     m_RuntimeStatus;
 
 
 public:

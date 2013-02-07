@@ -11,8 +11,11 @@
 #include <list>
 #include <mutex>
 #include <stdarg.h>
+#include <stdint.h>
 #include <string>
 #include <vector>
+#include <stddef.h> 
+#include <atomic>
 
 
 namespace Interface

@@ -177,5 +177,5 @@ EnvironmentManager::SetStatus(
     IEnvironment::IRuntime::Status Status
     )
 {
-    Base::InterlockedExchange( (long*)&m_RuntimeStatus, Status );
+    m_RuntimeStatus.exchange(Status);
 }
