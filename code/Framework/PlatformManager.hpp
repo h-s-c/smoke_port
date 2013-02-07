@@ -74,7 +74,7 @@ public:
     ////////////////////////////////////////////////////////////////////
     ///   Provides OS window system functionality.
     ////////////////////////////////////////////////////////////////////
-    class WindowSystem
+    class WindowSystem : public IPlatform::IWindow
     {
     private:
         friend class PlatformManager;
@@ -86,6 +86,12 @@ public:
     public:
         // Processes any waiting window messages.
         void ProcessMessages( void );
+        // Get window handle.
+        virtual void* GetWindowHandle( void );
+        // Set window handle.
+        virtual void SetWindowHandle(void* window);
+    private:
+        void* window = nullptr;
     };
 
 protected:
@@ -100,8 +106,9 @@ public:
     }
 
     // Gets a reference to the WindowSystem class.
-    WindowSystem& WindowSystem( void )
+    virtual WindowSystem& WindowSystem( void )
     {
         return m_WindowSystem;
     }
+    
 };

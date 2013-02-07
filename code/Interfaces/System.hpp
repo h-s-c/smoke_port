@@ -389,6 +389,7 @@ extern "C"
         IEnvironment*       pEnvironment;
         IService*           pService;
         ITaskManager*       pTask;
+        IPlatform*          pPlatform;
     };
 
     struct SystemFuncs 

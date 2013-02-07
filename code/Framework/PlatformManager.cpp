@@ -71,9 +71,10 @@ PlatformManager::FileSystem::LoadSystemLibrary( const char* pszSysLib, ISystem**
         if ( systemFuncs != NULL )
         {
             ManagerInterfaces Managers;
-            Managers.pEnvironment = &Singletons::EnvironmentManager;
-            Managers.pService     = &Singletons::ServiceManager;
+            Managers.pEnvironment = &EnvironmentManager::getInstance();
+            Managers.pService     = &ServiceManager::getInstance();
             Managers.pTask        = g_pTaskManager;
+            Managers.pPlatform    = &PlatformManager::getInstance();
 
             // Initialize the system.
             systemFuncs->InitSystem( &Managers );
@@ -87,12 +88,12 @@ PlatformManager::FileSystem::LoadSystemLibrary( const char* pszSysLib, ISystem**
                 System::Type SystemType = pSystem->GetSystemType();
 
                 ISystem* pCurrSystem =
-                    Singletons::SystemManager.Get( SystemType );
+                    SystemManager::getInstance().Get( SystemType );
 
                 if ( pCurrSystem == NULL )
                 {
                     // Add the system to the collection.
-                    Singletons::SystemManager.Add( pSystem );
+                    SystemManager::getInstance().Add( pSystem );
 
                     SystemLib sl = { reinterpret_cast<Handle>(hLib), pSystem };
                     m_SystemLibs.push_back( sl );
@@ -183,6 +184,7 @@ PlatformManager::FileSystem::LoadSystemLibrary(
             Managers.pEnvironment = &EnvironmentManager::getInstance();
             Managers.pService     = &ServiceManager::getInstance();
             Managers.pTask        = g_pTaskManager;
+            Managers.pPlatform    = &PlatformManager::getInstance();
 
             // Initialize the system.
             systemFuncs->InitSystem( &Managers );
@@ -232,3 +234,15 @@ PlatformManager::WindowSystem::ProcessMessages(
 }
 
 #endif
+
+void*
+PlatformManager::WindowSystem::GetWindowHandle( void )
+{
+    return this->window;
+}
+
+void 
+PlatformManager::WindowSystem::SetWindowHandle(void* window)
+{
+    this->window = &window;
+}

@@ -22,11 +22,11 @@ namespace Interface
 {
     #include "Interfaces/SystemTypes.hpp"
     #include "Interfaces/Property.hpp"
-    #include "Interfaces/Platform.hpp"
     #include "Interfaces/ChangeControl.hpp"
     #include "Interfaces/TaskManager.hpp"
     #include "Interfaces/Environment.hpp"
     #include "Interfaces/Service.hpp"
+    #include "Interfaces/Platform.hpp"
     #include "Interfaces/System.hpp"
     #include "Interfaces/Generic.hpp"
     #include "Interfaces/Geometry.hpp"

@@ -313,7 +313,12 @@ OGREGraphicsSystem::Initialize(
             szWindowName, Width, Height, bFullScreen == True, &params
             );*/
     ASSERT( m_pRenderWindow != NULL );
-
+    
+    //make the window accessible by the input system
+    void* hWnd;
+    m_pRenderWindow->getCustomAttribute("WINDOW", &hWnd);
+    g_Managers.pPlatform->WindowSystem().SetWindowHandle( &hWnd );
+    //PlatformManager::getInstance().WindowSystem().SetWindowHandle( &hWnd );
 
     // listen to the RenderWindow
     Ogre::WindowEventUtilities::addWindowEventListener( m_pRenderWindow, this );
