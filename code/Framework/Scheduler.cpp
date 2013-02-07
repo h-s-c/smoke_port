@@ -132,7 +132,10 @@ Scheduler::Execute(
 
         for ( SceneExecsIt it=m_SceneExecs.begin(); it != m_SceneExecs.end(); it++ )
         {
-            ASSERT( cScenesToWaitFor < System::Types::MAX );
+            if ( cScenesToWaitFor > System::Types::MAX )
+            {
+                std::cerr << "cScenesToWaitFor > System::Types::MAX" << std::endl;
+            }
             ISystemScene* pSystemScene = it->second;
             aScenesToWaitFor[ cScenesToWaitFor++ ] = pSystemScene->GetSystemTask();
         }

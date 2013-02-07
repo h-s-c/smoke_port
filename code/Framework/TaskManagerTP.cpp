@@ -150,15 +150,24 @@ void TaskManagerTP::ParallelFor(
     u32 uThreads = ( this->uNumberOfThreads + 1 );
     u32 uCount = ( end - begin );
 
-    ASSERT( uThreads > 0 );
-    ASSERT( uCount >= 0 );
+    if ( uThreads <= 0 )
+    {
+        std::cerr << "uThreads <= 0" << std::endl;
+    }
+    if ( uCount <= 0 )
+    {
+        std::cerr << "uCount <= 0" << std::endl;
+    }
 
     u32 uGrainSize = ( uCount / uThreads );
 
     if( uGrainSize < minGrainSize )
     {
         uGrainSize = minGrainSize;
-        ASSERT( uGrainSize > 0 );
+        if ( uGrainSize <= 0 )
+        {
+            std::cerr << "uGrainSize <= 0" << std::endl;
+        }
 
         uThreads = ( uCount / uGrainSize );
     }

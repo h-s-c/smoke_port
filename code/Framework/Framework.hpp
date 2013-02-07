@@ -172,7 +172,7 @@ private:
 
         const std::string ParseScene( std::string sGDF, std::string sScene );
 
-        GDFParser& operator=( const GDFParser& ) { ASSERT( False ); return *this;}
+        GDFParser& operator=( const GDFParser& ) { std::cerr << "ASSERT" << std::endl; return *this;}
 
 
     protected:

@@ -974,7 +974,7 @@ Framework::GDFParser::BeginElement( void* pElement)
     }
     else if ( strcmp( pszName, "Properties" ) == 0 )
     {
-        if (m_GdfMarker != GDFM_System && m_GdfMarker && GDFM_Scene && m_GdfMarker != GDFM_Object)
+        if (m_GdfMarker != GDFM_System && m_GdfMarker != GDFM_Scene && m_GdfMarker != GDFM_Object)
         {
             std::cerr << "Parser identified <Properties> as not being under <System> or <Scene> or <Object>."
                         << " File " << pXmlElement->GetDocument()->Value() << ", Row " 
@@ -1096,51 +1096,66 @@ Framework::GDFParser::EndElement(
 
     if ( strcmp( pszName, "GlobalDefinition" ) == 0 )
     {
-        ASSERTMSG4( m_GdfMarker == GDFM_Gdf,
-                    "Parser identified the <%s> end marker to be in the wrong location." \
-                    " File (%s), row (%d) column (%d).",
-                    pszName, pXmlElement->GetDocument()->Value(), pXmlElement->Row(),
-                    pXmlElement->Column() );
+        if (m_GdfMarker != GDFM_Gdf)
+        {
+            std::cerr << "Parser identified the <" << pszName 
+                        << "> end marker to be in the wrong location."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        }
 
         m_GdfMarker = GDFM_None;
     }
     else if ( strcmp( pszName, "Environment" ) == 0 )
     {
-        ASSERTMSG4( m_GdfMarker == GDFM_Environment,
-                    "Parser identified the <%s> end marker to be in the wrong location." \
-                    " File (%s), row (%d) column (%d).",
-                    pszName, pXmlElement->GetDocument()->Value(), pXmlElement->Row(),
-                    pXmlElement->Column() );
+        if (m_GdfMarker != GDFM_Environment)
+        {
+            std::cerr << "Parser identified the <" << pszName 
+                        << "> end marker to be in the wrong location."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        }
 
         m_GdfMarker = GDFM_Gdf;
     }
     else if ( strcmp( pszName, "Variable" ) == 0 )
     {
-        ASSERTMSG4( m_GdfMarker == GDFM_EnvVar,
-                    "Parser identified the <%s> end marker to be in the wrong location." \
-                    " File (%s), row (%d) column (%d).",
-                    pszName, pXmlElement->GetDocument()->Value(), pXmlElement->Row(),
-                    pXmlElement->Column() );
+        if (m_GdfMarker != GDFM_EnvVar)
+        {
+            std::cerr << "Parser identified the <" << pszName 
+                        << "> end marker to be in the wrong location."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        }
 
         m_GdfMarker = GDFM_Environment;
     }
     else if ( strcmp( pszName, "Systems" ) == 0 )
     {
-        ASSERTMSG4( m_GdfMarker == GDFM_Systems,
-                    "Parser identified the <%s> end marker to be in the wrong location." \
-                    " File (%s), row (%d) column (%d).",
-                    pszName, pXmlElement->GetDocument()->Value(), pXmlElement->Row(),
-                    pXmlElement->Column() );
+        if (m_GdfMarker != GDFM_Systems)
+        {
+            std::cerr << "Parser identified the <" << pszName 
+                        << "> end marker to be in the wrong location."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        }
 
         m_GdfMarker = GDFM_Gdf;
     }
     else if ( strcmp( pszName, "System" ) == 0 )
     {
-        ASSERTMSG4( m_GdfMarker == GDFM_System || m_GdfMarker == GDFM_SystemProperties,
-                    "Parser identified the <%s> end marker to be in the wrong location." \
-                    " File (%s), row (%d) column (%d).",
-                    pszName, pXmlElement->GetDocument()->Value(), pXmlElement->Row(),
-                    pXmlElement->Column() );
+        if (m_GdfMarker != GDFM_System && m_GdfMarker != GDFM_SystemProperties)
+        {
+            std::cerr << "Parser identified the <" << pszName 
+                        << "> end marker to be in the wrong location."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        }
 
         if ( m_SystemLevel == 0 )
         {
@@ -1153,21 +1168,27 @@ Framework::GDFParser::EndElement(
     }
     else if ( strcmp( pszName, "Scenes" ) == 0 )
     {
-        ASSERTMSG4( m_GdfMarker == GDFM_Scenes,
-                    "Parser identified the <%s> end marker to be in the wrong location." \
-                    " File (%s), row (%d) column (%d).",
-                    pszName, pXmlElement->GetDocument()->Value(), pXmlElement->Row(),
-                    pXmlElement->Column() );
+        if (m_GdfMarker != GDFM_Scenes)
+        {
+            std::cerr << "Parser identified the <" << pszName 
+                        << "> end marker to be in the wrong location."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        }
 
         m_GdfMarker = GDFM_Gdf;
     }
     else if ( strcmp( pszName, "Scene" ) == 0 )
     {
-        ASSERTMSG4( m_GdfMarker == GDFM_Scene,
-                    "Parser identified the <%s> end marker to be in the wrong location." \
-                    " File (%s), row (%d) column (%d).",
-                    pszName, pXmlElement->GetDocument()->Value(), pXmlElement->Row(),
-                    pXmlElement->Column() );
+        if (m_GdfMarker != GDFM_Scene)
+        {
+            std::cerr << "Parser identified the <" << pszName 
+                        << "> end marker to be in the wrong location."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        }
 
         bProcessSiblings = False;
 
@@ -1196,7 +1217,10 @@ Framework::GDFParser::EndElement(
                     // Get the extension.
                     //
                     ISystemObject* pObject = pUObject->GetExtension( it->first );
-                    ASSERT( pObject != NULL );
+                    if ( pObject == NULL)
+                    {
+                        std::cerr << "pObject == NULL" << std::endl;
+                    }
 
                     //
                     // Initialize the extension.
@@ -1225,36 +1249,47 @@ Framework::GDFParser::EndElement(
     }
     else if ( strcmp( pszName, "SystemProperties" ) == 0 )
     {
-        ASSERTMSG4( m_GdfMarker == GDFM_SceneProperties,
-                    "Parser identified the <%s> end marker to be in the wrong location." \
-                    " File (%s), row (%d) column (%d).",
-                    pszName, pXmlElement->GetDocument()->Value(), pXmlElement->Row(),
-                    pXmlElement->Column() );
+        if (m_GdfMarker != GDFM_SceneProperties)
+        {
+            std::cerr << "Parser identified the <" << pszName 
+                        << "> end marker to be in the wrong location."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        }
 
         m_GdfMarker = GDFM_Scene;
     }
     else if ( strcmp( pszName, "Objects" ) == 0 )
     {
-        ASSERTMSG4( m_GdfMarker == GDFM_Objects,
-                    "Parser identified the <%s> end marker to be in the wrong location." \
-                    " File (%s), row (%d) column (%d).",
-                    pszName, pXmlElement->GetDocument()->Value(), pXmlElement->Row(),
-                    pXmlElement->Column() );
+        if (m_GdfMarker != GDFM_Objects)
+        {
+            std::cerr << "Parser identified the <" << pszName 
+                        << "> end marker to be in the wrong location."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        }
 
         m_GdfMarker = GDFM_Scene;
     }
     else if ( strcmp( pszName, "Object" ) == 0 )
     {
-        ASSERTMSG4( m_GdfMarker == GDFM_Object || m_GdfMarker == GDFM_ObjectProperties,
-                    "Parser identified the <%s> end marker to be in the wrong location." \
-                    " File (%s), row (%d) column (%d).",
-                    pszName, pXmlElement->GetDocument()->Value(), pXmlElement->Row(),
-                    pXmlElement->Column() );
+        if ( m_GdfMarker != GDFM_Object && m_GdfMarker != GDFM_ObjectProperties)
+        {
+            std::cerr << "Parser identified the <" << pszName 
+                        << "> end marker to be in the wrong location."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        }
 
         if ( m_ObjectLevel == 0 )
         {
-            ASSERTMSG( m_pUObject != NULL,
-                       "A UObject should have already been created by this point." );
+            if ( m_pUObject == NULL)
+            {
+                std::cerr << "A UObject should have already been created by this point." << std::endl;
+            }
 
             //
             // Add this object's properties to the global collection.
@@ -1272,12 +1307,14 @@ Framework::GDFParser::EndElement(
     }
     else if ( strcmp( pszName, "Properties" ) == 0 )
     {
-        ASSERTMSG4( m_GdfMarker == GDFM_SystemProperties || m_GdfMarker == GDFM_SceneProperties ||
-                    m_GdfMarker == GDFM_ObjectProperties,
-                    "Parser identified the <%s> end marker to be in the wrong location." \
-                    " File (%s), row (%d) column (%d).",
-                    pszName, pXmlElement->GetDocument()->Value(), pXmlElement->Row(),
-                    pXmlElement->Column() );
+        if ( m_GdfMarker != GDFM_SystemProperties && m_GdfMarker != GDFM_SceneProperties && m_GdfMarker != GDFM_ObjectProperties)
+        {
+            std::cerr << "Parser identified the <" << pszName 
+                        << "> end marker to be in the wrong location."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        }
 
         if ( m_GdfMarker == GDFM_SystemProperties )
         {
@@ -1285,12 +1322,17 @@ Framework::GDFParser::EndElement(
         }
         else if ( m_GdfMarker == GDFM_SceneProperties )
         {
-            ASSERTMSG3( m_SceneLevel < 2, "Scene properties are not valid for included CDFs." \
-                        " File (%s), row (%d) column (%d).",
-                        pXmlElement->GetDocument()->Value(),
-                        pXmlElement->Row(), pXmlElement->Column() );
-
-            ASSERT( m_pSystemScene != NULL );
+            if ( m_SceneLevel > 2)
+            {
+                std::cerr << "Scene properties are not valid for included CDFs."
+                            << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                            << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                            << std::endl;
+            }
+            if ( m_pSystemScene == NULL)
+            {
+                std::cerr << "m_pSystemScene == NULL" << std::endl;
+            }
 
             m_pSystemScene->Initialize( m_SetProperties );
             m_GetProperties.clear();
@@ -1300,7 +1342,10 @@ Framework::GDFParser::EndElement(
         }
         else if ( m_GdfMarker == GDFM_ObjectProperties )
         {
-            ASSERT( m_pSystemObject != NULL );
+            if ( m_pSystemObject == NULL)
+            {
+                std::cerr << "m_pSystemObject == NULL" << std::endl;
+            }
 
             m_GetProperties.clear();
 
@@ -1309,12 +1354,14 @@ Framework::GDFParser::EndElement(
     }
     else if ( strcmp( pszName, "Property" ) == 0 )
     {
-        ASSERTMSG4( m_GdfMarker == GDFM_SystemProperty || m_GdfMarker == GDFM_SceneProperty ||
-                    m_GdfMarker == GDFM_ObjectProperty,
-                    "Parser identified the <%s> end marker to be in the wrong location." \
-                    " File (%s), row (%d) column (%d).",
-                    pszName, pXmlElement->GetDocument()->Value(), pXmlElement->Row(),
-                    pXmlElement->Column() );
+        if ( m_GdfMarker != GDFM_SystemProperty && m_GdfMarker != GDFM_SceneProperty && m_GdfMarker != GDFM_ObjectProperty)
+        {
+            std::cerr << "Parser identified the <" << pszName 
+                        << "> end marker to be in the wrong location."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        }
 
         if ( m_GdfMarker == GDFM_SystemProperty )
         {
@@ -1331,40 +1378,48 @@ Framework::GDFParser::EndElement(
     }
     else if ( strcmp( pszName, "Links" ) == 0 )
     {
-        ASSERTMSG4( m_GdfMarker == GDFM_Links,
-                    "Parser identified the <%s> end marker to be in the wrong location." \
-                    " File (%s), row (%d) column (%d).",
-                    pszName, pXmlElement->GetDocument()->Value(), pXmlElement->Row(),
-                    pXmlElement->Column() );
+        if ( m_GdfMarker != GDFM_Links)
+        {
+            std::cerr << "Parser identified the <" << pszName 
+                        << "> end marker to be in the wrong location."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        }
 
         m_GdfMarker = GDFM_Scene;
     }
     else if ( strcmp( pszName, "Link" ) == 0 )
     {
-        ASSERTMSG4( m_GdfMarker == GDFM_Link,
-                    "Parser identified the <%s> end marker to be in the wrong location." \
-                    " File (%s), row (%d) column (%d).",
-                    pszName, pXmlElement->GetDocument()->Value(), pXmlElement->Row(),
-                    pXmlElement->Column() );
+        if ( m_GdfMarker != GDFM_Link)
+        {
+            std::cerr << "Parser identified the <" << pszName 
+                        << "> end marker to be in the wrong location."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        }
 
         m_GdfMarker = GDFM_Links;
     }
     else if ( strcmp( pszName, "Include" ) == 0 )
     {
-        ASSERTMSG3( m_GdfMarker == GDFM_Include,
-                    "Parser identified the <Include> end marker as not being under <Include>." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(), pXmlElement->Row(), pXmlElement->Column() );
-
+        if ( m_GdfMarker != GDFM_Include)
+        {
+            std::cerr << "Parser identified the <Include> end marker as not being under <Include>."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        }
+        
         m_GdfMarker = GDFM_Scene;
     }
     else
     {
-        ASSERTMSG4( False,
-                    "Parser came across an unrecognized end marker <%s>." \
-                    " File (%s), row (%d) column (%d).",
-                    pszName, pXmlElement->GetDocument()->Value(), pXmlElement->Row(),
-                    pXmlElement->Column() );
+        std::cerr << "Parser came across an unrecognized end marker <" << pszName << ">."
+                    << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                    << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                    << std::endl;
     }
 
     return bProcessSiblings;
@@ -1479,44 +1534,54 @@ Framework::GDFParser::ReadAttributes(
 
             if ( strcmp( pszName, "Name" ) == 0 )
             {
-                ASSERTMSG4( pszVariableName == NULL,
-                            "Duplicate attribute found '%s'.",
-                            pszName, pXmlElement->GetDocument()->Value(),
-                            pXmlAttrib->Row(), pXmlAttrib->Column() );
+                if ( pszVariableName != NULL)
+                {
+                    std::cerr << "Duplicate attribute found '" << pszName << "'."
+                                << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                                << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                                << std::endl;
+                }
 
                 pszVariableName = pXmlAttrib->Value();
             }
             else if ( strcmp( pszName, "Value" ) == 0 )
             {
-                ASSERTMSG4( pszVariableValue == NULL,
-                            "Duplicate attribute found '%s'.",
-                            pszName, pXmlElement->GetDocument()->Value(),
-                            pXmlAttrib->Row(), pXmlAttrib->Column() );
+                if ( pszVariableValue != NULL)
+                {
+                    std::cerr << "Duplicate attribute found '" << pszName << "'."
+                                << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                                << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                                << std::endl;
+                }
 
                 pszVariableValue = pXmlAttrib->Value();
             }
             else
             {
-                ASSERTMSG4( False,
-                            "Parser encountered an unknown <Variable> attribute '%s'." \
-                            " File (%s), row (%d) column (%d).",
-                            pszName, pXmlElement->GetDocument()->Value(),
-                            pXmlAttrib->Row(), pXmlAttrib->Column() );
+                std::cerr << "Parser encountered an unknown <Variable> attribute '" << pszName << "'."
+                            << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                            << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                            << std::endl;
             }
 
             pXmlAttrib = pXmlAttrib->Next();
         }
-        ASSERT( pszVariableName != NULL  &&  pszVariableValue != NULL );
+        if ( pszVariableName == NULL || pszVariableValue == NULL)
+        {
+            std::cerr << "pszVariableName == NULL || pszVariableValue == NULL" << std::endl;
+        }
 
         EnvironmentManager::getInstance().Variables().Add( pszVariableName, pszVariableValue );
     }
     else if ( m_GdfMarker == GDFM_SystemProperty )
     {
-        ASSERTMSG3( m_GetProperties.empty() == False,
-                    "Parser found an empty property element." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(),
-                    pXmlElement->Row(), pXmlElement->Column() );
+        if ( m_GetProperties.empty() == True)
+        {
+            std::cerr << "Parser found an empty property element."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        }
 
         ReadPropertyAttributes( pXmlElement, pXmlAttrib, m_GetProperties, m_SetProperties );
     }
@@ -1532,11 +1597,10 @@ Framework::GDFParser::ReadAttributes(
             }
             else
             {
-                ASSERTMSG4( False,
-                            "Parser encountered an unknown <Scenes> attribute %s." \
-                            " File (%s), row (%d) column (%d).",
-                            pszName, pXmlElement->GetDocument()->Value(),
-                            pXmlAttrib->Row(), pXmlAttrib->Column() );
+                std::cerr << "Parser encountered an unknown <Scenes> attribute '" << pszName << "'."
+                            << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                            << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                            << std::endl;
             }
 
             pXmlAttrib = pXmlAttrib->Next();
@@ -1551,27 +1615,32 @@ Framework::GDFParser::ReadAttributes(
 
             if ( strcmp( pszName, "Name" ) == 0 )
             {
-                ASSERTMSG3( m_SceneLevel < 2,
-                            "Scene names are only valid for non-included CDFs." \
-                            " File (%s), row (%d) column (%d).",
-                            pXmlElement->GetDocument()->Value(),
-                            pXmlAttrib->Row(), pXmlAttrib->Column() );
-
-                ASSERTMSG4( m_SceneLevel == 0 || strcmp( m_pszSceneName, pszValue ) == 0,
-                            "Parser identified an incorrect scene name. It should be %s." \
-                            " File (%s), row (%d) column (%d).",
-                            m_pszSceneName, pXmlElement->GetDocument()->Value(),
-                            pXmlAttrib->Row(), pXmlAttrib->Column() );
+                if ( m_SceneLevel > 2)
+                {
+                    std::cerr << "Scene names are only valid for non-included CDFs."
+                                << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                                << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                                << std::endl;
+                }
+                if ( m_SceneLevel != 0 && strcmp( m_pszSceneName, pszValue ) != 0)
+                {
+                    std::cerr << "Parser identified an incorrect scene name. It should be " << m_pszSceneName  
+                                << ". (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                                << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                                << std::endl;
+                }
 
                 m_pszSceneName = pszValue;
             }
             else if ( strcmp( pszName, "CDF" ) == 0 )
             {
-                ASSERTMSG3( m_SceneLevel < 1,
-                            "Scene CDFs are only valid from the GDFs." \
-                            " File (%s), row (%d) column (%d).",
-                            pXmlElement->GetDocument()->Value(),
-                            pXmlAttrib->Row(), pXmlAttrib->Column() );
+                if ( m_SceneLevel > 1)
+                {
+                    std::cerr << "Scene CDFs are only valid from the GDFs." 
+                                << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                                << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                                << std::endl;
+                }
 
                 //
                 // Create a new xml document for the cdf.
@@ -1584,7 +1653,7 @@ Framework::GDFParser::ReadAttributes(
 
                 if ( XmlDoc.LoadFile() == False )
                 {
-                    ASSERTMSG1( False, "Parser was unable to load CDF file %s.", pszCDF );
+                    std::cerr << "Parser was unable to load CDF file " << pszCDF << "." << std::endl;
                 }
 
                 //
@@ -1600,22 +1669,22 @@ Framework::GDFParser::ReadAttributes(
             }
             else if ( strcmp( pszName, "NextScene" ) == 0 )
             {
-                ASSERTMSG4( m_SceneLevel == 0,
-                            "Parser identified a %s attribute within an SDF." \
-                            " This can only be set in the GDF." \
-                            " File (%s), row (%d) column (%d).",
-                            pszName, pXmlElement->GetDocument()->Value(),
-                            pXmlAttrib->Row(), pXmlAttrib->Column() );
+                if ( m_SceneLevel != 0)
+                {
+                    std::cerr << "Parser identified a " << pszName << " attribute within an SDF. This can only be set in the GDF."
+                                << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                                << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                                << std::endl;
+                }
 
                 m_sNextScene = pszValue;
             }
             else
             {
-                ASSERTMSG4( False,
-                            "Parser encountered an unknown <Scene> attribute %s." \
-                            " File (%s), row (%d) column (%d).",
-                            pszName, pXmlElement->GetDocument()->Value(),
-                            pXmlAttrib->Row(), pXmlAttrib->Column() );
+                std::cerr << "Parser encountered an unknown <Scene> attribute " << pszName
+                            << ". (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                            << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                            << std::endl;
             }
 
             pXmlAttrib = pXmlAttrib->Next();
@@ -1631,37 +1700,44 @@ Framework::GDFParser::ReadAttributes(
             if ( strcmp( pszName, "SystemType" ) == 0 )
             {
                 m_pSystem = SystemManager::getInstance().Get( pszValue );
-                ASSERTMSG4( m_pSystem != NULL, "Parser was unable to get system %s." \
-                            " File (%s), row (%d) column (%d).",
-                            pszValue, pXmlElement->GetDocument()->Value(),
-                            pXmlAttrib->Row(), pXmlAttrib->Column() );
+                if (  m_pSystem == NULL)
+                {
+                    std::cerr << "Parser was unable to get system " << pszValue
+                                << ". (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                                << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                                << std::endl;
+                }
 
                 if ( m_pSystem != NULL )
                 {
                     m_GetProperties.clear();
                     m_SetProperties.clear();
 
-                    UScene::SystemScenesConstIt it =
-                        m_pScene->GetSystemScenes().find( m_pSystem->GetSystemType() );
-                    ASSERTMSG4( it != m_pScene->GetSystemScenes().end(),
-                                "Parser was unable to find a scene for system %s." \
-                                " File (%s), row (%d) column (%d).",
-                                pszValue, pXmlElement->GetDocument()->Value(),
-                                pXmlAttrib->Row(), pXmlAttrib->Column() );
-
+                    UScene::SystemScenesConstIt it = m_pScene->GetSystemScenes().find( m_pSystem->GetSystemType() );
+                    if ( it == m_pScene->GetSystemScenes().end())
+                    {
+                        std::cerr << "Parser was unable to find a scene for system " << pszValue
+                                    << ". (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                                    << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                                    << std::endl;
+                    }
+                    
                     m_pSystemScene = it->second;
-                    ASSERT( m_pSystemScene != NULL );
+                    if ( m_pSystemScene == NULL)
+                    {
+                        std::cerr << "m_pSystemScene == NULL" << std::endl;
+                    }
 
                     m_pSystemScene->GetProperties( m_GetProperties );
                 }
             }
             else
             {
-                ASSERTMSG4( False,
-                            "Parser encountered an unknown scene <Properties> attribute %s." \
-                            " File (%s), row (%d) column (%d).",
-                            pszName, pXmlElement->GetDocument()->Value(),
-                            pXmlAttrib->Row(), pXmlAttrib->Column() );
+                 std::cerr << "Parser encountered an unknown scene <Properties> attribute " << pszName
+                            << ". (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                            << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                            << std::endl;
+      
             }
 
             pXmlAttrib = pXmlAttrib->Next();
@@ -1669,21 +1745,25 @@ Framework::GDFParser::ReadAttributes(
     }
     else if ( m_GdfMarker == GDFM_SceneProperty )
     {
-        ASSERTMSG3( m_GetProperties.empty() == False,
-                    "Parser found an empty property element." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(),
-                    pXmlElement->Row(), pXmlElement->Column() );
+        if ( m_GetProperties.empty() == True)
+        {
+            std::cerr << "Parser found an empty property element."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        } 
 
         ReadPropertyAttributes( pXmlElement, pXmlAttrib, m_GetProperties, m_SetProperties );
     }
     else if ( m_GdfMarker == GDFM_Object )
     {
-        ASSERTMSG3( m_pUObject != NULL,
-                    "Parser does not have a UObject to work with." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(),
-                    pXmlElement->Row(), pXmlElement->Column() );
+        if ( m_pUObject == NULL)
+        {
+            std::cerr << "Parser does not have a UObject to work with."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        } 
 
         while ( pXmlAttrib != NULL )
         {
@@ -1715,7 +1795,7 @@ Framework::GDFParser::ReadAttributes(
 
                 if ( XmlDoc.LoadFile() == False )
                 {
-                    ASSERTMSG1( False, "Parser was unable to load ODF file %s.", pszODF );
+                    std::cerr <<  "Parser was unable to load ODF file " << pszODF << "." << std::endl;
                 }
 
                 //
@@ -1731,11 +1811,10 @@ Framework::GDFParser::ReadAttributes(
             }
             else
             {
-                ASSERTMSG4( False,
-                            "Parser encountered an unknown <Object> attribute %s." \
-                            " File (%s), row (%d) column (%d).",
-                            pszName, pXmlElement->GetDocument()->Value(),
-                            pXmlAttrib->Row(), pXmlAttrib->Column() );
+                std::cerr << "Parser encountered an unknown <Object> attribute " <<  pszName
+                            << ". (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                            << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                            << std::endl;
             }
 
             pXmlAttrib = pXmlAttrib->Next();
@@ -1743,11 +1822,13 @@ Framework::GDFParser::ReadAttributes(
     }
     else if ( m_GdfMarker == GDFM_ObjectProperties )
     {
-        ASSERTMSG3( m_pUObject != NULL,
-                    "Parser does not have a UObject to work with." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(),
-                    pXmlElement->Row(), pXmlElement->Column() );
+        if ( m_pUObject == NULL)
+        {
+            std::cerr << "Parser does not have a UObject to work with."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        } 
 
         //
         // Clear the properties.
@@ -1763,10 +1844,13 @@ Framework::GDFParser::ReadAttributes(
             if ( strcmp( pszName, "SystemType" ) == 0 )
             {
                 m_pSystem = SystemManager::getInstance().Get( pszValue );
-                ASSERTMSG4( m_pSystem != NULL, "Parser was unable to get system %s." \
-                            " File (%s), row (%d) column (%d).",
-                            pszValue, pXmlElement->GetDocument()->Value(),
-                            pXmlAttrib->Row(), pXmlAttrib->Column() );
+                if ( m_pSystem == NULL)
+                {
+                    std::cerr << "Parser was unable to get system " << pszValue
+                                << ". (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                                << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                                << std::endl;
+                } 
 
                 if ( m_pSystem != NULL )
                 {
@@ -1784,11 +1868,10 @@ Framework::GDFParser::ReadAttributes(
             }
             else
             {
-                ASSERTMSG4( False,
-                            "Parser encountered an unknown object <Properties> attribute %s." \
-                            " File (%s), row (%d) column (%d).",
-                            pszName, pXmlElement->GetDocument()->Value(),
-                            pXmlAttrib->Row(), pXmlAttrib->Column() );
+                std::cerr << "Parser encountered an unknown object <Properties> attribute " << pszName
+                            << ". (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                            << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                            << std::endl;
             }
 
             pXmlAttrib = pXmlAttrib->Next();
@@ -1803,14 +1886,19 @@ Framework::GDFParser::ReadAttributes(
             {
                 UScene::SystemScenesConstIt it =
                     m_pScene->GetSystemScenes().find( m_pSystem->GetSystemType() );
-                ASSERTMSG3( it != m_pScene->GetSystemScenes().end(),
-                            "Parser was unable to find a scene for this system." \
-                            " File (%s), row (%d) column (%d).",
-                            pXmlElement->GetDocument()->Value(),
-                            pXmlElement->Row(), pXmlElement->Column() );
+                if ( it == m_pScene->GetSystemScenes().end())
+                {
+                    std::cerr << "Parser was unable to find a scene for this system."
+                                << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                                << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                                << std::endl;
+                }
 
                 m_pSystemObject = m_pUObject->Extend( it->second, m_pszObjectType );
-                ASSERT( m_pSystemObject != NULL );
+                if ( m_pSystemObject == NULL )
+                {
+                    std::cerr << "m_pSystemObject == NULL" << std::endl;
+                }
 
                 m_pSystemObject->GetProperties( m_GetProperties );
 
@@ -1823,11 +1911,13 @@ Framework::GDFParser::ReadAttributes(
     }
     else if ( m_GdfMarker == GDFM_ObjectProperty )
     {
-        ASSERTMSG3( m_GetProperties.empty() == False,
-                    "Parser found an empty property element." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(),
-                    pXmlElement->Row(), pXmlElement->Column() );
+        if ( m_GetProperties.empty() == True)
+        {
+            std::cerr << "Parser found an empty property element."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        }
 
         //
         // Get the system object's type.
@@ -1885,22 +1975,34 @@ Framework::GDFParser::ReadAttributes(
 
             pXmlAttrib = pXmlAttrib->Next();
         }
-        ASSERTMSG3( pSubject != NULL, "Parser did not find the UObject subject." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(),
-                    pXmlElement->Row(), pXmlElement->Column() );
-        ASSERTMSG3( pObserver != NULL, "Parser did not find the UObject observer." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(),
-                    pXmlElement->Row(), pXmlElement->Column() );
-        /*ASSERTMSG3( !sSystemSubject.empty(), "Parser did not find the system subject." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(),
-                    pXmlElement->Row(), pXmlElement->Column() );*/
-        ASSERTMSG3( !sSystemObserver.empty(), "Parser did not find the system observer." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(),
-                    pXmlElement->Row(), pXmlElement->Column() );
+        if ( pSubject == NULL)
+        {
+            std::cerr << "Parser did not find the UObject subject."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        }
+        if ( pObserver == NULL)
+        {
+            std::cerr << "Parser did not find the UObject observer."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        }
+        if ( sSystemSubject.empty() )
+        {
+            std::cerr << "Parser did not find the system subject."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        }
+        if ( sSystemObserver.empty() )
+        {
+            std::cerr << "Parser did not find the system observer."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        }
 
         ISystemObject* pSystemSubject = NULL;
         ISystemObject* pSystemObserver = NULL;
@@ -1913,36 +2015,44 @@ Framework::GDFParser::ReadAttributes(
         if ( !sSystemSubject.empty() )
         {
             pSystem = SystemManager::getInstance().Get( sSystemSubject.c_str() );
-            ASSERTMSG4( pSystem != NULL,
-                        "Parser identified system %s as not loaded." \
-                        " File (%s), row (%d) column (%d).",
-                        sSystemSubject.c_str(), pXmlElement->GetDocument()->Value(),
-                        pXmlElement->Row(), pXmlElement->Column() );
-
+            if ( pSystem == NULL )
+            {
+                std::cerr << "Parser identified system " << sSystemSubject.c_str() << " as not loaded."
+                            << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                            << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                            << std::endl;
+            }
+            
             pSystemSubject = pSubject->GetExtension( pSystem->GetSystemType() );
-            ASSERTMSG3( pSystemSubject != NULL,
-                        "Parser identifed subject system as not extending subject object." \
-                        " File (%s), row (%d) column (%d).",
-                        pXmlElement->GetDocument()->Value(),
-                        pXmlElement->Row(), pXmlElement->Column() );
+            if ( pSystemSubject == NULL )
+            {
+                std::cerr << "Parser identifed subject system as not extending subject object."
+                            << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                            << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                            << std::endl;
+            }
         }
 
         //
         // Get the extension for the object.
         //
         pSystem = SystemManager::getInstance().Get( sSystemObserver.c_str() );
-        ASSERTMSG4( pSystem != NULL,
-                    "Parser identified system %s as not loaded." \
-                    " File (%s), row (%d) column (%d).",
-                    sSystemObserver.c_str(), pXmlElement->GetDocument()->Value(),
-                    pXmlElement->Row(), pXmlElement->Column() );
+        if ( pSystem == NULL )
+        {
+            std::cerr << "Parser identified system " << sSystemObserver.c_str() << " as not loaded."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        }
 
         pSystemObserver = pObserver->GetExtension( pSystem->GetSystemType() );
-        ASSERTMSG3( pSystemObserver != NULL,
-                    "Parser identifed observer system as not extending observer object." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(),
-                    pXmlElement->Row(), pXmlElement->Column() );
+        if ( pSystemObserver == NULL )
+        {
+            std::cerr << "Parser identifed observer system as not extending observer object."
+                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                        << std::endl;
+        }
 
         //
         // Call the scene to register the links.
@@ -1976,7 +2086,7 @@ Framework::GDFParser::ReadAttributes(
 
                 if ( XmlDoc.LoadFile() == False )
                 {
-                    ASSERTMSG1( False, "Parser was unable to load CDF file %s.", pszCDF );
+                    std::cerr <<  "Parser was unable to load CDF file " << pszCDF << "." << std::endl;
                 }
 
                 //
@@ -1992,11 +2102,10 @@ Framework::GDFParser::ReadAttributes(
             }
             else
             {
-                ASSERTMSG4( False,
-                            "Parser encountered an unknown <Include> attribute %s." \
-                            " File (%s), row (%d) column (%d).",
-                            pszName, pXmlElement->GetDocument()->Value(),
-                            pXmlAttrib->Row(), pXmlAttrib->Column() );
+                std::cerr <<  "Parser encountered an unknown <Include> attribute " << pszName
+                            << ". (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                            << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                            << std::endl;
             }
 
             pXmlAttrib = pXmlAttrib->Next();
@@ -2004,10 +2113,10 @@ Framework::GDFParser::ReadAttributes(
     }
     else
     {
-        ASSERTMSG3( False, "Parser encountered an unsupported marker." \
-                    " File (%s), row (%d) column (%d).",
-                    pXmlElement->GetDocument()->Value(),
-                    pXmlElement->Row(), pXmlElement->Column() );
+        std::cerr << "Parser encountered an unsupported marker."
+                    << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                    << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                    << std::endl;
     }
 }
 
@@ -2037,8 +2146,7 @@ Framework::GDFParser::ReadPropertyAttributes(
             //
             pcstr pszValue = pXmlAttrib->Value();
 
-            for ( Properties::ConstIterator it=GetProperties.begin();
-                  it != GetProperties.end(); it++ )
+            for ( Properties::ConstIterator it=GetProperties.begin(); it != GetProperties.end(); it++ )
             {
                 if ( strcmp( it->GetName(), pszValue ) == 0 )
                 {
@@ -2048,23 +2156,27 @@ Framework::GDFParser::ReadPropertyAttributes(
                     break;
                 }
             }
-
-            ASSERTMSG4( GetPropIt != GetProperties.end(),
-                        "Parser could not find the property named %s in the list given by the system." \
-                        " File (%s), row (%d) column (%d).",
-                        pszValue, pXmlElement->GetDocument()->Value(),
-                        pXmlElement->Row(), pXmlElement->Column() );
+            
+            if ( GetPropIt == GetProperties.end())
+            {
+                std::cerr << "Parser could not find the property named " << pszValue << " in the list given by the system."
+                            << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                            << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                            << std::endl;
+            }
         }
         else if ( _stricmp( pszName, GetPropIt->GetValueName( 0 ) ) == 0 ||
                   _stricmp( pszName, GetPropIt->GetValueName( 1 ) ) == 0 ||
                   _stricmp( pszName, GetPropIt->GetValueName( 2 ) ) == 0 ||
                   _stricmp( pszName, GetPropIt->GetValueName( 3 ) ) == 0 )
         {
-            ASSERTMSG4( GetPropIt != GetProperties.end(),
-                        "Parser encountered a property value %s that occured before the property name." \
-                        " File (%s), row (%d) column (%d).",
-                        pszName, pXmlElement->GetDocument()->Value(),
-                        pXmlElement->Row(), pXmlElement->Column() );
+            if ( GetPropIt == GetProperties.end())
+            {
+                std::cerr << "Parser encountered a property value " << pszName << " that occured before the property name."
+                            << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                            << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                            << std::endl;
+            }
 
             //
             // Determine the index of the value.
@@ -2077,11 +2189,13 @@ Framework::GDFParser::ReadPropertyAttributes(
                     break;
                 }
             }
-            ASSERTMSG4( iValue != Properties::Values::Count,
-                        "Parser encoutered an unknown value '%s'." \
-                        " File (%s), row (%d) column (%d).",
-                        pszName, pXmlElement->GetDocument()->Value(),
-                        pXmlElement->Row(), pXmlElement->Column() );
+            if ( iValue == Properties::Values::Count )
+            {
+                std::cerr << "Parser encoutered an unknown value '" << pszName
+                            << ". (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                            << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                            << std::endl;
+            }
 
             //
             // Read in the property from the xml.
@@ -2089,11 +2203,10 @@ Framework::GDFParser::ReadPropertyAttributes(
             switch ( GetPropIt->GetValueType( iValue ) )
             {
             case Properties::Values::None:
-            ASSERTMSG4( False,
-                        "Parser encoutered a value '%s' with no type." \
-                        " File (%s), row (%d) column (%d).",
-                        pszName, pXmlElement->GetDocument()->Value(),
-                        pXmlElement->Row(), pXmlElement->Column() );
+                std::cerr << "Parser encoutered a value '" << pszName << "' with no type."
+                            << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                            << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                            << std::endl;
                 break;
 
             case Properties::Values::Boolean:

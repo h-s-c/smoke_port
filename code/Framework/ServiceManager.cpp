@@ -22,7 +22,10 @@ ServiceManager::SystemAccess(
     void
     )
 {
-    ASSERT( m_pSystemAccess != NULL );
+    if ( m_pSystemAccess == NULL )
+    {
+        std::cerr << "m_pSystemAccess == NULL" << std::endl;
+    }
     return *m_pSystemAccess;
 }
 
