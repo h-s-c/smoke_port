@@ -9,7 +9,7 @@
 
 namespace Base
 {
-    #if defined (COMPILER_GCC)
+    #if defined (COMPILER_GCC) || defined  (COMPILER_CLANG)
 
     uint32_t INLINE PopCount( uint32_t x )
     {

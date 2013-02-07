@@ -70,6 +70,12 @@
 #  endif
 #endif
 
+#if defined(__clang__)
+#  if !defined(COMPILER_CLANG)
+#     define COMPILER_CLANG
+#  endif
+#endif
+
 #if defined(COMPILER_MSVC)
 #define NOINLINE            __declspec(noinline)
 #define INLINE              __forceinline
