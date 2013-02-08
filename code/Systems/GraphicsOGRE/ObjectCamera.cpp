@@ -13,6 +13,8 @@
 #include "Systems/GraphicsOGRE/ObjectCamera.hpp"
 #include "Systems/GraphicsOGRE/Scene.hpp"
 #include "Systems/GraphicsOGRE/System.hpp"
+//FIXME
+#include "Systems/Input/Object.hpp"
 
 
 #define PSCENE          (reinterpret_cast<OGREGraphicsScene*>(m_pSystemScene))
@@ -351,10 +353,10 @@ Error OGREGraphicsObjectCamera::ChangeOccurred( ISubject* pSubject, System::Chan
         // The Input System makes relative changes. The other systems (cambot)
         // change the position of the camera in absolute terms.
         //
-        //if ( dynamic_cast<InputObject*>(pSubject) )
+        if ( dynamic_cast<InputObject*>(pSubject) )
         {
-            //m_pCamera->moveRelative(pos);
-        //} else {
+            m_pCamera->moveRelative(pos);
+        } else {
             m_pCamera->setPosition(pos);
         }
         

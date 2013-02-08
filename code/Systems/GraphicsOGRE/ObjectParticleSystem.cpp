@@ -18,6 +18,9 @@
 #include "Systems/GraphicsOGRE/ObjectMesh.hpp"
 #include "Systems/GraphicsOGRE/Scene.hpp"
 #include "Systems/GraphicsOGRE/System.hpp"
+//FIXME
+#include "Systems/Input/Object.hpp"
+
 
 
 #define POGRESCENEMGR (reinterpret_cast<OGREGraphicsScene*>(m_pSystemScene)->GetOGRESceneManager())
@@ -258,8 +261,8 @@ Error OGREGraphicsObjectParticleSystem::ChangeOccurred( ISubject* pSubject, Syst
     {
         if( ChangeType & System::Changes::Input::Firehose )
         {
-            //InputObject* pInputObj = dynamic_cast<InputObject*>(pSubject);
-            //if( pInputObj )
+            InputObject* pInputObj = dynamic_cast<InputObject*>(pSubject);
+            if( pInputObj )
             {
                 if( m_bEmitParticles )
                 {

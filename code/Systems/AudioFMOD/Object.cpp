@@ -10,6 +10,8 @@
 #include <mutex>
 //external
 #include "fmod.hpp"
+//FIXME
+#include "Systems/Input/Object.hpp"
 
 //
 // capture current time for random play
@@ -368,7 +370,7 @@ FMODObject::ChangeOccurred(
              ChangeType & System::Changes::Geometry::Orientation ||
              ChangeType & System::Changes::Physics::Velocity )
         {
-            //if (!dynamic_cast<InputObject*>(pSubject)) 
+            if (!dynamic_cast<InputObject*>(pSubject)) 
             {
                 m_Position = *dynamic_cast<IGeometryObject*>(pSubject)->GetPosition();
                 m_Orientation = *dynamic_cast<IGeometryObject*>(pSubject)->GetOrientation();

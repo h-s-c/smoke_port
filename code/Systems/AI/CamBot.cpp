@@ -1,8 +1,12 @@
-//internal
+//core
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
+//interface
 #include "Interfaces/Interface.hpp"
+//system
 #include "Systems/AI/CamBot.hpp"
+//FIXME
+#include "Systems/Input/Object.hpp"
 
 
 template <class T>
@@ -193,7 +197,7 @@ Error CamBot::ChangeOccurred( ISubject* pSubject, System::Changes::BitMask Chang
 {
     ASSERT( m_bInitialized );
 
-    //if ( dynamic_cast<InputObject*>(pSubject) )
+    if ( dynamic_cast<InputObject*>(pSubject) )
     {
         if ( ChangeType & (System::Changes::Geometry::Position | System::Changes::Geometry::Orientation) ) 
         {
