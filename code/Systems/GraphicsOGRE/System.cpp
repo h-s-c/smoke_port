@@ -315,9 +315,9 @@ OGREGraphicsSystem::Initialize(
     ASSERT( m_pRenderWindow != NULL );
     
     //make the window accessible by the input system
-    void* hWnd;
+    size_t hWnd = 0;
     m_pRenderWindow->getCustomAttribute("WINDOW", &hWnd);
-    g_Managers.pPlatform->WindowSystem().SetWindowHandle( &hWnd );
+    g_Managers.pPlatform->WindowSystem().SetWindowHandle( hWnd );
     g_Managers.pPlatform->WindowSystem().SetWindowHeight( Height );
     g_Managers.pPlatform->WindowSystem().SetWindowWidth( Width );
     

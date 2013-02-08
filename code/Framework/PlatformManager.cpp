@@ -235,16 +235,16 @@ PlatformManager::WindowSystem::ProcessMessages(
 
 #endif
 
-void*
+size_t
 PlatformManager::WindowSystem::GetWindowHandle( void )
 {
     return this->window;
 }
 
 void 
-PlatformManager::WindowSystem::SetWindowHandle(void* window)
+PlatformManager::WindowSystem::SetWindowHandle(size_t window)
 {
-    this->window = &window;
+    this->window = window;
 }
 
 uint32_t

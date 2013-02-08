@@ -12,9 +12,9 @@ public:
     {
     public:
         // Get window handle.
-        virtual void* GetWindowHandle(void) = 0;
+        virtual size_t GetWindowHandle(void) = 0;
         // Set window handle.
-        virtual void  SetWindowHandle(void* window) = 0;
+        virtual void  SetWindowHandle(size_t window) = 0;
         // Get window height.
         virtual uint32_t GetWindowHeight(void) = 0;
         // Set window height.

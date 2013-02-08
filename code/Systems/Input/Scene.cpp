@@ -84,8 +84,7 @@ InputScene::Initialize(
     m_nOldDown         = 0;
     m_MouseMoveEnabled = false;
 
-    void* window = g_Managers.pPlatform->WindowSystem().GetWindowHandle();
-    m_InputManager = OIS::InputManager::createInputSystem((size_t)window);
+    m_InputManager = OIS::InputManager::createInputSystem(g_Managers.pPlatform->WindowSystem().GetWindowHandle());
     m_Mouse = static_cast<OIS::Mouse*>(m_InputManager->createInputObject(OIS::OISMouse, true));
     m_Mouse->setEventCallback( this );
     m_Keyboard = static_cast<OIS::Keyboard*>(m_InputManager->createInputObject(OIS::OISKeyboard, true));

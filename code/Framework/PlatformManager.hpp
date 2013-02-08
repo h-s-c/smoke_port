@@ -87,9 +87,9 @@ public:
         // Processes any waiting window messages.
         void ProcessMessages( void );
         // Get window handle.
-        virtual void* GetWindowHandle( void );
+        virtual size_t GetWindowHandle( void );
         // Set window handle.
-        virtual void SetWindowHandle(void* window);
+        virtual void SetWindowHandle(size_t window);
         // Get window height.
         virtual uint32_t GetWindowHeight(void);
         // Set window height.
@@ -99,7 +99,7 @@ public:
         // Set window width.
         virtual void SetWindowWidth(uint32_t width);
     private:
-        void* window = nullptr;
+        size_t window = 0;
         uint32_t height = 768;
         uint32_t width  = 1024;
     };
