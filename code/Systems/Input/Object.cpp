@@ -1,29 +1,11 @@
-// Copyright © 2008-2009 Intel Corporation
-// All Rights Reserved
-//
-// Permission is granted to use, copy, distribute and prepare derivative works of this
-// software for any purpose and without fee, provided, that the above copyright notice
-// and this statement appear in all copies.  Intel makes no representations about the
-// suitability of this software for any purpose.  THIS SOFTWARE IS PROVIDED "AS IS."
-// INTEL SPECIFICALLY DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, AND ALL LIABILITY,
-// INCLUDING CONSEQUENTIAL AND OTHER INDIRECT DAMAGES, FOR THE USE OF THIS SOFTWARE,
-// INCLUDING LIABILITY FOR INFRINGEMENT OF ANY PROPRIETARY RIGHTS, AND INCLUDING THE
-// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  Intel does not
-// assume any responsibility for any errors which may appear in this software nor any
-// responsibility to update it.
+//core
+#include "Base/Compat.hpp"
+#include "Base/Platform.hpp"
+//interface
+#include "Interfaces/Interface.hpp"
+//system
+#include "Systems/Input/Object.hpp"
 
-
-//
-// core includes
-//
-#include "..\BaseTypes\BaseTypes.h"
-#include "..\Interfaces\Interface.h"
-
-//
-// Input system includes
-//
-#include "Object.h"
-#include "D3DX9Math.h"
 
 pcstr InputObject::sm_kapszTypeNames[] =
 {
@@ -38,36 +20,36 @@ pcstr InputObject::sm_kapszPropertyNames[] =
 
 InputObject::InputObject(ISystemScene* pSystemScene) : ISystemObject( pSystemScene, NULL )
 {
-	m_Type = Type_Controlled;
+    m_Type = Type_Controlled;
 }
 
 const Properties::Property InputObject::sm_kaDefaultProperties[] =
 {
     Properties::Property( sm_kapszPropertyNames[ Property_FKey ],
-						  VALUE1( Properties::Values::Int32 ),
+                          VALUE1( Properties::Values::Int32 ),
                           Properties::Flags::Valid,
-						  NULL, NULL, NULL, NULL,
-						  0),
+                          NULL, NULL, NULL, NULL,
+                          0),
 
-	Properties::Property( sm_kapszPropertyNames[ Property_Orientation ],
-						  VALUE1x3( Properties::Values::Float32 ),
-						  Properties::Flags::Valid,
-						  NULL, NULL, NULL, NULL,
-						  0)
+    Properties::Property( sm_kapszPropertyNames[ Property_Orientation ],
+                          VALUE1x3( Properties::Values::Float32 ),
+                          Properties::Flags::Valid,
+                          NULL, NULL, NULL, NULL,
+                          0)
 };
 
 InputObject::InputObject(ISystemScene* pSystemScene, pcstr pszType, pcstr pszName) : ISystemObject( pSystemScene, NULL )
 {
-	ASSERT( Property_Count == sizeof sm_kapszPropertyNames / sizeof sm_kapszPropertyNames[ 0 ] );
+    ASSERT( Property_Count == sizeof sm_kapszPropertyNames / sizeof sm_kapszPropertyNames[ 0 ] );
     ASSERT( Property_Count == sizeof sm_kaDefaultProperties / sizeof sm_kaDefaultProperties[ 0 ] );
 
-	if (strcmp(pszType, sm_kapszTypeNames[Type_Controlled]) == 0) {
+    if (strcmp(pszType, sm_kapszTypeNames[Type_Controlled]) == 0) {
         m_Type = Type_Controlled;
     } else if (strcmp(pszType, sm_kapszTypeNames[Type_GUI]) == 0) {
         m_Type = Type_GUI;
     }
 
-	m_sName = pszName;
+    m_sName = pszName;
 }
 
 
@@ -95,16 +77,16 @@ InputObject::Initialize(
     //
     // Set this set as initialized.
     //
-	m_bInitialized = True;
+    m_bInitialized = True;
 
-	// fill out pitch and yaw 
-	m_Pitch = 0.0f;
-	m_Yaw = 0.0f;
-	m_nFunctionKey = 0;
+    // fill out pitch and yaw 
+    m_Pitch = 0.0f;
+    m_Yaw = 0.0f;
+    m_nFunctionKey = 0;
 
-	memset(&m_LayoutData, 0, sizeof(m_LayoutData));
+    memset(&m_LayoutData, 0, sizeof(m_LayoutData));
 
-	SetProperties(Properties);
+    SetProperties(Properties);
 
     return Errors::Success;
 }
@@ -115,7 +97,7 @@ InputObject::GetProperties(
     Properties::Array& Properties
     )
 {
-	//
+    //
     // Get the index of our first item.
     //
     i32 iProperty = static_cast<i32>(Properties.size());
@@ -133,7 +115,7 @@ InputObject::GetProperties(
     //
     // Modify the default values.
     //
-	Properties[iProperty + Property_FKey].SetValue(0, m_nFunctionKey);
+    Properties[iProperty + Property_FKey].SetValue(0, m_nFunctionKey);
 }
 
 
@@ -144,8 +126,8 @@ InputObject::SetProperties(
 {
     ASSERT( m_bInitialized );
 
-	Error Err;
-	Err = Errors::Failure;
+    Error Err;
+    Err = Errors::Failure;
 
     //
     // Read in the properties.
@@ -158,21 +140,21 @@ InputObject::SetProperties(
  
             if ( sName == sm_kapszPropertyNames[Property_FKey] )
             {
-				m_nFunctionKey = it->GetInt32(0);
-			}
-			else if ( sName == sm_kapszPropertyNames[Property_Orientation] )
-			{
-				m_Yaw   = it->GetFloat32(0);
-				m_Pitch = it->GetFloat32(1);
-				m_Roll  = it->GetFloat32(2);
+                m_nFunctionKey = it->GetInt32(0);
+            }
+            else if ( sName == sm_kapszPropertyNames[Property_Orientation] )
+            {
+                m_Yaw   = it->GetFloat32(0);
+                m_Pitch = it->GetFloat32(1);
+                m_Roll  = it->GetFloat32(2);
 
-				m_Orientation.x = m_Yaw;
-				m_Orientation.y = m_Pitch;
-				m_Orientation.z = 0;
-				m_Orientation.w = 0;
+                m_Orientation.x = m_Yaw;
+                m_Orientation.y = m_Pitch;
+                m_Orientation.z = 0;
+                m_Orientation.w = 0;
 
-				PostChanges(System::Changes::Geometry::Orientation);
-			}
+                PostChanges(System::Changes::Geometry::Orientation);
+            }
             else
             {
                 ASSERT(False);
@@ -197,9 +179,9 @@ InputObject::GetDesiredSystemChanges(
 
 Error
 InputObject::ChangeOccurred(
-	ISubject* pSubject,
-	System::Changes::BitMask ChangeType
-	)
+    ISubject* pSubject,
+    System::Changes::BitMask ChangeType
+    )
 {
     ASSERT( m_bInitialized );
 
@@ -225,7 +207,7 @@ InputObject::GetPotentialSystemChanges(
     return System::Changes::Input::Firehose |
            System::Changes::Geometry::Position |
            System::Changes::Geometry::Orientation |
-		   System::Changes::Graphics::GUI;
+           System::Changes::Graphics::GUI;
 }
 
 
@@ -234,7 +216,7 @@ InputObject::GetPosition(
     void
     )
 {
-	return &m_Position;
+    return &m_Position;
 }
 
 
@@ -243,7 +225,7 @@ InputObject::GetOrientation(
     void
     )
 {
-	return &m_Orientation;
+    return &m_Orientation;
 }
 
 
@@ -253,14 +235,14 @@ InputObject::GetScale(
     )
 {
     ASSERT( False );
-	return NULL;
+    return NULL;
 }
 
 const WindowData* InputObject::GetWindowData(void)
 {
-	m_LayoutData.nFlags |= WINDOW_SHOW;
-	m_LayoutData.bShow = !m_LayoutData.bShow;
+    m_LayoutData.nFlags |= WINDOW_SHOW;
+    m_LayoutData.bShow = !m_LayoutData.bShow;
 
-	return &m_LayoutData; 
+    return &m_LayoutData; 
 }
 
