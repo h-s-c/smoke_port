@@ -318,8 +318,9 @@ OGREGraphicsSystem::Initialize(
     void* hWnd;
     m_pRenderWindow->getCustomAttribute("WINDOW", &hWnd);
     g_Managers.pPlatform->WindowSystem().SetWindowHandle( &hWnd );
-    //PlatformManager::getInstance().WindowSystem().SetWindowHandle( &hWnd );
-
+    g_Managers.pPlatform->WindowSystem().SetWindowHeight( Height );
+    g_Managers.pPlatform->WindowSystem().SetWindowWidth( Width );
+    
     // listen to the RenderWindow
     Ogre::WindowEventUtilities::addWindowEventListener( m_pRenderWindow, this );
 

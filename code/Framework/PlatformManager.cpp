@@ -246,3 +246,27 @@ PlatformManager::WindowSystem::SetWindowHandle(void* window)
 {
     this->window = &window;
 }
+
+uint32_t
+PlatformManager::WindowSystem::GetWindowHeight( void )
+{
+    return this->height;
+}
+
+void 
+PlatformManager::WindowSystem::SetWindowHeight(uint32_t height)
+{
+    this->height = height;
+}
+
+uint32_t
+PlatformManager::WindowSystem::GetWindowWidth( void )
+{
+    return this->width;
+}
+
+void 
+PlatformManager::WindowSystem::SetWindowWidth(uint32_t width)
+{
+    this->width = width;
+}

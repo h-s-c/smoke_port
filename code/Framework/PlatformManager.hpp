@@ -90,8 +90,18 @@ public:
         virtual void* GetWindowHandle( void );
         // Set window handle.
         virtual void SetWindowHandle(void* window);
+        // Get window height.
+        virtual uint32_t GetWindowHeight(void);
+        // Set window height.
+        virtual void SetWindowHeight(uint32_t height);
+        // Get window width.
+        virtual uint32_t GetWindowWidth(void);
+        // Set window width.
+        virtual void SetWindowWidth(uint32_t width);
     private:
         void* window = nullptr;
+        uint32_t height = 768;
+        uint32_t width  = 1024;
     };
 
 protected:
