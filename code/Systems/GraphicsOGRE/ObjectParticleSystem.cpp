@@ -18,8 +18,6 @@
 #include "Systems/GraphicsOGRE/ObjectMesh.hpp"
 #include "Systems/GraphicsOGRE/Scene.hpp"
 #include "Systems/GraphicsOGRE/System.hpp"
-//FIXME
-#include "Systems/Input/Object.hpp"
 
 
 
@@ -261,7 +259,7 @@ Error OGREGraphicsObjectParticleSystem::ChangeOccurred( ISubject* pSubject, Syst
     {
         if( ChangeType & System::Changes::Input::Firehose )
         {
-            InputObject* pInputObj = dynamic_cast<InputObject*>(pSubject);
+            IInputObject* pInputObj = dynamic_cast<IInputObject*>(pSubject);
             if( pInputObj )
             {
                 if( m_bEmitParticles )

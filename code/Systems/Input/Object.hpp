@@ -27,7 +27,7 @@ class InputScene;
 /// </summary>
 ///////////////////////////////////////////////////////////////////////////////
 
-class InputObject : public ISystemObject, public IGeometryObject, public IGUIObject
+class InputObject : public ISystemObject, public IGeometryObject, public IGUIObject, public IInputObject
 {
     friend class InputScene;
     friend class InputTask;
@@ -96,23 +96,23 @@ public:
     /// <summary cref="IGeometryObject::GetPosition">
     ///   Implementation of the IGeometryObject GetPosition function.
     /// </summary>
-	virtual const Math::Vector3* GetPosition( void );
+    virtual const Math::Vector3* GetPosition( void );
 
 public:
     /// <summary cref="IGeometryObject::GetOrientation">
     ///   Implementation of the IGeometryObject GetOrientation function.
     /// </summary>
-	virtual const Math::Quaternion* GetOrientation( void );
+    virtual const Math::Quaternion* GetOrientation( void );
 protected:
     /// <summary cref="IGeometryObject::GetScale">
     ///   Implementation of the IGeometryObject GetScale function.
     /// </summary>
-	virtual const Math::Vector3* GetScale( void );
+    virtual const Math::Vector3* GetScale( void );
 
-	/// <summary cref="IGUIObject::GetWindowData">
+    /// <summary cref="IGUIObject::GetWindowData">
     ///   Implementation of the IGUIObject GetWindowData function.
     /// </summary>
-	virtual const WindowData* GetWindowData( void );
+    virtual const WindowData* GetWindowData( void );
 
 protected:
 
@@ -122,32 +122,32 @@ protected:
     //       used to store pitch and yaw information.
     Math::Quaternion                    m_Orientation;
 
-	f32                                 m_Yaw;
-	f32                                 m_Pitch;
-	f32                                 m_Roll;
+    f32                                 m_Yaw;
+    f32                                 m_Pitch;
+    f32                                 m_Roll;
 
-	static pcstr                        sm_kapszTypeNames[];
+    static pcstr                        sm_kapszTypeNames[];
 
     enum Types
     {
         Type_Controlled, Type_GUI
     };
-	Types                               m_Type;
-	bool								m_bVisible;
+    Types                               m_Type;
+    bool                                m_bVisible;
 
-	
+    
 
-	WindowData                          m_LayoutData;
+    WindowData                          m_LayoutData;
 
-	std::string                         m_sName;
-	int                                 m_nFunctionKey;
+    std::string                         m_sName;
+    int                                 m_nFunctionKey;
 
-	enum PropertyTypes
+    enum PropertyTypes
     {
         Property_FKey,
-		Property_Orientation,
-		Property_Count,
-		Property_Instrumentation
+        Property_Orientation,
+        Property_Count,
+        Property_Instrumentation
     };
 
     static pcstr                        sm_kapszPropertyNames[];

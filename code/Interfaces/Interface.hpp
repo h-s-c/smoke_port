@@ -37,5 +37,6 @@ namespace Interface
     #include "Interfaces/Area.hpp"
     #include "Interfaces/Move.hpp"
     #include "Interfaces/Target.hpp"
+    #include "Interfaces/Input.hpp"
 }
 using namespace Interface;

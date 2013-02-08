@@ -370,7 +370,7 @@ FMODObject::ChangeOccurred(
              ChangeType & System::Changes::Geometry::Orientation ||
              ChangeType & System::Changes::Physics::Velocity )
         {
-            if (!dynamic_cast<InputObject*>(pSubject)) 
+            if (!dynamic_cast<IInputObject*>(pSubject)) 
             {
                 m_Position = *dynamic_cast<IGeometryObject*>(pSubject)->GetPosition();
                 m_Orientation = *dynamic_cast<IGeometryObject*>(pSubject)->GetOrientation();

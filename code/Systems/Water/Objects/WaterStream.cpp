@@ -100,7 +100,7 @@ Error WaterStream::ChangeOccurred( ISubject* pSubject, System::Changes::BitMask 
 
     if( ChangeType & System::Changes::Input::Firehose )
     {
-        InputObject* pInputObj = dynamic_cast<InputObject*>(pSubject);
+        IInputObject* pInputObj = dynamic_cast<IInputObject*>(pSubject);
         if( pInputObj )
         {
             if( m_bSprayWater )
