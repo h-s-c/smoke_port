@@ -1,8 +1,10 @@
-//internal
+// Base
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
+// Interface
 #include "Interfaces/Interface.hpp"
-#include "Systems/Explosion/Explosion.hpp"
+// System
+#include "Systems/Explosion/ObjectExplosion.hpp"
 #include "Systems/Explosion/System.hpp"
 
 // Local data

@@ -52,7 +52,7 @@ project (Smoke)
     list(APPEND SMOKE_DEPEDENCIES SystemExplosion)
     list(APPEND SMOKE_DEPEDENCIES SystemGeometry)
     list(APPEND SMOKE_DEPEDENCIES SystemGraphicsOGRE)
-    list(APPEND SMOKE_DEPEDENCIES SystemInput)
+    list(APPEND SMOKE_DEPEDENCIES SystemInputOIS)
 
     list(APPEND SKUNKWORKS_INCLUDE_DIRS ${CMAKE_SOURCE_DIR})
     
