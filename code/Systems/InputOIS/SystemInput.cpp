@@ -55,7 +55,7 @@ DestroyInputSystem( ISystem* pSystem)
 
 extern "C" 
 {
-    struct SystemFuncs SystemInput = {
+    struct SystemFuncs SystemInputOIS = {
         &InitInputSystem,
         &CreateInputSystem,
         &DestroyInputSystem
