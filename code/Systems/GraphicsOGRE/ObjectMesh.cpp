@@ -6,9 +6,9 @@
 //external
 #include <Ogre.h>
 //system
-#include "Systems/GraphicsOGRE/DynamicLines.hpp"
-#include "Systems/GraphicsOGRE/MovableText.hpp"
-#include "Systems/GraphicsOGRE/NormalizedLines.hpp"
+#include "Systems/GraphicsOGRE/Extras/DynamicLines.hpp"
+#include "Systems/GraphicsOGRE/Extras/MovableText.hpp"
+#include "Systems/GraphicsOGRE/Extras/NormalizedLines.hpp"
 #include "Systems/GraphicsOGRE/Object.hpp"
 #include "Systems/GraphicsOGRE/ObjectMesh.hpp"
 #include "Systems/GraphicsOGRE/Scene.hpp"
@@ -80,17 +80,17 @@ const Properties::Property OGREGraphicsObjectMesh::sm_kaDefaultProperties[] =
                           Properties::Values::Vector3,
                           Properties::Flags::Valid,
                           NULL, NULL, NULL, NULL,
-                          Math::Vector3::Zero ),
+                          Base::Vector3::Zero ),
     Properties::Property( sm_kapszPropertyNames[ Property_Orientation ],
                           Properties::Values::Quaternion,
                           Properties::Flags::Valid,
                           NULL, NULL, NULL, NULL,
-                          Math::Quaternion::Zero ),
+                          Base::Quaternion::Zero ),
     Properties::Property( sm_kapszPropertyNames[ Property_Scale ],
                           Properties::Values::Vector3,
                           Properties::Flags::Valid,
                           NULL, NULL, NULL, NULL,
-                          Math::Vector3::Zero ),
+                          Base::Vector3::Zero ),
 };
 
 
@@ -233,9 +233,9 @@ OGREGraphicsObjectMesh::OGREGraphicsObjectMesh(
     pcstr pszName
     )
     : OGREGraphicsObject( pSystemScene, pszName )
-    , m_Position( Math::Vector3::Zero )
-    , m_Orientation( Math::Quaternion::Zero )
-    , m_Scale( Math::Vector3::One )
+    , m_Position( Base::Vector3::Zero )
+    , m_Orientation( Base::Quaternion::Zero )
+    , m_Scale( Base::Vector3::One )
     , m_pEntity( NULL )
     , m_pCaption( NULL )
     , m_strStaticGrpName ( "" )
@@ -689,8 +689,8 @@ OGREGraphicsObjectMesh::ChangeOccurred(
         IGraphicsObject* pGfxObj = dynamic_cast<IGraphicsObject*>(pSubject);
         ASSERT( pGfxObj != NULL );
 
-        Math::Vector3 AABBMin;
-        Math::Vector3 AABBMax;
+        Base::Vector3 AABBMin;
+        Base::Vector3 AABBMax;
         pGfxObj->GetAABB( AABBMin, AABBMax );
 
 
@@ -1106,8 +1106,8 @@ OGREGraphicsObjectMesh::GetStreamsChanged(
 
 void
 OGREGraphicsObjectMesh::GetAABB(
-    Out Math::Vector3& Min,
-    Out Math::Vector3& Max
+    Out Base::Vector3& Min,
+    Out Base::Vector3& Max
     )
 {
     ASSERT( m_pEntity != NULL );
@@ -1300,12 +1300,12 @@ OGREGraphicsObjectMesh::BuildNormalsTemplate(
             //
             // Get the vertex at the index.
             //
-            const Math::Vector3& Vertex =
-                *reinterpret_cast<const Math::Vector3*>(pVertsPos  + iPosOffset  + (pIndices[i] * VertPosSize));
-            const Math::Vector3& Normal =
-                *reinterpret_cast<const Math::Vector3*>(pVertsNorm + iNormOffset + (pIndices[i] * VertNormSize));
+            const Base::Vector3& Vertex =
+                *reinterpret_cast<const Base::Vector3*>(pVertsPos  + iPosOffset  + (pIndices[i] * VertPosSize));
+            const Base::Vector3& Normal =
+                *reinterpret_cast<const Base::Vector3*>(pVertsNorm + iNormOffset + (pIndices[i] * VertNormSize));
 
-            pNormals->addPoint(Vertex, Math::Vector3::Zero);
+            pNormals->addPoint(Vertex, Base::Vector3::Zero);
             pNormals->addPoint(Vertex, Normal);
         }
         pNormals->update();
@@ -1318,12 +1318,12 @@ OGREGraphicsObjectMesh::BuildNormalsTemplate(
         pTangents->setCastShadows(false);
         for (size_t i=0; i<ibuf->getNumIndexes(); i++) 
         {
-            const Math::Vector3& Vertex =
-                *reinterpret_cast<const Math::Vector3*>(pVertsPos  + iPosOffset  + (pIndices[i]* VertPosSize));
-            const Math::Vector3& Tangent =
-                *reinterpret_cast<const Math::Vector3*>(pVertsTang + iTangOffset + (pIndices[i]* VertTangSize));
+            const Base::Vector3& Vertex =
+                *reinterpret_cast<const Base::Vector3*>(pVertsPos  + iPosOffset  + (pIndices[i]* VertPosSize));
+            const Base::Vector3& Tangent =
+                *reinterpret_cast<const Base::Vector3*>(pVertsTang + iTangOffset + (pIndices[i]* VertTangSize));
 
-            pTangents->addPoint(Vertex, Math::Vector3::Zero);
+            pTangents->addPoint(Vertex, Base::Vector3::Zero);
             pTangents->addPoint(Vertex, Tangent);
         }
         pTangents->update();

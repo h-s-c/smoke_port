@@ -27,7 +27,7 @@ const Properties::Property OGREGraphicsObjectLightFire::sm_kaDefaultProperties[]
                           Properties::Values::Color3,
                           Properties::Flags::Valid,
                           "R", "G", "B", NULL,
-                          Math::Color3::Black ),
+                          Base::Color3::Black ),
     Properties::Property( sm_kapszPropertyNames[ Property_Flicker ],
                           Properties::Values::Float32,
                           Properties::Flags::Valid,
@@ -84,7 +84,7 @@ void OGREGraphicsObjectLightFire::Update(
             Ogre::ColourValue Color = m_BaseColor;
 
             // Flicker level ( based on sin mapped to [0.0, 1.0f] )
-            f32 Level = ( Math::Angle::Sin( m_TotalTime ) + 1.0f ) * 0.5f;
+            f32 Level = ( Base::Angle::Sin( m_TotalTime ) + 1.0f ) * 0.5f;
 
             Color.r = m_BaseColor.r + m_Flare.r * Level;
             Color.g = m_BaseColor.g + m_Flare.g * Level;
@@ -157,7 +157,7 @@ OGREGraphicsObjectLightFire::GetProperties(
     //
     // Modify the default values.
     //
-    Math::Color3 Flare = { m_BaseFlare.r, m_BaseFlare.g, m_BaseFlare.b };
+    Base::Color3 Flare = { m_BaseFlare.r, m_BaseFlare.g, m_BaseFlare.b };
     Properties[ iProperty+Property_Flare ].SetValue( Flare );
     Properties[ iProperty+Property_Flicker ].SetValue( 0, m_Flicker );
 }
@@ -249,14 +249,14 @@ OGREGraphicsObjectLightFire::ChangeOccurred(
         ASSERT( pAreaObject );
 
         // Get data
-        Math::Vector3 Min, Max;
+        Base::Vector3 Min, Max;
         pAreaObject->GetAreaBB( Min, Max );
 
         
         if( m_pLight )
         {
             // Set the position
-            Math::Vector3 Center = ( Min + Max ) * 0.5f;
+            Base::Vector3 Center = ( Min + Max ) * 0.5f;
             m_pLight->setPosition( Center.x, Center.y, Center.z );
 
             // Enable the light if needed

@@ -73,7 +73,7 @@ public:
     /// <returns>Velocity of the object.
     /// </returns>
     /// <seealso cref="IMoveObject::GetVelocity"/>
-    virtual const Math::Vector3* GetVelocity();
+    virtual const Base::Vector3* GetVelocity();
 
     /// <summary cref="Explosion::GetPosition">
     /// Implementation of the <c>IMoveObject::GetPosition</c> method.
@@ -81,7 +81,7 @@ public:
     /// <returns>Position of the object.
     /// </returns>
     /// <seealso cref="IMoveObject::GetPosition"/>
-    virtual const Math::Vector3* GetPosition( void );
+    virtual const Base::Vector3* GetPosition( void );
 
     /// <summary cref="Explosion::GetMaxVelocity">
     /// Implementation of the <c>IMoveObject::GetMaxVelocity</c> method.
@@ -135,7 +135,7 @@ public:
     /// Sets the velocity for the Explosion object.
     /// </summary>
     /// <param name="velocity">Velocity of the object.</param>
-    void SetVelocity(Math::Vector3 velocity);
+    void SetVelocity(Base::Vector3 velocity);
 
 private:
 
@@ -152,7 +152,7 @@ private:
     /// <summary >
     /// Explosion velocity vector
     /// </summary >
-    Math::Vector3 m_Velocity; // Velocity vector describing the explosive effect on other entities
+    Base::Vector3 m_Velocity; // Velocity vector describing the explosive effect on other entities
 
     /// <summary >
     /// Explosion system Property name array

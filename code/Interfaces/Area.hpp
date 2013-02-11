@@ -37,20 +37,20 @@ public:
     /// </summary>
     /// <param name="Min">The returned minimum AABB point.</param>
     /// <param name="Max">The returned maximum AABB point.</param>
-	virtual void GetAreaBB( Out Math::Vector3& Min, Out Math::Vector3& Max ) = 0;
+    virtual void GetAreaBB( Out Base::Vector3& Min, Out Base::Vector3& Max ) = 0;
 
     /// <summary>
     ///   Returns the name to id this area.
     /// </summary>
-	virtual pcstr GetAreaName( void ) = 0;
+    virtual pcstr GetAreaName( void ) = 0;
 
     /// <summary>
     ///   Returns the type of the area.
     /// </summary>
-	virtual AreaType GetAreaType( void ) = 0;
+    virtual AreaType GetAreaType( void ) = 0;
 
     /// <summary>
     ///   Return True if this ares is active (i.e. the area has been triggered).
     /// </summary>
-	virtual Bool IsAreaActive( void ) = 0;  
+    virtual Bool IsAreaActive( void ) = 0;  
 };

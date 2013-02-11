@@ -107,7 +107,7 @@ public:
     /// </summary>
     /// <param name="AABBmin">Mins of the Axis Aligned Bounding Box.</param>
     /// <param name="AABBmax">Maxs of the Axis Aligned Bounding Box.</param>
-    void  setExtents(Math::Vector3 AABBmin, Math::Vector3 AABBmax);
+    void  setExtents(Base::Vector3 AABBmin, Base::Vector3 AABBmax);
 
 
     /// <summary cref="DynamicBuffer::setDistanceFromCamera">

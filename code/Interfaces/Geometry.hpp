@@ -26,21 +26,21 @@ class IGeometryObject
 {
 public:
 
-	/// <summary>
+    /// <summary>
     /// Gets the position of the object.
-	/// </summary>
-	/// <returns>A constant pointer to the position.</returns>
-	virtual const Math::Vector3* GetPosition( void ) = 0;
+    /// </summary>
+    /// <returns>A constant pointer to the position.</returns>
+    virtual const Base::Vector3* GetPosition( void ) = 0;
 
-	/// <summary>
+    /// <summary>
     /// Gets the orientation of the object.
-	/// </summary>
-	/// <returns>A constant pointer to the orientation.</returns>
-	virtual const Math::Quaternion* GetOrientation( void ) = 0;
+    /// </summary>
+    /// <returns>A constant pointer to the orientation.</returns>
+    virtual const Base::Quaternion* GetOrientation( void ) = 0;
 
-	/// <summary>
+    /// <summary>
     /// Gets the scale of the object.
-	/// </summary>
-	/// <returns>A constant pointer to the scle.</returns>
-	virtual const Math::Vector3* GetScale( void ) = 0;
+    /// </summary>
+    /// <returns>A constant pointer to the scle.</returns>
+    virtual const Base::Vector3* GetScale( void ) = 0;
 };

@@ -2,10 +2,10 @@
 #include "Base/Platform.hpp"
 #include "Base/MathX.hpp"
 
+#include <cmath>
 #include <stdexcept>
-#include <math.h>
 
-using namespace Math;
+using namespace Base;
 
 ALIGN(16) static const u32 kaTranslationMask[ 4 ] = { 0xFFFFFFFF, 0xFFFFFFFF, 0xFFFFFFFF, 0 };
 ALIGN(16) static const f32 kaIdentityMatrix[ 16 ] =
@@ -250,7 +250,7 @@ XMatrix4x4::GetOrientation(
 
     if ( T > 0.00000001f )
     {
-        const f32 S = sqrtf( T ) * 2.0f;
+        const f32 S = std::sqrt( T ) * 2.0f;
         const f32 invS = 1.0f / S;
 
         Orientation = XQuaternion( (m[ 6 ] - m[ 9 ]) * invS, 
@@ -260,7 +260,7 @@ XMatrix4x4::GetOrientation(
     }
     else if ( m[ 0 ] > m[ 5 ] && m[ 0 ] > m[ 10 ] )
     {
-        const f32 S = sqrtf( 1.0f + m[ 0 ] - m[ 5 ] - m[ 10 ] ) * 2.0f;
+        const f32 S = std::sqrt( 1.0f + m[ 0 ] - m[ 5 ] - m[ 10 ] ) * 2.0f;
         const f32 invS = 1.0f / S;
 
         Orientation = XQuaternion( 0.25f * S,

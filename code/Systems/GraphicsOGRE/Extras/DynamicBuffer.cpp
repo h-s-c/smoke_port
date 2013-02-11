@@ -6,7 +6,7 @@
 //external
 #include <Ogre.h>
 //system
-#include "Systems/GraphicsOGRE/DynamicBuffer.hpp"
+#include "Systems/GraphicsOGRE/Extras/DynamicBuffer.hpp"
 
 // NOTE: this setting reveals some concurrency errors
 //#define USE_INFINITE_BOXES 1
@@ -180,7 +180,7 @@ void DynamicBuffer::fillHardwareBuffers(void *p)
 
 Ogre::Real DynamicBuffer::getBoundingRadius(void) const
 {
-    return Ogre::Math::Sqrt(Math::Max(mBox.getMaximum().squaredLength(), mBox.getMinimum().squaredLength()));
+    return Ogre::Math::Sqrt(Base::Max(mBox.getMaximum().squaredLength(), mBox.getMinimum().squaredLength()));
 }
 
 Ogre::Real DynamicBuffer::getSquaredViewDepth(const Ogre::Camera* pCam) const
@@ -229,7 +229,7 @@ void DynamicBuffer::unlockBuffer(void)
     m_pVB->unlock();
 }
 
-void DynamicBuffer::setExtents(::Math::Vector3 min, ::Math::Vector3 max)
+void DynamicBuffer::setExtents(::Base::Vector3 min, ::Base::Vector3 max)
 {
     mBox.setExtents( Ogre::Vector3(min.x, min.y, min.z),
                      Ogre::Vector3(max.x, max.y, max.z) );

@@ -46,12 +46,12 @@ const Properties::Property OGREGraphicsObjectCamera::sm_kaDefaultProperties[] =
                           Properties::Values::Vector3,
                           Properties::Flags::Valid,
                           NULL, NULL, NULL, NULL,
-                          Math::Vector3::Zero ),
+                          Base::Vector3::Zero ),
     Properties::Property( sm_kapszPropertyNames[ Property_LookAt ],
                           Properties::Values::Vector3,
                           Properties::Flags::Valid | Properties::Flags::WriteOnly,
                           NULL, NULL, NULL, NULL,
-                          Math::Vector3::Zero ),
+                          Base::Vector3::Zero ),
     Properties::Property( sm_kapszPropertyNames[ Property_PolygonMode ],
                           Properties::Values::Enum,
                           Properties::Flags::Valid | Properties::Flags::WriteOnly,
@@ -78,7 +78,7 @@ OGREGraphicsObjectCamera::OGREGraphicsObjectCamera(
     , m_pCamera( NULL )
     , m_pViewport( NULL )
     , m_bLocked( false )
-    , m_vLookAt( Math::Vector3::Zero )
+    , m_vLookAt( Base::Vector3::Zero )
 {
     ASSERT( Property_Count == sizeof sm_kapszPropertyNames / sizeof sm_kapszPropertyNames[ 0 ] );
     ASSERT( Property_Count == sizeof sm_kaDefaultProperties / sizeof sm_kaDefaultProperties[ 0 ] );
@@ -258,7 +258,7 @@ OGREGraphicsObjectCamera::SetProperties(
                 //
                 // Set the camera's position.
                 //
-                const Math::Vector3& Position = it->GetVector3();
+                const Base::Vector3& Position = it->GetVector3();
                 m_pCamera->setPosition( Ogre::Vector3( Position.x, Position.y, Position.z ) );
             }
             else if ( sName == sm_kapszPropertyNames[ Property_LookAt ] )
@@ -314,12 +314,12 @@ Error OGREGraphicsObjectCamera::ChangeOccurred( ISubject* pSubject, System::Chan
 
     if ( ChangeType & System::Changes::POI::Target )
     {
-        const Math::Vector3 poi = dynamic_cast<ITargetObject*>(pSubject)->GetTarget();
+        const Base::Vector3 poi = dynamic_cast<ITargetObject*>(pSubject)->GetTarget();
         m_pCamera->lookAt(poi.x,poi.y,poi.z);
     }
     if (ChangeType & System::Changes::Geometry::Orientation)
     {
-        const Math::Quaternion& Orientation =
+        const Base::Quaternion& Orientation =
             *dynamic_cast<IGeometryObject*>(pSubject)->GetOrientation();
 
         Ogre::Radian rad;
@@ -341,7 +341,7 @@ Error OGREGraphicsObjectCamera::ChangeOccurred( ISubject* pSubject, System::Chan
 
     if (ChangeType & System::Changes::Geometry::Position)
     {
-        const Math::Vector3 Position =
+        const Base::Vector3 Position =
                 *dynamic_cast<IGeometryObject*>(pSubject)->GetPosition();
 
         Ogre::Vector3 pos(Position.x, Position.y, Position.z);
@@ -407,7 +407,7 @@ OGREGraphicsObjectCamera::Update( f32 DeltaTime )
 
 ///////////////////////////////////////////////////////////////////////////////
 // GetPosition - Returns the position of this Object
-const Math::Vector3* OGREGraphicsObjectCamera::GetPosition( void )
+const Base::Vector3* OGREGraphicsObjectCamera::GetPosition( void )
 {
     Ogre::Vector3 v3;
 
@@ -422,7 +422,7 @@ const Math::Vector3* OGREGraphicsObjectCamera::GetPosition( void )
 
 ///////////////////////////////////////////////////////////////////////////////
 // GetOrientation - Returns the orientation of this Object
-const Math::Quaternion* OGREGraphicsObjectCamera::GetOrientation( void )
+const Base::Quaternion* OGREGraphicsObjectCamera::GetOrientation( void )
 {
     Ogre::Quaternion q;
     
@@ -439,7 +439,7 @@ const Math::Quaternion* OGREGraphicsObjectCamera::GetOrientation( void )
 
 ///////////////////////////////////////////////////////////////////////////////
 // GetScale - Returns the scale of this Object
-const Math::Vector3* OGREGraphicsObjectCamera::GetScale( void )
+const Base::Vector3* OGREGraphicsObjectCamera::GetScale( void )
 {
     return &m_Scale;
 }

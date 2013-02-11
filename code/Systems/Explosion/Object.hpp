@@ -32,50 +32,50 @@ class ExplosionState
 #define STATEFLAG_NEW 0x00000001
 
 public:
-	ExplosionState( void ) 
-	{ 
-		m_State = -1;
-		m_PreviousState = -1;
-		m_Flags = 0;
-		m_Duration = 0.0f; 
-	}
+    ExplosionState( void ) 
+    { 
+        m_State = -1;
+        m_PreviousState = -1;
+        m_Flags = 0;
+        m_Duration = 0.0f; 
+    }
 
-	~ExplosionState( void ) {}
+    ~ExplosionState( void ) {}
 
-	inline void SetState( u32 State )
-	{
-		m_PreviousState = m_State;
-		m_State = State;
-		if( m_PreviousState != m_State )
-		{
-			m_Flags |= STATEFLAG_NEW;
-		}
-		m_Duration = 0.0f;
-	}
+    inline void SetState( u32 State )
+    {
+        m_PreviousState = m_State;
+        m_State = State;
+        if( m_PreviousState != m_State )
+        {
+            m_Flags |= STATEFLAG_NEW;
+        }
+        m_Duration = 0.0f;
+    }
 
-	inline bool Triggered( void )
-	{
-		if( m_Flags & STATEFLAG_NEW )
-		{
-			m_Flags &= ~STATEFLAG_NEW;
-			return True;
-		}
+    inline bool Triggered( void )
+    {
+        if( m_Flags & STATEFLAG_NEW )
+        {
+            m_Flags &= ~STATEFLAG_NEW;
+            return True;
+        }
 
-		return False;
-	}
+        return False;
+    }
 
-	inline void InitState( i32 State ) { m_State = m_PreviousState = State; }
-	inline i32 GetState( void ) { return m_State; }
-	inline i32 GetPreviousState( void ) { return m_PreviousState; }
-	inline i32 GetFlags( void ) { return m_Flags; }
-	inline f32 GetTime( void ) { return m_Duration; }
-	inline void UpdateTime( f32 DeltaTime ) { m_Duration += DeltaTime; }
+    inline void InitState( i32 State ) { m_State = m_PreviousState = State; }
+    inline i32 GetState( void ) { return m_State; }
+    inline i32 GetPreviousState( void ) { return m_PreviousState; }
+    inline i32 GetFlags( void ) { return m_Flags; }
+    inline f32 GetTime( void ) { return m_Duration; }
+    inline void UpdateTime( f32 DeltaTime ) { m_Duration += DeltaTime; }
 
 private:
-	i32 m_State;          // Current state
-	i32 m_PreviousState;  // Previous state
-	i32 m_Flags;          // Flags about this state
-	f32 m_Duration;       // Time in the current state
+    i32 m_State;          // Current state
+    i32 m_PreviousState;  // Previous state
+    i32 m_Flags;          // Flags about this state
+    f32 m_Duration;       // Time in the current state
 };
 
 
@@ -158,7 +158,7 @@ protected:
     /// <returns>Returns the orientation quaternion for this Explosion.
     /// </returns>
     /// <seealso cref="IGeometryObject::GetOrientation"/>
-	virtual const Math::Quaternion* GetOrientation( void );
+    virtual const Base::Quaternion* GetOrientation( void );
 
     /// <summary cref="ExplosionObject::GetScale">
     ///   Implementation of the <c>IGeometryObject::GetScale</c> function.
@@ -166,7 +166,7 @@ protected:
     /// <returns>Returns the scale for this Explosion.
     /// </returns>
     /// <seealso cref="IGeometryObject::GetScale"/>
-	virtual const Math::Vector3* GetScale( void );
+    virtual const Base::Vector3* GetScale( void );
 
 public:
     /// <summary cref="ExplosionObject::GetPosition">
@@ -175,7 +175,7 @@ public:
     /// <returns>Returns the position for this Explosion.
     /// </returns>
     /// <seealso cref="IGeometryObject::GetPosition"/>
-    virtual const Math::Vector3* GetPosition( void );
+    virtual const Base::Vector3* GetPosition( void );
 
 public:
 
@@ -196,20 +196,20 @@ public:
     /// This method is called after each <c>Update</c> call to perform post-processing.
     /// </summary>
     /// <param name="DeltaTime">Elapsed time since the last frame.</param>
-	virtual void PostUpdate( f32 DeltaTime );
+    virtual void PostUpdate( f32 DeltaTime );
 
     /// <summary cref="ExplosionObject::GetState">
     ///   Returns the state of the Explosion object.
     /// </summary>
     /// <returns>Returns the state for this Explosion.
     /// </returns>
-	inline i32 GetState( void ) { return m_State.GetState(); }
+    inline i32 GetState( void ) { return m_State.GetState(); }
 
-    Math::Vector3       m_Position;     // Position of Explosion object
-    Math::Quaternion    m_Orientation;  // Orientation of Explosion object
-    Math::Vector3       m_Scale;        // Scale of Explosion object
+    Base::Vector3       m_Position;     // Position of Explosion object
+    Base::Quaternion    m_Orientation;  // Orientation of Explosion object
+    Base::Vector3       m_Scale;        // Scale of Explosion object
 
 protected:
-	ExplosionState             m_State;        // State of Explosion (internal use)
+    ExplosionState             m_State;        // State of Explosion (internal use)
 };
 

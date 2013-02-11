@@ -1,12 +1,12 @@
-//core
+// Base
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
-//interface
+// Interface
 #include "Interfaces/Interface.hpp"
-//system
-#include "Systems/Input/Scene.hpp"
-#include "Systems/Input/Object.hpp"
-#include "Systems/Input/Task.hpp"
+// System
+#include "Systems/InputOIS/Scene.hpp"
+#include "Systems/InputOIS/Object.hpp"
+#include "Systems/InputOIS/Task.hpp"
 
 
 InputTask::InputTask(

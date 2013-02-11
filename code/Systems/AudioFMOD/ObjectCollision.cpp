@@ -207,7 +207,7 @@ FMODObjectCollision::ChangeOccurred(
             if (pContactInfo->m_Impact > IMPACT_SPEED_SOUND)
             {
                 // Update position of impact and unpause collision sound
-                Math::Vector3 currPos = pContactInfo->m_Position;
+                Base::Vector3 currPos = pContactInfo->m_Position;
                 UpdateCollisionPosition( &currPos );
                 m_Result = CollisionSource->setPaused( false );
                 m_pSystem->FMODErrorCode( m_Result, __FUNCTION__ );
@@ -235,7 +235,7 @@ FMODObjectCollision::GetPotentialSystemChanges(
 
 ///////////////////////////////////////////////////////////////////////////////
 // UpdateCollisionPosition - Update the position where the collision occurred
-Error FMODObjectCollision::UpdateCollisionPosition( Math::Vector3* CurrPos )
+Error FMODObjectCollision::UpdateCollisionPosition( Base::Vector3* CurrPos )
 {
     FMOD_VECTOR newPosition = {CurrPos->x, CurrPos->y, CurrPos->z};
     

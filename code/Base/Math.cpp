@@ -1,15 +1,16 @@
-#include "Base/Compat.hpp"
+// Base
 #include "Base/Platform.hpp"
 #include "Base/Math.hpp"
-
-#include <math.h>
+// Standard Library
+#include <cmath>
+#include <cstdint>
 #include <stdexcept>
 
 
-using namespace Math;
+using namespace Base;
 
 
-const f32 Angle::Pi = 3.1415926535897932384626433832795f;
+const float Angle::Pi = 3.1415926535897932384626433832795f;
 
 const Vector2 Vector2::Zero = { 0.0f, 0.0f };
 const Vector2 Vector2::One  = { 1.0f, 1.0f };
@@ -43,13 +44,13 @@ const Color4 Color4::White = { 1.0f, 1.0f, 1.0f, 1.0f };
 const Quaternion&
 Quaternion::Set(
     In Vector3& Axis,
-    In f32 Angle
+    In float Angle
     )
 {
     if (1.0f - Axis.Magnitude() < 0.0001f)
         throw std::runtime_error("This function requires the vector to be normalized upon entry.");
 
-    const f32 Sin = Angle::Sin( Angle / 2.0f );
+    const float Sin = Angle::Sin( Angle / 2.0f );
 
     x = Axis.x * Sin;
     y = Axis.y * Sin;
@@ -88,7 +89,7 @@ Quaternion::Set(
 //
 void Quaternion::Rotate( Vector3& a )  
 {
-    Math::Quaternion p, r, q, qInverse;
+    Quaternion p, r, q, qInverse;
     
     // Convert vector to a quaternion
     p.x = a.x;
@@ -156,14 +157,14 @@ Matrix4x4::operator*(
 {
     Matrix4x4 r;
 
-    u32 idx = 0;
-    for ( u32 Row=0; Row < 16; Row+=4 )
+    std::uint32_t idx = 0;
+    for ( std::uint32_t Row=0; Row < 16; Row+=4 )
     {
-        for ( u32 Col=0; Col < 4; Col++ )
+        for ( std::uint32_t Col=0; Col < 4; Col++ )
         {
             r.m[ idx ] = 0.0f;
 
-            for ( u32 i=0; i < 4; i++ )
+            for ( std::uint32_t i=0; i < 4; i++ )
             {
                 r.m[ idx ] += m[ Col + i*4 ] * a.m[ Row + i ];
             }
@@ -210,12 +211,12 @@ Matrix4x4::GetOrientation(
     Quaternion& Orientation
     ) const
 {
-    const f32 T = 1.0f + m[ 0 ] + m[ 5 ] + m[ 10 ];
+    const float T = 1.0f + m[ 0 ] + m[ 5 ] + m[ 10 ];
 
     if ( T > 0.00000001f )
     {
-        const f32 S = sqrtf( T ) * 2.0f;
-        const f32 invS = 1.0f / S;
+        const float S = std::sqrt( T ) * 2.0f;
+        const float invS = 1.0f / S;
 
         Orientation.x = (m[ 6 ] - m[ 9 ]) * invS;
         Orientation.y = (m[ 8 ] - m[ 2 ]) * invS;
@@ -224,8 +225,8 @@ Matrix4x4::GetOrientation(
     }
     else if ( m[ 0 ] > m[ 5 ] && m[ 0 ] > m[ 10 ] )
     {
-        const f32 S = sqrtf( 1.0f + m[ 0 ] - m[ 5 ] - m[ 10 ] ) * 2.0f;
-        const f32 invS = 1.0f / S;
+        const float S = std::sqrt( 1.0f + m[ 0 ] - m[ 5 ] - m[ 10 ] ) * 2.0f;
+        const float invS = 1.0f / S;
 
         Orientation.x = 0.25f * S;
         Orientation.y = (m[ 1 ] + m[ 4 ]) * invS;
@@ -234,8 +235,8 @@ Matrix4x4::GetOrientation(
     }
     else if ( m[ 5 ] > m[ 10 ] )
     {
-        const f32 S  = sqrt( 1.0f + m[ 5 ] - m[ 0 ] - m[ 10 ] ) * 2.0f;
-        const f32 invS = 1.0f / S;
+        const float S  = std::sqrt( 1.0f + m[ 5 ] - m[ 0 ] - m[ 10 ] ) * 2.0f;
+        const float invS = 1.0f / S;
 
         Orientation.x = (m[ 1 ] + m[ 4 ]) * invS;
         Orientation.y = 0.25f * S;
@@ -244,8 +245,8 @@ Matrix4x4::GetOrientation(
     }
     else
     {
-        const f32 S  = sqrt( 1.0f + m[ 10 ] - m[ 0 ] - m[ 5 ] ) * 2.0f;
-        const f32 invS = 1.0f / S;
+        const float S  = std::sqrt( 1.0f + m[ 10 ] - m[ 0 ] - m[ 5 ] ) * 2.0f;
+        const float invS = 1.0f / S;
 
         Orientation.x = (m[ 8 ] + m[ 2 ]) * invS;
         Orientation.y = (m[ 6 ] + m[ 9 ]) * invS;
@@ -260,15 +261,15 @@ Matrix4x4::SetOrientation(
     const Quaternion& Orientation
     )
 {
-    f32 xx = Orientation.x * Orientation.x;
-    f32 xy = Orientation.x * Orientation.y;
-    f32 xz = Orientation.x * Orientation.z;
-    f32 xw = Orientation.x * Orientation.w;
-    f32 yy = Orientation.y * Orientation.y;
-    f32 yz = Orientation.y * Orientation.z;
-    f32 yw = Orientation.y * Orientation.w;
-    f32 zz = Orientation.z * Orientation.z;
-    f32 zw = Orientation.z * Orientation.w;
+    float xx = Orientation.x * Orientation.x;
+    float xy = Orientation.x * Orientation.y;
+    float xz = Orientation.x * Orientation.z;
+    float xw = Orientation.x * Orientation.w;
+    float yy = Orientation.y * Orientation.y;
+    float yz = Orientation.y * Orientation.z;
+    float yw = Orientation.y * Orientation.w;
+    float zz = Orientation.z * Orientation.z;
+    float zw = Orientation.z * Orientation.w;
 
     m[  0 ] = 1.0f - ((yy + zz) * 2.0f);
     m[  1 ] =        ((xy - zw) * 2.0f);
@@ -314,29 +315,29 @@ Matrix4x4::Inverse(
 
     
     
-    f32 cofactor_00 = Cofactor9(A.m[5],A.m[6],A.m[7],A.m[9],A.m[10],A.m[11],A.m[13],A.m[14],A.m[15]);
-    f32 cofactor_01 = -Cofactor9(A.m[4],A.m[6],A.m[7],A.m[8],A.m[10],A.m[11],A.m[12],A.m[14],A.m[15]);
-    f32 cofactor_02 = Cofactor9(A.m[4],A.m[5],A.m[7],A.m[8],A.m[9],A.m[11],A.m[12],A.m[13],A.m[15]);
-    f32 cofactor_03 = -Cofactor9(A.m[4],A.m[5],A.m[6],A.m[8],A.m[9],A.m[10],A.m[12],A.m[13],A.m[14]);
-    f32 cofactor_10 = Cofactor9(A.m[1],A.m[2],A.m[3],A.m[9],A.m[10],A.m[11],A.m[13],A.m[14],A.m[15]);
-    f32 cofactor_11 = Cofactor9(A.m[0],A.m[2],A.m[3],A.m[8],A.m[10],A.m[11],A.m[12],A.m[14],A.m[15]);
-    f32 cofactor_12 = -Cofactor9(A.m[0],A.m[1],A.m[3],A.m[8],A.m[9],A.m[11],A.m[12],A.m[13],A.m[15]);
-    f32 cofactor_13 = Cofactor9(A.m[0],A.m[1],A.m[2],A.m[8],A.m[9],A.m[10],A.m[12],A.m[13],A.m[14]);
-    f32 cofactor_20 = Cofactor9(A.m[1],A.m[2],A.m[3],A.m[5],A.m[6],A.m[7],A.m[13],A.m[14],A.m[15]);
-    f32 cofactor_21 = -Cofactor9(A.m[0],A.m[2],A.m[3],A.m[4],A.m[6],A.m[7],A.m[12],A.m[14],A.m[15]);
-    f32 cofactor_22 = Cofactor9(A.m[0],A.m[1],A.m[3],A.m[4],A.m[5],A.m[7],A.m[12],A.m[13],A.m[15]);
-    f32 cofactor_23 = -Cofactor9(A.m[0],A.m[1],A.m[2],A.m[4],A.m[5],A.m[6],A.m[12],A.m[13],A.m[14]);
-    f32 cofactor_30 = -Cofactor9(A.m[1],A.m[2],A.m[3],A.m[5],A.m[6],A.m[7],A.m[9],A.m[10],A.m[11]);
-    f32 cofactor_31 = Cofactor9(A.m[0],A.m[2],A.m[3],A.m[4],A.m[6],A.m[7],A.m[8],A.m[10],A.m[11]);
-    f32 cofactor_32 = -Cofactor9(A.m[0],A.m[1],A.m[3],A.m[4],A.m[5],A.m[7],A.m[8],A.m[9],A.m[11]);
-    f32 cofactor_33 = Cofactor9(A.m[0],A.m[1],A.m[2],A.m[4],A.m[5],A.m[6],A.m[8],A.m[9],A.m[10]);
+    float cofactor_00 = Cofactor9(A.m[5],A.m[6],A.m[7],A.m[9],A.m[10],A.m[11],A.m[13],A.m[14],A.m[15]);
+    float cofactor_01 = -Cofactor9(A.m[4],A.m[6],A.m[7],A.m[8],A.m[10],A.m[11],A.m[12],A.m[14],A.m[15]);
+    float cofactor_02 = Cofactor9(A.m[4],A.m[5],A.m[7],A.m[8],A.m[9],A.m[11],A.m[12],A.m[13],A.m[15]);
+    float cofactor_03 = -Cofactor9(A.m[4],A.m[5],A.m[6],A.m[8],A.m[9],A.m[10],A.m[12],A.m[13],A.m[14]);
+    float cofactor_10 = Cofactor9(A.m[1],A.m[2],A.m[3],A.m[9],A.m[10],A.m[11],A.m[13],A.m[14],A.m[15]);
+    float cofactor_11 = Cofactor9(A.m[0],A.m[2],A.m[3],A.m[8],A.m[10],A.m[11],A.m[12],A.m[14],A.m[15]);
+    float cofactor_12 = -Cofactor9(A.m[0],A.m[1],A.m[3],A.m[8],A.m[9],A.m[11],A.m[12],A.m[13],A.m[15]);
+    float cofactor_13 = Cofactor9(A.m[0],A.m[1],A.m[2],A.m[8],A.m[9],A.m[10],A.m[12],A.m[13],A.m[14]);
+    float cofactor_20 = Cofactor9(A.m[1],A.m[2],A.m[3],A.m[5],A.m[6],A.m[7],A.m[13],A.m[14],A.m[15]);
+    float cofactor_21 = -Cofactor9(A.m[0],A.m[2],A.m[3],A.m[4],A.m[6],A.m[7],A.m[12],A.m[14],A.m[15]);
+    float cofactor_22 = Cofactor9(A.m[0],A.m[1],A.m[3],A.m[4],A.m[5],A.m[7],A.m[12],A.m[13],A.m[15]);
+    float cofactor_23 = -Cofactor9(A.m[0],A.m[1],A.m[2],A.m[4],A.m[5],A.m[6],A.m[12],A.m[13],A.m[14]);
+    float cofactor_30 = -Cofactor9(A.m[1],A.m[2],A.m[3],A.m[5],A.m[6],A.m[7],A.m[9],A.m[10],A.m[11]);
+    float cofactor_31 = Cofactor9(A.m[0],A.m[2],A.m[3],A.m[4],A.m[6],A.m[7],A.m[8],A.m[10],A.m[11]);
+    float cofactor_32 = -Cofactor9(A.m[0],A.m[1],A.m[3],A.m[4],A.m[5],A.m[7],A.m[8],A.m[9],A.m[11]);
+    float cofactor_33 = Cofactor9(A.m[0],A.m[1],A.m[2],A.m[4],A.m[5],A.m[6],A.m[8],A.m[9],A.m[10]);
 
-    f32 cofactorGiven_00 = Cofactor9(Inverse.m[5],Inverse.m[6],Inverse.m[7],Inverse.m[9],Inverse.m[10],Inverse.m[11],Inverse.m[13],Inverse.m[14],Inverse.m[15]);
-    f32 cofactorGiven_01 = Cofactor9(Inverse.m[4],Inverse.m[6],Inverse.m[7],Inverse.m[8],Inverse.m[10],Inverse.m[11],Inverse.m[12],Inverse.m[14],Inverse.m[15]);
-    f32 cofactorGiven_02 = Cofactor9(Inverse.m[4],Inverse.m[5],Inverse.m[7],Inverse.m[8],Inverse.m[9],Inverse.m[11],Inverse.m[12],Inverse.m[13],Inverse.m[15]);
-    f32 cofactorGiven_03 = Cofactor9(Inverse.m[4],Inverse.m[5],Inverse.m[6],Inverse.m[8],Inverse.m[9],Inverse.m[10],Inverse.m[12],Inverse.m[13],Inverse.m[14]);
-    f32 detA = Inverse.m[0] * cofactorGiven_00 - Inverse.m[1]*cofactorGiven_01 + Inverse.m[2]*cofactorGiven_02 - Inverse.m[3]*cofactorGiven_03;
-    f32 IdetA = 1.0f/detA;
+    float cofactorGiven_00 = Cofactor9(Inverse.m[5],Inverse.m[6],Inverse.m[7],Inverse.m[9],Inverse.m[10],Inverse.m[11],Inverse.m[13],Inverse.m[14],Inverse.m[15]);
+    float cofactorGiven_01 = Cofactor9(Inverse.m[4],Inverse.m[6],Inverse.m[7],Inverse.m[8],Inverse.m[10],Inverse.m[11],Inverse.m[12],Inverse.m[14],Inverse.m[15]);
+    float cofactorGiven_02 = Cofactor9(Inverse.m[4],Inverse.m[5],Inverse.m[7],Inverse.m[8],Inverse.m[9],Inverse.m[11],Inverse.m[12],Inverse.m[13],Inverse.m[15]);
+    float cofactorGiven_03 = Cofactor9(Inverse.m[4],Inverse.m[5],Inverse.m[6],Inverse.m[8],Inverse.m[9],Inverse.m[10],Inverse.m[12],Inverse.m[13],Inverse.m[14]);
+    float detA = Inverse.m[0] * cofactorGiven_00 - Inverse.m[1]*cofactorGiven_01 + Inverse.m[2]*cofactorGiven_02 - Inverse.m[3]*cofactorGiven_03;
+    float IdetA = 1.0f/detA;
 
     Inverse.m[0]   = IdetA * cofactor_00;
     Inverse.m[1]   = IdetA * cofactor_01;
@@ -358,19 +359,19 @@ Matrix4x4::Inverse(
     return Inverse;
 }
 
-f32 Matrix4x4::Cofactor4(f32 a, f32 b, f32 c, f32 d)
+float Matrix4x4::Cofactor4(float a, float b, float c, float d)
 {
     return (a*d)-(b*c);
 }
 
-f32 Matrix4x4::Cofactor9(f32 a, f32 b, f32 c, f32 d, f32 e, f32 f, f32 g, f32 h, f32 i)
+float Matrix4x4::Cofactor9(float a, float b, float c, float d, float e, float f, float g, float h, float i)
 {
     return (a*Cofactor4(e,f,h,i)) + (b*Cofactor4(d,f,g,i)) + (c*Cofactor4(d,e,g,h));
 
 }
 
 
-f32 Random::GetRandomFloat(float a, float b)
+float Random::GetRandomFloat(float a, float b)
 {
     if( a >= b ) // bad input
         return a;

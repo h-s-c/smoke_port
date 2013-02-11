@@ -12,7 +12,7 @@ struct AABB
     float           xMax;
     float           yMax;
     float           zMax;
-    Math::Vector3   max;
-    Math::Vector3   min;
+    Base::Vector3   max;
+    Base::Vector3   min;
     
 };

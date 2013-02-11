@@ -2,7 +2,7 @@
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
 #include "Interfaces/Interface.hpp"
-#include "Systems/Explosion/MeteorImpact.hpp"
+#include "Systems/Explosion/ObjectMeteorImpact.hpp"
 #include "Systems/Explosion/System.hpp"
 #include "Systems/Explosion/Scene.hpp"
 
@@ -23,7 +23,7 @@ MeteorImpact::MeteorImpact( ISystemScene* pSystemScene, pcstr pszName ) : Explos
 
     // Set default values
     m_bFragmentUsed = false;
-    m_Impact = Math::Vector3::Zero;
+    m_Impact = Base::Vector3::Zero;
 }
 
 
@@ -65,11 +65,11 @@ void MeteorImpact::Update( f32 DeltaTime )
     for( std::list<POI*>::iterator it = POIs.begin(); it != POIs.end(); it++ )
     {
         POI* pPOI = *it;
-        Math::Vector3 Diff = m_Position - pPOI->GetPosition();
+        Base::Vector3 Diff = m_Position - pPOI->GetPosition();
         if( pPOI->GetType() == POIType::e_POI_Contact )
         {   
             POIContact* pPOIContact = (POIContact*)pPOI;
-            Math::Vector3 position = pPOIContact->GetPosition();
+            Base::Vector3 position = pPOIContact->GetPosition();
             f32 impact = pPOIContact->GetImpact();
 
             // Hack: As there is no differentiation between hitting the ground or any other static mesh
@@ -112,18 +112,18 @@ void MeteorImpact::Update( f32 DeltaTime )
 
                 m_Position = position;
 
-                Math::Vector3 inboundVelocity, deflectionVelocity;
+                Base::Vector3 inboundVelocity, deflectionVelocity;
                 
-                Math::Vector3 vectorI = pPOIContact->GetVelocityObjectA() + pPOIContact->GetVelocityObjectB();
+                Base::Vector3 vectorI = pPOIContact->GetVelocityObjectA() + pPOIContact->GetVelocityObjectB();
                 vectorI.y *= -1.0f;
                 vectorI.x *= 0.95f;
                 vectorI.Normalize(); // get the deflection adjusted vector
 
                 const f32 scale = 0.1f;
-                f32 x = Math::Random::GetRandomFloat( -scale, scale ); 
-                f32 y = Math::Random::GetRandomFloat( -scale, scale ); 
-                f32 z = Math::Random::GetRandomFloat( -scale, scale ); 
-                f32 m = Math::Random::GetRandomFloat( -scale, scale ); 
+                f32 x = Base::Random::GetRandomFloat( -scale, scale ); 
+                f32 y = Base::Random::GetRandomFloat( -scale, scale ); 
+                f32 z = Base::Random::GetRandomFloat( -scale, scale ); 
+                f32 m = Base::Random::GetRandomFloat( -scale, scale ); 
                 vectorI.x += x;
                 vectorI.y += y;
                 vectorI.z += z;

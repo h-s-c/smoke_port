@@ -92,21 +92,21 @@ public:
     /// <returns>Position of the object.
     /// </returns>
     /// <seealso cref="IGeometryObject::GetPosition"/>
-    virtual const Math::Vector3* GetPosition( void );
+    virtual const Base::Vector3* GetPosition( void );
     /// <summary cref="OGREGraphicsObjectParticleSystem::GetOrientation">
     /// Implementation of the <c>IGeometryObject::GetOrientation</c> method.
     /// </summary>
     /// <returns>Orientation of the object.
     /// </returns>
     /// <seealso cref="IGeometryObject::GetOrientation"/>
-    virtual const Math::Quaternion* GetOrientation( void );
+    virtual const Base::Quaternion* GetOrientation( void );
     /// <summary cref="OGREGraphicsObjectParticleSystem::GetScale">
     /// Implementation of the <c>IGeometryObject::GetScale</c> method.
     /// </summary>
     /// <returns>Scale of the object.
     /// </returns>
     /// <seealso cref="IGeometryObject::GetScale"/>
-    virtual const Math::Vector3* GetScale( void );
+    virtual const Base::Vector3* GetScale( void );
 
 protected:
 
@@ -150,22 +150,22 @@ protected:
     /// <summary >
     /// OGREGraphicsObjectParticleSystem object position.
     /// </summary >
-    Math::Vector3                       m_Position;
+    Base::Vector3                       m_Position;
 
     /// <summary >
     /// OGREGraphicsObjectParticleSystem object last position recorded for this object used to calculate a direction (velocity) vector.
     /// </summary >
-    Math::Vector3                       m_LastPosition;
+    Base::Vector3                       m_LastPosition;
 
     /// <summary >
     /// OGREGraphicsObjectParticleSystem object orientation quaternion.
     /// </summary >
-    Math::Quaternion                    m_Orientation;
+    Base::Quaternion                    m_Orientation;
 
     /// <summary >
     /// OGREGraphicsObjectParticleSystem object scale.
     /// </summary >
-    Math::Vector3                       m_Scale;
+    Base::Vector3                       m_Scale;
 
     /// <summary >
     /// OGREGraphicsObjectParticleSystem object Ogre3D particle system material string ID name.

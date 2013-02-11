@@ -1,9 +1,9 @@
 #pragma once
 
-//internal
-#include "Systems/AI/POI.hpp"
-//stdlib
+// Standard Library
 #include <mutex>
+// System
+#include "Systems/Common/POI.hpp"
 
 
 class AISystem;

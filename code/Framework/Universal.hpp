@@ -61,7 +61,7 @@ public:
     /// <summary>
     ///   Creates a new UObject that gets attached to this scene.
     /// </summary>
-	/// <param name="pszName">The name for the object to use. (default = "")</param>
+    /// <param name="pszName">The name for the object to use. (default = "")</param>
     /// <returns>The newly created object that has consequently been added to the scene.</returns>
     UObject* CreateObject( pcstr pszName = "" );
 
@@ -103,15 +103,15 @@ protected:
     SystemScenes                            m_SystemScenes;
     Objects                                 m_Objects;
 
-	struct ObjectLinkData
-	{
-		ISubject*			    pSubject;
-		IObserver*			    pObserver;
-	};
-	typedef std::list<ObjectLinkData>	    ObjectLinks;
-	typedef ObjectLinks::iterator			ObjectLinksIt;
+    struct ObjectLinkData
+    {
+        ISubject*               pSubject;
+        IObserver*              pObserver;
+    };
+    typedef std::list<ObjectLinkData>       ObjectLinks;
+    typedef ObjectLinks::iterator           ObjectLinksIt;
 
-	ObjectLinks								m_ObjectLinks;
+    ObjectLinks                             m_ObjectLinks;
 };
 
 
@@ -211,17 +211,17 @@ public:
     /// <summary cref="IGeometryObject::GetPosition">
     ///   Implementation of the IGeometryObject GetPosition function.
     /// </summary>
-    virtual const Math::Vector3* GetPosition( void );
+    virtual const Base::Vector3* GetPosition( void );
 
     /// <summary cref="IGeometryObject::GetOrientation">
     ///   Implementation of the IGeometryObject GetOrientation function.
     /// </summary>
-	virtual const Math::Quaternion* GetOrientation( void );
+    virtual const Base::Quaternion* GetOrientation( void );
 
     /// <summary cref="IGeometryObject::GetScale">
     ///   Implementation of the IGeometryObject GetScale function.
     /// </summary>
-	virtual const Math::Vector3* GetScale( void );
+    virtual const Base::Vector3* GetScale( void );
 
     /// <summary cref="IGraphicsObject::GetSubMeshCount">
     ///   Implementation of the IGraphicsObject GetSubMeshCount function.
@@ -242,7 +242,7 @@ public:
     ///   Implementation of the IGraphicsObject GetVertexDeclaration function.
     /// </summary>
     virtual void GetVertexDeclaration( Out VertexDecl::Element* pVertexDecl,
-									   In  u16 nSubMeshIndex );
+                                       In  u16 nSubMeshIndex );
 
     /// <summary cref="IGraphicsObject::GetIndexCount">
     ///   Implementation of the IGraphicsObject GetIndexCount function.
@@ -277,7 +277,7 @@ public:
     /// <summary cref="IGraphicsObject::GetAABB">
     ///   Implementation of the IGraphicsObject GetAABB function.
     /// </summary>
-    virtual void GetAABB( Out Math::Vector3& Min, Out Math::Vector3& Max );
+    virtual void GetAABB( Out Base::Vector3& Min, Out Base::Vector3& Max );
 
 
 protected:

@@ -4,9 +4,9 @@
 //interface
 #include "Interfaces/Interface.hpp"
 //system
-#include "Systems/Input/System.hpp"
-#include "Systems/Input/Scene.hpp"
-#include "Systems/Input/Object.hpp"
+#include "Systems/InputOIS/System.hpp"
+#include "Systems/InputOIS/Scene.hpp"
+#include "Systems/InputOIS/Object.hpp"
 
 
 pcstr InputSystem::sm_kapszPropertyNames[] =

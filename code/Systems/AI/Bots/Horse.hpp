@@ -84,6 +84,6 @@ protected:
     f32 m_WalkSpeed;  // Walking speed for this horse
     f32 m_RunSpeed;   // Running speed for this horse
 
-    Math::Vector3 m_TargetPosition;
+    Base::Vector3 m_TargetPosition;
 };
 

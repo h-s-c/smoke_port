@@ -4,7 +4,7 @@
 //interface
 #include "Interfaces/Interface.hpp"
 //system
-#include "Systems/Input/Object.hpp"
+#include "Systems/InputOIS/Object.hpp"
 
 
 pcstr InputObject::sm_kapszTypeNames[] =
@@ -211,7 +211,7 @@ InputObject::GetPotentialSystemChanges(
 }
 
 
-const Math::Vector3*
+const Base::Vector3*
 InputObject::GetPosition(
     void
     )
@@ -220,7 +220,7 @@ InputObject::GetPosition(
 }
 
 
-const Math::Quaternion*
+const Base::Quaternion*
 InputObject::GetOrientation(
     void
     )
@@ -229,7 +229,7 @@ InputObject::GetOrientation(
 }
 
 
-const Math::Vector3*
+const Base::Vector3*
 InputObject::GetScale(
     void
     )

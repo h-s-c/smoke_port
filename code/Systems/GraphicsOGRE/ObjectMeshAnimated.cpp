@@ -6,7 +6,7 @@
 //external
 #include <Ogre.h>
 //system
-#include "Systems/GraphicsOGRE/MovableText.hpp"
+#include "Systems/GraphicsOGRE/Extras/MovableText.hpp"
 #include "Systems/GraphicsOGRE/Object.hpp"
 #include "Systems/GraphicsOGRE/ObjectMesh.hpp"
 #include "Systems/GraphicsOGRE/ObjectMeshAnimated.hpp"
@@ -48,7 +48,7 @@ OGREGraphicsObjectMeshAnimated::OGREGraphicsObjectMeshAnimated(
     : OGREGraphicsObjectMesh( pSystemScene, pszName )
 {
     // Set default values
-    m_Velocity = Math::Vector3::Zero;
+    m_Velocity = Base::Vector3::Zero;
     m_MaxVelocity = 0.0f;
 
     m_Type = OGREGraphicsObject::Type_MeshAnimated;
@@ -81,10 +81,10 @@ OGREGraphicsObjectMeshAnimated::Update(
     f32 Scale = 1.0f;
     if( m_MaxVelocity )
     {
-        Math::Vector3 vVelocityNormal(m_Velocity);
+        Base::Vector3 vVelocityNormal(m_Velocity);
         vVelocityNormal.Normalize();
 
-        Scale = Math::Min( 1.0f, m_Velocity.Magnitude() / m_MaxVelocity );
+        Scale = Base::Min( 1.0f, m_Velocity.Magnitude() / m_MaxVelocity );
 
         if(vVelocityNormal.y > 0.5f)
         {
@@ -130,7 +130,7 @@ OGREGraphicsObjectMeshAnimated::Update(
             pAnimation->m_State->setWeight( Weight );
 
             // Adjust amount of time in transition
-            pAnimation->m_Transition = Math::Max( 0.0f, pAnimation->m_Transition - DeltaTime );
+            pAnimation->m_Transition = Base::Max( 0.0f, pAnimation->m_Transition - DeltaTime );
             if( pAnimation->m_Transition == 0.0f && pAnimation->m_Disable )
             {
                 pAnimation->m_State->setEnabled( False );

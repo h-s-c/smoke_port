@@ -269,7 +269,7 @@ public:
     /// </summary>
     /// <param name="Min">The returned minimum AABB point.</param>
     /// <param name="Max">The returned maximum AABB point.</param>
-    virtual void GetAABB( Out Math::Vector3& Min, Out Math::Vector3& Max ) = 0;
+    virtual void GetAABB( Out Base::Vector3& Min, Out Base::Vector3& Max ) = 0;
 };
 
 
@@ -285,8 +285,8 @@ public:
 
     struct ParticleData
     {
-        Math::Vector3       Position;
-        Math::Vector3       Velocity;
+        Base::Vector3       Position;
+        Base::Vector3       Velocity;
         f32                 Size;
         f32                 Time;
         f32                 LifeTime;
@@ -297,16 +297,16 @@ public:
 
 public:
 
-	virtual u32 GetParticleGroupCount( void ){return 0;};
+    virtual u32 GetParticleGroupCount( void ){return 0;};
 
-	virtual void GetParticleGroup( u32 iParticleGroup, Out ParticleGroupData& ParticleGroup ){};
+    virtual void GetParticleGroup( u32 iParticleGroup, Out ParticleGroupData& ParticleGroup ){};
 
-	virtual u32 GetParticleCount( u32 iParticleGroup ) { return 0;};
+    virtual u32 GetParticleCount( u32 iParticleGroup ) { return 0;};
 
-	virtual void GetParticles( u32 iParticleGroup, Out ParticleData* pParticles ) {};
+    virtual void GetParticles( u32 iParticleGroup, Out ParticleData* pParticles ) {};
 
-	virtual std::string GetParticleGroupTechnique(void) {return "turkey breath";};
+    virtual std::string GetParticleGroupTechnique(void) {return "turkey breath";};
 
-	virtual f32 GetParticleSystemAge() {return 0.0f;};
+    virtual f32 GetParticleSystemAge() {return 0.0f;};
 
 };

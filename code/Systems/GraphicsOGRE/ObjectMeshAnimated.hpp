@@ -91,7 +91,7 @@ protected:
 
     // Member variables
     std::list<Animation*> m_Animations;   // Collection of animations
-    Math::Vector3         m_Velocity;     // Current velocity
+    Base::Vector3         m_Velocity;     // Current velocity
     f32                   m_MaxVelocity;  // Max velocity
 };
 

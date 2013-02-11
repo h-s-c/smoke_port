@@ -44,7 +44,7 @@ public:
 
     f32 m_Fear;                        // The level of fear for this animal
     f32 m_PanicLevel;                  // The level of fear that makes us panic
-    Math::Vector3 m_FearVector;        // Vector pointing in least scary direction
+    Base::Vector3 m_FearVector;        // Vector pointing in least scary direction
 
     Bool m_CanFly;                     // Can this creature fly?
 };

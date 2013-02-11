@@ -1,6 +1,6 @@
 #pragma once
  
-#include "Systems/GraphicsOGRE/DynamicRenderable.hpp"
+#include "Systems/GraphicsOGRE/Extras/DynamicRenderable.hpp"
 #include <vector>
  
 class DynamicLines : public DynamicRenderable

@@ -140,7 +140,7 @@ protected:
     ///   Implementation of the IGraphicsObject GetAABB function.
     /// </summary>
     /// <seealso cref="IGraphicsObject::GetAABB"/>
-    virtual void GetAABB( Out Math::Vector3& Min, Out Math::Vector3& Max );
+    virtual void GetAABB( Out Base::Vector3& Min, Out Base::Vector3& Max );
 
 protected:
 

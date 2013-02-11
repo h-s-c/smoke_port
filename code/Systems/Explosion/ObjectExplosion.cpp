@@ -36,7 +36,7 @@ Explosion::Explosion( ISystemScene* pSystemScene, pcstr pszName ) : ExplosionObj
     m_Type = ExplosionType::e_None;
     m_BlastForce = 0.0f;
     m_BlastRadius = 0.0f;
-    m_Velocity = Math::Vector3::Zero;
+    m_Velocity = Base::Vector3::Zero;
 }
 
 
@@ -74,18 +74,18 @@ void Explosion::Update( f32 DeltaTime )
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-void Explosion::SetVelocity(Math::Vector3 velocity)
+void Explosion::SetVelocity(Base::Vector3 velocity)
 {
     m_Velocity = velocity;
 }
 ///////////////////////////////////////////////////////////////////////////////
-const Math::Vector3* Explosion::GetVelocity(void)
+const Base::Vector3* Explosion::GetVelocity(void)
 {
     return &m_Velocity;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
-const Math::Vector3* Explosion::GetPosition(void)
+const Base::Vector3* Explosion::GetPosition(void)
 {
     return &m_Position;
 }

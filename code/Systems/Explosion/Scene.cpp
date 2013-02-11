@@ -1,15 +1,17 @@
-//internal
+// Base
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
+// Interface
 #include "Interfaces/Interface.hpp"
-#include "Systems/Explosion/MeteorImpact.hpp"
+// Standard Library
+#include <mutex>
+// System
+#include "Systems/Common/POI.hpp"
 #include "Systems/Explosion/Object.hpp"
-#include "Systems/Explosion/POI.hpp"
+#include "Systems/Explosion/ObjectMeteorImpact.hpp"
 #include "Systems/Explosion/Scene.hpp"
 #include "Systems/Explosion/System.hpp"
 #include "Systems/Explosion/Task.hpp"
-//stdlib
-#include <mutex>
 
 
 //

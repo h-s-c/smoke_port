@@ -41,14 +41,14 @@ Swallow::Swallow( ISystemScene* pSystemScene, pcstr pszName ) : Animal( pSystemS
     static u32 counter = 0;
     if( counter > 90 )
     {
-        m_TargetPosition = Math::Vector3::Zero;
+        m_TargetPosition = Base::Vector3::Zero;
         m_TargetPosition.x = -389.88f;
         m_TargetPosition.y = 1037.78f;
         m_TargetPosition.z = 2261.59f;
     }
     else
     {
-        m_TargetPosition = Math::Vector3::Zero;
+        m_TargetPosition = Base::Vector3::Zero;
         m_TargetPosition.x = -5000.0;
         m_TargetPosition.y = 500.0f;
         m_TargetPosition.z = 1500.0f;
@@ -129,12 +129,12 @@ void Swallow::Update( f32 DeltaTime )
     Animal::Update( DeltaTime );  
 
     // If we are too close to the ground and going down, set desired velocity to avoid the ground
-    Math::Vector3 Down = Math::Vector3::Zero;
+    Base::Vector3 Down = Base::Vector3::Zero;
     Down.y = -1.0f;
 
     if(  m_Position.y < MIN_DISTANCE_FOR_GROUND && m_DesiredVelocity.Dot( Down ) > 0.0f )
     {
-        m_DesiredVelocity = Math::Vector3::UnitY;
+        m_DesiredVelocity = Base::Vector3::UnitY;
     }
 }
 
@@ -159,7 +159,7 @@ void Swallow::UpdateFlock( void )
     }
 
     // Add a slight desire to return to the target position
-    Math::Vector3 Direction = m_TargetPosition - m_Position;
+    Base::Vector3 Direction = m_TargetPosition - m_Position;
     Direction.Normalize();
     Direction *= 0.35f;
     m_DesiredVelocity = m_DesiredVelocity + Direction;

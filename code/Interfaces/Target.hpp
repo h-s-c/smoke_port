@@ -27,5 +27,5 @@ public:
     /// <summary>
     ///   Return the point of interest for this object.
     /// </summary>
-    virtual Math::Vector3 GetTarget( void ) = 0;
+    virtual Base::Vector3 GetTarget( void ) = 0;
 };

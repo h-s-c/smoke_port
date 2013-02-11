@@ -22,7 +22,7 @@ class ISystemObject;
 //
 // service api
 //
-#include "Interfaces/Services/CollisionAPI.hpp"
+#include "Interfaces/Services/Collision.hpp"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// <summary>
@@ -172,7 +172,7 @@ public:
         /// </summary>
         /// <param name="Request">Collision request.</param>
         /// <returns>A handle used to get the results.</returns>
-        virtual Coll::Handle Test( const Coll::Request& Request ) = 0;
+        virtual Collision::Handle Test( const Collision::Request& Request ) = 0;
 
         /// <summary>
         ///   Requests a collision line test.
@@ -181,7 +181,7 @@ public:
         /// <param name="Position1">Vector position to end test.</param>
         /// <param name="Request">Collision request.</param>
         /// <returns>A handle used to get the results.</returns>
-        virtual Coll::Handle LineTest( const Math::Vector3& Position0, const Math::Vector3& Position1, Coll::Request& Request ) = 0;
+        virtual Collision::Handle LineTest( const Base::Vector3& Position0, const Base::Vector3& Position1, Collision::Request& Request ) = 0;
 
         /// <summary>
         ///   Gets results for the given handle.
@@ -189,7 +189,7 @@ public:
         /// <param name="Handle">Collision test handle.</param>
         /// <param name="Result">Pointer to structure to be filled with results.</param>
         /// <returns>Returns True if test has finished.</returns>
-        virtual Bool Finalize( Coll::Handle Handle, Coll::Result* Result ) = 0;
+        virtual Bool Finalize( Collision::Handle Handle, Collision::Result* Result ) = 0;
     };
 
     /// <summary>

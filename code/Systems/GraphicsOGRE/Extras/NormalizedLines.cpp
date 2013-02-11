@@ -4,8 +4,8 @@
 //interface
 #include "Interfaces/Interface.hpp"
 //system
-#include "Systems/GraphicsOGRE/DynamicRenderable.hpp"
-#include "Systems/GraphicsOGRE/NormalizedLines.hpp"
+#include "Systems/GraphicsOGRE/Extras/DynamicRenderable.hpp"
+#include "Systems/GraphicsOGRE/Extras/NormalizedLines.hpp"
 
 NormalizedLines::NormalizedLines(pcstr pcstrMaterialName)
 {
@@ -18,7 +18,7 @@ NormalizedLines::~NormalizedLines()
 {
 }
 
-void NormalizedLines::addPoint(const Math::Vector3& pos, const Math::Vector3& norm)
+void NormalizedLines::addPoint(const Base::Vector3& pos, const Base::Vector3& norm)
 {
     m_Points.push_back(pos);
     m_Normals.push_back(norm);
@@ -67,8 +67,8 @@ void NormalizedLines::fillHardwareBuffers()
         return;
     }
 
-    Math::Vector3 vaabMin = m_Points[0];
-    Math::Vector3 vaabMax = m_Points[0];
+    Base::Vector3 vaabMin = m_Points[0];
+    Base::Vector3 vaabMax = m_Points[0];
 
     Ogre::HardwareVertexBufferSharedPtr vbuf =
         mRenderOp.vertexData->vertexBufferBinding->getBuffer(0);
@@ -87,13 +87,13 @@ void NormalizedLines::fillHardwareBuffers()
             *prPos++ = m_Normals[i].y;
             *prPos++ = m_Normals[i].z;
 
-            vaabMin.x = Math::Min(m_Points[i].x, vaabMin.x);
-            vaabMin.y = Math::Min(m_Points[i].y, vaabMin.y);
-            vaabMin.z = Math::Min(m_Points[i].z, vaabMin.z);
+            vaabMin.x = Base::Min(m_Points[i].x, vaabMin.x);
+            vaabMin.y = Base::Min(m_Points[i].y, vaabMin.y);
+            vaabMin.z = Base::Min(m_Points[i].z, vaabMin.z);
 
-            vaabMax.x = Math::Max(m_Points[i].x, vaabMax.x);
-            vaabMax.y = Math::Max(m_Points[i].y, vaabMax.y);
-            vaabMax.z = Math::Max(m_Points[i].z, vaabMax.z);
+            vaabMax.x = Base::Max(m_Points[i].x, vaabMax.x);
+            vaabMax.y = Base::Max(m_Points[i].y, vaabMax.y);
+            vaabMax.z = Base::Max(m_Points[i].z, vaabMax.z);
         }
     }
     vbuf->unlock();

@@ -144,7 +144,7 @@ protected:
     ///   Implementation of the IGraphicsObject GetAABB function.
     /// </summary>
     /// <seealso cref="IGraphicsObject::GetAABB"/>
-    virtual void GetAABB( Out Math::Vector3& Min, Out Math::Vector3& Max );
+    virtual void GetAABB( Out Base::Vector3& Min, Out Base::Vector3& Max );
 
     /// <summary cref="OGREGraphicsObjectMesh::SetupNormalsAndTangentsDisplay">
     ///   Generate data need to display normals and tangets for this mesh.
@@ -182,9 +182,9 @@ protected:
     static pcstr                        sm_kapszPropertyNames[];
     static const Properties::Property   sm_kaDefaultProperties[];
 
-    Math::Vector3                       m_Position;
-    Math::Quaternion                    m_Orientation;
-    Math::Vector3                       m_Scale;
+    Base::Vector3                       m_Position;
+    Base::Quaternion                    m_Orientation;
+    Base::Vector3                       m_Scale;
 
     Ogre::Entity*                       m_pEntity;
 

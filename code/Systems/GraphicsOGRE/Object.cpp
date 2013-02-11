@@ -121,19 +121,19 @@ void UpdateGeometry( Ogre::SceneNode* pNode, System::Changes::BitMask ChangeType
 {
     if ( ChangeType & System::Changes::Geometry::Position )
     {
-        const Math::Vector3& Position = *pGeometryObject->GetPosition();
+        const Base::Vector3& Position = *pGeometryObject->GetPosition();
         pNode->setPosition( Position.x, Position.y, Position.z );
     }
 
     if ( ChangeType & System::Changes::Geometry::Orientation )
     {
-        const Math::Quaternion& Orientation = *pGeometryObject->GetOrientation();
+        const Base::Quaternion& Orientation = *pGeometryObject->GetOrientation();
         pNode->setOrientation( Orientation.w, Orientation.x, Orientation.y, Orientation.z );
     }
 
     if ( ChangeType & System::Changes::Geometry::Scale )
     {
-        const Math::Vector3& Scale = *pGeometryObject->GetScale();
+        const Base::Vector3& Scale = *pGeometryObject->GetScale();
         pNode->setScale(Scale.x, Scale.y, Scale.z );
     }
 }

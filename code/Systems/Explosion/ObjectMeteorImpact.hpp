@@ -1,7 +1,7 @@
 #pragma once
 
 //internal
-#include "Systems/Explosion/Explosion.hpp"
+#include "Systems/Explosion/ObjectExplosion.hpp"
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// <summary>
@@ -72,6 +72,6 @@ protected:
     /// <summary >
     /// MeteorImpact impact vector for fragment deflection angle calculations
     /// </summary >
-    Math::Vector3 m_Impact; // Impact vector for fragment deflection angle calculations
+    Base::Vector3 m_Impact; // Impact vector for fragment deflection angle calculations
 };
 

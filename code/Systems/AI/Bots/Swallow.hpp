@@ -50,6 +50,6 @@ protected:
     /// </summary>
     void UpdatePanic( void );
 
-    Math::Vector3 m_TargetPosition;
+    Base::Vector3 m_TargetPosition;
 };
 

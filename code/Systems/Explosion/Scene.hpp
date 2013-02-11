@@ -1,9 +1,11 @@
 #pragma once
 
-//internal
-#include "Systems/Explosion/POI.hpp"
-//stdlib
+// Standard Library
+#include <list>
 #include <mutex>
+#include <vector>
+// System
+#include "Systems/Common/POI.hpp"
 
 class ExplosionSystem;
 class ExplosionTask;

@@ -9,8 +9,8 @@
 //standard
 #include <mutex>
 //system
-#include "Systems/GraphicsOGRE/DynamicBuffer.hpp"
-#include "Systems/GraphicsOGRE/MovableText.hpp"
+#include "Systems/GraphicsOGRE/Extras/DynamicBuffer.hpp"
+#include "Systems/GraphicsOGRE/Extras/MovableText.hpp"
 #include "Systems/GraphicsOGRE/Object.hpp"
 #include "Systems/GraphicsOGRE/Task.hpp"
 #include "Systems/GraphicsOGRE/ObjectParticleSystem.hpp"
@@ -360,19 +360,19 @@ void OGREGraphicsObjectParticleSystem::Update( f32 DeltaTime )
 }
 
 
-const Math::Vector3* OGREGraphicsObjectParticleSystem::GetPosition( void )
+const Base::Vector3* OGREGraphicsObjectParticleSystem::GetPosition( void )
 {   
     return &m_Position;
 }
 
 
-const Math::Quaternion* OGREGraphicsObjectParticleSystem::GetOrientation( void )
+const Base::Quaternion* OGREGraphicsObjectParticleSystem::GetOrientation( void )
 {   
     return &m_Orientation;
 }
 
 
-const Math::Vector3* OGREGraphicsObjectParticleSystem::GetScale( void )
+const Base::Vector3* OGREGraphicsObjectParticleSystem::GetScale( void )
 {
     return &m_Scale;
 }

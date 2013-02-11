@@ -50,7 +50,7 @@ void Herding::Update( f32 DeltaTime )
         // If this target is visiable
         if( m_Targets[ Index ].m_Visible )
         {
-            Math::Vector3 Diff = m_Targets[ Index ].m_pBot->m_Position - m_Bot->m_Position;
+            Base::Vector3 Diff = m_Targets[ Index ].m_pBot->m_Position - m_Bot->m_Position;
 
             // Add this as a target if it's in range
             if( Diff.Magnitude() < m_Range )
@@ -64,19 +64,19 @@ void Herding::Update( f32 DeltaTime )
     if( NumTargets > 0 )
     {
         // Target Avoidance
-        Math::Vector3 AvoidanceVector;
+        Base::Vector3 AvoidanceVector;
         Avoidance( p_Targets, NumTargets, AvoidanceVector );
 
         // Velocity Matching
-        Math::Vector3 MatchingVector;
+        Base::Vector3 MatchingVector;
         Matching( p_Targets, NumTargets, MatchingVector );
 
         // Flock Centering
-        Math::Vector3 CenterVector;
+        Base::Vector3 CenterVector;
         Centering( p_Targets, NumTargets, CenterVector );
 
         // Determine the new direction
-        Math::Vector3 Direction = AvoidanceVector + MatchingVector + CenterVector;
+        Base::Vector3 Direction = AvoidanceVector + MatchingVector + CenterVector;
         
         // Remove y difference if we can't fly
         Animal* p_Animal = (Animal*)m_Bot;
@@ -107,14 +107,14 @@ void Herding::PostUpdate( f32 DeltaTime )
 
 ///////////////////////////////////////////////////////////////////////////////
 // Avoidance - Determine target avoidance vector
-void Herding::Avoidance( HerdingTarget** p_Targets, u32 NumTargets, Math::Vector3& Result )
+void Herding::Avoidance( HerdingTarget** p_Targets, u32 NumTargets, Base::Vector3& Result )
 {
-    Result = Math::Vector3::Zero;
+    Result = Base::Vector3::Zero;
 
     // Determine if we are too close to any other targets
     for( u32 Index = 0; Index < NumTargets; Index++ )
     {
-        Math::Vector3 Diff = p_Targets[ Index ]->m_pBot->m_Position - m_Bot->m_Position;
+        Base::Vector3 Diff = p_Targets[ Index ]->m_pBot->m_Position - m_Bot->m_Position;
 
         if( Diff.Magnitude() < m_MinDistance && m_Bot->m_Facing.Dot( Diff ) > 0.0f )
         {
@@ -127,10 +127,10 @@ void Herding::Avoidance( HerdingTarget** p_Targets, u32 NumTargets, Math::Vector
 
 ///////////////////////////////////////////////////////////////////////////////
 // Matching - Determine velocity matching vector
-void Herding::Matching( HerdingTarget** p_Targets, u32 NumTargets, Math::Vector3& Result )
+void Herding::Matching( HerdingTarget** p_Targets, u32 NumTargets, Base::Vector3& Result )
 {
     // Determine the avaerage velocity of all the targets
-    Math::Vector3 Velocity = Math::Vector3::Zero;
+    Base::Vector3 Velocity = Base::Vector3::Zero;
     for( u32 Index = 0; Index < NumTargets; Index++ )
     {
         Velocity += p_Targets[ Index ]->m_pBot->m_Velocity;
@@ -145,10 +145,10 @@ void Herding::Matching( HerdingTarget** p_Targets, u32 NumTargets, Math::Vector3
 
 ///////////////////////////////////////////////////////////////////////////////
 // Centering - Determine centering vector
-void Herding::Centering( HerdingTarget** p_Targets, u32 NumTargets, Math::Vector3& Result )
+void Herding::Centering( HerdingTarget** p_Targets, u32 NumTargets, Base::Vector3& Result )
 {
     // Determine the center of all the targets
-    Math::Vector3 Center = Math::Vector3::Zero;
+    Base::Vector3 Center = Base::Vector3::Zero;
     for( u32 Index = 0; Index < NumTargets; Index++ )
     {
         Center += p_Targets[ Index ]->m_pBot->m_Position;

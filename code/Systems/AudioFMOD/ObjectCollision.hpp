@@ -69,7 +69,7 @@ protected:
     /// </summary>
     /// <param name="CurrPos">Position of the source to update to</param>
     /// <returns>Error.</returns>
-    Error UpdateCollisionPosition( Math::Vector3* CurrPos );
+    Error UpdateCollisionPosition( Base::Vector3* CurrPos );
 
     /// <summary >
     /// FMODObjectCollision PropertyTypes enum

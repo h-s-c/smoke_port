@@ -1,10 +1,10 @@
 project (SystemGraphicsOGRE)
     set( SYSTEM_SOURCE
-        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/DynamicBuffer.cpp
-        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/DynamicLines.cpp
-        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/DynamicRenderable.cpp
-        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/MovableText.cpp
-        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/NormalizedLines.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/DynamicBuffer.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/DynamicLines.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/DynamicRenderable.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/MovableText.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/NormalizedLines.cpp
         ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Object.cpp
         ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/ObjectCamera.cpp
         ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/ObjectChart.cpp

@@ -96,14 +96,14 @@ protected:
     /// <param name="CurrPos">Position of listener to update to</param>
     /// <param name="CurrOri">Orientation of listener to update to</param>
     /// <returns>Error.</returns>
-    Error UpdateListener( Math::Vector3 *CurrPos, Math::Quaternion *CurrOri );
+    Error UpdateListener( Base::Vector3 *CurrPos, Base::Quaternion *CurrOri );
     
     /// <summary cref="FMODObject::UpdatePosition">
     ///   Updates the position for any source
     /// </summary>
     /// <param name="CurrPos">Position of the source to update to</param>
     /// <returns>Error.</returns>
-    Error UpdatePosition( Math::Vector3 *CurrPos );  // Handle changes in position
+    Error UpdatePosition( Base::Vector3 *CurrPos );  // Handle changes in position
     
     /// <summary cref="FMODObject::RandomPlay">
     ///   Play the sound specified as random upon initialization at a random time
@@ -153,10 +153,10 @@ protected:
     FMOD::Sound*    m_Buffer; // holds the sound
     FMOD::Channel*  m_Source; // where the sound plays
 
-    Math::Vector3       m_Position;     // Position of sound object
-    Math::Quaternion    m_Orientation;  // Orientation of sound object
+    Base::Vector3       m_Position;     // Position of sound object
+    Base::Quaternion    m_Orientation;  // Orientation of sound object
     
-    static Math::Vector3 prevPos;       // previous position for velocity calculation
+    static Base::Vector3 prevPos;       // previous position for velocity calculation
     
     Bool            m_FireActive; // when fire active, unpause fire sounds
 

@@ -712,7 +712,7 @@ UObject::ChangeOccurred(
 }
 
 
-const Math::Vector3*
+const Base::Vector3*
 UObject::GetPosition(
     void
     )
@@ -726,7 +726,7 @@ UObject::GetPosition(
 }
 
 
-const Math::Quaternion*
+const Base::Quaternion*
 UObject::GetOrientation(
     void
     )
@@ -740,7 +740,7 @@ UObject::GetOrientation(
 }
 
 
-const Math::Vector3*
+const Base::Vector3*
 UObject::GetScale(
     void
     )
@@ -849,8 +849,8 @@ UObject::GetStreamsChanged(
 
 void
 UObject::GetAABB(
-    Out Math::Vector3& Min,
-    Out Math::Vector3& Max
+    Out Base::Vector3& Min,
+    Out Base::Vector3& Max
     )
 {
     if ( m_pGraphicsObject == NULL )

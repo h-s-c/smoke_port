@@ -47,8 +47,8 @@ public:
     virtual void PostUpdate( f32 DeltaTime );
 
 protected:
-    Math::Vector3 m_TargetPosition;
-    Coll::Handle  m_CollHandle;
+    Base::Vector3 m_TargetPosition;
+    Collision::Handle  m_CollHandle;
     Bool          m_Finished;  // Goal has completed
 };
 

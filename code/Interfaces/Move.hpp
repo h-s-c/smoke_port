@@ -28,7 +28,7 @@ public:
     /// Gets the velocity of the object.
     /// </summary>
     /// <returns>A constant pointer to the velocity.</returns>
-    virtual const Math::Vector3* GetVelocity()    
+    virtual const Base::Vector3* GetVelocity()    
     {
         return nullptr;
     }

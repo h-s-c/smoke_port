@@ -34,12 +34,12 @@ namespace Collision
     // Collision Request
     struct Request
     {
-        Math::Vector3 m_Position0;  // Start position of the test
-        Math::Vector3 m_Position1;  // End position of the test
+        Base::Vector3 m_Position0;  // Start position of the test
+        Base::Vector3 m_Position1;  // End position of the test
         Type          m_Type;       // Type of test
         Handle        m_Handle;     // Unique handle for this request
         std::string   m_Ignore;     // Name of object to ignore in collision
-        Flags         m_Flags;      // Flags (see Coll::Flags)
+        Flags         m_Flags;      // Flags (see Collision::Flags)
 
         Request() { std::memset( this, 0, sizeof( *this ) ); }
         void SetIgnore( std::string ignore ) { m_Ignore = ignore; }
@@ -49,8 +49,8 @@ namespace Collision
     // Collision Result
     struct Result
     {
-        Math::Vector3   m_Position;   // Contact position
-        Math::Vector3   m_Normal;     // Normal vector (vector pernedicular to contact surface)
+        Base::Vector3   m_Position;   // Contact position
+        Base::Vector3   m_Normal;     // Normal vector (vector pernedicular to contact surface)
         std::string     m_Hit;        // Name of object hit (null is no collision detected)
         float           m_Depth;      // Penetration depth (along normal vector)
         std::uint32_t   m_Finalized;  // Collision test has finished (0 = no, 1 = yes, >1 = delete)

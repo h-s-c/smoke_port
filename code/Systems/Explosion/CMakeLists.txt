@@ -1,9 +1,9 @@
 project (SystemExplosion)
     set( SYSTEM_SOURCE
-        ${CMAKE_SOURCE_DIR}/Systems/Explosion/Explosion.cpp
-        ${CMAKE_SOURCE_DIR}/Systems/Explosion/MeteorImpact.cpp
         ${CMAKE_SOURCE_DIR}/Systems/Explosion/System.cpp
         ${CMAKE_SOURCE_DIR}/Systems/Explosion/Object.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/Explosion/ObjectExplosion.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/Explosion/ObjectMeteorImpact.cpp
         ${CMAKE_SOURCE_DIR}/Systems/Explosion/Scene.cpp
         ${CMAKE_SOURCE_DIR}/Systems/Explosion/System.cpp
         ${CMAKE_SOURCE_DIR}/Systems/Explosion/SystemExplosion.cpp

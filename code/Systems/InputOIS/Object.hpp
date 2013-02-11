@@ -96,18 +96,18 @@ public:
     /// <summary cref="IGeometryObject::GetPosition">
     ///   Implementation of the IGeometryObject GetPosition function.
     /// </summary>
-    virtual const Math::Vector3* GetPosition( void );
+    virtual const Base::Vector3* GetPosition( void );
 
 public:
     /// <summary cref="IGeometryObject::GetOrientation">
     ///   Implementation of the IGeometryObject GetOrientation function.
     /// </summary>
-    virtual const Math::Quaternion* GetOrientation( void );
+    virtual const Base::Quaternion* GetOrientation( void );
 protected:
     /// <summary cref="IGeometryObject::GetScale">
     ///   Implementation of the IGeometryObject GetScale function.
     /// </summary>
-    virtual const Math::Vector3* GetScale( void );
+    virtual const Base::Vector3* GetScale( void );
 
     /// <summary cref="IGUIObject::GetWindowData">
     ///   Implementation of the IGUIObject GetWindowData function.
@@ -116,11 +116,11 @@ protected:
 
 protected:
 
-    Math::Vector3                       m_Position;
+    Base::Vector3                       m_Position;
 
     // NOTE: m_Orientation is not really storing a Quaternion.  The data structure is being
     //       used to store pitch and yaw information.
-    Math::Quaternion                    m_Orientation;
+    Base::Quaternion                    m_Orientation;
 
     f32                                 m_Yaw;
     f32                                 m_Pitch;

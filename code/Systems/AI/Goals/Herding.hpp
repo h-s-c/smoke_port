@@ -64,7 +64,7 @@ protected:
     /// <param name="p_Targets">An array of target that should be avoided.</param>
     /// <param name="NumTargets">The number of targets in p_Targets.</param>
     /// <param name="Result">This vector will be filled in with the result.</param>
-    void Avoidance( HerdingTarget** p_Targets, u32 NumTargets, Math::Vector3& Result );
+    void Avoidance( HerdingTarget** p_Targets, u32 NumTargets, Base::Vector3& Result );
 
     /// <summary cref="Herding::Matching">
     /// Determines the best vector to match the heading of all p_Targets.
@@ -72,7 +72,7 @@ protected:
     /// <param name="p_Targets">An array of target that should be followed.</param>
     /// <param name="NumTargets">The number of targets in p_Targets.</param>
     /// <param name="Result">This vector will be filled in with the result.</param>
-    void Matching( HerdingTarget** p_Targets, u32 NumTargets, Math::Vector3& Result );
+    void Matching( HerdingTarget** p_Targets, u32 NumTargets, Base::Vector3& Result );
 
     /// <summary cref="Herding::Centering">
     /// Determines the best vector to get to the center of all p_Targets.
@@ -80,7 +80,7 @@ protected:
     /// <param name="p_Targets">An array of target that should be centered upon</param>
     /// <param name="NumTargets">The number of targets in p_Targets.</param>
     /// <param name="Result">This vector will be filled in with the result.</param>
-    void Centering( HerdingTarget** p_Targets, u32 NumTargets, Math::Vector3& Result );  // Determine centering vector
+    void Centering( HerdingTarget** p_Targets, u32 NumTargets, Base::Vector3& Result );  // Determine centering vector
 
     /// <summary cref="Herding::FindTargets">
     /// Find suitable herding targets (other AI's we should herd with).

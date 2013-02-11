@@ -34,7 +34,7 @@ void Idle::PreUpdate( f32 DeltaTime )
 void Idle::Update( f32 DeltaTime )
 {
     // Come to a stop
-    m_Bot->m_Speed = Math::Max( 0.0f, m_Bot->m_Speed - (m_Bot->m_Accel * DeltaTime) );
+    m_Bot->m_Speed = Base::Max( 0.0f, m_Bot->m_Speed - (m_Bot->m_Accel * DeltaTime) );
 }
 
 

@@ -20,7 +20,7 @@ public:
     /// </summary>
     /// <param name="pBot">Pointer to the bot that owns this goal.</param>
     /// <param name="TargetPosition">Desired position.</param>
-    GotoPosition( Bot* pBot, Math::Vector3 TargetPosition );
+    GotoPosition( Bot* pBot, Base::Vector3 TargetPosition );
    
     /// <summary cref="GotoPosition::GetName">
     ///   Gets the name for this goal ("GotoPosition").
@@ -34,7 +34,7 @@ public:
     /// the goal will try to move the AI towards.
     /// </summary>
     /// <param name="TargetPosition">Desired position.</param>
-    void SetPosition( Math::Vector3 TargetPosition );
+    void SetPosition( Base::Vector3 TargetPosition );
 
     /// <summary cref="GotoPosition::PreUpdate">
     /// This method is called before each <c>Update</c> call to perform pre-processing.
@@ -58,7 +58,7 @@ public:
     virtual void PostUpdate( f32 DeltaTime );
 
 protected:
-    Math::Vector3 m_TargetPosition;
+    Base::Vector3 m_TargetPosition;
     Bool          m_Finished;  // Goal has completed
 };
 

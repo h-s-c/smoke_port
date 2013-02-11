@@ -103,7 +103,7 @@ System::Changes::BitMask ExplosionObject::GetPotentialSystemChanges( void )
 
 ///////////////////////////////////////////////////////////////////////////////
 // GetPosition - Returns the position of this Object
-const Math::Vector3* ExplosionObject::GetPosition( void )
+const Base::Vector3* ExplosionObject::GetPosition( void )
 {
     return &m_Position;
 }
@@ -111,7 +111,7 @@ const Math::Vector3* ExplosionObject::GetPosition( void )
 
 ///////////////////////////////////////////////////////////////////////////////
 // GetOrientation - Returns the orientation of this Object
-const Math::Quaternion* ExplosionObject::GetOrientation( void )
+const Base::Quaternion* ExplosionObject::GetOrientation( void )
 {
     return &m_Orientation;
 }
@@ -119,7 +119,7 @@ const Math::Quaternion* ExplosionObject::GetOrientation( void )
 
 ///////////////////////////////////////////////////////////////////////////////
 // GetScale - Returns the scale of this Object
-const Math::Vector3* ExplosionObject::GetScale( void )
+const Base::Vector3* ExplosionObject::GetScale( void )
 {
     return &m_Scale;
 }

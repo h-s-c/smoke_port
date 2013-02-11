@@ -10,7 +10,7 @@
 #include <cfloat>
 #include <stdio.h>
 //system
-#include "Systems/GraphicsOGRE/MovableText.hpp"
+#include "Systems/GraphicsOGRE/Extras/MovableText.hpp"
 #include "Systems/GraphicsOGRE/System.hpp"
 #include "Systems/GraphicsOGRE/Scene.hpp"
 #include "Systems/GraphicsOGRE/Task.hpp"
@@ -88,7 +88,7 @@ const Properties::Property OGREGraphicsScene::sm_kaDefaultProperties[] =
                           Properties::Values::Color3,
                           Properties::Flags::Valid,
                           "R", "G", "B", NULL,
-                          Math::Color3::Black ),
+                          Base::Color3::Black ),
     Properties::Property( sm_kapszPropertyNames[ Property_Shadows ],
                           VALUE1x2( Properties::Values::Boolean ),
                           Properties::Flags::Valid,
@@ -98,7 +98,7 @@ const Properties::Property OGREGraphicsScene::sm_kaDefaultProperties[] =
                           Properties::Values::Color3,
                           Properties::Flags::Valid,
                           "R", "G", "B", NULL,
-                          Math::Color3::Black ),
+                          Base::Color3::Black ),
     Properties::Property( sm_kapszPropertyNames[ Property_DrawBoundingBox ],
                           Properties::Values::Boolean,
                           Properties::Flags::Valid,
@@ -846,7 +846,7 @@ OGREGraphicsScene::GetProperties(
     if ( m_pSceneManager != NULL )
     {
         Ogre::ColourValue AmbientColor = m_pSceneManager->getAmbientLight();
-        Math::Vector3 vAmbientColor(AmbientColor.r, AmbientColor.g, AmbientColor.b);
+        Base::Vector3 vAmbientColor(AmbientColor.r, AmbientColor.g, AmbientColor.b);
         Properties[ iProperty+Property_AmbientLight ].SetValue( vAmbientColor );
 
         Properties[ iProperty+Property_Shadows ].SetValue(
@@ -854,11 +854,11 @@ OGREGraphicsScene::GetProperties(
             );
 
         Ogre::ColourValue ShadowColor = m_pSceneManager->getShadowColour();
-        Math::Vector3 vShadowColor(ShadowColor.r, ShadowColor.g, ShadowColor.b);
+        Base::Vector3 vShadowColor(ShadowColor.r, ShadowColor.g, ShadowColor.b);
         Properties[ iProperty+Property_AmbientLight ].SetValue( vShadowColor );
 
         Ogre::ColourValue FogColor = m_pSceneManager->getFogColour();
-        Math::Vector3 vFogColor(FogColor.r, FogColor.g, FogColor.b);
+        Base::Vector3 vFogColor(FogColor.r, FogColor.g, FogColor.b);
         Properties[ iProperty + Property_FogColor ].SetValue( vFogColor );
 
         i32   mode         = m_pSceneManager->getFogMode();

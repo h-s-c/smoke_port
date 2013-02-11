@@ -68,7 +68,7 @@ __m128 INLINE _mm_div_ps_composite( const __m128& a, const __m128& b )
 }
 
 
-namespace Math
+namespace Base
 {
     class XVector3;
     class XVector4;

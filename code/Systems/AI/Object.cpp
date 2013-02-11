@@ -107,7 +107,7 @@ System::Changes::BitMask AIObject::GetPotentialSystemChanges( void )
 
 ///////////////////////////////////////////////////////////////////////////////
 // GetPosition - Returns the position of this Object
-const Math::Vector3* AIObject::GetPosition( void )
+const Base::Vector3* AIObject::GetPosition( void )
 {
     return &m_Position;
 }
@@ -115,7 +115,7 @@ const Math::Vector3* AIObject::GetPosition( void )
 
 ///////////////////////////////////////////////////////////////////////////////
 // GetPosition - Returns the orientation of this Object
-const Math::Quaternion* AIObject::GetOrientation( void )
+const Base::Quaternion* AIObject::GetOrientation( void )
 {
     return &m_Orientation;
 }
@@ -123,7 +123,7 @@ const Math::Quaternion* AIObject::GetOrientation( void )
 
 ///////////////////////////////////////////////////////////////////////////////
 // GetScale - Returns the scale of this Object
-const Math::Vector3* AIObject::GetScale( void )
+const Base::Vector3* AIObject::GetScale( void )
 {
     return &m_Scale;
 }

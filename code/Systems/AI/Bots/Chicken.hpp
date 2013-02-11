@@ -56,7 +56,7 @@ protected:
     /// </summary>
     void UpdatePanic( void );
 
-    Math::Vector3 m_IdleDirection;    // The desired facing direction when idealing
+    Base::Vector3 m_IdleDirection;    // The desired facing direction when idealing
     f32           m_CurrentMaxSpeed;  // Current max speed for this chicken
     f32           m_Duration;         // Time before next state change
      

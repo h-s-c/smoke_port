@@ -30,10 +30,10 @@ public:
     /// </summary>
     struct Info
     {
-		Math::Vector3 m_VelocityObjectA;
-		Math::Vector3 m_VelocityObjectB;
-		Math::Vector3 m_Normal;
-        Math::Vector3 m_Position;
+        Base::Vector3 m_VelocityObjectA;
+        Base::Vector3 m_VelocityObjectB;
+        Base::Vector3 m_Normal;
+        Base::Vector3 m_Position;
         f32           m_Impact;
         Bool          m_Static;
     };
@@ -63,12 +63,12 @@ public:
     struct Info
     {
         pcstr               pszName;
-        Math::Vector3       Position;
-        Math::Quaternion    Orientation;
-        Math::Vector3       LinearVelocity;
-        Math::Vector3       AngularVelocity;
-        Math::Vector3       AABBMin;
-        Math::Vector3       AABBMax;
+        Base::Vector3       Position;
+        Base::Quaternion    Orientation;
+        Base::Vector3       LinearVelocity;
+        Base::Vector3       AngularVelocity;
+        Base::Vector3       AABBMin;
+        Base::Vector3       AABBMax;
     };
     typedef std::vector<Info>           InfoArray;
     typedef InfoArray::const_iterator   InfoArrayIt;

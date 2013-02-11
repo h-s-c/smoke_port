@@ -7,7 +7,7 @@
 #include <OISMouse.h>
 #include <OISEvents.h>
 //system
-#include "Systems/Input/System.hpp"
+#include "Systems/InputOIS/System.hpp"
 
 class InputSystem;
 class InputTask;

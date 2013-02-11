@@ -11,14 +11,14 @@
 GotoPosition::GotoPosition( Bot* pBot ) : Goal( pBot )
 {
     // Init instance data
-    m_TargetPosition = Math::Vector3::Zero;
+    m_TargetPosition = Base::Vector3::Zero;
     m_Finished = False;
 }
 
 
 ///////////////////////////////////////////////////////////////////////////////
 // GotoPosition - Constructor with target position
-GotoPosition::GotoPosition( Bot* pBot, Math::Vector3 TargetPosition ) : Goal( pBot )
+GotoPosition::GotoPosition( Bot* pBot, Base::Vector3 TargetPosition ) : Goal( pBot )
 {
     // Init instance data
     SetPosition( TargetPosition );
@@ -35,7 +35,7 @@ GotoPosition::~GotoPosition( void )
 
 ///////////////////////////////////////////////////////////////////////////////
 // SetPosition - Set target position
-void GotoPosition::SetPosition( Math::Vector3 TargetPosition )
+void GotoPosition::SetPosition( Base::Vector3 TargetPosition )
 {
     m_TargetPosition = TargetPosition;
 }
@@ -55,7 +55,7 @@ void GotoPosition::Update( f32 DeltaTime )
 {
     if( !m_Finished )
     {
-        Math::Vector3 Disp = m_TargetPosition - m_Bot->m_Position;
+        Base::Vector3 Disp = m_TargetPosition - m_Bot->m_Position;
         f32 DistToTravel = Disp.Magnitude();
 
         f32 TimeToStop = m_Bot->m_Speed / m_Bot->m_Accel;
@@ -91,14 +91,14 @@ void GotoPosition::PostUpdate( f32 DeltaTime )
     UNREFERENCED_PARAM( DeltaTime );
 
     // Check if we've reached the target position
-    Math::Vector3 Disp = m_TargetPosition - m_Bot->m_Position;
+    Base::Vector3 Disp = m_TargetPosition - m_Bot->m_Position;
 
     #define MIN_DISTANCE_FROM_TARGET 1.0f
     if( Disp.Magnitude() < MIN_DISTANCE_FROM_TARGET )
     {
         m_Finished = True;
         m_Bot->m_Speed = 0.0f;
-        m_Bot->m_Velocity = Math::Vector3::Zero;
+        m_Bot->m_Velocity = Base::Vector3::Zero;
     }
 }
 

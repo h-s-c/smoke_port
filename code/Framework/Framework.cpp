@@ -2241,7 +2241,7 @@ Framework::GDFParser::ReadPropertyAttributes(
 
             case Properties::Values::Angle:
                 SetProperties[ iProp ].SetValue(
-                    iValue, Math::Angle::Deg2Rad( static_cast<f32>(pXmlAttrib->DoubleValue()) )
+                    iValue, Base::Angle::Deg2Rad( static_cast<f32>(pXmlAttrib->DoubleValue()) )
                     );
                 break;
 

@@ -66,19 +66,19 @@ protected:
     ///   Implementation of the IGeometryObject GetPosition function.
     /// </summary>
     /// <seealso cref="IGeometryObject::GetPosition"/>
-    virtual const Math::Vector3* GetPosition( void );
+    virtual const Base::Vector3* GetPosition( void );
 
     /// <summary cref="GeometryObject::GetOrientation">
     ///   Implementation of the IGeometryObject GetOrientation function.
     /// </summary>
     /// <seealso cref="IGeometryObject::GetOrientation"/>
-    virtual const Math::Quaternion* GetOrientation( void );
+    virtual const Base::Quaternion* GetOrientation( void );
 
     /// <summary cref="GeometryObject::GetScale">
     ///   Implementation of the IGeometryObject GetScale function.
     /// </summary>
     /// <seealso cref="IGeometryObject::GetScale"/>
-    virtual const Math::Vector3* GetScale( void );
+    virtual const Base::Vector3* GetScale( void );
 
 
 protected:
@@ -95,7 +95,7 @@ protected:
 
 private:
 
-    Math::Vector3                   m_Position;
-    Math::Quaternion                m_Orientation;
-    Math::Vector3                   m_Scale;
+    Base::Vector3                   m_Position;
+    Base::Quaternion                m_Orientation;
+    Base::Vector3                   m_Scale;
 };

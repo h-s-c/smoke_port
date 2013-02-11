@@ -304,37 +304,37 @@ namespace Properties
             return m_asValues[ Index ].c_str();
         }
 
-        const Math::Vector3 GetVector3( void ) const
+        const Base::Vector3 GetVector3( void ) const
         {
-            return Math::Vector3( m_aValues[ 0 ].Float32,
+            return Base::Vector3( m_aValues[ 0 ].Float32,
                                   m_aValues[ 1 ].Float32,
                                   m_aValues[ 2 ].Float32);
         }
 
-        const Math::Vector4 GetVector4( void ) const
+        const Base::Vector4 GetVector4( void ) const
         {
-            Math::Vector4 v = { m_aValues[ 0 ].Float32, m_aValues[ 1 ].Float32,
+            Base::Vector4 v = { m_aValues[ 0 ].Float32, m_aValues[ 1 ].Float32,
                                 m_aValues[ 2 ].Float32, m_aValues[ 3 ].Float32 };
             return v;
         }
 
-        const Math::Quaternion GetQuaternion( void ) const
+        const Base::Quaternion GetQuaternion( void ) const
         {
-            Math::Quaternion q ={ m_aValues[ 0 ].Float32, m_aValues[ 1 ].Float32,
+            Base::Quaternion q ={ m_aValues[ 0 ].Float32, m_aValues[ 1 ].Float32,
                                   m_aValues[ 2 ].Float32, m_aValues[ 3 ].Float32 };
             return q;
         }
 
-        const Math::Color3 GetColor3( void ) const
+        const Base::Color3 GetColor3( void ) const
         {
-            Math::Color3 c = { m_aValues[ 0 ].Float32, m_aValues[ 1 ].Float32,
+            Base::Color3 c = { m_aValues[ 0 ].Float32, m_aValues[ 1 ].Float32,
                                m_aValues[ 2 ].Float32 };
             return c;
         }
 
-        const Math::Color4 GetColor4( void ) const
+        const Base::Color4 GetColor4( void ) const
         {
-            Math::Color4 c = { m_aValues[ 0 ].Float32, m_aValues[ 1 ].Float32,
+            Base::Color4 c = { m_aValues[ 0 ].Float32, m_aValues[ 1 ].Float32,
                                m_aValues[ 2 ].Float32, m_aValues[ 3 ].Float32 };
             return c;
         }
@@ -363,22 +363,14 @@ namespace Properties
             m_asValues[ Index ] = Value;
         }
 
-        void SetValue( const Math::Vector3& Value )
+        void SetValue( const Base::Vector3& Value )
         {
             m_aValues[ 0 ].Float32 = Value.x;
             m_aValues[ 1 ].Float32 = Value.y;
             m_aValues[ 2 ].Float32 = Value.z;
         }
 
-        void SetValue( const Math::Vector4& Value )
-        {
-            m_aValues[ 0 ].Float32 = Value.x;
-            m_aValues[ 1 ].Float32 = Value.y;
-            m_aValues[ 2 ].Float32 = Value.z;
-            m_aValues[ 3 ].Float32 = Value.w;
-        }
-
-        void SetValue( const Math::Quaternion& Value )
+        void SetValue( const Base::Vector4& Value )
         {
             m_aValues[ 0 ].Float32 = Value.x;
             m_aValues[ 1 ].Float32 = Value.y;
@@ -386,14 +378,22 @@ namespace Properties
             m_aValues[ 3 ].Float32 = Value.w;
         }
 
-        void SetValue( const Math::Color3& Value )
+        void SetValue( const Base::Quaternion& Value )
+        {
+            m_aValues[ 0 ].Float32 = Value.x;
+            m_aValues[ 1 ].Float32 = Value.y;
+            m_aValues[ 2 ].Float32 = Value.z;
+            m_aValues[ 3 ].Float32 = Value.w;
+        }
+
+        void SetValue( const Base::Color3& Value )
         {
             m_aValues[ 0 ].Float32 = Value.b;
             m_aValues[ 1 ].Float32 = Value.g;
             m_aValues[ 2 ].Float32 = Value.r;
         }
 
-        void SetValue( const Math::Color4& Value )
+        void SetValue( const Base::Color4& Value )
         {
             m_aValues[ 0 ].Float32 = Value.b;
             m_aValues[ 1 ].Float32 = Value.g;

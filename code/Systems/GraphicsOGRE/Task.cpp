@@ -7,14 +7,14 @@
 #include <Ogre.h>
 #include <OgreGLPlugin.h>
 //system
-#include "Systems/GraphicsOGRE/MovableText.hpp"
+#include "Systems/GraphicsOGRE/Extras/MovableText.hpp"
 #include "Systems/GraphicsOGRE/Scene.hpp"
 #include "Systems/GraphicsOGRE/Task.hpp"
 #include "Systems/GraphicsOGRE/Object.hpp"
 #include "Systems/GraphicsOGRE/ObjectCamera.hpp"
 #include "Systems/GraphicsOGRE/ObjectMesh.hpp"
-#include "Systems/GraphicsOGRE/DynamicLines.hpp"
-#include "Systems/GraphicsOGRE/NormalizedLines.hpp"
+#include "Systems/GraphicsOGRE/Extras/DynamicLines.hpp"
+#include "Systems/GraphicsOGRE/Extras/NormalizedLines.hpp"
 
 // UPDATE: provides access to environment variables
 extern ManagerInterfaces   g_Managers;

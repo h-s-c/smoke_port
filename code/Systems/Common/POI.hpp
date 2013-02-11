@@ -46,7 +46,7 @@ public:
     inline POIType::POIType GetType( void ) { return m_Type; }
     
     // Returns True is this POI is no longer valid.
-    virtual inline Bool Expired( void ) { return True; }
+    virtual inline bool Expired( void ) { return true; }
 
 protected:
     Base::Vector3    m_Position;  // Position of POI
@@ -62,8 +62,10 @@ public:
     POIContact( void )
     {
         m_Position = Base::Vector3::Zero;
+        m_Normal = Base::Vector3::Zero;
         m_Type = POIType::e_POI_Contact;
         m_Impact = 0.0f;
+        m_bStatic = false;
     }
 
     ~POIContact( void ) {}
@@ -75,9 +77,22 @@ public:
     // Set the strength of the impact that caused this contact.  
     // The larger the number, to more significant the impact.
     inline void SetImpact( float impact ) { m_Impact = impact; }
+    
+    inline void SetStatic( bool bStatic ) { m_bStatic = bStatic; }
+    inline bool IsStatic( void ) { return m_bStatic; }
+    inline Base::Vector3 GetVelocityObjectA( void ) { return m_VelocityObjectA; }
+    inline void SetVelocityObjectA( Base::Vector3 velocityA ) { m_VelocityObjectA = velocityA; }
+    inline Base::Vector3 GetVelocityObjectB( void ) { return m_VelocityObjectB; }
+    inline void SetVelocityObjectB( Base::Vector3 velocityB ) { m_VelocityObjectB = velocityB; }
+    inline Base::Vector3 GetNormal( void ) { return m_Normal; }
+    inline void SetNormal( Base::Vector3 normal ) { m_Normal = normal; }    
 
 protected:
     float m_Impact;  // Impulse of collision
+    bool  m_bStatic;
+    Base::Vector3 m_VelocityObjectA;
+    Base::Vector3 m_VelocityObjectB;
+    Base::Vector3 m_Normal;
 };
 
 
@@ -116,7 +131,7 @@ public:
         m_Type     = POIType::e_POI_Fire;
         m_AABB_Max = Base::Vector3::Zero;
         m_AABB_Min = Base::Vector3::Zero;
-        m_Name     = NULL;
+        m_Name     = "";
     }
 
     ~POIFire( void ) {}
@@ -139,7 +154,7 @@ public:
 
     // Returns the unique name for fire POI. 
     // The name can be used to unique define each fire.
-    inline pcstr GetName( void ) { return m_Name; }
+    inline std::string GetName( void ) { return m_Name; }
     
     // Sets the name for this fire.  Name must be unique for each fire.
     inline void  SetName( std::string name ) { m_Name = name; }

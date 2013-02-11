@@ -196,23 +196,23 @@ protected:
     /// <summary cref="AIObject::GetPosition">
     ///   Implementation of the <c>IGeometryObject::GetPosition</c> function.
     /// </summary>
-    /// <returns>Math::Vector3* - Returns the position for this AI object.</returns>
+    /// <returns>Base::Vector3* - Returns the position for this AI object.</returns>
     /// <seealso cref="IGeometryObject::GetPosition"/>
-    virtual const Math::Vector3* GetPosition( void );
+    virtual const Base::Vector3* GetPosition( void );
 
     /// <summary cref="AIObject::GetOrientation">
     ///   Implementation of the <c>IGeometryObject::GetOrientation</c> function.
     /// </summary>
-    /// <returns>Math::Quaternion* - Returns the orientation quaternion for this AI object.</returns>
+    /// <returns>Base::Quaternion* - Returns the orientation quaternion for this AI object.</returns>
     /// <seealso cref="IGeometryObject::GetOrientation"/>
-    virtual const Math::Quaternion* GetOrientation( void );
+    virtual const Base::Quaternion* GetOrientation( void );
 
     /// <summary cref="AIObject::GetScale">
     ///   Implementation of the <c>IGeometryObject::GetScale</c> function.
     /// </summary>
-    /// <returns>Math::Vector3* - Returns the scale for this AI object.</returns>
+    /// <returns>Base::Vector3* - Returns the scale for this AI object.</returns>
     /// <seealso cref="IGeometryObject::GetScale"/>
-    virtual const Math::Vector3* GetScale( void );
+    virtual const Base::Vector3* GetScale( void );
 
 
     /// <summary cref="AIObject::GetBehavior">
@@ -248,9 +248,9 @@ public:
     /// <returns>i32 - Returns the state for this AI.</returns>
     inline i32 GetState( void ) { return m_State.GetState(); }
 
-    Math::Vector3       m_Position;     // Position of AI object
-    Math::Quaternion    m_Orientation;  // Orientation of AI object
-    Math::Vector3       m_Scale;        // Scale of AI object
+    Base::Vector3       m_Position;     // Position of AI object
+    Base::Quaternion    m_Orientation;  // Orientation of AI object
+    Base::Vector3       m_Scale;        // Scale of AI object
 
 protected:
     /// <summary cref="AIObject::SetBehavior">

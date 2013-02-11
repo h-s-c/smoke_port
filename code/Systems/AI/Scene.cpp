@@ -1,19 +1,21 @@
-//internal
+// Base
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
+// Interface
 #include "Interfaces/Interface.hpp"
+// Standard Library
+#include <mutex>
+// System
+#include "Systems/Common/POI.hpp"
 #include "Systems/AI/Bots/Animal.hpp"
 #include "Systems/AI/Bots/Bot.hpp"
 #include "Systems/AI/Bots/Chicken.hpp"
 #include "Systems/AI/Bots/Horse.hpp"
 #include "Systems/AI/Bots/Swallow.hpp"
-#include "Systems/AI/CamBot.hpp"
 #include "Systems/AI/Object.hpp"
-#include "Systems/AI/POI.hpp"
+#include "Systems/AI/ObjectCamBot.hpp"
 #include "Systems/AI/Scene.hpp"
 #include "Systems/AI/Task.hpp"
-//stdlib
-#include <mutex>
 
 
 extern ManagerInterfaces   g_Managers;
@@ -233,7 +235,7 @@ Error AIScene::ChangeOccurred( ISubject* pSubject, System::Changes::BitMask Chan
             if( pPOI->GetType() == POIType::e_POI_Fire )
             {
                 POIFire* pTestFire = (POIFire*)pPOI;
-                if( strcmp( pTestFire->GetName(), AreaName ) == 0 )
+                if( strcmp( pTestFire->GetName().c_str(), AreaName ) == 0 )
                 {
                     pFire = pTestFire;
                     break;
@@ -252,11 +254,11 @@ Error AIScene::ChangeOccurred( ISubject* pSubject, System::Changes::BitMask Chan
         m_mutex.unlock();
 
         // Set data
-        Math::Vector3 Min, Max;
+        Base::Vector3 Min, Max;
         pAreaObject->GetAreaBB( Min, Max );
         pFire->SetAABB( Min, Max );
 
-        Math::Vector3 Center = ( Min + Max ) * 0.5f;
+        Base::Vector3 Center = ( Min + Max ) * 0.5f;
         pFire->SetPosition( Center );
     }
     else if( ChangeType & System::Changes::POI::Contact )

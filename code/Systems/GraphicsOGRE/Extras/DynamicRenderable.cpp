@@ -1,5 +1,5 @@
 //internal
-#include "Systems/GraphicsOGRE/DynamicRenderable.hpp"
+#include "Systems/GraphicsOGRE/Extras/DynamicRenderable.hpp"
 //external
 #include <OgreCamera.h>
 #include <OgreHardwareBufferManager.h>

@@ -36,7 +36,7 @@ Chicken::Chicken( ISystemScene* pSystemScene, pcstr pszName ) : Animal( pSystemS
     m_PanicLevel = 0.40f;
     m_CurrentMaxSpeed = MAX_SPEED_CALM;
 
-    m_IdleDirection = Math::Vector3::Zero;
+    m_IdleDirection = Base::Vector3::Zero;
     m_Duration = 0.0f;
 }
 
@@ -183,14 +183,14 @@ void Chicken::UpdateIdle( f32 DeltaTime )
         m_Duration = 1.0f * ( (f32)rand() / (f32)RAND_MAX );
 
         // Increase length of flocking as we get more panicked
-        m_Duration += 2.0f * Math::Min( 1.0f, m_Fear / m_PanicLevel );
+        m_Duration += 2.0f * Base::Min( 1.0f, m_Fear / m_PanicLevel );
     }
 
     // Rotate toward our desired direction
-    f32 Diff = Math::Angle::ACos( m_Facing.Dot( m_IdleDirection ) );
+    f32 Diff = Base::Angle::ACos( m_Facing.Dot( m_IdleDirection ) );
     if( Diff > 0.01f )
     {
-        Math::Quaternion Rotation;
+        Base::Quaternion Rotation;
         Rotation.Set( (m_Facing.Cross( m_IdleDirection )).Normalize(), 0.25f * DeltaTime );
 
         m_Orientation = m_Orientation * Rotation;

@@ -1,14 +1,14 @@
-//core
+// Base
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
-//interface
+// Interface
 #include "Interfaces/Interface.hpp"
-//external
+// External
 #include <Ogre.h>
 #include <PagedGeometry.h>
 #include <GrassLoader.h>
-//system
-#include "Systems/GraphicsOGRE/DynamicBuffer.hpp"
+// System
+#include "Systems/GraphicsOGRE/Extras/DynamicBuffer.hpp"
 #include "Systems/GraphicsOGRE/Object.hpp"
 #include "Systems/GraphicsOGRE/ObjectParticles.hpp"
 #include "Systems/GraphicsOGRE/Scene.hpp"
@@ -245,8 +245,8 @@ OGREGraphicsObjectParticles::ChangeOccurred(
         //
         // Get the AABB information from the graphics object.
         //
-        Math::Vector3 AABBMin;
-        Math::Vector3 AABBMax;
+        Base::Vector3 AABBMin;
+        Base::Vector3 AABBMax;
         pGfxObj->GetAABB( AABBMin, AABBMax );
         AABBMax.y += m_fFireBBHeight;  // make bounding boxes a taller for the embers and smoke
         Ogre::AxisAlignedBox oaabb(Ogre::Vector3(AABBMin.x,AABBMin.y,AABBMin.z),Ogre::Vector3(AABBMax.x,AABBMax.y,AABBMax.z));
@@ -269,8 +269,8 @@ OGREGraphicsObjectParticles::ChangeOccurred(
         //
         // Get the AABB information from the graphics object.
         //
-        Math::Vector3 AABBMin;
-        Math::Vector3 AABBMax;
+        Base::Vector3 AABBMin;
+        Base::Vector3 AABBMax;
         pGfxObj->GetAABB( AABBMin, AABBMax );
 
         m_pDynamicObject->setExtents( AABBMin, AABBMax );
@@ -416,8 +416,8 @@ OGREGraphicsObjectParticles::GetVertices(
 
 void
 OGREGraphicsObjectParticles::GetAABB(
-    Out Math::Vector3& Min,
-    Out Math::Vector3& Max
+    Out Base::Vector3& Min,
+    Out Base::Vector3& Max
     )
 {
     UNREFERENCED_PARAM( Min );

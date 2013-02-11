@@ -40,33 +40,33 @@ const Properties::Property OGREGraphicsObjectLight::sm_kaDefaultProperties[] =
                           Properties::Values::Vector3,
                           Properties::Flags::Valid,
                           NULL, NULL, NULL, NULL,
-                          Math::Vector3::Zero ),
+                          Base::Vector3::Zero ),
     Properties::Property( sm_kapszPropertyNames[ Property_Diffuse ],
                           Properties::Values::Color3,
                           Properties::Flags::Valid,
                           "R", "G", "B", NULL,
-                          Math::Color3::Black ),
+                          Base::Color3::Black ),
     Properties::Property( sm_kapszPropertyNames[ Property_Specular ],
                           Properties::Values::Color3,
                           Properties::Flags::Valid,
                           "R", "G", "B", NULL,
-                          Math::Color3::Black ),
+                          Base::Color3::Black ),
     Properties::Property( sm_kapszPropertyNames[ Property_Direction ],
                           Properties::Values::Vector3,
                           Properties::Flags::Valid,
                           NULL, NULL, NULL, NULL,
-                          Math::Vector3::Zero ),
+                          Base::Vector3::Zero ),
     Properties::Property( sm_kapszPropertyNames[ Property_Range ],
                           VALUE3( Properties::Values::Angle, Properties::Values::Angle,
                                   Properties::Values::Float32 ),
                           Properties::Flags::Valid,
                           NULL, NULL, NULL, NULL,
-                          Math::Vector3::Zero ),
+                          Base::Vector3::Zero ),
     Properties::Property( sm_kapszPropertyNames[ Property_Attenuation ],
                           VALUE1x4( Properties::Values::Float32 ),
                           Properties::Flags::Valid,
                           NULL, NULL, NULL, NULL,
-                          Math::Vector3::Zero ),
+                          Base::Vector3::Zero ),
 };
 
 
@@ -210,22 +210,22 @@ OGREGraphicsObjectLight::GetProperties(
         Properties[ iProperty+Property_Type ].SetValue( 0, m_LightType );
 
         Ogre::Vector3 OgrePos = m_pLight->getPosition();
-        Math::Vector3 Position(OgrePos.x, OgrePos.y, OgrePos.z);
+        Base::Vector3 Position(OgrePos.x, OgrePos.y, OgrePos.z);
         Properties[ iProperty+Property_Position ].SetValue( Position );
 
         const Ogre::ColourValue OgreDiffuseColor = m_pLight->getDiffuseColour();
-        Math::Color3 DiffuseColor = { OgreDiffuseColor.r, OgreDiffuseColor.g, OgreDiffuseColor.b };
+        Base::Color3 DiffuseColor = { OgreDiffuseColor.r, OgreDiffuseColor.g, OgreDiffuseColor.b };
         Properties[ iProperty+Property_Diffuse ].SetValue( DiffuseColor );
 
         const Ogre::ColourValue OgreSpecularColor = m_pLight->getSpecularColour();
-        Math::Color3 SpecularColor = { OgreSpecularColor.r, OgreSpecularColor.g,
+        Base::Color3 SpecularColor = { OgreSpecularColor.r, OgreSpecularColor.g,
                                         OgreSpecularColor.b };
         Properties[ iProperty+Property_Diffuse ].SetValue( SpecularColor );
 
         if ( m_LightType == LightType_Spot )
         {
             Ogre::Vector3 OgreDir = m_pLight->getDirection();
-            Math::Vector3 Direction( OgreDir.x, OgreDir.y, OgreDir.z);
+            Base::Vector3 Direction( OgreDir.x, OgreDir.y, OgreDir.z);
             Properties[ iProperty+Property_Direction ].SetValue( Direction );
 
             Properties[ iProperty+Property_Range ].SetValue(

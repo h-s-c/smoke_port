@@ -4,7 +4,7 @@
 //interface
 #include "Interfaces/Interface.hpp"
 //system
-#include "Systems/AI/CamBot.hpp"
+#include "Systems/AI/ObjectCamBot.hpp"
 
 
 template <class T>
@@ -35,17 +35,17 @@ T catmullRom( T p1, T p2, T p3, T p4, f32 f )
 // CamBot - Constructor
 CamBot::CamBot( ISystemScene* pSystemScene, pcstr pszName ) : AIObject( pSystemScene, pszName )
 {
-    Math::Vector3 house(-974,625,-2855);
-    Math::Vector3 coop(-3061,  93, -2309);
-    Math::Vector3 truck(0,50,0);
+    Base::Vector3 house(-974,625,-2855);
+    Base::Vector3 coop(-3061,  93, -2309);
+    Base::Vector3 truck(0,50,0);
 
-    Math::Vector3 tree_center(-4305,1083,-4256);
-    Math::Vector3 tree_side1(-4316,654,-8492);
-    Math::Vector3 tree_side2(-5245,325,-1594);
-    Math::Vector3 tree_mid(-7504,54,-6646);
+    Base::Vector3 tree_center(-4305,1083,-4256);
+    Base::Vector3 tree_side1(-4316,654,-8492);
+    Base::Vector3 tree_side2(-5245,325,-1594);
+    Base::Vector3 tree_mid(-7504,54,-6646);
 
 #if 0
-    AddControlPoint(Math::Vector3::Zero, house );
+    AddControlPoint(Base::Vector3::Zero, house );
     AddControlPoint(coop, corral_1 ); // start location
 
     AddControlPoint(corral_1, corral_1_2 );   // loop around corral
@@ -120,15 +120,15 @@ CamBot::~CamBot( void )
 void CamBot::AddControlPoint( float x, float y, float z )
 {
     ASSERT( m_LookAtPoints.size() > 0 );
-    Math::Vector3 la( m_LookAtPoints[m_LookAtPoints.size()-1] );
+    Base::Vector3 la( m_LookAtPoints[m_LookAtPoints.size()-1] );
     AddControlPoint(x,y,z,la.x,la.y,la.z );
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 void CamBot::AddControlPoint( float x1, float y1, float z1, float x2, float y2, float z2  )
 {
-    m_ControlPoints.push_back(Math::Vector3(x1,y1,z1));
-    m_LookAtPoints.push_back(Math::Vector3(x2,y2,z2));
+    m_ControlPoints.push_back(Base::Vector3(x1,y1,z1));
+    m_LookAtPoints.push_back(Base::Vector3(x2,y2,z2));
 
     // if there's more than 2 control points, figure out the distance from
     // this latest one to the last one
@@ -177,7 +177,7 @@ void CamBot::SetPosition( f32 DeltaTime )
     return;
   }
 
-  float f = Math::Min( 1.0f, m_SegmentElapsedTime/m_SegmentTotalTime );
+  float f = Base::Min( 1.0f, m_SegmentElapsedTime/m_SegmentTotalTime );
 
   //Debug::Print("Fraction of segment = %f  elapsed Distance = %f\n",f,m_SegmentElapsedTime*m_speed);
 

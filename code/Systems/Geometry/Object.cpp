@@ -16,17 +16,17 @@ const Properties::Property GeometryObject::sm_kaDefaultProperties[] =
                           Properties::Values::Vector3,
                           Properties::Flags::Valid,
                           NULL, NULL, NULL, NULL,
-                          Math::Vector3::Zero ),
+                          Base::Vector3::Zero ),
     Properties::Property( sm_kapszPropertyNames[ Property_Orientation ],
                           Properties::Values::Quaternion,
                           Properties::Flags::Valid,
                           NULL, NULL, NULL, NULL,
-                          Math::Vector3::Zero ),
+                          Base::Vector3::Zero ),
     Properties::Property( sm_kapszPropertyNames[ Property_Scale ],
                           Properties::Values::Vector3,
                           Properties::Flags::Valid,
                           NULL, NULL, NULL, NULL,
-                          Math::Vector3::Zero ),
+                          Base::Vector3::Zero ),
 };
 
 
@@ -34,9 +34,9 @@ GeometryObject::GeometryObject(
     ISystemScene* pSystemScene
     )
     : ISystemObject( pSystemScene, NULL )
-    , m_Position( Math::Vector3::Zero )
-    , m_Orientation( Math::Quaternion::Zero )
-    , m_Scale( Math::Vector3::One )
+    , m_Position( Base::Vector3::Zero )
+    , m_Orientation( Base::Quaternion::Zero )
+    , m_Scale( Base::Vector3::One )
 {
     ASSERT( Property_Count == sizeof sm_kapszPropertyNames / sizeof sm_kapszPropertyNames[ 0 ] );
     ASSERT( Property_Count == sizeof sm_kaDefaultProperties / sizeof sm_kaDefaultProperties[ 0 ] );
@@ -201,7 +201,7 @@ GeometryObject::GetPotentialSystemChanges(
 }
 
 
-const Math::Vector3*
+const Base::Vector3*
 GeometryObject::GetPosition(
     void
     )
@@ -210,7 +210,7 @@ GeometryObject::GetPosition(
 }
 
 
-const Math::Quaternion*
+const Base::Quaternion*
 GeometryObject::GetOrientation(
     void
     )
@@ -219,7 +219,7 @@ GeometryObject::GetOrientation(
 }
 
 
-const Math::Vector3*
+const Base::Vector3*
 GeometryObject::GetScale(
     void
     )

@@ -1,13 +1,14 @@
 #pragma once
-#include "Base/Compat.hpp"
-#include "Base/Platform.hpp"
 
-#include <math.h>
+// Base
+#include "Base/Platform.hpp"
+// Standard Library
+#include <cmath>
 
 #define MIN(x,y) ( ( (x) < (y) ) ? (x) : (y) )
 #define MAX(x,y) ( ( (x) > (y) ) ? (x) : (y) )
 
-namespace Math
+namespace Base
 {
     ////////////////////////////////////////////////////////////////////////////////////////////////
     /// <summary>
@@ -19,45 +20,45 @@ namespace Math
     {
     public:
 
-        static float Deg2Rad( f32 Degrees )
+        static float Deg2Rad( float Degrees )
         {
             return Degrees * (Pi / 180.0f);
         }
 
-        static f32 Sin( f32 Rad )
+        static float Sin( float Rad )
         {
-            return sin( Rad );
+            return std::sin( Rad );
         }
 
-        static f32 Cos( f32 Rad )
+        static float Cos( float Rad )
         {
-            return cos( Rad );
+            return std::cos( Rad );
         }
 
-        static f32 Tan( f32 Rad )
+        static float Tan( float Rad )
         {
-            return tan( Rad );
+            return std::tan( Rad );
         }
 
-        static f32 ASin( f32 Rad )
+        static float ASin( float Rad )
         {
-            return asin( Rad );
+            return std::asin( Rad );
         }
 
-        static f32 ACos( f32 Rad )
+        static float ACos( float Rad )
         {
-            return acos( Rad );
+            return std::acos( Rad );
         }
 
-        static f32 ATan( f32 Rad )
+        static float ATan( float Rad )
         {
-            return atan( Rad );
+            return std::atan( Rad );
         }
 
 
     public:
 
-        static const f32 Pi;
+        static const float Pi;
     };
 
 
@@ -72,8 +73,8 @@ namespace Math
         static const Vector2 Zero;
         static const Vector2 One;
 
-        f32             x;
-        f32             y;
+        float             x;
+        float             y;
     };
 
 
@@ -95,21 +96,21 @@ namespace Math
         static const Vector3 UnitZ;
 
         /// <summary>
-        ///   Provides a cast to a f32 pointer.
+        ///   Provides a cast to a float pointer.
         /// </summary>
         /// <remarks>Inlined for performance.</remarks>
         /// <returns>A pointer to the matrix array.</returns>
-        operator f32*( void )
+        operator float*( void )
         {
             return &x;
         }
 
         /// <summary>
-        ///   Provides a cast to a constant f32 pointer.
+        ///   Provides a cast to a constant float pointer.
         /// </summary>
         /// <remarks>Inlined for performance.</remarks>
         /// <returns>A pointer to the constant matrix array.</returns>
-        operator const f32*( void ) const
+        operator const float*( void ) const
         {
             return &x;
         }
@@ -162,7 +163,7 @@ namespace Math
         /// <remarks>Inlined for performance.</remarks>
         /// <param name="Scalar">The scalar to multiply to this vector.</param>
         /// <returns>A reference to this vector.</returns>
-        Vector3& operator*=( f32 Scalar )
+        Vector3& operator*=( float Scalar )
         {
             x *= Scalar;
             y *= Scalar;
@@ -176,11 +177,11 @@ namespace Math
         /// <remarks>Inlined for performance.</remarks>
         /// <param name="Scalar">The scalar to divide from this vector.</param>
         /// <returns>A reference to this vector.</returns>
-        Vector3& operator/=( f32 Scalar )
+        Vector3& operator/=( float Scalar )
         {
             if ( Scalar != 0.0f )
             {
-                f32 Inv = 1.0f / Scalar;
+                float Inv = 1.0f / Scalar;
                 x *= Inv;
                 y *= Inv;
                 z *= Inv;
@@ -217,12 +218,12 @@ namespace Math
         }
 
 
-        //Vector3 operator/(const f32 &v)const
+        //Vector3 operator/(const float &v)const
         //{
         //    return Vector3(*this) /= v;
         //}
 
-        //Vector3 operator*(const f32 &v)const
+        //Vector3 operator*(const float &v)const
         //{
         //    return Vector3(*this) *= v;
         //}
@@ -255,7 +256,7 @@ namespace Math
         /// <remarks>Inlined for performance.</remarks>
         /// <param name="Scalar">The scalar to multiply to this vector.</param>
         /// <returns>The new vector created by this operation.</returns>
-        Vector3 operator*( f32 Scalar ) const
+        Vector3 operator*( float Scalar ) const
         {
             Vector3 v(x * Scalar, y * Scalar, z * Scalar);
             return v;
@@ -267,13 +268,13 @@ namespace Math
         /// <remarks>Inlined for performance.</remarks>
         /// <param name="Scalar">The scalar to divide from this vector.</param>
         /// <returns>The new vector created by this operation.</returns>
-        Vector3 operator/( f32 Scalar ) const
+        Vector3 operator/( float Scalar ) const
         {
             Vector3 v = Zero;
 
             if ( Scalar != 0.0f )
             {
-                f32 Inv = 1.0f / Scalar;
+                float Inv = 1.0f / Scalar;
                 v.x = x * Inv;
                 v.y = y * Inv;
                 v.z = z * Inv;
@@ -287,7 +288,7 @@ namespace Math
         /// </summary>
         /// <param name="a">The vector to compare to this vector.</param>
         /// <returns>The result of the comparison.</returns>
-        bool operator==( const Math::Vector3& a ) const
+        bool operator==( const Base::Vector3& a ) const
         {
             return (x == a.x) && (y == a.y) && (z == a.z);
         }
@@ -297,18 +298,18 @@ namespace Math
         /// </summary>
         /// <param name="a">The vector to compare to this vector.</param>
         /// <returns>The result of the comparison.</returns>
-        bool operator!=( const Math::Vector3& a ) const
+        bool operator!=( const Base::Vector3& a ) const
         {
-			return (x != a.x) || (y != a.y) || (z != a.z);
+            return (x != a.x) || (y != a.y) || (z != a.z);
         }
 
         /// <summary>
         ///   Returns the magnitude of the vector.
         /// </summary>
         /// <returns>The magnitude of the vector.</returns>
-        f32 Magnitude( void ) const
+        float Magnitude( void ) const
         {
-            return sqrtf( x*x + y*y + z*z );
+            return std::sqrt( x*x + y*y + z*z );
         }
 
         /// <summary>
@@ -317,11 +318,11 @@ namespace Math
         /// <returns>A refrence to this vector.</returns>
         const Vector3& Normalize( void )
         {
-            f32 Mag = Magnitude();
+            float Mag = Magnitude();
 
             if ( Mag != 0.0f )
             {
-                f32 Inv = 1.0f / Mag;
+                float Inv = 1.0f / Mag;
                 x *= Inv;
                 y *= Inv;
                 z *= Inv;
@@ -335,7 +336,7 @@ namespace Math
         /// </summary>
         /// <param name="a">The other vector.</param>
         /// <returns>The dot product.</returns>
-        f32 Dot( const Vector3& a ) const
+        float Dot( const Vector3& a ) const
         {
             return x * a.x + y * a.y + z*a.z;
         }
@@ -359,7 +360,7 @@ namespace Math
         /// <param name="_y">the y value.</param>
         /// <param name="_z">the z value.</param>
         /// <returns>The constructed vector3.</returns>
-        Vector3(f32 _x, f32 _y, f32 _z )
+        Vector3(float _x, float _y, float _z )
         {
             x = _x;
             y = _y;
@@ -371,7 +372,7 @@ namespace Math
         /// </summary>
         /// <param name="_v">the value to use for x, y and z.</param>
         /// <returns>The constructed Vector3.</returns>
-        Vector3(f32 _v)
+        Vector3(float _v)
         {
             x = y = z = _v;
         }
@@ -385,9 +386,9 @@ namespace Math
         {
         }
 
-        f32             x;
-        f32             y;
-        f32             z;
+        float             x;
+        float             y;
+        float             z;
     };
 
 
@@ -406,21 +407,21 @@ namespace Math
         static const Vector4 One;
 
         /// <summary>
-        ///   Provides a cast to a f32 pointer.
+        ///   Provides a cast to a float pointer.
         /// </summary>
         /// <remarks>Inlined for performance.</remarks>
         /// <returns>A pointer to the matrix array.</returns>
-        operator f32*( void )
+        operator float*( void )
         {
             return &x;
         }
 
         /// <summary>
-        ///   Provides a cast to a constant f32 pointer.
+        ///   Provides a cast to a constant float pointer.
         /// </summary>
         /// <remarks>Inlined for performance.</remarks>
         /// <returns>A pointer to the constant matrix array.</returns>
-        operator const f32*( void ) const
+        operator const float*( void ) const
         {
             return &x;
         }
@@ -476,7 +477,7 @@ namespace Math
         /// <remarks>Inlined for performance.</remarks>
         /// <param name="Scalar">The scalar to multiply to this vector.</param>
         /// <returns>A reference to this vector.</returns>
-        Vector4& operator*=( f32 Scalar )
+        Vector4& operator*=( float Scalar )
         {
             x *= Scalar;
             y *= Scalar;
@@ -491,11 +492,11 @@ namespace Math
         /// <remarks>Inlined for performance.</remarks>
         /// <param name="Scalar">The scalar to divide from this vector.</param>
         /// <returns>A reference to this vector.</returns>
-        Vector4& operator/=( f32 Scalar )
+        Vector4& operator/=( float Scalar )
         {
             if ( Scalar != 0.0f )
             {
-                f32 Inv = 1.0f / Scalar;
+                float Inv = 1.0f / Scalar;
                 x *= Inv;
                 y *= Inv;
                 z *= Inv;
@@ -550,7 +551,7 @@ namespace Math
         /// <remarks>Inlined for performance.</remarks>
         /// <param name="Scalar">The scalar to multiply to this vector.</param>
         /// <returns>The new vector created by this operation.</returns>
-        Vector4 operator*( f32 Scalar ) const
+        Vector4 operator*( float Scalar ) const
         {
             Vector4 v = { x * Scalar, y * Scalar, z * Scalar, w * Scalar };
             return v;
@@ -562,13 +563,13 @@ namespace Math
         /// <remarks>Inlined for performance.</remarks>
         /// <param name="Scalar">The scalar to divide from this vector.</param>
         /// <returns>The new vector created by this operation.</returns>
-        Vector4 operator/( f32 Scalar ) const
+        Vector4 operator/( float Scalar ) const
         {
             Vector4 r = Zero;
             
             if ( Scalar != 0.0f )
             {
-                f32 Inv = 1.0f / Scalar;
+                float Inv = 1.0f / Scalar;
                 r.x = x * Inv;
                 r.y = y * Inv;
                 r.z = z * Inv;
@@ -578,10 +579,10 @@ namespace Math
             return r;
         }
 
-        f32             x;
-        f32             y;
-        f32             z;
-        f32             w;
+        float             x;
+        float             y;
+        float             z;
+        float             w;
     };
 
 
@@ -598,7 +599,7 @@ namespace Math
         //
         static const Quaternion Zero;
 
-		/// <summary>
+        /// <summary>
         ///   Functionality for adding two quaternions.
         /// </summary>
         /// <remarks>Inlined for performance.</remarks>
@@ -610,7 +611,7 @@ namespace Math
             return r;
         }
 
-		/// <summary>
+        /// <summary>
         ///   Functionality for subtracting two quaternions.
         /// </summary>
         /// <remarks>Inlined for performance.</remarks>
@@ -661,36 +662,36 @@ namespace Math
         /// <param name="Axis">The normalized vector axis."</param>
         /// <param name="Angle">The angle of the vector axis."</param>
         /// <returns>A reference to this quaternion.</returns>
-        const Quaternion& Set( In Math::Vector3& Axis, In f32 Angle );
+        const Quaternion& Set( In Base::Vector3& Axis, In float Angle );
 
         /// <summary>
         ///   Sets a quaternion using Euler angles.
         /// </summary>
         /// <param name="Angles">The Euler angles for the quaternion."</param>
         /// <returns>A reference to this quaternion.</returns>
-        const Quaternion& Set( In Math::Vector3& Angles );
+        const Quaternion& Set( In Base::Vector3& Angles );
 
-		/// <summary>
+        /// <summary>
         ///   Sets a quaternion using Euler angles.
         /// </summary>
         /// <param name="RotationX">The rotation around X in radians."</param>
-		/// <param name="RotationY">The rotation around Y in radians."</param>
-		/// <param name="RotationZ">The rotation around Z in radians."</param>
+        /// <param name="RotationY">The rotation around Y in radians."</param>
+        /// <param name="RotationZ">The rotation around Z in radians."</param>
         /// <returns>A reference to this quaternion.</returns>
-        const Quaternion& Set( In f32 RotationX, In f32 RotationY, In f32 RotationZ )
-		{
-			Vector3 Angles(RotationX, RotationY, RotationZ );
-			return Set( Angles );
-		}
+        const Quaternion& Set( In float RotationX, In float RotationY, In float RotationZ )
+        {
+            Vector3 Angles(RotationX, RotationY, RotationZ );
+            return Set( Angles );
+        }
 
         /// <summary>
         ///   Calculates the magnitude of this quaternion.
         /// </summary>
         /// <remarks>Inlined for performance.</remarks>
         /// <returns>The magnitude.</returns>
-        f32 Magnitude( void )
+        float Magnitude( void )
         {
-            return sqrtf( x*x + y*y + z*z + w*w );
+            return std::sqrt( x*x + y*y + z*z + w*w );
         }
 
         /// <summary>
@@ -717,17 +718,17 @@ namespace Math
             r.w = w;
         }
 
-		/// <summary>
+        /// <summary>
         ///   Rotates the given vector by this quaternion.
         /// </summary>
         /// <param name="a ">The vector to be rotated by this this quaternion.</param>
         /// <remarks>Inlined for performance.</remarks>
         void Rotate( Vector3& a );
 
-        f32             x;
-        f32             y;
-        f32             z;
-        f32             w;
+        float             x;
+        float             y;
+        float             z;
+        float             w;
     };
 
 
@@ -838,45 +839,45 @@ namespace Math
         /// <param name="b">Input b.</param>
         /// <param name="c">Input c.</param>
         /// <param name="d">Input d.</param>
-		/// <returns>Calculates a Cofactor4</returns>
-        f32 Cofactor4(f32 a, f32 b, f32 c, f32 d);
+        /// <returns>Calculates a Cofactor4</returns>
+        float Cofactor4(float a, float b, float c, float d);
 
         /// <summary>
         ///   calulates a cofactor for a 4x4 matrix or determinent of a 3x3 matrix.
         /// </summary>
-		/// <param name="a">Input a.</param>
-		/// <param name="b">Input b.</param>
-		/// <param name="c">Input c.</param>
-		/// <param name="d">Input d.</param>
-		/// <param name="e">Input e.</param>
-		/// <param name="f">Input f.</param>
-		/// <param name="g">Input g.</param>
-		/// <param name="h">Input h.</param>
-		/// <param name="i">Input i.</param>
+        /// <param name="a">Input a.</param>
+        /// <param name="b">Input b.</param>
+        /// <param name="c">Input c.</param>
+        /// <param name="d">Input d.</param>
+        /// <param name="e">Input e.</param>
+        /// <param name="f">Input f.</param>
+        /// <param name="g">Input g.</param>
+        /// <param name="h">Input h.</param>
+        /// <param name="i">Input i.</param>
         /// <returns>Calculates a Cofactor9</returns>
-        f32 Cofactor9(f32 a, f32 b, f32 c, f32 d, f32 e, f32 f, f32 g, f32 h, f32 i);
+        float Cofactor9(float a, float b, float c, float d, float e, float f, float g, float h, float i);
 
         /// <summary>
-        ///   Provides a cast to a f32 pointer.
+        ///   Provides a cast to a float pointer.
         /// </summary>
         /// <remarks>Inlined for performance.</remarks>
         /// <returns>A pointer to the matrix array.</returns>
-        operator f32*( void )
+        operator float*( void )
         {
             return m;
         }
 
         /// <summary>
-        ///   Provides a cast to a f32 pointer.
+        ///   Provides a cast to a float pointer.
         /// </summary>
         /// <remarks>Inlined for performance.</remarks>
         /// <returns>A pointer to the constant matrix array.</returns>
-        operator const f32*( void ) const
+        operator const float*( void ) const
         {
             return m;
         }
 
-        f32 m[ 16 ];
+        float m[ 16 ];
     };
 
 
@@ -891,9 +892,9 @@ namespace Math
         static const Color3 Black;
         static const Color3 White;
 
-        f32             r;
-        f32             g;
-        f32             b;
+        float             r;
+        float             g;
+        float             b;
     };
 
 
@@ -908,22 +909,22 @@ namespace Math
         static const Color4 Black;
         static const Color4 White;
 
-        f32             b;
-        f32             g;
-        f32             r;
-        f32             a;
+        float             b;
+        float             g;
+        float             r;
+        float             a;
     };
 
 
-	// Min/Max for f32
-	inline f32 Min( f32 x, f32 y ) { return ( x < y ) ? x : y; }
-	inline f32 Max( f32 x, f32 y ) { return ( x > y ) ? x : y; }
-	
-	inline f32 Floor( f32 x ) { return floor( x ); }
+    // Min/Max for float
+    inline float Min( float x, float y ) { return ( x < y ) ? x : y; }
+    inline float Max( float x, float y ) { return ( x > y ) ? x : y; }
+    
+    inline float Floor( float x ) { return floor( x ); }
 
-	// Min/Max for Vector3
-	inline Vector3 Min( Math::Vector3& x, Math::Vector3& y ) { return ( x.Magnitude() < y.Magnitude() ) ? x : y; }
-	inline Vector3 Max( Math::Vector3& x, Math::Vector3& y ) { return ( x.Magnitude() > y.Magnitude() ) ? x : y; }
+    // Min/Max for Vector3
+    inline Vector3 Min( Base::Vector3& x, Base::Vector3& y ) { return ( x.Magnitude() < y.Magnitude() ) ? x : y; }
+    inline Vector3 Max( Base::Vector3& x, Base::Vector3& y ) { return ( x.Magnitude() > y.Magnitude() ) ? x : y; }
 
 
     ////////////////////////////////////////////////////////////////////////////////////////////////
@@ -934,6 +935,6 @@ namespace Math
 
     struct Random
     {
-        static f32 GetRandomFloat(float a, float b);
+        static float GetRandomFloat(float a, float b);
     };
 }

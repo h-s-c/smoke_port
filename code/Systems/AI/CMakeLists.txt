@@ -1,7 +1,7 @@
 project (SystemAI)
     set( SYSTEM_SOURCE
-        ${CMAKE_SOURCE_DIR}/Systems/AI/CamBot.cpp
         ${CMAKE_SOURCE_DIR}/Systems/AI/Object.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/AI/ObjectCamBot.cpp
         ${CMAKE_SOURCE_DIR}/Systems/AI/Scene.cpp
         ${CMAKE_SOURCE_DIR}/Systems/AI/System.cpp
         ${CMAKE_SOURCE_DIR}/Systems/AI/SystemAI.cpp

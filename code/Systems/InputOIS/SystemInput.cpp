@@ -4,7 +4,7 @@
 //interface
 #include "Interfaces/Interface.hpp"
 //system
-#include "Systems/Input/System.hpp"
+#include "Systems/InputOIS/System.hpp"
 
 
 #if defined(COMPILER_MSVC)

@@ -1,4 +1,4 @@
-#include "Systems/GraphicsOGRE/DynamicLines.hpp"
+#include "Systems/GraphicsOGRE/Extras/DynamicLines.hpp"
 #include <Ogre.h>
 #include <cassert>
 #include <cmath>

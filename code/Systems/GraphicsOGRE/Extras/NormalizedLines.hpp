@@ -27,9 +27,9 @@ public:
     /// <summary cref="NormalizedLines::addPoint">
     /// Add a normal to the list
     /// </summary>
-    /// <param name="pos">const Math::Vector3& - Location of normal</param>
-    /// <param name="norm">const Math::Vector3& - Normal vector</param>
-    void addPoint(const Math::Vector3& pos, const Math::Vector3& norm);
+    /// <param name="pos">const Base::Vector3& - Location of normal</param>
+    /// <param name="norm">const Base::Vector3& - Normal vector</param>
+    void addPoint(const Base::Vector3& pos, const Base::Vector3& norm);
 
     /// <summary cref="NormalizedLines::getNumPoints">
     /// Return the total number of normals
@@ -58,8 +58,8 @@ protected:
     /// </summary>
     virtual void fillHardwareBuffers();
 
-    std::vector<Math::Vector3> m_Points;
-    std::vector<Math::Vector3> m_Normals;
+    std::vector<Base::Vector3> m_Points;
+    std::vector<Base::Vector3> m_Normals;
     Bool m_bDirty;
 };
 

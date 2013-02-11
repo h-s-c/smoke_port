@@ -1,7 +1,8 @@
 #pragma once
 
-//internal
-#include "Interfaces/Services/CollisionAPI.hpp"
+// Interfaces
+#include "Interfaces/Services/Collision.hpp"
+// System
 #include "Systems/AI/Object.hpp"
 #include "Systems/AI/Goals/Goal.hpp"
 
@@ -70,9 +71,9 @@ public:
     /// Implementation of the <c>IMoveObject::GetVelocity</c> function.
     /// This function returns the Bot's current velocity
     /// </summary>
-    /// <returns>Math::Vector3* - Velocity of this Bot</returns>
+    /// <returns>Base::Vector3* - Velocity of this Bot</returns>
     /// <seealso cref="IMoveObject::GetVelocity"/>
-    virtual const Math::Vector3* GetVelocity() { return &m_Velocity; }
+    virtual const Base::Vector3* GetVelocity() { return &m_Velocity; }
 
     /// <summary cref="Bot::GetMaxVelocity">
     /// Implementation of the <c>IMoveObject::GetMaxVelocity</c> function.
@@ -106,17 +107,17 @@ public:
     f32   m_Agility;     // Scalar used for changing m_Velocity to m_DesiredVelocity
     f32   m_YOffset;     // Distance off the ground from m_Position to the root
 
-    Math::Vector3 m_Velocity;         // Current velocity 
-    Math::Vector3 m_DesiredVelocity;  // Desired velocity 
+    Base::Vector3 m_Velocity;         // Current velocity 
+    Base::Vector3 m_DesiredVelocity;  // Desired velocity 
 
-    Math::Vector3 m_OriginalFacing;   // The orignal facing vector (based on art file)
-    Math::Vector3 m_Facing;           // Direction this bot is facing
+    Base::Vector3 m_OriginalFacing;   // The orignal facing vector (based on art file)
+    Base::Vector3 m_Facing;           // Direction this bot is facing
 
 private:
-    Math::Vector3 m_Ground;          // Current ground position
-    Coll::Handle  m_GroundTest;      // Current ground test
+    Base::Vector3 m_Ground;          // Current ground position
+    Collision::Handle  m_GroundTest;      // Current ground test
     Bool          m_GroundValid;     // Is m_Ground valid?
-    Coll::Handle  m_MoveTest;        // Current move collision test
-    Math::Vector3 m_TargetPosition;  // Desired position
+    Collision::Handle  m_MoveTest;        // Current move collision test
+    Base::Vector3 m_TargetPosition;  // Desired position
 };
 

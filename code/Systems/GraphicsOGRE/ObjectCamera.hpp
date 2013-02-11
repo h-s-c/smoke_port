@@ -77,19 +77,19 @@ public:
     ///   Implementation of the IGeometryObject GetPosition function.
     /// </summary>
     /// <seealso cref="IGeometryObject::GetPosition"/>
-    virtual const Math::Vector3* GetPosition( void );
+    virtual const Base::Vector3* GetPosition( void );
 
     /// <summary cref="OGREGraphicsObjectCamera::GetOrientation">
     ///   Implementation of the IGeometryObject GetOrientation function.
     /// </summary>
     /// <seealso cref="IGeometryObject::GetOrientation"/>
-    virtual const Math::Quaternion* GetOrientation( void );
+    virtual const Base::Quaternion* GetOrientation( void );
 
     /// <summary cref="OGREGraphicsObjectCamera::GetScale">
     ///   Implementation of the IGeometryObject GetScale function.
     /// </summary>
     /// <seealso cref="IGeometryObject::GetScale"/>
-    virtual const Math::Vector3* GetScale( void );
+    virtual const Base::Vector3* GetScale( void );
 
     /// <summary cref="OGREGraphicsObjectCamera::GetPotentialSystemChanges">
     ///   Implementation of the <c>ISubject::GetPotentialSystemChanges</c> function.
@@ -121,7 +121,7 @@ protected:
 
     bool                                m_bLocked;
 public:
-    Math::Vector3                       m_vLookAt;
+    Base::Vector3                       m_vLookAt;
 protected:
     System::Types::BitMask              m_Modified;
 
@@ -136,9 +136,9 @@ protected:
     static const pcstr                  sm_kapszPolygonModeEnumOptions[];
     PolygonModes                        m_PolygonMode;
 public:
-    Math::Vector3                       m_Position;     // Position of AI object
+    Base::Vector3                       m_Position;     // Position of AI object
 protected:
-    Math::Quaternion                    m_Orientation;  // Orientation of AI object
-    Math::Vector3                       m_Scale;        // Scale of AI object
+    Base::Quaternion                    m_Orientation;  // Orientation of AI object
+    Base::Vector3                       m_Scale;        // Scale of AI object
 };
 

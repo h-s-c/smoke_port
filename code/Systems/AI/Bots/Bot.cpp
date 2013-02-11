@@ -28,15 +28,15 @@ Bot::Bot( ISystemScene* pSystemScene, pcstr pszName ) : AIObject( pSystemScene, 
     m_Agility    = 1.0f;
     m_YOffset    = 200.0f;
 
-    m_Velocity        = Math::Vector3::Zero;
-    m_DesiredVelocity = Math::Vector3::Zero;
+    m_Velocity        = Base::Vector3::Zero;
+    m_DesiredVelocity = Base::Vector3::Zero;
 
-    m_Ground      = Math::Vector3::Zero;
-    m_GroundTest  = Coll::InvalidHandle;
+    m_Ground      = Base::Vector3::Zero;
+    m_GroundTest  = Collision::InvalidHandle;
     m_GroundValid = False;
     m_PhysicsMove = True;
 
-    m_MoveTest = Coll::InvalidHandle;
+    m_MoveTest = Collision::InvalidHandle;
 
     m_OriginalFacing.x = 0.0f;
     m_OriginalFacing.y = 0.0f;
@@ -44,11 +44,11 @@ Bot::Bot( ISystemScene* pSystemScene, pcstr pszName ) : AIObject( pSystemScene, 
     m_OriginalFacing.Normalize();
 
     m_Facing = m_OriginalFacing;
-    m_Orientation = Math::Quaternion::Zero;
+    m_Orientation = Base::Quaternion::Zero;
     m_Orientation.Rotate( m_Facing );
     m_Facing.Normalize();
     
-    m_Position = Math::Vector3::Zero;
+    m_Position = Base::Vector3::Zero;
     m_TargetPosition = m_Position;
 }
 
@@ -88,7 +88,7 @@ void Bot::PreUpdate( f32 DeltaTime )
     AIObject::PreUpdate( DeltaTime );
 
     // Clear out desired velocity
-    m_DesiredVelocity = Math::Vector3::Zero;
+    m_DesiredVelocity = Base::Vector3::Zero;
 
     // Update the current goal
     if( m_Goal )
@@ -125,19 +125,19 @@ void Bot::Update( f32 DeltaTime )
         }
 
         // Rotation towards our current velocity
-        Math::Vector3 NormalizedVelocity = m_Velocity;
+        Base::Vector3 NormalizedVelocity = m_Velocity;
         NormalizedVelocity.Normalize();
 
         f32 AngularSpeed = m_SpeedRot * DeltaTime;
-        f32 DiffAngle = Math::Angle::ACos( m_Facing.Dot( NormalizedVelocity ) );
+        f32 DiffAngle = Base::Angle::ACos( m_Facing.Dot( NormalizedVelocity ) );
 
         // Rotate if the difference in m_Facing and m_Velocity is significant
         if( DiffAngle > 0.0001f || !m_PhysicsMove )
         {
-            f32 Angle = Math::Min( DiffAngle, AngularSpeed );
+            f32 Angle = Base::Min( DiffAngle, AngularSpeed );
             
             // Rotate m_Facing toward m_Velocity by Angle
-            Math::Quaternion Rotation;
+            Base::Quaternion Rotation;
             Rotation.Set( (m_Facing.Cross( NormalizedVelocity )).Normalize(), Angle );
 
             // Update our orientation
@@ -149,7 +149,7 @@ void Bot::Update( f32 DeltaTime )
             // Force the to face the direction they are heading if not using physics
             if( !m_PhysicsMove )
             {
-                m_Orientation.Set( (m_OriginalFacing.Cross( NormalizedVelocity )).Normalize(), Math::Angle::ACos( m_OriginalFacing.Dot( NormalizedVelocity ) ) );
+                m_Orientation.Set( (m_OriginalFacing.Cross( NormalizedVelocity )).Normalize(), Base::Angle::ACos( m_OriginalFacing.Dot( NormalizedVelocity ) ) );
             }
 
             // Tell the other system our new orientation
@@ -175,7 +175,7 @@ void Bot::PostUpdate( f32 DeltaTime )
     // Update velocity
     m_Velocity.Normalize();
 
-    Math::Vector3 DeltaVelocity = m_DesiredVelocity - m_Velocity;
+    Base::Vector3 DeltaVelocity = m_DesiredVelocity - m_Velocity;
     DeltaVelocity.Normalize();
     DeltaVelocity *= DeltaTime * m_Agility;
 

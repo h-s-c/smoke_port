@@ -42,7 +42,7 @@ Horse::Horse( ISystemScene* pSystemScene, pcstr pszName ) : Animal( pSystemScene
     m_MaxSpeed  = m_WalkSpeed;
     m_SpeedRot  = 1.0f;
 
-    m_TargetPosition = Math::Vector3::Zero;
+    m_TargetPosition = Base::Vector3::Zero;
     m_TargetPosition.x = -1200.0f;
     m_TargetPosition.y = 500.0f;
     m_TargetPosition.z = 10.0f;
@@ -259,7 +259,7 @@ void Horse::UpdateFear( f32 DeltaTime )
     if( !NearHorse )
     {
         // HACK: Disable
-        //m_Fear = Math::Min( 1.0f, m_Fear + 0.25f );
+        //m_Fear = Base::Min( 1.0f, m_Fear + 0.25f );
     }
 }
 
@@ -373,7 +373,7 @@ void Horse::UpdateHerding( void )
     }
 
     // HACK: Add a slight desire to return to the middle
-    Math::Vector3 Direction = m_TargetPosition - m_Position;
+    Base::Vector3 Direction = m_TargetPosition - m_Position;
     Direction.y = 0.0f;
     Direction.Normalize();
     Direction *= 0.25f;

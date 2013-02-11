@@ -1,24 +1,24 @@
-//internal
+// Base
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
+// Interface
 #include "Interfaces/Interface.hpp"
-#include "Systems/AudioFMOD/Object.hpp"
-#include "Systems/AudioFMOD/System.hpp"
-//stdlib
+// Standard Library
 #include <ctime>
 #include <cstring>
 #include <mutex>
-//external
+// External
 #include "fmod.hpp"
-//FIXME
-#include "Systems/Input/Object.hpp"
+// System
+#include "Systems/AudioFMOD/Object.hpp"
+#include "Systems/AudioFMOD/System.hpp"
 
 //
 // capture current time for random play
 //
 clock_t FMODObject::prevTime = clock();
 
-Math::Vector3 FMODObject::prevPos;
+Base::Vector3 FMODObject::prevPos;
 
 
 pcstr FMODObject::sm_kapszPropertyNames[] =
@@ -84,12 +84,12 @@ const Properties::Property FMODObject::sm_kaDefaultProperties[] =
                           Properties::Values::Vector3,
                           Properties::Flags::Valid,
                           NULL, NULL, NULL, NULL,
-                          Math::Vector3::Zero ),
+                          Base::Vector3::Zero ),
     Properties::Property( sm_kapszPropertyNames[ Property_Orientation ],
                           Properties::Values::Quaternion,
                           Properties::Flags::Valid,
                           NULL, NULL, NULL, NULL,
-                          Math::Vector3::Zero ),
+                          Base::Vector3::Zero ),
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -108,8 +108,8 @@ FMODObject::FMODObject(
     , m_bCollisionOff ( 0 )
     , m_fVolume ( 1.0f )
     , m_iPriority ( 0 )
-    , m_Position( Math::Vector3::Zero )
-    , m_Orientation( Math::Quaternion::Zero )
+    , m_Position( Base::Vector3::Zero )
+    , m_Orientation( Base::Quaternion::Zero )
 {
     ASSERT( Property_Count == sizeof sm_kapszPropertyNames / sizeof sm_kapszPropertyNames[ 0 ] );
     ASSERT( Property_Count == sizeof sm_kaDefaultProperties / sizeof sm_kaDefaultProperties[ 0 ] );
@@ -393,9 +393,9 @@ FMODObject::ChangeOccurred(
             ASSERT( pAreaObject );
 
             // Set data
-            Math::Vector3 Min, Max;
+            Base::Vector3 Min, Max;
             pAreaObject->GetAreaBB( Min, Max );
-            Math::Vector3 Center = ( Min + Max ) * 0.5f;
+            Base::Vector3 Center = ( Min + Max ) * 0.5f;
             f32 Volume = ( Max.x - Min.x )*( Max.y - Min.y )*( Max.z - Min.z );
             
             m_FireActive = pAreaObject->IsAreaActive();
@@ -480,19 +480,19 @@ FMODObject::GetPotentialSystemChanges(
 // UpdateListener - Updates the position and orientation of the listener
 Error 
 FMODObject::UpdateListener(
-    Math::Vector3 *newPos, 
-    Math::Quaternion *newOri
+    Base::Vector3 *newPos, 
+    Base::Quaternion *newOri
     )
 {
     Error Err = Errors::Success;
     FMOD_VECTOR newPosition = {newPos->x, newPos->y, newPos->z};
 
     // Orientation
-    Math::Vector3 atVec(0.0f, 0.0f, -1.0f);
+    Base::Vector3 atVec(0.0f, 0.0f, -1.0f);
     newOri->Rotate(atVec);  // rotate the atVec so adjust to the world
     FMOD_VECTOR newAt = {atVec.x, atVec.y, atVec.z};
 
-    Math::Vector3 upVec(0.0f, 1.0f, 0.0f);
+    Base::Vector3 upVec(0.0f, 1.0f, 0.0f);
     newOri->Rotate(upVec);
     FMOD_VECTOR newUp = {upVec.x, upVec.y, upVec.z};
 
@@ -508,7 +508,7 @@ FMODObject::UpdateListener(
 // UpdatePosition - Update the position of a source object
 Error 
 FMODObject::UpdatePosition( 
-    Math::Vector3* currPos 
+    Base::Vector3* currPos 
     )
 {
     Error Err = Errors::Success;

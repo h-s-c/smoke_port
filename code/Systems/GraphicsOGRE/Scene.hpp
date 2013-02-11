@@ -11,9 +11,9 @@ class OGREGraphicsSystem;
 class OGREGraphicsTask;
 class OGREGraphicsObject;
 
-// Macro to convert from Math::Vector3 to Ogre::Vector3
+// Macro to convert from Base::Vector3 to Ogre::Vector3
 #define TOOGREVEC(Vec)  (Ogre::Vector3((Vec).x, (Vec).y, (Vec).z) )
-// Macro to convert from Math::Quaternion to Ogre::Quaternion
+// Macro to convert from Base::Quaternion to Ogre::Quaternion
 #define TOOGREQUAT(Vec) (Ogre::Quaternion((Vec).w, (Vec).x, (Vec).y, (Vec).z) )
 
 #define MAX_NUM_JOBS 32

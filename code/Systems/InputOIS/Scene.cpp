@@ -6,10 +6,10 @@
 //stdlib
 #include <iostream>
 //system
-#include "Systems/Input/System.hpp"
-#include "Systems/Input/Scene.hpp"
-#include "Systems/Input/Object.hpp"
-#include "Systems/Input/Task.hpp"
+#include "Systems/InputOIS/System.hpp"
+#include "Systems/InputOIS/Scene.hpp"
+#include "Systems/InputOIS/Object.hpp"
+#include "Systems/InputOIS/Task.hpp"
 
 
 #define SAFE_RELEASE(x)     if (x) { (x)->Release();        (x) = NULL; }   //!< Safe D3D-style release
@@ -215,7 +215,7 @@ InputScene::GetSystemChangeData(
 void InputScene::InputUpdate(f32 DeltaTime)
 {
     // Cap DeltaTime
-    DeltaTime = Math::Min( 1.0, DeltaTime );
+    DeltaTime = Base::Min( 1.0, DeltaTime );
     
     if( m_Mouse ) 
     {
@@ -244,12 +244,12 @@ void InputScene::InputUpdate(f32 DeltaTime)
     
     if( m_nRotateLeftRight || m_nRotateUpDown )
     {
-        total_yaw   -= Math::Angle::Deg2Rad( m_nRotateLeftRight * DeltaTime * ySensitivity );
-        total_pitch -= Math::Angle::Deg2Rad( m_nRotateUpDown * DeltaTime * xSensitivity );
+        total_yaw   -= Base::Angle::Deg2Rad( m_nRotateLeftRight * DeltaTime * ySensitivity );
+        total_pitch -= Base::Angle::Deg2Rad( m_nRotateUpDown * DeltaTime * xSensitivity );
         bOrientationModified = true;
     }
     
-    Math::Vector3 Direction( 0.0f, 0.0f, 0.0f );
+    Base::Vector3 Direction( 0.0f, 0.0f, 0.0f );
     if (m_nMoveLeftRight || m_nMoveForwardBack || m_nMoveUpDown) {
         // When paused DeltaTime is 0 which prevents camera movement on paused scene.  
         // If paused, set DeltaTime to some constant to allow camera movement around the scene.
@@ -297,10 +297,10 @@ void InputScene::InputUpdate(f32 DeltaTime)
             {            
                 // NOTE: there's nothing special about the number 0.2f.  It was determined by trial
                 // and error in order to smooth out the movement
-                total_pitch = Math::Min( total_pitch, 0.2f );
-                total_pitch = Math::Max( total_pitch, -0.2f );
-                total_yaw = Math::Min( total_yaw, 0.2f );
-                total_yaw = Math::Max( total_yaw, -0.2f );
+                total_pitch = Base::Min( total_pitch, 0.2f );
+                total_pitch = Base::Max( total_pitch, -0.2f );
+                total_yaw = Base::Min( total_yaw, 0.2f );
+                total_yaw = Base::Max( total_yaw, -0.2f );
 
                 pObject->m_Orientation.x = total_yaw;
                 pObject->m_Orientation.y = total_pitch;

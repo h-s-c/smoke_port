@@ -12,7 +12,7 @@
  
 #include <Ogre.h>
 #include <OgreFontManager.h>
-#include "Systems/GraphicsOGRE/MovableText.hpp"
+#include "Systems/GraphicsOGRE/Extras/MovableText.hpp"
  
 using namespace Ogre;
  
