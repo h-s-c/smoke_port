@@ -2,8 +2,3 @@ bin/
 build/
 docs/
 media/
-code/Systems/Scripting
-code/Systems/Water
-code/Systems/ProceduralTrees
-code/Systems/ProceduralFire
-code/Systems/PhysicsBULLET
