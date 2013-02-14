@@ -53,6 +53,10 @@ project (Smoke)
     list(APPEND SMOKE_DEPEDENCIES SystemGeometry)
     list(APPEND SMOKE_DEPEDENCIES SystemGraphicsOGRE)
     list(APPEND SMOKE_DEPEDENCIES SystemInputOIS)
+    find_package(HAVOK)
+    if (HAVOK_FOUND)
+        list(APPEND SMOKE_DEPEDENCIES SystemPhysicsHAVOK)
+    endif ()
 
     list(APPEND SKUNKWORKS_INCLUDE_DIRS ${CMAKE_SOURCE_DIR})
     
