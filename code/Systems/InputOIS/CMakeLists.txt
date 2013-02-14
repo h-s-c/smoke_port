@@ -3,7 +3,7 @@ project (SystemInputOIS)
         ${CMAKE_SOURCE_DIR}/Systems/InputOIS/Object.cpp
         ${CMAKE_SOURCE_DIR}/Systems/InputOIS/Scene.cpp
         ${CMAKE_SOURCE_DIR}/Systems/InputOIS/System.cpp
-        ${CMAKE_SOURCE_DIR}/Systems/InputOIS/SystemInput.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/InputOIS/SystemInputOIS.cpp
         ${CMAKE_SOURCE_DIR}/Systems/InputOIS/Task.cpp
     )
     list(APPEND SYSTEM_SOURCE ${SYSTEM_SOURCE})
