@@ -6,14 +6,18 @@ find_path(PG_INCLUDE_DIR PagedGeometry.h HINTS
     /usr/include/ogre/PagedGeometry
     /usr/include/OGRE/PagedGeometry
     /usr/local/include/ogre/PagedGeometry
-    /usr/local/include/OGRE/PagedGeometry)
+    /usr/local/include/OGRE/PagedGeometry
+	${CMAKE_SOURCE_DIR}/External/PagedGeometry/include/PagedGeometry
+	)
 
 find_library(PG_LIBRARY NAMES PagedGeometry libPagedGeometry HINTS 
     /usr/lib${LIB_SUFFIX}/ogre
     /usr/lib${LIB_SUFFIX}/OGRE
     /usr/lib64/OGRE
     /usr/local/lib${LIB_SUFFIX}/ogre
-    /usr/local/lib${LIB_SUFFIX}/OGRE)
+    /usr/local/lib${LIB_SUFFIX}/OGRE
+	${CMAKE_SOURCE_DIR}/External/PagedGeometry/lib
+	)
 
 set(PG_LIBRARIES ${PG_LIBRARY} )
 set(PG_INCLUDE_DIRS ${PG_INCLUDE_DIR} )

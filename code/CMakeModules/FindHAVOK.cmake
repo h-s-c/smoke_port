@@ -18,6 +18,7 @@ FIND_PATH(HAVOK_INCLUDE_DIR Source/Common/Base/hkBase.h
 		/opt/local # DarwinPorts
 		/opt/csw # Blastwave
 		/opt
+		${CMAKE_SOURCE_DIR}/External/hk550
 )
 
 SET(HAVOK_LIBS hkBase hkSerialize hkSceneData hkVisualize hkCompat hkpCollide hkpConstraintSolver hkpDynamics hkpInternal hkpUtilities hkpVehicle)
@@ -41,6 +42,7 @@ FOREACH(CUR_LIB ${HAVOK_LIBS})
 			/opt/local
 			/opt/csw
 			/opt
+			${CMAKE_SOURCE_DIR}/External/hk550
 	)
 
 	FIND_LIBRARY(HAVOK_LIBRARY_${CUR_LIB}_DEBUG
@@ -59,6 +61,7 @@ FOREACH(CUR_LIB ${HAVOK_LIBS})
 			/opt/local
 			/opt/csw
 			/opt
+			${CMAKE_SOURCE_DIR}/External/hk550
 	)
 
 	# Combine all libs to one variable

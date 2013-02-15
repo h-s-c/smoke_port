@@ -22,10 +22,12 @@ project (Framework)
     list(APPEND FRAMEWORK_SOURCE ${TINYXML_SOURCE})
 
     ##boost.filesystem
-    find_package( Boost COMPONENTS filesystem system REQUIRED)
-    list(APPEND FRAMEWORK_LIBRARIES ${Boost_LIBRARIES})
-    list(APPEND FRAMEWORK_INCLUDE_DIRS ${Boost_INCLUDE_DIR})
-    list(APPEND FRAMEWORK_LIBRARY_DIRS ${Boost_LIBRARY_DIR})
+	if (NOT ${CMAKE_CXX_COMPILER_ID} EQUAL "MSVC")
+		find_package( Boost COMPONENTS filesystem system REQUIRED)
+		list(APPEND FRAMEWORK_LIBRARIES ${Boost_LIBRARIES})
+		list(APPEND FRAMEWORK_INCLUDE_DIRS ${Boost_INCLUDE_DIR})
+		list(APPEND FRAMEWORK_LIBRARY_DIRS ${Boost_LIBRARY_DIR})
+	endif ()
 
     ##pthreads
     if (UNIX) 

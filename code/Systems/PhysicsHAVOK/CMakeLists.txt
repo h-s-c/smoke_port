@@ -4,7 +4,7 @@ project (SystemPhysicsHAVOK)
         ${CMAKE_SOURCE_DIR}/Systems/PhysicsHAVOK/ObjectCharacter.cpp        
         ${CMAKE_SOURCE_DIR}/Systems/PhysicsHAVOK/ObjectPhysics.cpp        
         ${CMAKE_SOURCE_DIR}/Systems/PhysicsHAVOK/Scene.cpp
-        ${CMAKE_SOURCE_DIR}/Systems/PhysicsHAVOK/ServiceCollsion.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/PhysicsHAVOK/ServiceCollision.cpp
         ${CMAKE_SOURCE_DIR}/Systems/PhysicsHAVOK/System.cpp
         ${CMAKE_SOURCE_DIR}/Systems/PhysicsHAVOK/SystemPhysicsHAVOK.cpp
         ${CMAKE_SOURCE_DIR}/Systems/PhysicsHAVOK/Task.cpp

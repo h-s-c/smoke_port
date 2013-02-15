@@ -31,7 +31,8 @@ set(OIS_PREFIX_PATH ${OIS_HOME} ${ENV_OIS_HOME}
   ${OGRE_SOURCE}/iPhoneDependencies ${ENV_OGRE_SOURCE}/iPhoneDependencies
   ${OGRE_SOURCE}/Dependencies ${ENV_OGRE_SOURCE}/Dependencies
   ${OGRE_SDK} ${ENV_OGRE_SDK}
-  ${OGRE_HOME} ${ENV_OGRE_HOME})
+  ${OGRE_HOME} ${ENV_OGRE_HOME}   
+  C:/OgreSDK)
 create_search_paths(OIS)
 # redo search if prefix path changed
 clear_if_changed(OIS_PREFIX_PATH
