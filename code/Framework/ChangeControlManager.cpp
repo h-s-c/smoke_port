@@ -19,6 +19,9 @@
 #include "Framework/ChangeControlManager.hpp"
 #include "Framework/PlatformManager.hpp"
 
+#if defined(COMPILER_MSVC)
+#include <Windows.h>
+#endif
 
 #include <algorithm>
 #include <utility>

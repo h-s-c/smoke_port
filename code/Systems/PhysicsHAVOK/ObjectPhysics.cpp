@@ -3,11 +3,6 @@
 #include "Base/Platform.hpp"
 // Interface
 #include "Interfaces/Interface.hpp"
-// System
-#include "Systems/PhysicsHAVOK/Scene.hpp"
-#include "Systems/PhysicsHAVOK/Object.hpp"
-#include "Systems/PhysicsHAVOK/ObjectPhysics.hpp"
-#include "Systems/PhysicsHAVOK/PhantomShape.hpp"
 // External
 #include <Common\Base\hkBase.h>
 #include <Physics\Dynamics\Entity\hkpRigidBody.h>
@@ -23,7 +18,11 @@
 #include <Physics\Collide\Shape\Misc\Bv\hkpBvShape.h>
 #include <Physics\Collide\Shape\Misc\PhantomCallback\hkpPhantomCallbackShape.h>
 #include <Physics\Utilities\Destruction\BreakOffParts\hkpBreakOffPartsUtil.h>
-
+// System
+#include "Systems/PhysicsHAVOK/Scene.hpp"
+#include "Systems/PhysicsHAVOK/Object.hpp"
+#include "Systems/PhysicsHAVOK/ObjectPhysics.hpp"
+#include "Systems/PhysicsHAVOK/Extras/PhantomShape.hpp"
 
 #define PHAVOKSCENE         reinterpret_cast<HavokPhysicsScene*>(m_pSystemScene)
 #define _USE_MOPP_FOR_MESH_
@@ -90,7 +89,7 @@ const Properties::Property HavokPhysicsObject::sm_kaBoxDefaultProperties[] =
                           Properties::Flags::Valid | Properties::Flags::InitOnly |
                             Properties::Flags::WriteOnly,
                           NULL, NULL, NULL, NULL,
-                          Math::Vector3::Zero ),
+                          Base::Vector3::Zero ),
 };
 
 pcstr HavokPhysicsObject::sm_kapszSpherePropertyNames[] =
@@ -105,7 +104,7 @@ const Properties::Property HavokPhysicsObject::sm_kaSphereDefaultProperties[] =
                           Properties::Flags::Valid | Properties::Flags::InitOnly |
                             Properties::Flags::WriteOnly,
                           NULL, NULL, NULL, NULL,
-                          Math::Vector3::Zero ),
+                          Base::Vector3::Zero ),
 };
 
 
@@ -118,12 +117,12 @@ HavokPhysicsObject::HavokPhysicsObject(
     hkpRigidBody* pBody
     )
     : HavokObject( pSystemScene, pszName )
-    , m_Offset( Math::Vector3::Zero )
+    , m_Offset( Base::Vector3::Zero )
     , m_pBody( NULL )
     , m_bStatic( False )
     , m_MaterialId( -1 )
     , m_Mass( 0.0f )
-    , m_LinearVelocity( Math::Vector3::Zero )
+    , m_LinearVelocity( Base::Vector3::Zero )
     , m_Quality( 1 )
     , m_pShapeData1( NULL )
     , m_pShapeData2( NULL )
@@ -279,7 +278,7 @@ HavokPhysicsObject::Initialize(
     //
     // Read in the properties.
     //
-    Math::Vector3   Size = Math::Vector3::Zero;
+    Base::Vector3   Size = Base::Vector3::Zero;
 
     for ( Properties::Iterator it=Properties.begin(); it != Properties.end(); it++ )
     {
@@ -323,7 +322,7 @@ HavokPhysicsObject::Initialize(
     switch ( m_Type )
     {
     case Type_Box:
-        if ( Size != Math::Vector3::Zero )
+        if ( Size != Base::Vector3::Zero )
         {
             hkVector4 hkHalfExtent( Size.x * 0.5f, Size.y * 0.5f, Size.z * 0.5f );
             hkpBoxShape* pBox = new hkpBoxShape( hkHalfExtent, 0 );
@@ -567,7 +566,7 @@ HavokPhysicsObject::ChangeOccurred(
             //
             // Modify the body's position.
             //
-            Math::Vector3 TempPos = m_Position - m_Offset;
+            Base::Vector3 TempPos = m_Position - m_Offset;
             hkVector4 Position( TempPos.x, TempPos.y, TempPos.z );
             m_pBody->setPosition( Position );
         }
@@ -655,15 +654,15 @@ HavokPhysicsObject::ChangeOccurred(
             //
             if( m_Type != Type_Box )  // If not a box, calculate scale
             {
-                if ( m_Scale != Math::Vector3::One )
+                if ( m_Scale != Base::Vector3::One )
                 {
                     for ( u32 iVertex=0; iVertex < VertexCount; iVertex++ )
                     {
                         //
                         // Get the vertex at the index.
                         //
-                        Math::Vector3& Vertex =
-                            *reinterpret_cast<Math::Vector3*>(pVertexBuffer + iPosition + (iVertex * VertexSize));
+                        Base::Vector3& Vertex =
+                            *reinterpret_cast<Base::Vector3*>(pVertexBuffer + iPosition + (iVertex * VertexSize));
 
                         Vertex.x *= m_Scale.x;
                         Vertex.y *= m_Scale.y;
@@ -679,17 +678,17 @@ HavokPhysicsObject::ChangeOccurred(
 
             if ( m_Type == Type_Box )
             {
-                Math::Vector3   Min(+1.0e+38f, +1.0e+38f, +1.0e+38f);
-                Math::Vector3   Max(-1.0e+38f, -1.0e+38f, -1.0e+38f);
-                Math::Vector3   Adj(+1.0e+38f, +1.0e+38f, -1.0e+38f);
+                Base::Vector3   Min(+1.0e+38f, +1.0e+38f, +1.0e+38f);
+                Base::Vector3   Max(-1.0e+38f, -1.0e+38f, -1.0e+38f);
+                Base::Vector3   Adj(+1.0e+38f, +1.0e+38f, -1.0e+38f);
 
                 for ( u32 iVertex=0; iVertex < VertexCount; iVertex++ )
                 {
                     //
                     // Get the vertex at the index.
                     //
-                    const Math::Vector3& Vertex =
-                        *reinterpret_cast<const Math::Vector3*>(pVertexBuffer + iPosition +
+                    const Base::Vector3& Vertex =
+                        *reinterpret_cast<const Base::Vector3*>(pVertexBuffer + iPosition +
                                                                 (iVertex * VertexSize));
 
                     //
@@ -759,7 +758,7 @@ HavokPhysicsObject::ChangeOccurred(
                 //
                 // Calculate the position of the box.
                 //
-                Math::Vector3 HalfDiff = (Max - Min) * 0.5f;
+                Base::Vector3 HalfDiff = (Max - Min) * 0.5f;
                 m_Position += Min + HalfDiff;
 
                 //
@@ -768,7 +767,7 @@ HavokPhysicsObject::ChangeOccurred(
                 Adj -= Min;
                 Adj.Normalize();
 
-                f32 Angle = Math::Angle::ACos( Adj.Dot( Math::Vector3::UnitZ ) );
+                f32 Angle = Base::Angle::ACos( Adj.Dot( Base::Vector3::UnitZ ) );
 
                 // Todo: Change this so the orientation is added to the existing orientation, just like w/ position.
                 m_Orientation.Set( Adj, Angle );

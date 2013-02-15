@@ -7,8 +7,13 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#if defined(COMPILER_MSVC)
+#include <filesystem>
+#endif
 // external
+#if defined(COMPILER_GCC)
 #include <boost/filesystem.hpp>
+#endif
 #include "External/tinyxml/tinyxml.h"
 // framework
 #include "Framework/Universal.hpp"
@@ -71,7 +76,11 @@ Error
 Framework::Initialize( pcstr pszGDF)
 {
     std::clog << "Initializing Framework" << std::endl;
+#if defined(COMPILER_MSVC)
+    if ( !std::tr2::sys::exists(std::tr2::sys::path(pszGDF)) )
+#else
     if ( !boost::filesystem::exists( pszGDF ) )
+#endif
     {
         std::cerr << "Framework could not locate the GDF file " << std::string(pszGDF) << "." << std::endl;
         return Errors::File::NotFound;

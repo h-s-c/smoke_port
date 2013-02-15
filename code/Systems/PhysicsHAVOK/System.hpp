@@ -34,7 +34,7 @@ public:
     HavokPhysicsSystem( void );
     virtual ~HavokPhysicsSystem( void );
 
-	HavokCollisionService* GetService( void ) { return &m_Collision; }
+	HavokCollisionService* GetService( void ) { return m_Collision; }
 
 protected:
 
@@ -121,7 +121,7 @@ private:
     void*                       m_pThreadMemoryStack;
     static const u32            m_cThreadMemoryStack = 2 * 1024 * 1024;
 
-    HavokCollisionService       m_Collision;
+    HavokCollisionService*       m_Collision;
 
     static u32 s_idMainThread;
 

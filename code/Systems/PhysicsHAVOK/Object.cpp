@@ -14,9 +14,9 @@ HavokObject::HavokObject(
     pcstr pszName
     )
     : ISystemObject( pSystemScene, pszName )
-    , m_Position( Math::Vector3::Zero )
-    , m_Orientation( Math::Quaternion::Zero )
-    , m_Scale( Math::Vector3::One )
+    , m_Position( Base::Vector3::Zero )
+    , m_Orientation( Base::Quaternion::Zero )
+    , m_Scale( Base::Vector3::One )
 {
 }
 
@@ -43,7 +43,7 @@ HavokObject::GetSystemType(
 
 ///////////////////////////////////////////////////////////////////////////////
 // GetPosition - Returns the position of this Object
-const Math::Vector3*
+const Base::Vector3*
 HavokObject::GetPosition(
     void
     )
@@ -54,7 +54,7 @@ HavokObject::GetPosition(
 
 ///////////////////////////////////////////////////////////////////////////////
 // GetPosition - Returns the orientation of this Object
-const Math::Quaternion*
+const Base::Quaternion*
 HavokObject::GetOrientation(
     void
     )
@@ -65,7 +65,7 @@ HavokObject::GetOrientation(
 
 ///////////////////////////////////////////////////////////////////////////////
 // GetScale - Returns the scale of this Object
-const Math::Vector3*
+const Base::Vector3*
 HavokObject::GetScale(
     void
     )

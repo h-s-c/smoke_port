@@ -3,11 +3,6 @@
 #include "Base/Platform.hpp"
 // Interface
 #include "Interfaces/Interface.hpp"
-// System
-#include "Systems/PhysicsHAVOK/ServiceCollision.hpp"
-#include "Systems/PhysicsHAVOK/Scene.hpp"
-#include "Systems/PhysicsHAVOK/Object.hpp"
-#include "Systems/PhysicsHAVOK/ObjectPhysics.hpp"
 // Extern
 #include <Common\Base\hkBase.h>
 #include <Physics\Dynamics\World\hkpWorld.h>
@@ -17,6 +12,11 @@
 #include <Physics\Collide\Query\CastUtil\hkpWorldRayCastOutput.h>
 #include <Physics\Collide\Query\Collector\RayCollector\hkpClosestRayHitCollector.h>
 #include <Physics\Utilities\Destruction\BreakOffParts\hkpBreakOffPartsUtil.h>
+// System
+#include "Systems/PhysicsHAVOK/ServiceCollision.hpp"
+#include "Systems/PhysicsHAVOK/Scene.hpp"
+#include "Systems/PhysicsHAVOK/Object.hpp"
+#include "Systems/PhysicsHAVOK/ObjectPhysics.hpp"
 
 //
 // global variables
@@ -25,16 +25,10 @@ extern ManagerInterfaces    g_Managers;
 
 
 //
-// local defines
-//
-#define SCOPE_LOCK( x ) SpinWait::Lock Lock##x( x )
-
-
-//
 // local prototypes
 //
-static void ProcessColl( CollData& Data, HavokPhysicsScene* pScene );
-static void LineTest( const Coll::Request& Request, Coll::Result* Result, HavokPhysicsScene* pScene );
+static void ProcessCollision( CollisionData& Data, HavokPhysicsScene* pScene );
+static void LineTest( const Collision::Request& Request, Collision::Result* Result, HavokPhysicsScene* pScene );
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -48,7 +42,7 @@ HavokCollisionService::HavokCollisionService(
 
     // Setup collision workspace
     m_HandleCount = 0;
-    m_CollData.clear();
+    m_CollisionData.clear();
 
     // Setup pending request
     m_PendingRequests.clear();
@@ -92,15 +86,15 @@ HavokCollisionService::ProcessRequests(
 {
     // Delete all dead entries
     {
-        SCOPE_LOCK( m_DeadHandlesLock );
-        SCOPE_LOCK( m_PendingResultsLock );
+        std::lock_guard<std::mutex> lock( m_DeadHandlesLock );
+        std::lock_guard<std::mutex> lock2( m_PendingResultsLock );
 
         if( !m_DeadHandles.empty() )
         {
-            std::vector<Coll::Handle>::iterator it;
+            std::vector<Collision::Handle>::iterator it;
             for( it = m_DeadHandles.begin(); it != m_DeadHandles.end(); it++ )
             {
-                m_CollData.erase( *(it) );
+                m_CollisionData.erase( *(it) );
                 m_PendingResults.erase( *(it) );
             }
 
@@ -110,19 +104,19 @@ HavokCollisionService::ProcessRequests(
 
     // Add all new request
     {
-        SCOPE_LOCK( m_PendingRequestsLock );
+        std::lock_guard<std::mutex> lock( m_PendingRequestsLock );
         if( !m_PendingRequests.empty() )
         {
-            std::vector<Coll::Request>::iterator it;
+            std::vector<Collision::Request>::iterator it;
             for( it = m_PendingRequests.begin(); it != m_PendingRequests.end(); it++ )
             {
                 // Build an entry
-                CollData Data;
+                CollisionData Data;
                 memset( &Data, 0, sizeof( Data ) );
 
                 Data.m_Request = (*it);
 
-                m_CollData[ (*it).m_Handle ] = Data;
+                m_CollisionData[ (*it).m_Handle ] = Data;
             }
 
             m_PendingRequests.clear();
@@ -130,19 +124,19 @@ HavokCollisionService::ProcessRequests(
     }
 
     // Process all outstanding requests
-    if( !m_CollData.empty() )
+    if( !m_CollisionData.empty() )
     {
-        u32 size = (u32)m_CollData.size();
+        u32 size = (u32)m_CollisionData.size();
         UNREFERENCED_PARAM( size );
 
-        std::map<Coll::Handle,CollData>::iterator it;
-        for( it = m_CollData.begin(); it != m_CollData.end(); it++ )
+        std::map<Collision::Handle,CollisionData>::iterator it;
+        for( it = m_CollisionData.begin(); it != m_CollisionData.end(); it++ )
         {
-            ProcessColl( (*it).second, pScene );
+            ProcessCollision( (*it).second, pScene );
 
             // Store result
             {
-                SCOPE_LOCK( m_PendingResultsLock );
+                std::lock_guard<std::mutex> lock( m_PendingResultsLock );
                 m_PendingResults[ (*it).second.m_Request.m_Handle ] = (*it).second.m_Result;
             }
         }
@@ -152,19 +146,19 @@ HavokCollisionService::ProcessRequests(
 
 ///////////////////////////////////////////////////////////////////////////////
 // Test - Requests a collision test
-Coll::Handle
+Collision::Handle
 HavokCollisionService::Test(
-    const Coll::Request& Request
+    const Collision::Request& Request
     )
 {
-    Coll::Handle Handle = Coll::InvalidHandle;
+    Collision::Handle Handle = Collision::InvalidHandle;
 
     // Create a new entry
-    Coll::Request PendingRequest = Request;
+    Collision::Request PendingRequest = Request;
 
     // Store data to run the test later
     {
-        SCOPE_LOCK( m_PendingRequestsLock );
+        std::lock_guard<std::mutex> lock( m_PendingRequestsLock );
         
         Handle = GetNextHandle();
         PendingRequest.m_Handle = Handle;
@@ -179,15 +173,15 @@ HavokCollisionService::Test(
 
 ///////////////////////////////////////////////////////////////////////////////
 // LineTest - Requests a collision line test
-Coll::Handle
+Collision::Handle
 HavokCollisionService::LineTest(
-    const Math::Vector3& Start,
-    const Math::Vector3& End,
-    Coll::Request& Request
+    const Base::Vector3& Start,
+    const Base::Vector3& End,
+    Collision::Request& Request
     )
 {
     // Build request
-    Request.m_Type      = Coll::e_LineTest;
+    Request.m_Type      = Collision::e_LineTest;
     Request.m_Position0 = Start;
     Request.m_Position1 = End;
 
@@ -200,15 +194,15 @@ HavokCollisionService::LineTest(
 // Finalize - Gets results for the given handle
 Bool
 HavokCollisionService::Finalize(
-    Coll::Handle Handle,
-    Coll::Result* pResult
+    Collision::Handle Handle,
+    Collision::Result* pResult
     )
 {
     ASSERT( pResult != NULL );
-    ASSERT( Handle != Coll::InvalidHandle );
+    ASSERT( Handle != Collision::InvalidHandle );
 
     // Return if the handle isn't valid
-    if( Handle == Coll::InvalidHandle )
+    if( Handle == Collision::InvalidHandle )
     {
         return False;
     }
@@ -218,13 +212,13 @@ HavokCollisionService::Finalize(
 
     // Get the data for the given handle
     Bool ResultAvailable = False;
-    Coll::Result PendingResult;
+    Collision::Result PendingResult;
     memset( &PendingResult, 0, sizeof( PendingResult ) );
 
     {
-        SCOPE_LOCK( m_PendingResultsLock );
+       std::lock_guard<std::mutex> lock( m_PendingResultsLock );
 
-        std::map<Coll::Handle,Coll::Result>::iterator it = m_PendingResults.find( Handle );
+        std::map<Collision::Handle,Collision::Result>::iterator it = m_PendingResults.find( Handle );
         if( it != m_PendingResults.end() )
         {
             ResultAvailable = True;
@@ -243,7 +237,7 @@ HavokCollisionService::Finalize(
             
         // Mark for deletion
         {
-            SCOPE_LOCK( m_DeadHandlesLock );
+            std::lock_guard<std::mutex> lock( m_DeadHandlesLock );
             m_DeadHandles.push_back( Handle );
         }
     }
@@ -254,7 +248,7 @@ HavokCollisionService::Finalize(
 
 ///////////////////////////////////////////////////////////////////////////////
 // GetNextHandle - Returns the next unique handle
-Coll::Handle 
+Collision::Handle 
 HavokCollisionService::GetNextHandle( 
     void 
     )
@@ -267,8 +261,8 @@ HavokCollisionService::GetNextHandle(
 ///////////////////////////////////////////////////////////////////////////////
 // ProcessColl - Process and individual collision
 static void 
-ProcessColl( 
-    CollData& Data, 
+ProcessCollision( 
+    CollisionData& Data, 
     HavokPhysicsScene* pScene 
     )
 {
@@ -277,7 +271,7 @@ ProcessColl(
     {
         switch( Data.m_Request.m_Type )
         {
-        case Coll::e_LineTest:
+        case Collision::e_LineTest:
             LineTest( Data.m_Request, &Data.m_Result, pScene );
             break;
 
@@ -293,8 +287,8 @@ ProcessColl(
 // LineTest - Initiate a collision line test
 static void 
 LineTest( 
-    const Coll::Request& Request, 
-    Coll::Result* Result, 
+    const Collision::Request& Request, 
+    Collision::Result* Result, 
     HavokPhysicsScene* pScene 
     )
 {

@@ -15,8 +15,6 @@
 
 #pragma once
 
-#include <windows.h> // For CRITICAL_SECTION
-
 class HavokObject;
 class HavokPhysicsSystem;
 class HavokPhysicsScene;
@@ -152,7 +150,7 @@ private:
 
 protected:
 
-    Math::Vector3                       m_Offset;
+    Base::Vector3                       m_Offset;
 
     hkpRigidBody*                       m_pBody;
     Bool                                m_bStatic;
@@ -160,7 +158,7 @@ protected:
     i32                                 m_MaterialId;
     f32                                 m_Mass;
 
-    Math::Vector3                       m_LinearVelocity;
+    Base::Vector3                       m_LinearVelocity;
 
     i32                                 m_Quality;
 

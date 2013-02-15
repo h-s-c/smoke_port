@@ -12,7 +12,10 @@ project (SystemInputOIS)
     find_package(OIS REQUIRED)
     list(APPEND SYSTEM_INCLUDE_DIRS ${OIS_INCLUDE_DIRS})
     list(APPEND SYSTEM_LIBRARIES ${OIS_LIBRARIES}) 
-    
+ 	
+     ##base
+    list(APPEND SYSTEM_LIBRARIES Base)
+	
     list(APPEND SYSTEM_INCLUDE_DIRS ${CMAKE_SOURCE_DIR})
     
     include_directories(${SYSTEM_INCLUDE_DIRS})

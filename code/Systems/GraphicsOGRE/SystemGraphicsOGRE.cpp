@@ -30,7 +30,6 @@ DllMain(
 
     return TRUE;
 }
-}
 #endif
 
 ManagerInterfaces   g_Managers;

@@ -100,11 +100,11 @@ protected:
 
     hkpCharacterProxy* m_CharacterProxy;
 
-    Math::Vector3      m_Velocity;
+    Base::Vector3      m_Velocity;
 
     // Properties
-    Math::Vector3      m_CapsuleA;
-    Math::Vector3      m_CapsuleB;
+    Base::Vector3      m_CapsuleA;
+    Base::Vector3      m_CapsuleB;
     f32                m_Radius;
 
 public:

@@ -3,7 +3,7 @@
 
 
 #if defined(COMPILER_MSVC)
-#define __forceinline               __declspec(inline)
+//#define __forceinline
 //#define strcpy_s
 //#define strcat_s
 //#define sprintf_s

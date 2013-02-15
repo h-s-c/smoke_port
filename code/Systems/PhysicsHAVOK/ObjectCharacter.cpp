@@ -3,10 +3,6 @@
 #include "Base/Platform.hpp"
 // Interface
 #include "Interfaces/Interface.hpp"
-// System
-#include "Systems/PhysicsHAVOK/Scene.hpp"
-#include "Systems/PhysicsHAVOK/Object.hpp"
-#include "Systems/PhysicsHAVOK/ObjectCharacter.hpp"
 // External
 #include <Common\Base\hkBase.h>
 #include <Physics\Collide\Shape\hkpShape.h>
@@ -17,6 +13,10 @@
 #include <Physics\Utilities\CharacterControl\CharacterProxy\hkpCharacterProxy.h>
 #include <Physics\Collide\Query\Collector\PointCollector\hkpClosestCdPointCollector.h>
 #include <Physics\Utilities\Destruction\BreakOffParts\hkpBreakOffPartsUtil.h>
+// System
+#include "Systems/PhysicsHAVOK/Scene.hpp"
+#include "Systems/PhysicsHAVOK/Object.hpp"
+#include "Systems/PhysicsHAVOK/ObjectCharacter.hpp"
 
 // Constants
 #define PHAVOKSCENE         reinterpret_cast<HavokPhysicsScene*>(m_pSystemScene)
@@ -57,9 +57,9 @@ HavokCharacterObject::HavokCharacterObject(
     )
     : HavokObject( pSystemScene, pszName )
     , m_CharacterProxy( NULL )
-    , m_Velocity( Math::Vector3::Zero )
-    , m_CapsuleA( Math::Vector3::Zero )
-    , m_CapsuleB( Math::Vector3::Zero )
+    , m_Velocity( Base::Vector3::Zero )
+    , m_CapsuleA( Base::Vector3::Zero )
+    , m_CapsuleB( Base::Vector3::Zero )
     , m_Radius( 0.0f )
 {
 }

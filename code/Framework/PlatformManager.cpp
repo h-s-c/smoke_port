@@ -67,7 +67,7 @@ PlatformManager::FileSystem::LoadSystemLibrary( const char* pszSysLib, ISystem**
     if ( hLib != NULL )
     {
         // Get the system functions struct.
-        struct SystemFuncs *systemFuncs = reinterpret_cast<SystemFuncs*>(dlsym(hLib, pszSysLib));
+        struct SystemFuncs *systemFuncs = reinterpret_cast<SystemFuncs*>(Windows::GetProcAddress(hLib, pszSysLib));
         if ( systemFuncs != NULL )
         {
             ManagerInterfaces Managers;

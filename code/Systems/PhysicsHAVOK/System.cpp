@@ -3,17 +3,16 @@
 #include "Base/Platform.hpp"
 // Interface
 #include "Interfaces/Interface.hpp"
+// Extern
+#include <Common\Base\hkBase.h>
+#include <Common\Base\Memory\Memory\Pool\hkPoolMemory.h>
+//#include <Common\Base\Memory\Memory\Debug\hkStlDebugMemory.h>
+#include <Physics\Dynamics\World\hkpWorld.h>
+#include <Physics\Utilities\Destruction\BreakOffParts\hkpBreakOffPartsUtil.h>
 // System
 #include "Systems/PhysicsHAVOK/ServiceCollision.hpp"
 #include "Systems/PhysicsHAVOK/System.hpp"
 #include "Systems/PhysicsHAVOK/Scene.hpp"
-// Extern
-#include <Common\Base\hkBase.h>
-#include <Common\Base\Memory\Memory\Pool\hkPoolMemory.h>
-#include <Common\Base\Memory\Memory\Debug\hkStlDebugMemory.h>
-#include <Physics\Dynamics\World\hkpWorld.h>
-#include <Physics\Utilities\Destruction\BreakOffParts\hkpBreakOffPartsUtil.h>
-
 
 extern ManagerInterfaces    g_Managers;
 
@@ -276,7 +275,7 @@ HavokPhysicsSystem::ErrorReport(
 {
     HavokPhysicsSystem* pSystem = reinterpret_cast<HavokPhysicsSystem*>(pErrorOutputObject);
 
-    Debug::Print( "[%s Error]: %s", pSystem->GetName(), pString );
+    //Debug::Print( "[%s Error]: %s", pSystem->GetName(), pString );
 
     ASSERTMSG( False, pString );
 }

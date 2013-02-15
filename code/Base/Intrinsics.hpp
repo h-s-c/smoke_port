@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Base/Platform.hpp"
+
 #include <stdint.h>
 #include <stdexcept>
 
@@ -30,18 +32,18 @@ namespace Base
     uint32_t INLINE PopCount( uint32_t x )
     {
         uint32_t r = 0;
-        r = __popcnt(x)
+        r = __popcnt(x);
         return r;
     }
     uint32_t INLINE BitScanReverse( uint32_t x )
     {
-        int32_t r = 0;
+        unsigned long r = 0;
         _BitScanReverse(&r, x);
         return r;
     }
-    uint32_t INLINE BitScanForward(( uint32_t x )
+    uint32_t INLINE BitScanForward( uint32_t x )
     {
-        int32_t r = 0;
+        unsigned long r = 0;
         _BitScanForward(&r, x);
         return r;
     }

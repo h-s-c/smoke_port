@@ -75,21 +75,21 @@ protected:
     /// </summary>
     /// <returns>Math::Vector3* - Returns the position for this object.</returns>
     /// <seealso cref="IGeometryObject::GetPosition"/>
-	virtual const Math::Vector3* GetPosition( void );
+	virtual const Base::Vector3* GetPosition( void );
 
     /// <summary cref="HavokObject::GetOrientation">
     ///   Implementation of the <c>IGeometryObject::GetOrientation</c> function.
     /// </summary>
     /// <returns>Math::Quaternion* - Returns the orientation quaternion for this object.</returns>
     /// <seealso cref="IGeometryObject::GetOrientation"/>
-	virtual const Math::Quaternion* GetOrientation( void );
+	virtual const Base::Quaternion* GetOrientation( void );
 
     /// <summary cref="HavokObject::GetScale">
     ///   Implementation of the <c>IGeometryObject::GetScale</c> function.
     /// </summary>
     /// <returns>Math::Vector3* - Returns the scale for this object.</returns>
     /// <seealso cref="IGeometryObject::GetScale"/>
-	virtual const Math::Vector3* GetScale( void );
+	virtual const Base::Vector3* GetScale( void );
 
     /// <summary cref="HavokObject::Update">
     /// Called by the task to have the object update itself.
@@ -98,9 +98,9 @@ protected:
     virtual void Update( f32 DeltaTime = 0.0f ) = 0;
 
 protected:
-    Math::Vector3    m_Position;
-    Math::Quaternion m_Orientation;
-    Math::Vector3    m_Scale;
+    Base::Vector3    m_Position;
+    Base::Quaternion m_Orientation;
+    Base::Vector3    m_Scale;
 
     std::string      m_sType;
 };

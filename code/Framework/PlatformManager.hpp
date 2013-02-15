@@ -99,9 +99,9 @@ public:
         // Set window width.
         virtual void SetWindowWidth(uint32_t width);
     private:
-        size_t window = 0;
-        uint32_t height = 768;
-        uint32_t width  = 1024;
+        size_t window;
+        uint32_t height;
+        uint32_t width;
     };
 
 protected:

@@ -3,14 +3,6 @@
 #include "Base/Platform.hpp"
 // Interface
 #include "Interfaces/Interface.hpp"
-// System
-#include "Systems/PhysicsHAVOK/ServiceCollision.hpp"
-#include "Systems/PhysicsHAVOK/System.hpp"
-#include "Systems/PhysicsHAVOK/Scene.hpp"
-#include "Systems/PhysicsHAVOK/Task.hpp"
-#include "Systems/PhysicsHAVOK/Object.hpp"
-#include "Systems/PhysicsHAVOK/ObjectPhysics.hpp"
-#include "Systems/PhysicsHAVOK/ObjectCharacter.hpp"
 // External
 #define HK_COMPAT_FILE  <Common\Compat\hkCompatVersions.h>
 #define HK_CLASSES_FILE <Common\Serialize\ClassList\hkPhysicsClasses.h>
@@ -44,7 +36,14 @@
 #include <Common/Visualize/hkVisualDebugger.h>
 #include <Physics/Utilities/VisualDebugger/hkpPhysicsContext.h>
 #endif
-
+// System
+#include "Systems/PhysicsHAVOK/ServiceCollision.hpp"
+#include "Systems/PhysicsHAVOK/System.hpp"
+#include "Systems/PhysicsHAVOK/Scene.hpp"
+#include "Systems/PhysicsHAVOK/Task.hpp"
+#include "Systems/PhysicsHAVOK/Object.hpp"
+#include "Systems/PhysicsHAVOK/ObjectPhysics.hpp"
+#include "Systems/PhysicsHAVOK/ObjectCharacter.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////
 // CollisionListener - Local helper classes
@@ -88,8 +87,8 @@ void CollisionListener::contactPointConfirmedCallback(hkpContactPointConfirmedEv
         ContactInfo.m_Impact = Impact;
         ContactInfo.m_Static = ( pEntityA->getMotion()->m_type == hkpMotion::MOTION_FIXED || pEntityB->getMotion()->m_type == hkpMotion::MOTION_FIXED );
 
-        ContactInfo.m_VelocityObjectA = Math::Vector3::Zero;
-        ContactInfo.m_VelocityObjectB = Math::Vector3::Zero;
+        ContactInfo.m_VelocityObjectA = Base::Vector3::Zero;
+        ContactInfo.m_VelocityObjectB = Base::Vector3::Zero;
 
         // Tell the objects about the contact
         if( pObjectA )
@@ -115,7 +114,7 @@ void CollisionListener::contactPointConfirmedCallback(hkpContactPointConfirmedEv
 extern ManagerInterfaces    g_Managers;
 
 
-const Math::Vector3 HavokPhysicsScene::sm_kDefaultGravity(0.0f, -9.8f, 0.0f);
+const Base::Vector3 HavokPhysicsScene::sm_kDefaultGravity(0.0f, -9.8f, 0.0f);
 
 
 pcstr HavokPhysicsScene::sm_kapszPropertyNames[] =
@@ -715,7 +714,7 @@ HavokPhysicsScene::GetProperties(
     {
         const hkVector4 hkGravity = m_pWorld->getGravity();
 
-        Math::Vector3 Gravity;
+        Base::Vector3 Gravity;
         hkGravity.store3( Gravity );
         Properties[ iProperty+Property_Gravity ].SetValue( Gravity );
     }
@@ -749,7 +748,7 @@ HavokPhysicsScene::SetProperties(
                 //
                 // Set the gravity.
                 //
-                const Math::Vector3& Gravity = it->GetVector3();
+                const Base::Vector3& Gravity = it->GetVector3();
 
                 hkVector4 hkGravity( Gravity.x, Gravity.y, Gravity.z );
                 m_pWorld->setGravity( hkGravity );
@@ -966,7 +965,7 @@ HavokPhysicsScene::GetExtendObjects(
     ExtendObjectDataArray& apszNames
     )
 {
-    SpinWait::Lock Lock( m_BrokenOffPartsSpinWait );
+    std::lock_guard<std::mutex> lock( m_BrokenOffPartsSpinWait );
 
     for ( std::map<void*, ExtensionData>::iterator it=m_aExtensions.begin();
           it != m_aExtensions.end(); it++ )
@@ -1123,7 +1122,7 @@ HavokPhysicsScene::breakOffSubPart(
             Diff.setSub4(Aabb.m_max, Aabb.m_min);
             Diff.setAbs4( Diff );
 
-            Math::Vector3 vDiff;
+            Base::Vector3 vDiff;
             Diff.store3( vDiff );
 
             if ( vDiff.x < 0.1f || vDiff.y < 0.1f || vDiff.z < 0.1f )
@@ -1143,7 +1142,7 @@ HavokPhysicsScene::breakOffSubPart(
             //
             // The first thread to add this to the map wins.
             //
-            SpinWait::Lock Lock( m_BrokenOffPartsSpinWait );
+            std::lock_guard<std::mutex> lock( m_BrokenOffPartsSpinWait );
 
             //
             // Check to see if the part isn't already in the map.
@@ -1227,7 +1226,7 @@ HavokPhysicsScene::breakOffSubPart(
                 //
                 // Lock PhysicsSystem, KeysBrokenOff, and m_aBrokenOffParts.
                 //
-                SpinWait::Lock Lock( m_BrokenOffPartsSpinWait );
+                std::lock_guard<std::mutex> lock( m_BrokenOffPartsSpinWait );
 
                 //
                 // Remove the shape from the break-off-parts utility.

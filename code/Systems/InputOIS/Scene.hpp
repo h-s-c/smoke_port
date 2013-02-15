@@ -164,9 +164,9 @@ private:
     bool                            mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id );
        
     
-    bool bUseFireHose = false;
-    bool bScenePaused = false;
+    bool bUseFireHose;
+    bool bScenePaused;
     
-    int nToggleOverlay = 0;
+    int nToggleOverlay;
 
 };

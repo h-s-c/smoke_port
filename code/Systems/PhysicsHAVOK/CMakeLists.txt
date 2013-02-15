@@ -1,5 +1,6 @@
 project (SystemPhysicsHAVOK)
     set( SYSTEM_SOURCE
+        ${CMAKE_SOURCE_DIR}/Systems/PhysicsHAVOK/Extras/PhantomShape.cpp
         ${CMAKE_SOURCE_DIR}/Systems/PhysicsHAVOK/Object.cpp
         ${CMAKE_SOURCE_DIR}/Systems/PhysicsHAVOK/ObjectCharacter.cpp        
         ${CMAKE_SOURCE_DIR}/Systems/PhysicsHAVOK/ObjectPhysics.cpp        
@@ -15,6 +16,9 @@ project (SystemPhysicsHAVOK)
     find_package(HAVOK REQUIRED)
     list(APPEND SYSTEM_INCLUDE_DIRS ${HAVOK_INCLUDE_DIRS})
     list(APPEND SYSTEM_LIBRARIES ${HAVOK_LIBRARIES}) 
+	
+     ##base
+    list(APPEND SYSTEM_LIBRARIES Base)
     
     list(APPEND SYSTEM_INCLUDE_DIRS ${CMAKE_SOURCE_DIR})
     

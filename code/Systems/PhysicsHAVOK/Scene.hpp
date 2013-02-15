@@ -15,8 +15,10 @@
 
 #pragma once
 
-
-#include "Physics\Collide\Shape\Compound\Collection\SimpleMesh\hkpSimpleMeshShape.h"
+// Standard Library
+#include <map>
+// External
+#include <Physics/Collide/Shape/Compound/Collection/SimpleMesh/hkpSimpleMeshShape.h>
 
 
 class HavokPhysicsSystem;
@@ -243,7 +245,7 @@ public:
 
 protected:
 
-    static const Math::Vector3          sm_kDefaultGravity;
+    static const Base::Vector3          sm_kDefaultGravity;
 
     const hkVector4                     m_kVelocityModifier;
     const f32                           m_kfMass;
@@ -264,7 +266,7 @@ protected:
     HavokPhysicsTask*                   m_pTask;
 
     hkpWorld*                           m_pWorld;
-    //Math::Vector3                       m_Gravity;
+    //Base::Vector3                       m_Gravity;
 
     struct Material
     {
@@ -302,7 +304,7 @@ protected:
 
     hkArray<hkpBreakOffPartsUtil*>      m_apBreakOffPartsUtils;
 
-    SpinWait                            m_BrokenOffPartsSpinWait;
+    std::mutex                          m_BrokenOffPartsSpinWait;
 
     typedef std::map<HavokPhysicsObject*, std::vector<HavokPhysicsObject*> > CollisionTracker;
     typedef CollisionTracker::iterator  CollisionTrackerIt;

@@ -12,6 +12,9 @@ project (SystemExplosion)
     list(APPEND SYSTEM_SOURCE ${SYSTEM_SOURCE})
     
     list(APPEND SYSTEM_INCLUDE_DIRS ${CMAKE_SOURCE_DIR})
+	
+     ##base
+    list(APPEND SYSTEM_LIBRARIES Base)
     
     include_directories(${SYSTEM_INCLUDE_DIRS} )
     add_library (SystemExplosion SHARED ${SYSTEM_SOURCE})

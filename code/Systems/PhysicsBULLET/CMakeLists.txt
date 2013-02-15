@@ -15,6 +15,9 @@ project (SystemPhysicsBULLET)
     find_package(Bullet REQUIRED)
     list(APPEND SYSTEM_INCLUDE_DIRS ${BULLET_INCLUDE_DIRS})
     list(APPEND SYSTEM_LIBRARIES ${BULLET_LIBRARIES}) 
+	
+     ##base
+    list(APPEND SYSTEM_LIBRARIES Base)
     
     list(APPEND SYSTEM_INCLUDE_DIRS ${CMAKE_SOURCE_DIR})
     

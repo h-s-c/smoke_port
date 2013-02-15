@@ -22,6 +22,9 @@ project (SystemAI)
     list(APPEND SYSTEM_SOURCE ${SYSTEM_SOURCE})
     
     list(APPEND SYSTEM_INCLUDE_DIRS ${CMAKE_SOURCE_DIR})
+	
+     ##base
+    list(APPEND SYSTEM_LIBRARIES Base)
     
     include_directories(${SYSTEM_INCLUDE_DIRS} )
     add_library (SystemAI SHARED ${SYSTEM_SOURCE})

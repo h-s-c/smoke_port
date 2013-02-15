@@ -37,7 +37,18 @@ project (SystemGraphicsOGRE)
     find_package(PagedGeometry REQUIRED)
     list(APPEND SYSTEM_INCLUDE_DIRS ${PG_INCLUDE_DIR})
     list(APPEND SYSTEM_LIBRARIES ${PG_LIBRARIES}) 
-
+	
+	##ogre sdk workaround
+	if (${CMAKE_CXX_COMPILER_ID} EQUAL "MSVC")
+		set(BOOST_ROOT 			"C:/OgreSDK/boost")
+		set(Boost_USE_STATIC_LIBS ON)
+		find_package(Boost COMPONENTS thread)
+		list(APPEND SYSTEM_INCLUDE_DIRS ${Boost_INCLUDE_DIRS})
+		list(APPEND SYSTEM_LIBRARIES ${Boost_LIBRARIES}) 
+	endif ()
+	
+     ##base
+    list(APPEND SYSTEM_LIBRARIES Base)
 
     list(APPEND SYSTEM_INCLUDE_DIRS ${CMAKE_SOURCE_DIR})
     

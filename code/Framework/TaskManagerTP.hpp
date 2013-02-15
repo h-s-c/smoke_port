@@ -98,7 +98,7 @@ public:
 private:
     friend class Worker;
 
-    uint32_t uNumberOfThreads = 0;
+    uint32_t uNumberOfThreads;
 
     // need to keep track of threads so we can join them
     std::vector< std::thread > workers;

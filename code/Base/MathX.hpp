@@ -13,6 +13,7 @@
 // responsibility to update it.
 
 #pragma once
+#include "Base/Platform.hpp"
 #include "Base/Math.hpp"
 
 #include <iostream>

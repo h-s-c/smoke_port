@@ -3,22 +3,13 @@
 
 INCLUDE(FindPackageTargetLibraries)
 
-FIND_PATH(HAVOK_INCLUDE_DIR Source/Common/Base/hkBase.h
+FIND_PATH(HAVOK_INCLUDE_DIR Common/Base/hkBase.h
 	HINTS
 	$ENV{HAVOK_DIR}
 	$ENV{HAVOK_PATH}
 	${ADDITIONAL_SEARCH_PATHS}
-	PATH_SUFFIXES include
 	PATHS
-		~/Library/Frameworks
-		/Library/Frameworks
-		/usr/local
-		/usr
-		/sw # Fink
-		/opt/local # DarwinPorts
-		/opt/csw # Blastwave
-		/opt
-		${CMAKE_SOURCE_DIR}/External/hk550
+		${CMAKE_SOURCE_DIR}/External/hk550/Source
 )
 
 SET(HAVOK_LIBS hkBase hkSerialize hkSceneData hkVisualize hkCompat hkpCollide hkpConstraintSolver hkpDynamics hkpInternal hkpUtilities hkpVehicle)
@@ -34,14 +25,6 @@ FOREACH(CUR_LIB ${HAVOK_LIBS})
 			${ADDITIONAL_SEARCH_PATHS}
 		PATH_SUFFIXES lib Lib lib64 "Lib/win32_net_8-0/release_multithreaded_dll"
 		PATHS
-			~/Library/Frameworks
-			/Library/Frameworks
-			/usr/local
-			/usr
-			/sw
-			/opt/local
-			/opt/csw
-			/opt
 			${CMAKE_SOURCE_DIR}/External/hk550
 	)
 
@@ -53,14 +36,6 @@ FOREACH(CUR_LIB ${HAVOK_LIBS})
 			${ADDITIONAL_SEARCH_PATHS}
 		PATH_SUFFIXES lib Lib lib64 "Lib/win32_net_8-0/debug_multithreaded_dll"
 		PATHS
-			~/Library/Frameworks
-			/Library/Frameworks
-			/usr/local
-			/usr
-			/sw
-			/opt/local
-			/opt/csw
-			/opt
 			${CMAKE_SOURCE_DIR}/External/hk550
 	)
 
@@ -71,7 +46,7 @@ FOREACH(CUR_LIB ${HAVOK_LIBS})
 ENDFOREACH()
 
 
-# handle the QUIETLY and REQUIRED arguments and set CURL_FOUND to TRUE if 
+# handle the QUIETLY and REQUIRED arguments and set HAVOK_FOUND to TRUE if 
 # all listed variables are TRUE
 SET(HAVOK_LIBRARY_FULL_LIST)
 FOREACH(CUR_LIB ${HAVOK_LIBS})

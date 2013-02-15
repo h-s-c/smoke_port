@@ -3,14 +3,6 @@
 #include "Base/Platform.hpp"
 // Interface
 #include "Interfaces/Interface.hpp"
-// System
-#include "Systems/PhysicsHAVOK/Scene.hpp"
-#include "Systems/PhysicsHAVOK/Object.hpp"
-#include "Systems/PhysicsHAVOK/ObjectPhysics.hpp"
-#include "Systems/PhysicsHAVOK/ObjectCharacter.hpp"
-#include "Systems/PhysicsHAVOK/Task.hpp"
-#include "Systems/PhysicsHAVOK/ServiceCollision.hpp"
-#include "Systems/PhysicsHAVOK/System.hpp"
 // Extern
 #include <Common\Base\hkBase.h>
 #include <Common\Base\Memory\Memory\Pool\hkPoolMemory.h>
@@ -25,7 +17,14 @@
 #include <Common/Visualize/hkVisualDebugger.h>
 #include <Physics/Utilities/VisualDebugger/hkpPhysicsContext.h>
 #endif
-
+// System
+#include "Systems/PhysicsHAVOK/Scene.hpp"
+#include "Systems/PhysicsHAVOK/Object.hpp"
+#include "Systems/PhysicsHAVOK/ObjectPhysics.hpp"
+#include "Systems/PhysicsHAVOK/ObjectCharacter.hpp"
+#include "Systems/PhysicsHAVOK/Task.hpp"
+#include "Systems/PhysicsHAVOK/ServiceCollision.hpp"
+#include "Systems/PhysicsHAVOK/System.hpp"
 
 extern ManagerInterfaces    g_Managers;
 
@@ -197,7 +196,7 @@ HavokPhysicsTask::Update(
         //
         // Get the thread information.
         //
-        m_PrimaryThreadId = Thread::CurrentThreadId();
+        m_PrimaryThreadId = ::GetCurrentThreadId();
         m_PrimaryThreadToken = m_pWorld->getThreadToken();
 
         //
@@ -372,7 +371,7 @@ HavokPhysicsTask::StepUpdateS(
     //
     // Call non-static version for given pTask
     //
-    pTask->StepUpdate( Thread::CurrentThreadId() );
+    pTask->StepUpdate( ::GetCurrentThreadId() );
 }
 
 

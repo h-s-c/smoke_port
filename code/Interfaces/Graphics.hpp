@@ -32,7 +32,7 @@ namespace IndexDecl
     // </summary>
     // <param name=Type">The index declaration.</param>
     // <returns>The size of an index in bytes.</returns>
-    __forceinline u32 CalculateSize( In u32 Type )
+    INLINE u32 CalculateSize( In u32 Type )
     {
         return (Type == Type::Index16) ? sizeof (u16) : sizeof (u32);
     }
@@ -79,7 +79,7 @@ namespace VertexDecl
         u32                             StreamIndex;
     };
 
-    __forceinline u32 FindUsageInStream( In Element* pElements, In u32 cElements, In u32 VertUsage, In u32 UsageIndex=0 )
+    INLINE u32 FindUsageInStream( In Element* pElements, In u32 cElements, In u32 VertUsage, In u32 UsageIndex=0 )
     {
         u32 Stream = static_cast<u32>(-1);
 
@@ -105,7 +105,7 @@ namespace VertexDecl
     // <param name="pElements">The vertex declaration.</param>
     // <param name="cElements">The number of vertex declaration elements.</param>
     // <returns>The size of a vertex in bytes.</returns>
-    __forceinline u32 CalculateSize( In Element* pElements, In u32 cElements, u32 StreamIndex=0 )
+    INLINE u32 CalculateSize( In Element* pElements, In u32 cElements, u32 StreamIndex=0 )
     {
         u32 Size = 0;
 
@@ -137,7 +137,7 @@ namespace VertexDecl
     // <param name="cElements">The number of vertex declaration elements.</param>
     // <param name="Type">The returned type of the usage.</param>
     // <returns>The offset of the usage in the vertex in bytes.</returns>
-    __forceinline i32 CalculateUsageOffsetInVertex( In Element* pElements, In u32 cElements,
+    INLINE i32 CalculateUsageOffsetInVertex( In Element* pElements, In u32 cElements,
                                                     In u32 Usage, Out u32& Type, 
                                                     In u32 StreamIndex=0, In u32 UsageIndex=0 )
     {
