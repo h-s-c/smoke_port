@@ -199,7 +199,10 @@ namespace Properties
                  * second argument to the va_arg() macro. Finally, for vaguely related reasons, 
                  * the last fixed argument (the one whose name is passed as the second argument to the va_start() macro) 
                  * should not be of type char, short int, or float, either.*/
+                 
+#ifdef COMPILER_MSVC
 #pragma warning( disable : 4244 )
+#endif
                 case Values::Float32:
                 case Values::Angle:
                     m_aValues[ i ].Float32 = va_arg( pArg, double );
@@ -228,7 +231,9 @@ namespace Properties
                     i = Values::Count;
                     break;
                 }
+#ifdef COMPILER_MSVC
 #pragma warning( default : 4244 )
+#endif
                 case Values::String:
                 case Values::Path:
                     m_asValues[ i ] = va_arg( pArg, pcstr );
