@@ -32,7 +32,7 @@ set(OIS_PREFIX_PATH ${OIS_HOME} ${ENV_OIS_HOME}
   ${OGRE_SOURCE}/Dependencies ${ENV_OGRE_SOURCE}/Dependencies
   ${OGRE_SDK} ${ENV_OGRE_SDK}
   ${OGRE_HOME} ${ENV_OGRE_HOME}   
-  C:/OgreSDK)
+  "$ENV{PROGRAMFILES}/OGRE" C:/OgreSDK)
 create_search_paths(OIS)
 # redo search if prefix path changed
 clear_if_changed(OIS_PREFIX_PATH
@@ -70,7 +70,8 @@ if (WIN32)
 		${OGRE_DEPENDENCIES_DIR}/bin ${ENV_OGRE_DEPENDENCIES_DIR}/bin
 		${OGRE_SOURCE}/Dependencies/bin ${ENV_OGRE_SOURCE}/Dependencies/bin
 		${OGRE_SDK}/bin ${ENV_OGRE_SDK}/bin
-		${OGRE_HOME}/bin ${ENV_OGRE_HOME}/bin)
+		${OGRE_HOME}/bin ${ENV_OGRE_HOME}/bin
+		"$ENV{PROGRAMFILES}/OGRE/bin" C:/OgreSDK/bin)
 	find_file(OIS_BINARY_REL NAMES "OIS.dll" HINTS ${OIS_BIN_SEARCH_PATH}
 	  PATH_SUFFIXES "" release relwithdebinfo minsizerel)
 	find_file(OIS_BINARY_DBG NAMES "OIS_d.dll" HINTS ${OIS_BIN_SEARCH_PATH}

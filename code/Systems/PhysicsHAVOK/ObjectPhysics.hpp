@@ -15,6 +15,9 @@
 
 #pragma once
 
+// External
+#include <Physics/Dynamics/Entity/hkpRigidBody.h>
+
 class HavokObject;
 class HavokPhysicsSystem;
 class HavokPhysicsScene;

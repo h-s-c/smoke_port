@@ -76,8 +76,8 @@ get_debug_names(OGRE_LIBRARY_NAMES)
 # OS specific guesses
 if (WIN32)
   set(OGRE_PREFIX_GUESSES
-    ${ENV_PROGRAMFILES}/OGRE
-    C:/OgreSDK
+    "$ENV{PROGRAMFILES}/OGRE"
+	C:/OgreSDK
   )
 elseif (UNIX)
   set(OGRE_PREFIX_GUESSES

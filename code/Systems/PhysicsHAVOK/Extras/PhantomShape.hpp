@@ -15,6 +15,9 @@
 
 #pragma once
 
+// External
+#include <Physics/Collide/Shape/Misc/PhantomCallback/hkpPhantomCallbackShape.h>
+
 ///////////////////////////////////////////////////////////////////////////////
 /// <summary>
 ///   <c>PhantomShape</c> Extends hkpPhantomCallbackShape to implement Phantom

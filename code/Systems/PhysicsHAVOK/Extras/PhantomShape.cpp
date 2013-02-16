@@ -21,7 +21,6 @@
 #include "Physics\Collide\Shape\Compound\Tree\Mopp\hkpMoppBvTreeShape.h"
 #include "Physics\Collide\Shape\HeightField\hkpHeightFieldShape.h"
 #include "Physics\Collide\Shape\Misc\Bv\hkpBvShape.h"
-#include "Physics\Collide\Shape\Misc\PhantomCallback\hkpPhantomCallbackShape.h"
 #include "Physics\Utilities\Destruction\BreakOffParts\hkpBreakOffPartsUtil.h"
 
 #define PHAVOKSCENE         reinterpret_cast<HavokPhysicsScene*>(m_pSystemScene)

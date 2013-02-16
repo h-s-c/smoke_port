@@ -19,6 +19,7 @@
 #include <map>
 // External
 #include <Physics/Collide/Shape/Compound/Collection/SimpleMesh/hkpSimpleMeshShape.h>
+#include <Physics/Utilities/Destruction/BreakOffParts/hkpBreakOffPartsUtil.h>
 
 
 class HavokPhysicsSystem;

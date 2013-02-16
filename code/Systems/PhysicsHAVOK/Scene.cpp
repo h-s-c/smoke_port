@@ -28,7 +28,6 @@
 #include <Physics\Collide\Shape\Compound\Tree\Mopp\hkpMoppUtility.h>
 #include <Physics\Collide\Shape\Convex\ConvexVertices\hkpConvexVerticesShape.h>
 #include <Physics\Utilities\CharacterControl\CharacterProxy\hkpCharacterProxy.h>
-#include <Physics\Utilities\Destruction\BreakOffParts\hkpBreakOffPartsUtil.h>
 #include <Physics\Utilities\Dynamics\Inertia\hkpInertiaTensorComputer.h>
 #include <Physics\Utilities\Serialize\hkpPhysicsData.h>
 #include <Physics\Dynamics\Collide\hkpCollisionListener.h>
