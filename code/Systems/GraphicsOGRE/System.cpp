@@ -166,7 +166,7 @@ OGREGraphicsSystem::Initialize(
     //
     // Create Ogre's root.
     //
-    m_pRoot = new Ogre::Root( "", "", "Ogre.log" );
+    m_pRoot = new Ogre::Root( "", "", "logs/Ogre.log" );
     ASSERT( m_pRoot != NULL );
 
     //

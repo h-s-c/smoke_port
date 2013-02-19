@@ -1,5 +1,6 @@
 bin/release
 bin/debug
+bin/logs
 build/
 docs/
 media/
