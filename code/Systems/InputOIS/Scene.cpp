@@ -1,11 +1,12 @@
-//core
+// Base
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
-//interface
+// interface
 #include "Interfaces/Interface.hpp"
-//stdlib
+// Standard Library
 #include <iostream>
-//system
+#include <sstream>
+// System
 #include "Systems/InputOIS/System.hpp"
 #include "Systems/InputOIS/Scene.hpp"
 #include "Systems/InputOIS/Object.hpp"
@@ -83,8 +84,25 @@ InputScene::Initialize(
     m_nOldUp           = 0;
     m_nOldDown         = 0;
     m_MouseMoveEnabled = false;
+    
+    size_t windowHnd = g_Managers.pPlatform->WindowSystem().GetWindowHandle();
+    std::ostringstream windowHndStr;
+    OIS::ParamList pl;
 
-    m_InputManager = OIS::InputManager::createInputSystem(g_Managers.pPlatform->WindowSystem().GetWindowHandle());
+    windowHndStr << windowHnd;
+    pl.insert(std::make_pair(std::string("WINDOW"), windowHndStr.str()));
+
+    #if defined PLATFORM_WINDOWS
+       pl.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_FOREGROUND" )));
+       pl.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_NONEXCLUSIVE")));
+       pl.insert(std::make_pair(std::string("w32_keyboard"), std::string("DISCL_FOREGROUND")));
+       pl.insert(std::make_pair(std::string("w32_keyboard"), std::string("DISCL_NONEXCLUSIVE")));
+    #elif defined PLATFORM_LINUX
+       pl.insert(std::make_pair(std::string("x11_mouse_grab"), std::string("false")));
+       pl.insert(std::make_pair(std::string("x11_keyboard_grab"), std::string("false")));
+    #endif
+
+    m_InputManager = OIS::InputManager::createInputSystem( pl);
     m_Mouse = static_cast<OIS::Mouse*>(m_InputManager->createInputObject(OIS::OISMouse, true));
     m_Mouse->setEventCallback( this );
     m_Keyboard = static_cast<OIS::Keyboard*>(m_InputManager->createInputObject(OIS::OISKeyboard, true));
