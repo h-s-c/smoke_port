@@ -370,7 +370,7 @@ public :
             {
                 prevBits = it->m_interestBits.load();
             }
-            while ( it->m_interestBits.compare_exchange_strong(prevBits, newBits)  /*!= prevBits*/ );
+            while ( !it->m_interestBits.compare_exchange_weak(prevBits, newBits)  /*!= prevBits*/ );
     #endif
             curError = Errors::Success;
         }
