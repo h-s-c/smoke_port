@@ -1,4 +1,5 @@
-bin/
+bin/release
+bin/debug
 build/
 docs/
 media/

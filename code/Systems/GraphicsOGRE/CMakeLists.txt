@@ -37,7 +37,7 @@ project (SystemGraphicsOGRE)
     find_package(PagedGeometry REQUIRED)
     list(APPEND SYSTEM_INCLUDE_DIRS ${PG_INCLUDE_DIR})
     list(APPEND SYSTEM_LIBRARIES ${PG_LIBRARIES}) 
-	
+    
      ##base
     list(APPEND SYSTEM_LIBRARIES Base)
 
@@ -47,3 +47,28 @@ project (SystemGraphicsOGRE)
     add_library (SystemGraphicsOGRE SHARED ${SYSTEM_SOURCE})
     target_link_libraries(SystemGraphicsOGRE ${SYSTEM_LIBRARIES})
     set_target_properties(SystemGraphicsOGRE PROPERTIES PREFIX "")
+    set_target_properties(SystemGraphicsOGRE PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
+    
+    install (TARGETS SystemGraphicsOGRE 
+        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/release 
+        CONFIGURATIONS Release RelWithDebInfo)  
+    install (TARGETS SystemGraphicsOGRE 
+        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/debug 
+        CONFIGURATIONS Debug)  
+        
+if(WIN32)    
+    install(FILES ${PG_LIBRARIES}
+        ${OGRE_PLUGIN_DIR_REL}/OgreMain.dll
+        ${OGRE_PLUGIN_DIR_REL}/RenderSystem_GL.dll
+        ${OGRE_PLUGIN_DIR_REL}/Plugin_ParticleFX.dll
+        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/release
+        CONFIGURATIONS Release RelWithDebInfo
+    )
+    install(FILES ${PG_LIBRARIES}
+        ${OGRE_PLUGIN_DIR_DBG}/OgreMain_d.dll
+        ${OGRE_PLUGIN_DIR_DBG}/RenderSystem_GL_d.dll
+        ${OGRE_PLUGIN_DIR_DBG}/Plugin_ParticleFX_d.dll
+        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/debug
+        CONFIGURATIONS Debug
+    )
+endif()

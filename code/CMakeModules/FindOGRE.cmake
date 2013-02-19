@@ -77,7 +77,7 @@ get_debug_names(OGRE_LIBRARY_NAMES)
 if (WIN32)
   set(OGRE_PREFIX_GUESSES
     "$ENV{PROGRAMFILES}/OGRE"
-	C:/OgreSDK
+    C:/OgreSDK
   )
 elseif (UNIX)
   set(OGRE_PREFIX_GUESSES
@@ -110,7 +110,7 @@ if (OGRE_PREFIX_SOURCE AND OGRE_PREFIX_BUILD)
     set(OGRE_INC_SEARCH_PATH ${dir}/include ${OGRE_INC_SEARCH_PATH})
     set(OGRE_LIB_SEARCH_PATH ${dir}/lib ${OGRE_LIB_SEARCH_PATH})
     set(OGRE_BIN_SEARCH_PATH ${dir}/bin ${OGRE_BIN_SEARCH_PATH})
-	set(OGRE_BIN_SEARCH_PATH ${dir}/Samples/Common/bin ${OGRE_BIN_SEARCH_PATH})
+    set(OGRE_BIN_SEARCH_PATH ${dir}/Samples/Common/bin ${OGRE_BIN_SEARCH_PATH})
   endforeach(dir)
   
   if (OGRE_PREFIX_DEPENDENCIES_DIR)
@@ -148,7 +148,7 @@ if(NOT OGRE_BUILD_PLATFORM_IPHONE)
   # try to find framework on OSX
   findpkg_framework(OGRE)
 else()
-	set(OGRE_LIBRARY_FWK "")
+    set(OGRE_LIBRARY_FWK "")
 endif()
 
 # locate Ogre include files
@@ -215,8 +215,8 @@ list(REMOVE_DUPLICATES OGRE_INCLUDE_DIR)
 findpkg_finish(OGRE)
 add_parent_dir(OGRE_INCLUDE_DIRS OGRE_INCLUDE_DIR)
 if (OGRE_SOURCE)
-	# If working from source rather than SDK, add samples include
-	set(OGRE_INCLUDE_DIRS ${OGRE_INCLUDE_DIRS} "${OGRE_SOURCE}/Samples/Common/include")
+    # If working from source rather than SDK, add samples include
+    set(OGRE_INCLUDE_DIRS ${OGRE_INCLUDE_DIRS} "${OGRE_SOURCE}/Samples/Common/include")
 endif()
 
 mark_as_advanced(OGRE_CONFIG_INCLUDE_DIR OGRE_MEDIA_DIR OGRE_PLUGIN_DIR_REL OGRE_PLUGIN_DIR_DBG)
@@ -273,9 +273,9 @@ if (OGRE_STATIC)
     set(OGRE_DEPS_FOUND FALSE)
   endif ()
   if (UNIX AND NOT APPLE)
-	if (NOT X11_FOUND)
+    if (NOT X11_FOUND)
       set(OGRE_DEPS_FOUND FALSE)
-	endif ()
+    endif ()
   endif ()
 
   if (OGRE_CONFIG_THREADS)
@@ -323,13 +323,13 @@ set(OGRE_LIBRARY_DIRS ${OGRE_LIBRARY_DIR_REL} ${OGRE_LIBRARY_DIR_DBG})
 
 # find binaries
 if (NOT OGRE_STATIC)
-	if (WIN32)
-		find_file(OGRE_BINARY_REL NAMES "OgreMain.dll" HINTS ${OGRE_BIN_SEARCH_PATH}
+    if (WIN32)
+        find_file(OGRE_BINARY_REL NAMES "OgreMain.dll" HINTS ${OGRE_BIN_SEARCH_PATH}
           PATH_SUFFIXES "" release relwithdebinfo minsizerel)
-		find_file(OGRE_BINARY_DBG NAMES "OgreMain_d.dll" HINTS ${OGRE_BIN_SEARCH_PATH}
+        find_file(OGRE_BINARY_DBG NAMES "OgreMain_d.dll" HINTS ${OGRE_BIN_SEARCH_PATH}
           PATH_SUFFIXES "" debug )
-	endif()
-	mark_as_advanced(OGRE_BINARY_REL OGRE_BINARY_DBG)
+    endif()
+    mark_as_advanced(OGRE_BINARY_REL OGRE_BINARY_DBG)
 endif()
 
 
@@ -360,11 +360,11 @@ macro(ogre_find_component COMPONENT HEADER)
   if (OGRE_${COMPONENT}_FOUND)
     # find binaries
     if (NOT OGRE_STATIC)
-	  if (WIN32)
-	    find_file(OGRE_${COMPONENT}_BINARY_REL NAMES "Ogre${COMPONENT}.dll" HINTS ${OGRE_COMPONENT_SEARCH_PATH_REL} PATH_SUFFIXES "" bin bin/release bin/relwithdebinfo bin/minsizerel release)
-	    find_file(OGRE_${COMPONENT}_BINARY_DBG NAMES "Ogre${COMPONENT}_d.dll" HINTS ${OGRE_COMPONENT_SEARCH_PATH_DBG} PATH_SUFFIXES "" bin bin/debug debug)
-	  endif()
-	  mark_as_advanced(OGRE_${COMPONENT}_BINARY_REL OGRE_${COMPONENT}_BINARY_DBG)
+      if (WIN32)
+        find_file(OGRE_${COMPONENT}_BINARY_REL NAMES "Ogre${COMPONENT}.dll" HINTS ${OGRE_COMPONENT_SEARCH_PATH_REL} PATH_SUFFIXES "" bin bin/release bin/relwithdebinfo bin/minsizerel release)
+        find_file(OGRE_${COMPONENT}_BINARY_DBG NAMES "Ogre${COMPONENT}_d.dll" HINTS ${OGRE_COMPONENT_SEARCH_PATH_DBG} PATH_SUFFIXES "" bin bin/debug debug)
+      endif()
+      mark_as_advanced(OGRE_${COMPONENT}_BINARY_REL OGRE_${COMPONENT}_BINARY_DBG)
     endif()
   endif()
 endmacro()
@@ -428,12 +428,12 @@ macro(ogre_find_plugin PLUGIN HEADER)
         set(OGRE_PLUGIN_SEARCH_PATH_REL 
           ${OGRE_LIBRARY_DIR_REL}/..
           ${OGRE_LIBRARY_DIR_REL}/../..
-		  ${OGRE_BIN_SEARCH_PATH}
+          ${OGRE_BIN_SEARCH_PATH}
         )
         set(OGRE_PLUGIN_SEARCH_PATH_DBG
           ${OGRE_LIBRARY_DIR_DBG}/..
           ${OGRE_LIBRARY_DIR_DBG}/../..
-		  ${OGRE_BIN_SEARCH_PATH}
+          ${OGRE_BIN_SEARCH_PATH}
         )
         find_path(OGRE_PLUGIN_DIR_REL NAMES "${PLUGIN}.dll" HINTS ${OGRE_PLUGIN_SEARCH_PATH_REL}
           PATH_SUFFIXES "" bin bin/release bin/relwithdebinfo bin/minsizerel release)
@@ -441,21 +441,21 @@ macro(ogre_find_plugin PLUGIN HEADER)
           PATH_SUFFIXES "" bin bin/debug debug)
       elseif (UNIX)
         get_filename_component(OGRE_PLUGIN_DIR_TMP ${OGRE_${PLUGIN}_LIBRARY_REL} PATH)
-        set(OGRE_PLUGIN_DIR_REL ${OGRE_PLUGIN_DIR_TMP} CACHE STRING "Ogre plugin dir (release)")
+        set(OGRE_PLUGIN_DIR_REL ${OGRE_PLUGIN_DIR_TMP} CACHE STRING "Ogre plugin dir (release)" FORCE)
         get_filename_component(OGRE_PLUGIN_DIR_TMP ${OGRE_${PLUGIN}_LIBRARY_DBG} PATH)
-        set(OGRE_PLUGIN_DIR_DBG ${OGRE_PLUGIN_DIR_TMP} CACHE STRING "Ogre plugin dir (debug)")
+        set(OGRE_PLUGIN_DIR_DBG ${OGRE_PLUGIN_DIR_TMP} CACHE STRING "Ogre plugin dir (debug)" FORCE)
       endif ()
     endif ()
-	
-	# find binaries
-	if (NOT OGRE_STATIC)
-		if (WIN32)
-			find_file(OGRE_${PLUGIN}_REL NAMES "${PLUGIN}.dll" HINTS ${OGRE_PLUGIN_DIR_REL})
-			find_file(OGRE_${PLUGIN}_DBG NAMES "${PLUGIN}_d.dll" HINTS ${OGRE_PLUGIN_DIR_DBG})
-		endif()
-		mark_as_advanced(OGRE_${PLUGIN}_REL OGRE_${PLUGIN}_DBG)
-	endif()
-	
+    
+    # find binaries
+    if (NOT OGRE_STATIC)
+        if (WIN32)
+            find_file(OGRE_${PLUGIN}_REL NAMES "${PLUGIN}.dll" HINTS ${OGRE_PLUGIN_DIR_REL})
+            find_file(OGRE_${PLUGIN}_DBG NAMES "${PLUGIN}_d.dll" HINTS ${OGRE_PLUGIN_DIR_DBG})
+        endif()
+        mark_as_advanced(OGRE_${PLUGIN}_REL OGRE_${PLUGIN}_DBG)
+    endif()
+    
   endif ()
 
   if (TMP_CMAKE_LIB_PREFIX)

@@ -16,7 +16,7 @@ project (SystemPhysicsHAVOK)
     find_package(HAVOK REQUIRED)
     list(APPEND SYSTEM_INCLUDE_DIRS ${HAVOK_INCLUDE_DIRS})
     list(APPEND SYSTEM_LIBRARIES ${HAVOK_LIBRARIES}) 
-	
+    
      ##base
     list(APPEND SYSTEM_LIBRARIES Base)
     
@@ -26,3 +26,10 @@ project (SystemPhysicsHAVOK)
     add_library (SystemPhysicsHAVOK SHARED ${SYSTEM_SOURCE})
     target_link_libraries(SystemPhysicsHAVOK ${SYSTEM_LIBRARIES})
     set_target_properties(SystemPhysicsHAVOK PROPERTIES PREFIX "")
+
+    install (TARGETS SystemPhysicsHAVOK
+        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/release 
+        CONFIGURATIONS Release RelWithDebInfo)  
+    install (TARGETS SystemPhysicsHAVOK
+        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/debug 
+        CONFIGURATIONS Debug)  

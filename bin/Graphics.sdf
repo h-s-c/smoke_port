@@ -1,0 +1,25 @@
+<System Type="Graphics" Lib="SystemGraphicsOGRE">
+    <Properties>
+    <Property Name="ResourceLocation" Path="../media/graphics" Type="FileSystem" Group="farm_scene" Recursive="1"/>
+    <Property Name="WindowName" Value1="Smoke Demo"/>
+      <Property Name="Resolution" Value1="1024" Value2="768"/>
+    <Property Name="ShadowTextureCount" Value1="1"/>
+    <Property Name="ShadowTextureSize" Value1="1024"/>
+
+  <!-- When FullScreen is disabled, the app will run in windowed more.  
+       Please note, there is a know crash when you resize the window. -->
+    <Property Name="FullScreen" Value1="0"/>
+    
+    <Property Name="VerticalSync" Value1="0"/>
+    
+  <!-- Full Screen Anti-Aliasing
+       Example Type's: 
+          D3DMULTISAMPLE_NONE            =  0,
+          D3DMULTISAMPLE_NONMASKABLE     =  1,
+          D3DMULTISAMPLE_2_SAMPLES       =  2,
+          D3DMULTISAMPLE_4_SAMPLES       =  4,
+          D3DMULTISAMPLE_16_SAMPLES      = 16,          
+       Quality levels are driver specific. 0 selects default quality level. -->
+  <Property Name="FSAntiAliasing" Type="4" Quality="0"/>
+  </Properties>
+</System>

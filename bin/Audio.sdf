@@ -1,0 +1,17 @@
+<System Type="Audio" Lib="SystemAudioFMOD">
+	<Properties>
+		<Property Name="ResourceLocation" Value1="../media/sounds/" Value2="FileSystem" Value3="General"/>
+		<Property Name="MusicVol" Value1="1.0"/>
+		<Property Name="FXVol" Value1="1.0"/>
+    <!--
+    Speaker Mode Values:
+        0 - No speakers
+        1 - Mono
+        2 - Stereo (Default)
+        3 - Surround
+        4 - 5.1
+        5 - 7.1
+    -->
+    <!--Property Name="SpeakerMode" Value1="2"/-->
+	</Properties>
+</System>

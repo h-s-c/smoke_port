@@ -15,7 +15,15 @@
 #pragma once
 
 #include "Framework/FrameworkAPI.hpp"
+
 #include <mutex>
+
+#if defined(COMPILER_MSVC)
+#include <filesystem>
+#endif
+#if defined(COMPILER_GCC)
+#include <boost/filesystem.hpp>
+#endif
 
 /*******************************************************************************
 * CLASS: Framework
@@ -154,7 +162,7 @@ protected:
     UScene*                                 m_pScene;
 
     Bool                                    m_bExecuteLoop;
-
+    
 private:
 
     std::string                             m_sGDF;
@@ -164,7 +172,7 @@ private:
     {
     public:
 
-        GDFParser( UScene* pScene );
+        GDFParser( UScene* pScene, std::string sOldpath);
 
         void ParseEnvironment( std::string sGDF );
 
@@ -173,7 +181,8 @@ private:
         const std::string ParseScene( std::string sGDF, std::string sScene );
 
         GDFParser& operator=( const GDFParser& ) { std::cerr << "ASSERT" << std::endl; return *this;}
-
+        
+        public:
 
     protected:
 
@@ -197,6 +206,8 @@ private:
         UScene*                                         m_pScene;
 
         std::string                                     m_sNextScene;
+        
+        std::string                                     m_sOldpath;
 
         enum GdfMarkers
         {

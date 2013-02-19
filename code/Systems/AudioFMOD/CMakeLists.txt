@@ -23,3 +23,18 @@ project (SystemAudioFMOD)
     add_library (SystemAudioFMOD SHARED ${SYSTEM_SOURCE})
     target_link_libraries(SystemAudioFMOD ${SYSTEM_LIBRARIES})
     set_target_properties(SystemAudioFMOD PROPERTIES PREFIX "")
+    set_target_properties(SystemAudioFMOD PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
+    
+    install (TARGETS SystemAudioFMOD 
+        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/release
+        CONFIGURATIONS Release RelWithDebInfo)
+    install (TARGETS SystemAudioFMOD 
+        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/debug
+        CONFIGURATIONS Debug)
+        
+    install (FILES ${FMOD_LIBRARY} 
+        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/release
+        CONFIGURATIONS Release RelWithDebInfo)
+    install (FILES ${FMOD_LIBRARY} 
+        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/debug
+        CONFIGURATIONS Debug)

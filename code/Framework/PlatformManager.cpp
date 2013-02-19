@@ -57,17 +57,21 @@ PlatformManager::FileSystem::~FileSystem(
 
 
 Error
-PlatformManager::FileSystem::LoadSystemLibrary( const char* pszSysLib, ISystem** ppSystem)
+PlatformManager::FileSystem::LoadSystemLibrary(
+    const std::string strSysLib,
+    const std::string strSysLibPath,
+    ISystem** ppSystem
+    )
 {
     Error   Err = Errors::Failure;
-
+    
     // Load the dll.
-    Windows::HMODULE hLib = Windows::LoadLibraryA( pszSysLib );
+    Windows::HMODULE hLib = Windows::LoadLibraryA( std::string(strSysLibPath + "/" + strSysLib + ".dll").c_str() );
 
     if ( hLib != NULL )
     {
         // Get the system functions struct.
-        struct SystemFuncs *systemFuncs = reinterpret_cast<SystemFuncs*>(Windows::GetProcAddress(hLib, pszSysLib));
+        struct SystemFuncs *systemFuncs = reinterpret_cast<SystemFuncs*>(Windows::GetProcAddress(hLib, strSysLib.c_str()));
         if ( systemFuncs != NULL )
         {
             ManagerInterfaces Managers;
@@ -104,12 +108,12 @@ PlatformManager::FileSystem::LoadSystemLibrary( const char* pszSysLib, ISystem**
         }
         else
         {
-            std::cerr << "Could not get the system functions from " << pszSysLib << std::endl;
+            std::cerr << "Could not get the system functions from " << strSysLib.c_str() << std::endl;
         }
     }
     else
     {
-        std::cerr << "Could not open " << pszSysLib << std::endl;
+        std::cerr << "Could not open " << strSysLib.c_str() << std::endl;
     }
 
     return Err;
@@ -162,22 +166,20 @@ PlatformManager::FileSystem::~FileSystem( void)
 
 Error
 PlatformManager::FileSystem::LoadSystemLibrary(
-    const char* pszSysLib,
+    const std::string strSysLib,
+    const std::string strSysLibPath,
     ISystem** ppSystem
     )
 {
     Error   Err = Errors::Failure;
     
-    // Prepare the .so path and name
-    std::string strSysLib = boost::filesystem::current_path().string() + "/" + std::string(pszSysLib) + ".so";
-
     // Load the .so
-    void* hLib = dlopen( strSysLib.c_str(), RTLD_NOW);
+    void* hLib = dlopen( std::string(strSysLibPath + "/" + strSysLib + ".so").c_str(), RTLD_NOW);
 
     if ( hLib != NULL )
     {
         // Get the system functions struct.
-        struct SystemFuncs *systemFuncs = reinterpret_cast<SystemFuncs*>(dlsym(hLib, pszSysLib));
+        struct SystemFuncs *systemFuncs = reinterpret_cast<SystemFuncs*>(dlsym(hLib, strSysLib.c_str() ));
         if ( systemFuncs != NULL )
         {
             ManagerInterfaces Managers;

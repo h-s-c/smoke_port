@@ -15,7 +15,7 @@ project (SystemPhysicsBULLET)
     find_package(Bullet REQUIRED)
     list(APPEND SYSTEM_INCLUDE_DIRS ${BULLET_INCLUDE_DIRS})
     list(APPEND SYSTEM_LIBRARIES ${BULLET_LIBRARIES}) 
-	
+    
      ##base
     list(APPEND SYSTEM_LIBRARIES Base)
     
@@ -25,3 +25,10 @@ project (SystemPhysicsBULLET)
     add_library (SystemPhysicsBULLET SHARED ${SYSTEM_SOURCE})
     target_link_libraries(SystemPhysicsBULLET ${SYSTEM_LIBRARIES})
     set_target_properties(SystemPhysicsBULLET PROPERTIES PREFIX "")
+
+    install (TARGETS SystemPhysicsBULLET
+        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/release 
+        CONFIGURATIONS Release RelWithDebInfo)  
+    install (TARGETS SystemPhysicsBULLET
+        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/debug 
+        CONFIGURATIONS Debug)  

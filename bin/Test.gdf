@@ -1,0 +1,31 @@
+<GlobalDefinition>
+
+  <Environment>
+    <Variable Name="TaskManager" Value="TP"/>
+    <Variable Name="TaskManager::Threads" Value="0"/>
+    <Variable Name="StopAfterNFrames" Value="0"/>
+    <Variable Name="AI::Parallel" Value="True"/>
+    <Variable Name="AI::SubTasks" Value="4"/>
+    <Variable Name="Units" Value="0.01"/>
+    <Variable Name="Graphics::Parallel" Value="True"/>
+    <Variable Name="Graphics::PolygonMode" Value="0" />
+    <Variable Name="Graphics::ShowNormals" Value="False" />
+    <Variable Name="Graphics::ShowTangents" Value="False" />
+    <Variable Name="Graphics::ShowBoundingBox" Value="False" />
+    <Variable Name="Graphics::ShowCaptions" Value="False" />
+  </Environment>
+
+  <Systems>
+    <System Type="Geometry" Lib="SystemGeometry"/>
+    <System Type="Graphics" SDF="Graphics"/>
+    <System Type="Audio" SDF="Audio"/>
+    <System Type="Input" SDF="Input"/>
+    <System Type="AI" Lib="SystemAI"/>
+    <System Type="Explosion" Lib="SystemExplosion"/>
+  </Systems>
+
+  <Scenes Startup="Test">
+    <Scene Name="Test" CDF="Test"/>
+  </Scenes>
+
+</GlobalDefinition>

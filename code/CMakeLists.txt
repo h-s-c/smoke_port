@@ -2,7 +2,7 @@ cmake_minimum_required (VERSION 2.8.10)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeModules")
 
 project (Smoke)
-	# Compiler-specific C++11 activation/checks.
+    # Compiler-specific C++11 activation/checks.
     if (${CMAKE_CXX_COMPILER_ID} MATCHES "GNU")
         if (NOT (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 4.7 OR CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 4.7))
             message(FATAL_ERROR "${PROJECT_NAME} requires g++ 4.7 or greater.")
@@ -23,7 +23,7 @@ project (Smoke)
         set(CMAKE_CXX_FLAGS_RELEASE        "-O4 -DNDEBUG")
         set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-O2 -g")
     elseif (${CMAKE_CXX_COMPILER_ID} EQUAL "MSVC")
-		## /wd4251 silences warnings in OGRE headers
+        ## /wd4251 silences warnings in OGRE headers
         set(CMAKE_CXX_FLAGS                "/EHsc /wd4251 /D_CRT_SECURE_NO_WARNINGS")
         ##set(CMAKE_CXX_FLAGS_DEBUG          "")
         ##set(CMAKE_CXX_FLAGS_MINSIZEREL     "")
@@ -44,7 +44,13 @@ project (Smoke)
     else ()
         message(FATAL_ERROR "Your C++ compiler does not have the required C++11 support.")
     endif ()
-	   
+    
+    ## CMake defaults to leaving CMAKE_BUILD_TYPE empty. 
+    ## This screws updifferentiation between debug and release builds.   
+    if (CMAKE_BUILD_TYPE STREQUAL "")
+      set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "Choose the type of build, options are: None (CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used) Debug Release RelWithDebInfo MinSizeRel." FORCE)
+    endif ()
+       
     add_subdirectory(Base)
     ##add_subdirectory(External)
     
@@ -69,3 +75,11 @@ project (Smoke)
     add_executable(Smoke Main.cpp)
     add_dependencies(Smoke ${SMOKE_DEPEDENCIES} )
     target_link_libraries(Smoke ${SMOKE_LIBRARIES})
+    
+    install (TARGETS Smoke 
+        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/release
+        CONFIGURATIONS Release RelWithDebInfo)
+    install (TARGETS Smoke 
+        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/debug
+        CONFIGURATIONS Debug)
+

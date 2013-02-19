@@ -77,9 +77,19 @@ Framework::Initialize( pcstr pszGDF)
 {
     std::clog << "Initializing Framework" << std::endl;
 #if defined(COMPILER_MSVC)
-    if ( !std::tr2::sys::exists(std::tr2::sys::path(pszGDF)) )
+    // Backup directory
+    auto oldpath = std::tr2::sys::current_path();
+    // Go up one directory
+    std::tr2::sys::current_path( std::tr2::sys::current_path().branch_path());
+    // Check for GDF file
+    if ( !std::tr2::sys::exists( std::tr2::sys::path(pszGDF)) )
 #else
-    if ( !boost::filesystem::exists( pszGDF ) )
+    // Backup directory
+    auto oldpath = boost::filesystem::current_path();
+    // Go up one directory
+    boost::filesystem::current_path( boost::filesystem::current_path().branch_path());
+    // Check for GDF file
+    if ( !boost::filesystem::exists( boost::filesystem::path(pszGDF)))
 #endif
     {
         std::cerr << "Framework could not locate the GDF file " << std::string(pszGDF) << "." << std::endl;
@@ -96,7 +106,7 @@ Framework::Initialize( pcstr pszGDF)
     }
 
     // Instantiate the parser, parse the environment variables in the GDF.
-    GDFParser Parser( m_pScene );
+    GDFParser Parser( m_pScene, oldpath.string());
     Parser.ParseEnvironment( pszGDF );
     
     // Register the framework as the system access provider.  The system access provider gives the
@@ -581,11 +591,12 @@ Framework::IssuePendingSystemPropertyChanges(
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 // Framework::GDFParser Implementations.
-
 Framework::GDFParser::GDFParser(
-    UScene* pScene
+    UScene* pScene,
+    std::string sOldpath
     )
-    : m_pScene( pScene )
+    : m_pScene( pScene ),
+      m_sOldpath( sOldpath )
 {
 }
 
@@ -1469,7 +1480,7 @@ Framework::GDFParser::ReadAttributes(
                 //
                 // Load the system library.
                 //
-                PlatformManager::getInstance().FileSystem().LoadSystemLibrary(pXmlAttrib->Value(), &m_pSystem);
+                PlatformManager::getInstance().FileSystem().LoadSystemLibrary(std::string(pXmlAttrib->Value()), m_sOldpath, &m_pSystem);
                 if (m_pSystem == NULL)
                 {
                     std::cerr << "Parser could not load the system " <<  pXmlAttrib->Value()

@@ -58,8 +58,9 @@ public:
         
     public:
         // Loads a system library and returns pointers to the system.
-        Error LoadSystemLibrary( In char* pszSysLib, 
-                                 ISystem** ppSystem);
+        Error LoadSystemLibrary( const std::string strSysLib,
+                                    const std::string strSysLibPath,
+                                    ISystem** ppSystem);
 
     protected:
         struct SystemLib

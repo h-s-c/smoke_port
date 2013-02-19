@@ -22,7 +22,7 @@ project (SystemAI)
     list(APPEND SYSTEM_SOURCE ${SYSTEM_SOURCE})
     
     list(APPEND SYSTEM_INCLUDE_DIRS ${CMAKE_SOURCE_DIR})
-	
+    
      ##base
     list(APPEND SYSTEM_LIBRARIES Base)
     
@@ -30,3 +30,10 @@ project (SystemAI)
     add_library (SystemAI SHARED ${SYSTEM_SOURCE})
     target_link_libraries(SystemAI ${SYSTEM_LIBRARIES})
     set_target_properties(SystemAI PROPERTIES PREFIX "")
+    
+    install (TARGETS SystemAI
+        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/release 
+        CONFIGURATIONS Release RelWithDebInfo)  
+    install (TARGETS SystemAI
+        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/debug 
+        CONFIGURATIONS Debug)  
