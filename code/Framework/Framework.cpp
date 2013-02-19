@@ -147,11 +147,8 @@ Framework::Initialize( pcstr pszGDF)
     }
 
     // Complete the parsing of the GDF and the initial scene.
-    std::clog << "test1" << std::endl;
     m_sNextScene = Parser.Parse( pszGDF );
-    std::clog << "test2" << std::endl;
     m_sNextScene = Parser.ParseScene( pszGDF, m_sNextScene );
-    std::clog << "test3" << std::endl;
 
     // Set the initial scene for the scheduler.
     m_pScheduler->SetScene( m_pScene );

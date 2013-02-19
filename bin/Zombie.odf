@@ -7,11 +7,6 @@
     <Property Name="Animation" Value1="run" Value2="Running"/>
     <Property Name="Animation" Value1="react" Value2="Panicked"/>
   </Properties>
-  <Properties SystemType="PhysicsCollision" ObjectType="Character">
-    <Property Name="CapsuleA" Value1="0.0" Value2="31.0" Value3="0.0"/>
-    <Property Name="CapsuleB" Value1="0.0" Value2="30.0" Value3="0.0"/>
-    <Property Name="Radius" Value1="30.0"/>
-  </Properties>
   <Properties SystemType="Audio" ObjectType="AI">
     <Property Name="Source" Value1="1"/>
     <Property Name="Position" Value1="10000" Value2="10000" Value3="40000"/>
