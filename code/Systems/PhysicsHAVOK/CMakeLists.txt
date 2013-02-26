@@ -28,8 +28,8 @@ project (SystemPhysicsHAVOK)
     set_target_properties(SystemPhysicsHAVOK PROPERTIES PREFIX "")
 
     install (TARGETS SystemPhysicsHAVOK
-        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/release 
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/release 
         CONFIGURATIONS Release RelWithDebInfo)  
     install (TARGETS SystemPhysicsHAVOK
-        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/debug 
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/debug 
         CONFIGURATIONS Debug)  

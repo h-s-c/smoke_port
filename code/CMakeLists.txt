@@ -50,9 +50,14 @@ project (Smoke)
     if (CMAKE_BUILD_TYPE STREQUAL "")
       set(CMAKE_BUILD_TYPE "RelWithDebInfo" CACHE STRING "Choose the type of build, options are: None (CMAKE_CXX_FLAGS or CMAKE_C_FLAGS used) Debug Release RelWithDebInfo MinSizeRel." FORCE)
     endif ()
+    
+    ## Change default install prefix
+    if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
+    set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/../bin" CACHE PATH "install prefix" FORCE)
+    endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
        
     add_subdirectory(Base)
-    ##add_subdirectory(External)
+    add_subdirectory(External)
     
     add_subdirectory(Framework)
     list(APPEND SMOKE_LIBRARIES Framework)
@@ -77,9 +82,9 @@ project (Smoke)
     target_link_libraries(Smoke ${SMOKE_LIBRARIES})
     
     install (TARGETS Smoke 
-        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/release
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/release
         CONFIGURATIONS Release RelWithDebInfo)
     install (TARGETS Smoke 
-        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/debug
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/debug
         CONFIGURATIONS Debug)
 

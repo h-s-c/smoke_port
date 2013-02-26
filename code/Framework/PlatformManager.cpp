@@ -136,7 +136,6 @@ PlatformManager::WindowSystem::ProcessMessages( void)
 
 // external
 #include <dlfcn.h>
-#include <boost/filesystem.hpp>
 
 PlatformManager::FileSystem::~FileSystem( void)
 {

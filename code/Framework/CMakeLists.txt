@@ -1,3 +1,5 @@
+include(ExternalProject)
+
 project (Framework)
     set( FRAMEWORK_SOURCE
         ${CMAKE_SOURCE_DIR}/Framework/ChangeControlManager.cpp
@@ -21,13 +23,9 @@ project (Framework)
     )
     list(APPEND FRAMEWORK_SOURCE ${TINYXML_SOURCE})
 
-    ##boost.filesystem
-	if (NOT ${CMAKE_CXX_COMPILER_ID} EQUAL "MSVC")
-		find_package( Boost COMPONENTS filesystem system REQUIRED)
-		list(APPEND FRAMEWORK_LIBRARIES ${Boost_LIBRARIES})
-		list(APPEND FRAMEWORK_INCLUDE_DIRS ${Boost_INCLUDE_DIR})
-		list(APPEND FRAMEWORK_LIBRARY_DIRS ${Boost_LIBRARY_DIR})
-	endif ()
+    ##diy
+    list(APPEND FRAMEWORK_INCLUDE_DIRS  ${CMAKE_SOURCE_DIR}/External/diy)
+    list(APPEND FRAMEWORK_LIBRARIES diy)
 
     ##pthreads
     if (UNIX) 

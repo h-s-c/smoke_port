@@ -22,8 +22,8 @@ project (SystemExplosion)
     set_target_properties(SystemExplosion PROPERTIES PREFIX "")
 
     install (TARGETS SystemExplosion
-        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/release 
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/release 
         CONFIGURATIONS Release RelWithDebInfo)  
     install (TARGETS SystemExplosion
-        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/debug 
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/debug 
         CONFIGURATIONS Debug)  

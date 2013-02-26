@@ -50,10 +50,10 @@ project (SystemGraphicsOGRE)
     set_target_properties(SystemGraphicsOGRE PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
     
     install (TARGETS SystemGraphicsOGRE 
-        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/release 
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/release 
         CONFIGURATIONS Release RelWithDebInfo)  
     install (TARGETS SystemGraphicsOGRE 
-        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/debug 
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/debug 
         CONFIGURATIONS Debug)  
         
 if(WIN32)    
@@ -61,14 +61,14 @@ if(WIN32)
         ${OGRE_PLUGIN_DIR_REL}/OgreMain.dll
         ${OGRE_PLUGIN_DIR_REL}/RenderSystem_GL.dll
         ${OGRE_PLUGIN_DIR_REL}/Plugin_ParticleFX.dll
-        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/release
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/release
         CONFIGURATIONS Release RelWithDebInfo
     )
     install(FILES ${PG_LIBRARIES}
         ${OGRE_PLUGIN_DIR_DBG}/OgreMain_d.dll
         ${OGRE_PLUGIN_DIR_DBG}/RenderSystem_GL_d.dll
         ${OGRE_PLUGIN_DIR_DBG}/Plugin_ParticleFX_d.dll
-        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/debug
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/debug
         CONFIGURATIONS Debug
     )
 endif()

@@ -26,15 +26,15 @@ project (SystemAudioFMOD)
     set_target_properties(SystemAudioFMOD PROPERTIES INSTALL_RPATH_USE_LINK_PATH TRUE)
     
     install (TARGETS SystemAudioFMOD 
-        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/release
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/release
         CONFIGURATIONS Release RelWithDebInfo)
     install (TARGETS SystemAudioFMOD 
-        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/debug
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/debug
         CONFIGURATIONS Debug)
         
     install (FILES ${FMOD_LIBRARY} 
-        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/release
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/release
         CONFIGURATIONS Release RelWithDebInfo)
     install (FILES ${FMOD_LIBRARY} 
-        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/debug
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/debug
         CONFIGURATIONS Debug)

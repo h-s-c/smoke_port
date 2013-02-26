@@ -27,8 +27,8 @@ project (SystemPhysicsBULLET)
     set_target_properties(SystemPhysicsBULLET PROPERTIES PREFIX "")
 
     install (TARGETS SystemPhysicsBULLET
-        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/release 
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/release 
         CONFIGURATIONS Release RelWithDebInfo)  
     install (TARGETS SystemPhysicsBULLET
-        DESTINATION ${CMAKE_SOURCE_DIR}/../bin/debug 
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/debug 
         CONFIGURATIONS Debug)  

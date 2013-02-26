@@ -7,13 +7,8 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
-#if defined(COMPILER_MSVC)
-#include <filesystem>
-#endif
 // external
-#if defined(COMPILER_GCC)
-#include <boost/filesystem.hpp>
-#endif
+#include <diy/filesystem.hpp>
 #include "External/tinyxml/tinyxml.h"
 // framework
 #include "Framework/Universal.hpp"
@@ -76,21 +71,12 @@ Error
 Framework::Initialize( pcstr pszGDF)
 {
     std::clog << "Initializing Framework" << std::endl;
-#if defined(COMPILER_MSVC)
     // Backup directory
-    auto oldpath = std::tr2::sys::current_path();
+    auto oldpath = diy::filesystem::current_path();
     // Go up one directory
-    std::tr2::sys::current_path( std::tr2::sys::current_path().branch_path());
+    diy::filesystem::current_path( diy::filesystem::current_path().branch_path());
     // Check for GDF file
-    if ( !std::tr2::sys::exists( std::tr2::sys::path(pszGDF)) )
-#else
-    // Backup directory
-    auto oldpath = boost::filesystem::current_path();
-    // Go up one directory
-    boost::filesystem::current_path( boost::filesystem::current_path().branch_path());
-    // Check for GDF file
-    if ( !boost::filesystem::exists( boost::filesystem::path(pszGDF)))
-#endif
+    if ( !diy::filesystem::exists( diy::filesystem::path(pszGDF)))
     {
         std::cerr << "Framework could not locate the GDF file " << std::string(pszGDF) << "." << std::endl;
         return Errors::File::NotFound;
