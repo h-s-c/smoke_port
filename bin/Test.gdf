@@ -1,7 +1,7 @@
 <GlobalDefinition>
 
   <Environment>
-    <Variable Name="TaskManager" Value="TP"/>
+    <Variable Name="TaskManager" Value="None"/>
     <Variable Name="TaskManager::Threads" Value="1"/>
     <Variable Name="StopAfterNFrames" Value="0"/>
     <Variable Name="AI::Parallel" Value="False"/>
