@@ -4,7 +4,7 @@
 // Standard Library
 #include <cmath>
 #include <cstdint>
-#include <stdexcept>
+#include <cstdlib>
 
 
 using namespace Base;
@@ -47,8 +47,6 @@ Quaternion::Set(
     In float Angle
     )
 {
-    if (1.0f - Axis.Magnitude() < 0.0001f)
-        throw std::runtime_error("This function requires the vector to be normalized upon entry.");
 
     const float Sin = Angle::Sin( Angle / 2.0f );
 
