@@ -7,9 +7,9 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
-#include <stdnext/filesystem>
 // external
-#include "External/tinyxml/tinyxml.h"
+#include <boost/filesystem.hpp>
+#include <tinyxml/tinyxml.h>
 // framework
 #include "Framework/Universal.hpp"
 #include "Framework/SystemManager.hpp"
@@ -72,11 +72,11 @@ Framework::Initialize( pcstr pszGDF)
 {
     std::clog << "Initializing Framework" << std::endl;
     // Backup directory
-    auto oldpath = stdnext::filesystem::current_path();
+    auto oldpath = boost::filesystem::current_path();
     // Go up one directory
-    stdnext::filesystem::current_path( stdnext::filesystem::current_path().parent_path());
+    boost::filesystem::current_path( boost::filesystem::current_path().parent_path());
     // Check for GDF file
-    if ( !stdnext::filesystem::exists( stdnext::filesystem::path(pszGDF)))
+    if ( !boost::filesystem::exists( boost::filesystem::path(pszGDF)))
     {
         std::cerr << "Framework could not locate the GDF file " << std::string(pszGDF) << "." << std::endl;
         return Errors::File::NotFound;

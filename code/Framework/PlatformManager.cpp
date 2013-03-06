@@ -5,8 +5,7 @@
 #include "Interfaces/Interface.hpp"
 // Standard Library
 #include <iostream>
-// External
-#include <diy/dlfcn.hpp>
+#include <dlfcn.h>
 // Framework
 #include "Framework/PlatformManager.hpp"
 #include "Framework/SystemManager.hpp"
@@ -31,17 +30,17 @@ PlatformManager::SystemLibrary::~SystemLibrary( void)
         void* hLib = reinterpret_cast<void*>(it->hLib);
         
         // Get the system functions struct.
-        struct SystemFuncs *systemFuncs = reinterpret_cast<SystemFuncs*>(diy::dlsym(hLib, it->pSystem->GetName()));
+        struct SystemFuncs *systemFuncs = reinterpret_cast<SystemFuncs*>(dlsym(hLib, it->pSystem->GetName()));
         if ( systemFuncs != NULL )
         {
             systemFuncs->DestroySystem( it->pSystem );
         }
         else
         {
-            std::cerr << diy::dlerror() << std::endl;
+            std::cerr << dlerror() << std::endl;
         }
 
-        diy::dlclose( hLib );
+        dlclose( hLib );
     }
 
     m_SystemLibs.clear();
@@ -59,16 +58,16 @@ PlatformManager::SystemLibrary::LoadSystemLibrary(
     
     #if defined(__GNUC__) || defined(__clang__) || defined(__INTEL_COMPILER) 
     // Load the .so
-    void* hLib = diy::dlopen( std::string(strSysLibPath + "/" + strSysLib + ".so").c_str(), RTLD_NOW);
+    void* hLib = dlopen( std::string(strSysLibPath + "/" + strSysLib + ".so").c_str(), RTLD_NOW);
     #elif defined(_MSC_VER)
     // Load the .dll
-    void* hLib = diy::dlopen( std::string(strSysLibPath + "/" + strSysLib + ".dll").c_str(), RTLD_NOW);
+    void* hLib = dlopen( std::string(strSysLibPath + "/" + strSysLib + ".dll").c_str(), RTLD_NOW);
     #endif
     
     if ( hLib != NULL )
     {
         // Get the system functions struct.
-        struct SystemFuncs *systemFuncs = reinterpret_cast<SystemFuncs*>(diy::dlsym(hLib, strSysLib.c_str() ));
+        struct SystemFuncs *systemFuncs = reinterpret_cast<SystemFuncs*>(dlsym(hLib, strSysLib.c_str() ));
         if ( systemFuncs != NULL )
         {
             ManagerInterfaces Managers;
@@ -105,12 +104,12 @@ PlatformManager::SystemLibrary::LoadSystemLibrary(
         }
         else
         {
-            std::cerr << diy::dlerror() << std::endl;
+            std::cerr << dlerror() << std::endl;
         }
     }
     else
     {
-        std::cerr << diy::dlerror() << std::endl;
+        std::cerr << dlerror() << std::endl;
     }
 
     return Err;
