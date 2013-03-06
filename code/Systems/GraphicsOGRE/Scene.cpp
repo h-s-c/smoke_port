@@ -208,6 +208,8 @@ OGREGraphicsScene::Update(
                    IEnvironment::IRuntime::Status::Paused;
     m_bPause = bPaused;
     m_fDeltaTime = DeltaTime;
+    
+    Ogre::WindowEventUtilities::messagePump();
 
     if( m_bUseInstancedGeom )
     {
