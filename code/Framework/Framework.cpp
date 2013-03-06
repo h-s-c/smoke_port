@@ -7,8 +7,8 @@
 #include <iostream>
 #include <stdexcept>
 #include <string>
+#include <stdnext/filesystem>
 // external
-#include <diy/filesystem.hpp>
 #include "External/tinyxml/tinyxml.h"
 // framework
 #include "Framework/Universal.hpp"
@@ -72,11 +72,11 @@ Framework::Initialize( pcstr pszGDF)
 {
     std::clog << "Initializing Framework" << std::endl;
     // Backup directory
-    auto oldpath = diy::filesystem::current_path();
+    auto oldpath = stdnext::filesystem::current_path();
     // Go up one directory
-    diy::filesystem::current_path( diy::filesystem::current_path().branch_path());
+    stdnext::filesystem::current_path( stdnext::filesystem::current_path().parent_path());
     // Check for GDF file
-    if ( !diy::filesystem::exists( diy::filesystem::path(pszGDF)))
+    if ( !stdnext::filesystem::exists( stdnext::filesystem::path(pszGDF)))
     {
         std::cerr << "Framework could not locate the GDF file " << std::string(pszGDF) << "." << std::endl;
         return Errors::File::NotFound;
@@ -197,9 +197,6 @@ Framework::Execute( void)
 
     while ( m_bExecuteLoop )
     {
-        // Process any pending window messages.
-        PlatformManager::getInstance().WindowSystem().ProcessMessages();
-
         // Call the scheduler to have the systems internally update themselves.
         m_pScheduler->Execute();
 
@@ -1463,7 +1460,7 @@ Framework::GDFParser::ReadAttributes(
                 //
                 // Load the system library.
                 //
-                PlatformManager::getInstance().FileSystem().LoadSystemLibrary(std::string(pXmlAttrib->Value()), m_sOldpath, &m_pSystem);
+                PlatformManager::getInstance().SystemLibrary().LoadSystemLibrary(std::string(pXmlAttrib->Value()), m_sOldpath, &m_pSystem);
                 if (m_pSystem == NULL)
                 {
                     std::cerr << "Parser could not load the system " <<  pXmlAttrib->Value()

@@ -85,7 +85,7 @@ InputScene::Initialize(
     m_nOldDown         = 0;
     m_MouseMoveEnabled = false;
     
-    size_t windowHnd = g_Managers.pPlatform->WindowSystem().GetWindowHandle();
+    size_t windowHnd = g_Managers.pPlatform->Window().GetWindowHandle();
     std::ostringstream windowHndStr;
     OIS::ParamList pl;
 
@@ -108,8 +108,8 @@ InputScene::Initialize(
     m_Keyboard = static_cast<OIS::Keyboard*>(m_InputManager->createInputObject(OIS::OISKeyboard, true));
     m_Keyboard->setEventCallback( this );
     
-    uint32_t height= g_Managers.pPlatform->WindowSystem().GetWindowHeight();
-    uint32_t width= g_Managers.pPlatform->WindowSystem().GetWindowWidth();
+    uint32_t height= g_Managers.pPlatform->Window().GetWindowHeight();
+    uint32_t width= g_Managers.pPlatform->Window().GetWindowWidth();
     const OIS::MouseState &ms = m_Mouse->getMouseState();
     ms.height = height;
     ms.width = width;

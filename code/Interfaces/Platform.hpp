@@ -26,6 +26,6 @@ public:
         
     };
 
-    virtual IWindow& WindowSystem( void ) = 0;
+    virtual IWindow& Window( void ) = 0;
 
 };

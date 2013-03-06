@@ -18,12 +18,7 @@
 
 #include <mutex>
 
-#if defined(COMPILER_MSVC)
-#include <filesystem>
-#endif
-#if defined(COMPILER_GCC)
-#include <boost/filesystem.hpp>
-#endif
+#include <stdnext/filesystem>
 
 /*******************************************************************************
 * CLASS: Framework

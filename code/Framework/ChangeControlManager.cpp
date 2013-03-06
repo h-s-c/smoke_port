@@ -12,20 +12,18 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
 
+// Base
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
+// Interfaces
 #include "Interfaces/Interface.hpp"
-
-#include "Framework/ChangeControlManager.hpp"
-#include "Framework/PlatformManager.hpp"
-
-#if defined(COMPILER_MSVC)
-#include <Windows.h>
-#endif
-
+// Standard library
 #include <algorithm>
 #include <utility>
 #include <iostream>
+// Framework
+#include "Framework/ChangeControlManager.hpp"
+#include "Framework/PlatformManager.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////
 // ChangeManager - Default constructor 

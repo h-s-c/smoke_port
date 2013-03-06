@@ -26,19 +26,17 @@ project (Framework)
     ##diy
     list(APPEND FRAMEWORK_INCLUDE_DIRS  ${CMAKE_SOURCE_DIR}/External/diy)
     list(APPEND FRAMEWORK_LIBRARIES diy)
-
-    ##pthreads
+    
+    ##stdnext
+    list(APPEND FRAMEWORK_INCLUDE_DIRS  ${CMAKE_SOURCE_DIR}/External/stdnext)
+    list(APPEND FRAMEWORK_LIBRARIES stdnext)
+   
     if (UNIX) 
+        ##pthreads
         find_package(Threads)
         list(APPEND FRAMEWORK_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
-    endif ()
-
-    ##dl
-    if (UNIX) 
-        ##find_package(DL)
-        list(APPEND FRAMEWORK_LIBRARIES ${CMAKE_DL_LIBS})
-    endif ()
-    
+    endif ()   
+   
     ##base
     list(APPEND FRAMEWORK_LIBRARIES Base)
     

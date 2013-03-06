@@ -101,21 +101,6 @@
 #define InOut
 #endif
 
-#if defined(COMPILER_MSVC)
- #define TLSVAR         uint32_t
- #define TLSALLOC(k)    (*(k)=TlsAlloc(), TLS_OUT_OF_INDEXES==*(k))
- #define TLSFREE(k)     (!TlsFree(k))
- #define TLSGET(k)      TlsGetValue(k)
- #define TLSSET(k, a)   (!TlsSetValue(k, a))
-#elif defined(PLATFORM_UNIX)
- #define TLS_OUT_OF_INDEXES ((uint32_t)0xFFFFFFFF)
- #define TLSVAR         pthread_key_t
- #define TLSALLOC(k)    pthread_key_create(k, 0)
- #define TLSFREE(k)     pthread_key_delete(k)
- #define TLSGET(k)      pthread_getspecific(k)
- #define TLSSET(k, a)   pthread_setspecific(k, a)
-#endif
-
 #if defined(PLATFORM_UNIX)
 #define _stricmp strcasecmp
 #define _strnicmp strncasecmp

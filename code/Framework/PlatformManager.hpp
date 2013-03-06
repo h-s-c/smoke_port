@@ -3,9 +3,6 @@
 #include <mutex>
 #include <vector>
 
-////////////////////////////////////////////////////////////////////////
-///   Abstraction class for OS specific functionality.
-////////////////////////////////////////////////////////////////////////
 class PlatformManager : public IPlatform
 {
 private:
@@ -44,17 +41,17 @@ public:
     
 
     ////////////////////////////////////////////////////////////////////
-    ///   Provides OS file system functionality.
+    ///   Provides OS shared library loading functionality.
     ////////////////////////////////////////////////////////////////////
-    class FileSystem
+    class SystemLibrary
     {
     private:
         friend class PlatformManager;
 
     protected:
         // Only accessible via the PlatformMananger.
-        FileSystem() {}
-        ~FileSystem();
+        SystemLibrary() {}
+        ~SystemLibrary();
         
     public:
         // Loads a system library and returns pointers to the system.
@@ -75,18 +72,16 @@ public:
     ////////////////////////////////////////////////////////////////////
     ///   Provides OS window system functionality.
     ////////////////////////////////////////////////////////////////////
-    class WindowSystem : public IPlatform::IWindow
+    class Window : public IPlatform::IWindow
     {
     private:
         friend class PlatformManager;
 
     protected:
         // Only accessible via the PlatformMananger.</remarks>
-        WindowSystem() {}
+        Window() {}
 
     public:
-        // Processes any waiting window messages.
-        void ProcessMessages( void );
         // Get window handle.
         virtual size_t GetWindowHandle( void );
         // Set window handle.
@@ -106,20 +101,20 @@ public:
     };
 
 protected:
-    FileSystem                          m_FileSystem;
-    WindowSystem                        m_WindowSystem;
+    SystemLibrary                   m_SystemLibrary;
+    Window                          m_Window;
 
 public:
-    // Gets a reference to the FileSystem class.
-    FileSystem& FileSystem( void )
+    // Gets a reference to the SystemLibrary class.
+     SystemLibrary& SystemLibrary( void )
     {
-        return m_FileSystem;
+        return m_SystemLibrary;
     }
 
-    // Gets a reference to the WindowSystem class.
-    virtual WindowSystem& WindowSystem( void )
+    // Gets a reference to the Window class.
+    virtual Window& Window( void )
     {
-        return m_WindowSystem;
+        return m_Window;
     }
     
 };

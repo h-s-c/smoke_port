@@ -317,9 +317,9 @@ OGREGraphicsSystem::Initialize(
     //make the window accessible by the input system
     size_t hWnd = 0;
     m_pRenderWindow->getCustomAttribute("WINDOW", &hWnd);
-    g_Managers.pPlatform->WindowSystem().SetWindowHandle( hWnd );
-    g_Managers.pPlatform->WindowSystem().SetWindowHeight( Height );
-    g_Managers.pPlatform->WindowSystem().SetWindowWidth( Width );
+    g_Managers.pPlatform->Window().SetWindowHandle( hWnd );
+    g_Managers.pPlatform->Window().SetWindowHeight( Height );
+    g_Managers.pPlatform->Window().SetWindowWidth( Width );
     
     // listen to the RenderWindow
     Ogre::WindowEventUtilities::addWindowEventListener( m_pRenderWindow, this );
