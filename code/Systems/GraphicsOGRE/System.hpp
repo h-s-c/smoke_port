@@ -123,6 +123,9 @@ protected:
     static pcstr                        sm_kapszPropertyNames[];
     static const Properties::Property   sm_kaDefaultProperties[];
 
+    Ogre::LogManager*                   m_pLogManager;
+    Ogre::Log*                          m_pLog;
+    
     Ogre::Root*                         m_pRoot;
 
     Ogre::ResourceGroupManager*         m_pResourceGroupManager;

@@ -123,6 +123,7 @@ OGREGraphicsSystem::~OGREGraphicsSystem(
     m_pRoot->shutdown();
 
     SAFE_DELETE( m_pRoot );
+    SAFE_DELETE( m_pLogManager );
 }
 
 
@@ -162,11 +163,15 @@ OGREGraphicsSystem::Initialize(
     )
 {
     ASSERT( !m_bInitialized );
+    
+    
+    m_pLogManager = new Ogre::LogManager();
+    m_pLog = Ogre::LogManager::getSingleton().createLog("logs/Ogre.log", true, false, false); 
 
     //
     // Create Ogre's root.
     //
-    m_pRoot = new Ogre::Root( "", "", "logs/Ogre.log" );
+    m_pRoot = new Ogre::Root( "", "", "" );
     ASSERT( m_pRoot != NULL );
 
     //
