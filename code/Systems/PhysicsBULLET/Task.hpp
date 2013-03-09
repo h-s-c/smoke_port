@@ -121,22 +121,16 @@ private:
 
 
 private:
-
-#ifdef __HAVOK_VDB__
-    hkpPhysicsContext*                      m_pPhysicsContext;
-    hkVisualDebugger*                       m_pVisualDebugger;
-#endif
-
     BulletPhysicsScene*                     m_pScene;
 
-    hkpWorld*                               m_pWorld;
+    btDiscreteDynamicsWorld*                       m_pWorld;
 
     std::list<BulletPhysicsObject*>         m_ActiveObjects;
 
-    u32                                     m_cJobs;
+    //u32                                     m_cJobs;
 
-    u32                                     m_PrimaryThreadId;
-    hkpThreadToken                          m_PrimaryThreadToken;
+    //u32                                     m_PrimaryThreadId;
+    //hkpThreadToken                          m_PrimaryThreadToken;
 
     f32                                     m_DeltaTime;
 };

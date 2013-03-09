@@ -17,9 +17,8 @@
 
 #pragma once
 
-#include "..\..\extern\trees\Vector3.h"
-#include "..\..\extern\trees\aabb.h"
-#include "TreeScene.h"
+#include "Systems/Common/AABB.hpp"
+#include "Systems/ProceduralTrees/Scene.hpp"
 class TreeSystem;
 class TreeScene;
 class TreeTask;

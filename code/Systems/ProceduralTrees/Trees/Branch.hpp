@@ -20,13 +20,11 @@
 class Branch;
 class BranchBase;
 
-#ifndef _Branch
-#define _Branch
-#include "SpeciesGrammar.h"
-#include "segment.h"
-#include "observer.h"
-#include "canopy.h"
-#include "aabb.h"
+#include "Systems/ProceduralTrees/Trees/SpeciesGrammar.hpp"
+#include "Systems/ProceduralTrees/Trees/Segment.hpp"
+#include "Systems/ProceduralTrees/Trees/Observer.hpp"
+#include "Systems/ProceduralTrees/Trees/Canopy.hpp"
+#include "Systems/Common/AABB.hpp"
 
 struct treeNode;
 class Canopy;
@@ -40,7 +38,7 @@ public:
     Canopy  *canopies;
     bool isCanopy;
     int segmentCount;
-	int tipPointCount;
+    int tipPointCount;
     V3 heading; // This is overall branch direction.  different from initial segement heading.
     V3 position; // This is the root segment center point. This is the Parent branch Tip Point.
     V3 tipPoint; // This is the last segment center point.  This is the child branch position point.
@@ -49,7 +47,7 @@ public:
     int startIndex; 
     int vertexCount;
     int indexCount; 
-	int attribute;
+    int attribute;
     aabb AABB;
 
 
@@ -81,6 +79,5 @@ public:
 protected:
     Branch(){};
 };
-#endif
 
     

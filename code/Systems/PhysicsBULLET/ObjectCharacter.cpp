@@ -8,11 +8,6 @@
 #include "Systems/PhysicsBULLET/Object.hpp"
 #include "Systems/PhysicsBULLET/ObjectCharacter.hpp"
 
-//
-// constants
-//
-#define PHAVOKSCENE         reinterpret_cast<BulletPhysicsScene*>(m_pSystemScene)
-
 pcstr BulletCharacterObject::sm_kapszCommonPropertyNames[] =
 {
     "CapsuleA", "CapsuleB", "Radius",

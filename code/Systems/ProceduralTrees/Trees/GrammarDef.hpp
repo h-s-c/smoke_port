@@ -13,9 +13,9 @@
 // responsibility to update it.
 
 
-#include "SpeciesGrammar.h"
-#include "FatTreeGrammar.h"
-#include "PlainTreeGrammar.h"
-#include "ScratchTreeGrammar.h"
-#include "SpikeTreeGrammar.h"
-#include "TreeGrammar1.h"
+#include "Systems/ProceduralTrees/Trees/SpeciesGrammar.hpp"
+#include "Systems/ProceduralTrees/Trees/FatTreeGrammar.hpp"
+#include "Systems/ProceduralTrees/Trees/PlainTreeGrammar.hpp"
+#include "Systems/ProceduralTrees/Trees/ScratchTreeGrammar.hpp"
+#include "Systems/ProceduralTrees/Trees/SpikeTreeGrammar.hpp"
+#include "Systems/ProceduralTrees/Trees/TreeGrammar1.hpp"

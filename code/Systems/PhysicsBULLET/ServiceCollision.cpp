@@ -306,8 +306,7 @@ LineTest(
             Result->m_Normal.z = normal.z;
 
             // Set m_Hit
-            hkpWorldObject* pWorldObject = (hkpWorldObject*)output.getHit().m_rootCollidable->getOwner();
-            BulletObject* pObject = (BulletObject*)pWorldObject->getUserData();
+            BulletObject* pObject = (BulletObject*)closestResults.collisionObject.getUserPointer();
             if( pObject )
             {
                 Result->m_Hit = pObject->GetName();

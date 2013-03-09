@@ -16,7 +16,7 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
 
-#include "canopy.h"
+#include "Systems/ProceduralTrees/Trees/Canopy.hpp"
 
 void Canopy::heading(V3 Heading)
 {
@@ -63,55 +63,55 @@ void Canopy::growPatchSegment(treeNode *rootOfTree, BranchBase *pCanopyBranch,aa
 {
     
     theOverseer = observer::Instance();
-	//int cwidth =9;
-	//int cheight =9;
-	//float m_widthStep =1;
-	//float m_heightStep =1.25;
+    //int cwidth =9;
+    //int cheight =9;
+    //float m_widthStep =1;
+    //float m_heightStep =1.25;
     rootOfTree->tree->m_CanopyCount++;
     V3 root(rootOfTree->pbranch->segments[0].m_tipPointList[0]);
-	V3 CanopySegmentRoot(pCanopyBranch->tipPoint);// canopySegmentRoot
-	V3 CanopyTop(root);
+    V3 CanopySegmentRoot(pCanopyBranch->tipPoint);// canopySegmentRoot
+    V3 CanopyTop(root);
     CanopyTop.y = root.y + TreeBoundingBox.yMax;
-	V3 CanopyFulcrum(CanopyTop);
-	CanopyFulcrum.y = CanopyFulcrum.y * 0.57f; // 4/7
+    V3 CanopyFulcrum(CanopyTop);
+    CanopyFulcrum.y = CanopyFulcrum.y * 0.57f; // 4/7
     if(pCanopyBranch->tipPoint.y < CanopyFulcrum.y){
         CanopyFulcrum.y = pCanopyBranch->tipPoint.y * 0.714f;// 5/7
     }
-	V3 CanopyHeading = CanopySegmentRoot-CanopyFulcrum;
-	CanopyHeading.Normalize();
-	V3 CanopyArbitrary(CanopySegmentRoot-root);
-	CanopyArbitrary.Normalize();
-	V3 Left = CrossProduct(CanopyArbitrary,CanopyHeading);
-	V3 Right = CrossProduct(CanopyHeading,CanopyArbitrary);
-	Left.Normalize();
-	Right.Normalize();
-	V3 Down = CrossProduct(Left,CanopyHeading);
-	V3 Up = CrossProduct(CanopyHeading,Left);
+    V3 CanopyHeading = CanopySegmentRoot-CanopyFulcrum;
+    CanopyHeading.Normalize();
+    V3 CanopyArbitrary(CanopySegmentRoot-root);
+    CanopyArbitrary.Normalize();
+    V3 Left = CrossProduct(CanopyArbitrary,CanopyHeading);
+    V3 Right = CrossProduct(CanopyHeading,CanopyArbitrary);
+    Left.Normalize();
+    Right.Normalize();
+    V3 Down = CrossProduct(Left,CanopyHeading);
+    V3 Up = CrossProduct(CanopyHeading,Left);
     float perturbFactor = grammar->perturbFactor;
     V3 perturb = CanopyHeading;
-	Down.Normalize();
-	Up.Normalize();
+    Down.Normalize();
+    Up.Normalize();
     Basis.iAxis = Right * (((float)m_width)/2) * m_widthStep;
     Basis.jAxis = CanopyHeading;
     Basis.kAxis = Down * (((float)m_height)/2) * m_heightStep;
     int shift = -((int)floor(m_width/2.0f));
     float nudge =0.0f;
-	for(int j=0;j<m_height;j++){
-	    for(int i=0;i<m_width;i++){
+    for(int j=0;j<m_height;j++){
+        for(int i=0;i<m_width;i++){
             nudge = theOverseer->randf(-(perturbFactor),(perturbFactor));
             perturb = perturb * nudge;
             V3 tcb = pCanopyBranch->tipPoint + ((i+shift)*m_widthStep)* Left + (j*m_heightStep)*Down;
             V3 *cb;
             if(!(j==0&&i==(m_width/2))){
                 tcb = tcb + perturb;
- 			    cb = new V3(tcb);
+                cb = new V3(tcb);
             }else{
- 			    cb = new V3(tcb);
+                cb = new V3(tcb);
             }
-		    m_Canopy.push_back(cb);
+            m_Canopy.push_back(cb);
             perturb = CanopyHeading;
         }
-	}
+    }
     theOverseer = observer::Instance();
     m_startIndex = theOverseer->DXRS->CurrentIndex;
     m_startVertex = theOverseer->DXRS->CurrentVIndex;
@@ -126,27 +126,27 @@ void Canopy::growHexSegment(treeNode *rootOfTree, BranchBase *pCanopyBranch,aabb
     theOverseer = observer::Instance();
     rootOfTree->tree->m_CanopyCount++;
     V3 root(rootOfTree->pbranch->segments[0].m_tipPointList[0]);
-	V3 CanopySegmentRoot(pCanopyBranch->tipPoint);// canopySegmentRoot
-	V3 CanopyTop(root);
+    V3 CanopySegmentRoot(pCanopyBranch->tipPoint);// canopySegmentRoot
+    V3 CanopyTop(root);
     CanopyTop.y = root.y + TreeBoundingBox.yMax;
-	V3 CanopyFulcrum(CanopyTop);
-	CanopyFulcrum.y = CanopyFulcrum.y * 0.57f; // 4/7
+    V3 CanopyFulcrum(CanopyTop);
+    CanopyFulcrum.y = CanopyFulcrum.y * 0.57f; // 4/7
     if(pCanopyBranch->tipPoint.y < CanopyFulcrum.y){
         CanopyFulcrum.y = pCanopyBranch->tipPoint.y * 0.714f;// 5/7
     }
-	V3 CanopyHeading = CanopySegmentRoot-CanopyFulcrum;
-	CanopyHeading.Normalize();
-	V3 CanopyArbitrary(CanopySegmentRoot-root);
-	CanopyArbitrary.Normalize();
-	V3 Left = CrossProduct(CanopyArbitrary,CanopyHeading);
-	V3 Right = CrossProduct(CanopyHeading,CanopyArbitrary);
-	Left.Normalize();
-	Right.Normalize();
-	V3 Down = CrossProduct(Left,CanopyHeading);
-	V3 Up = CrossProduct(CanopyHeading,Left);
+    V3 CanopyHeading = CanopySegmentRoot-CanopyFulcrum;
+    CanopyHeading.Normalize();
+    V3 CanopyArbitrary(CanopySegmentRoot-root);
+    CanopyArbitrary.Normalize();
+    V3 Left = CrossProduct(CanopyArbitrary,CanopyHeading);
+    V3 Right = CrossProduct(CanopyHeading,CanopyArbitrary);
+    Left.Normalize();
+    Right.Normalize();
+    V3 Down = CrossProduct(Left,CanopyHeading);
+    V3 Up = CrossProduct(CanopyHeading,Left);
     V3 perturb = CanopyHeading;
-	Down.Normalize();
-	Up.Normalize();
+    Down.Normalize();
+    Up.Normalize();
     int shift = -((int)floor(m_width/2.0f));
     float nudge =0.0f;
 

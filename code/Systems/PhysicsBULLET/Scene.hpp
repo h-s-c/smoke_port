@@ -193,7 +193,7 @@ public:
     ///   Gets the Havok World used by this scene.
     /// </summary>
     /// <returns>hkpWorld* - A pointer this scenes Havok World.</returns>
-    hkpWorld* GetWorld( void )
+    btDiscreteDynamicsWorld* GetWorld( void )
     {
         ASSERT( m_pWorld != NULL );
         return m_pWorld;
@@ -294,15 +294,15 @@ protected:
     struct ExtensionData
     {
         pcstr                           pszName;
-        hkpRigidBody*                   pBody;
+        btRigidBody*                   pBody;
     };
     std::map<void*, ExtensionData>      m_aExtensions;
 
-    hkArray<hkpRigidBody*>              m_aUnattachedBodies;
+    hkArray<btRigidBody*>              m_aUnattachedBodies;
 
-    hkArray<hkpBreakOffPartsUtil*>      m_apBreakOffPartsUtils;
+    //hkArray<hkpBreakOffPartsUtil*>      m_apBreakOffPartsUtils;
 
-    SpinWait                            m_BrokenOffPartsSpinWait;
+    //SpinWait                            m_BrokenOffPartsSpinWait;
 
     typedef std::map<HavokPhysicsObject*, std::vector<HavokPhysicsObject*> > CollisionTracker;
     typedef CollisionTracker::iterator  CollisionTrackerIt;
