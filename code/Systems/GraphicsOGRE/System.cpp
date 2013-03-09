@@ -184,7 +184,7 @@ OGREGraphicsSystem::Initialize(
     Bool    bVerticalSync = True;
     std::string     dFSAAType    = "0";  //D3DMULTISAMPLE_NONE;
     std::string     dFSAAQuality = "0";
-    
+    std::vector<std::string> resourcegroups;    
 
     for ( Properties::Iterator it=Properties.begin(); it != Properties.end(); it++ )
     {
@@ -202,10 +202,10 @@ OGREGraphicsSystem::Initialize(
                 pcstr pszResourceGroup = it->GetStringPtr( 2 );
                 Bool  bRecursive = it->GetBool( 3 ); 
              
-                m_pResourceGroupManager->addResourceLocation(
-                    pszName, pszLocationType, pszResourceGroup, (bRecursive == True) );
-
-                m_pResourceGroupManager->loadResourceGroup( pszResourceGroup );
+                m_pResourceGroupManager->createResourceGroup( pszResourceGroup, true);             
+                m_pResourceGroupManager->addResourceLocation( pszName, pszLocationType, pszResourceGroup, (bRecursive == True) );
+                
+                resourcegroups.push_back(std::string(pszResourceGroup));
             }
             else if ( sName == sm_kapszPropertyNames[ Property_WindowName ] )
             {
@@ -243,35 +243,6 @@ OGREGraphicsSystem::Initialize(
             it->ClearFlag( Properties::Flags::Valid );
         }
     }
-
-    //
-    // Command line overrides
-    //
-    /*{
-        USES_CONVERSION;
-
-        WCHAR**             argv;
-        int                 argc, iArg;
-
-        argv = CommandLineToArgvW( GetCommandLineW(), &argc);
-        for(iArg=0; iArg<argc; iArg++)
-        {
-            switch (*argv[iArg])
-            {
-                case '-':
-                case '/':
-                {
-                    if (0==_wcsicmp(argv[iArg]+1, L"windowed" ))    bFullScreen = False;
-                }   break;
-                
-                default:
-                {
-                }
-            }
-        }
-        
-        LocalFree(argv);
-    }*/
     
     //
     // Intialize the render system and render window.
@@ -282,8 +253,6 @@ OGREGraphicsSystem::Initialize(
 #else
     m_pRoot->loadPlugin("RenderSystem_GL");
 #endif
-
-    //Ogre::RenderSystemList *pRenderList;
 
     auto pRenderList = m_pRoot->getAvailableRenderers();
 
@@ -308,10 +277,6 @@ OGREGraphicsSystem::Initialize(
     // yielded a render system with no render window until after plugins load which causes assertions for CreateParticleSystem
     // which requires a render window at the time the billboard renderer loads.
     m_pRenderWindow = m_pRoot->createRenderWindow( szWindowName, Width, Height, bFullScreen == True, &params );
-    /*m_pRenderWindow =
-        m_pRenderSystem->createRenderWindow(
-            szWindowName, Width, Height, bFullScreen == True, &params
-            );*/
     ASSERT( m_pRenderWindow != NULL );
     
     //make the window accessible by the input system
@@ -327,15 +292,15 @@ OGREGraphicsSystem::Initialize(
     //
     // Intialize all the resource groups.
     //
+    
+    // workaround
+    for (auto resourcegroup : resourcegroups)
+    {
+        m_pResourceGroupManager->initialiseResourceGroup( resourcegroup.c_str() );
+        m_pResourceGroupManager->loadResourceGroup( resourcegroup.c_str() );
+    }
+    
     m_pResourceGroupManager->initialiseAllResourceGroups();
-
-    //
-    // Initialize the material manager.
-    //
-
-    // Note: Commented because the createRenderWindow() call is now called directly through m_pRoot rather than initialised manually
-    // m_pMaterialManager = Ogre::MaterialManager::getSingletonPtr();
-    // m_pMaterialManager->initialise();
 
     //
     // Set as initialized.

@@ -646,11 +646,10 @@ OGREGraphicsScene::Initialize(
                 pcstr pszLocationType = it->GetStringPtr( 1 );
                 pcstr pszResourceGroup = it->GetStringPtr( 2 );
                 Bool  bRecursive = it->GetBool( 3 ); 
-
-                pResourceGroupManager->addResourceLocation(
-                    pszName, pszLocationType, pszResourceGroup, (bRecursive == True)
-                    );
-
+                
+                pResourceGroupManager->createResourceGroup( pszResourceGroup, true);
+                pResourceGroupManager->addResourceLocation( pszName, pszLocationType, pszResourceGroup, (bRecursive == True));
+                pResourceGroupManager->initialiseResourceGroup( pszResourceGroup );
                 pResourceGroupManager->loadResourceGroup( pszResourceGroup );
             }
             else if ( sName == sm_kapszPropertyNames[ Property_DelResourceLocation ] )
