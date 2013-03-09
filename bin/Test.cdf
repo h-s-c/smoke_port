@@ -46,8 +46,6 @@
   </Properties>
   <Properties SystemType="Input">
   </Properties>
-  <Properties SystemType="AI">
-  </Properties>
 
   <Objects>
     <Object Name="MainCamera">
@@ -62,11 +60,11 @@
         <Property Name="FOVy" Value1="0.523598"></Property>
         <Property Name="ClipDistances" Value1="5.0" Value2="120000.0"></Property>
       </Properties>
-      <!-- commented out by Omar A Rodriguez
+
       <Properties SystemType="Input">
         <Property Name="Orientation" Value1="-0.89" Value2="0.2" Value3="0.0"/>
       </Properties>
-      -->
+
       <Properties SystemType="Audio">
         <Property Name="Listener" Value1="1"/>
         <Property Name="Source" Value1="1"/>
@@ -343,246 +341,13 @@
       </Properties>
     </Object>
 
-    <!-- Chickens - Start -->
-    <!-- TODO: Zombie should replace this chicken -->
-    <Object Name="Zombie" ODF="Zombie">
+    <Object Name="Sinbad" ODF="Sinbad">
       <Properties SystemType="Geometry">
         <Property Name="Position" Value1="-800.0" Value2="200.0" Value3="4600.0"/>
         <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="800.0" Value2="800.0" Value3="800.0"/>
+        <Property Name="Scale" Value1="50.0" Value2="50.0" Value3="50.0"/>
       </Properties>
     </Object>
-    
-    <!-- These chickens form a cross -->
-    <Object Name="Chicken1" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="-200.0" Value2="0.0" Value3="6000.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken2" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="200.0" Value2="0.0" Value3="6000.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken3" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="0.0" Value2="0.0" Value3="5800.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken4" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="0.0" Value2="0.0" Value3="6200.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken5" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="-400.0" Value2="0.0" Value3="6000.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken6" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="400.0" Value2="0.0" Value3="6000.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken7" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="0.0" Value2="0.0" Value3="5600.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken8" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="0.0" Value2="0.0" Value3="6400.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken9" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="-600.0" Value2="0.0" Value3="6000.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken10" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="600.0" Value2="0.0" Value3="6000.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken11" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="0.0" Value2="0.0" Value3="5400.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken12" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="0.0" Value2="0.0" Value3="6600.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken13" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="-800.0" Value2="0.0" Value3="6000.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken14" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="800.0" Value2="0.0" Value3="6000.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken15" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="0.0" Value2="0.0" Value3="5200.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken16" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="0.0" Value2="0.0" Value3="6800.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-
-    <!-- These chickens fill in the spaces between 
-         the first cross by creating another cross -->
-    <Object Name="Chicken17" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="-200.0" Value2="0.0" Value3="6200.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken18" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="200.0" Value2="0.0" Value3="6200.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken19" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="-200.0" Value2="0.0" Value3="5800.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken20" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="200.0" Value2="0.0" Value3="5800.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken21" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="-400.0" Value2="0.0" Value3="6400.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken22" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="400.0" Value2="0.0" Value3="6400.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken23" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="-400.0" Value2="0.0" Value3="5600.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken24" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="400.0" Value2="0.0" Value3="5600.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken25" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="-600.0" Value2="0.0" Value3="6600.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken26" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="600.0" Value2="0.0" Value3="6600.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken27" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="-600.0" Value2="0.0" Value3="5400.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken28" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="600.0" Value2="0.0" Value3="5400.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken29" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="-800.0" Value2="0.0" Value3="6800.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken30" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="800.0" Value2="0.0" Value3="6800.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken31" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="-800.0" Value2="0.0" Value3="5200.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-    <Object Name="Chicken32" ODF="Chicken">
-      <Properties SystemType="Geometry">
-        <Property Name="Position" Value1="800.0" Value2="0.0" Value3="5200.0"/>
-        <Property Name="Orientation" Value1="0.0" Value2="0.0" Value3="0.0" Value4="1.0"/>
-        <Property Name="Scale" Value1="200.0" Value2="200.0" Value3="200.0"/>
-      </Properties>
-    </Object>
-
-    <!-- Chickens - End -->
 
   </Objects>
 

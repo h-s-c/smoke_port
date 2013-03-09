@@ -4,8 +4,6 @@
     <Variable Name="TaskManager" Value="None"/>
     <Variable Name="TaskManager::Threads" Value="1"/>
     <Variable Name="StopAfterNFrames" Value="0"/>
-    <Variable Name="AI::Parallel" Value="False"/>
-    <Variable Name="AI::SubTasks" Value="4"/>
     <Variable Name="Units" Value="0.01"/>
     <Variable Name="Graphics::Parallel" Value="False"/>
     <Variable Name="Graphics::PolygonMode" Value="0" />
@@ -20,8 +18,6 @@
     <System Type="Graphics" SDF="Graphics"/>
     <System Type="Audio" SDF="Audio"/>
     <System Type="Input" SDF="Input"/>
-    <System Type="AI" Lib="SystemAI"/>
-    <System Type="Explosion" Lib="SystemExplosion"/>
   </Systems>
 
   <Scenes Startup="Test">
