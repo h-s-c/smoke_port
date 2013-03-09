@@ -28,16 +28,10 @@ public:
     /// Gets the velocity of the object.
     /// </summary>
     /// <returns>A constant pointer to the velocity.</returns>
-    virtual const Base::Vector3* GetVelocity()    
-    {
-        return nullptr;
-    }
+    virtual const Base::Vector3* GetVelocity() = 0;
     /// <summary>
     /// Gets the max velocity of the object.
     /// </summary>
     /// <returns>The max velocity (a scalar).</returns>
-    virtual f32 GetMaxVelocity()
-    {
-        return 0.0f;
-    }
+    virtual f32 GetMaxVelocity() = 0;
 };
