@@ -7,7 +7,7 @@ project (Smoke)
         if (NOT (CMAKE_CXX_COMPILER_VERSION VERSION_GREATER 4.7 OR CMAKE_CXX_COMPILER_VERSION VERSION_EQUAL 4.7))
             message(FATAL_ERROR "${PROJECT_NAME} requires g++ 4.7 or greater.")
         endif ()
-        set(CMAKE_CXX_FLAGS                "-Wall -Wextra -Wno-unused -std=c++11 -pedantic -fPIC ")
+        set(CMAKE_CXX_FLAGS                "-Wall -Wextra -Wno-unused -std=c++11 -pedantic")
         set(CMAKE_CXX_FLAGS_DEBUG          "-O0 -g")
         set(CMAKE_CXX_FLAGS_MINSIZEREL     "-Os -DNDEBUG")
         set(CMAKE_CXX_FLAGS_RELEASE        "-O4 -DNDEBUG")
@@ -73,7 +73,7 @@ project (Smoke)
     if (HAVOK_FOUND)
         list(APPEND SMOKE_DEPEDENCIES SystemPhysicsHAVOK)
     endif ()
-
+    
     list(APPEND SKUNKWORKS_INCLUDE_DIRS ${CMAKE_SOURCE_DIR})
     
     include_directories(${SMOKE_INCLUDE_DIRS} )
