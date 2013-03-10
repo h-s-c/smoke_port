@@ -9,7 +9,7 @@
 #include <string>
 // external
 #include <boost/filesystem.hpp>
-#include <tinyxml/tinyxml.h>
+#include <tinyxml.h>
 // framework
 #include "Framework/Universal.hpp"
 #include "Framework/SystemManager.hpp"

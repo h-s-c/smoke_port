@@ -15,14 +15,9 @@ project (Framework)
     list(APPEND FRAMEWORK_SOURCE ${FRAMEWORK_SOURCE})
 
     ##tinyxml
-    set( TINYXML_SOURCE
-        ${CMAKE_SOURCE_DIR}/External/tinyxml/tinyxml.cpp
-        ${CMAKE_SOURCE_DIR}/External/tinyxml/tinyxmlerror.cpp
-        ${CMAKE_SOURCE_DIR}/External/tinyxml/tinyxmlparser.cpp
-        ${CMAKE_SOURCE_DIR}/External/tinyxml/tinystr.cpp
-    )
-    list(APPEND FRAMEWORK_SOURCE ${TINYXML_SOURCE})
-    list(APPEND FRAMEWORK_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/External/)
+    find_package( TinyXML REQUIRED)
+    list(APPEND FRAMEWORK_LIBRARIES ${TINYXML_LIBRARIES})
+    list(APPEND FRAMEWORK_INCLUDE_DIRS ${TINYXML_INCLUDE_DIRS})
 
     ##boost
     find_package( Boost COMPONENTS filesystem system REQUIRED)
