@@ -196,7 +196,7 @@ InputScene::DestroyObject(
     //
     m_Objects.remove( pObject );
 
-    SAFE_DELETE( pSystemObject );
+    //SAFE_DELETE( pSystemObject );
 
     return Errors::Success;
 }

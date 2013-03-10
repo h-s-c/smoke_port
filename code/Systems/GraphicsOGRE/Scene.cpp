@@ -195,7 +195,7 @@ OGREGraphicsScene::~OGREGraphicsScene(
     SAFE_DELETE( m_pGrassLoader );
 
     ASSERT( m_pSceneManager != NULL );
-    POGREROOT->destroySceneManager( m_pSceneManager );
+    //POGREROOT->destroySceneManager( m_pSceneManager );
 }
 
 

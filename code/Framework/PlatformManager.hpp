@@ -62,10 +62,12 @@ public:
     protected:
         struct SystemLib
         {
-            void*               hLib;
-            ISystem*            pSystem;
+            void*                     hLib;
+            ISystem*                  pSystem;
+            const std::string         strSysLib;
         };
         std::vector<SystemLib>  m_SystemLibs;
+    private:
     };
 
 

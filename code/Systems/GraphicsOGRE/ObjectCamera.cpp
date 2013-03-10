@@ -96,7 +96,7 @@ OGREGraphicsObjectCamera::~OGREGraphicsObjectCamera(
 
     if ( m_pViewport != NULL )
     {
-        Ogre::RenderWindow* pRenderWindow = PSYSTEM->GetOGRERenderWindow();
+        auto pRenderWindow = PSYSTEM->GetOGRERenderWindow();
 
         pRenderWindow->removeViewport( m_pViewport->getZOrder() );
     }
@@ -134,7 +134,7 @@ OGREGraphicsObjectCamera::Initialize(
         //
         // Create the viewport.
         //
-        Ogre::RenderWindow* pRenderWindow = PSYSTEM->GetOGRERenderWindow();
+        auto pRenderWindow = PSYSTEM->GetOGRERenderWindow();
         m_pViewport = pRenderWindow->addViewport( m_pCamera );
         ASSERT( m_pViewport != NULL );
 

@@ -125,11 +125,10 @@ protected:
 
     Ogre::LogManager*                   m_pLogManager;
     Ogre::Log*                          m_pLog;
-    
+   
     Ogre::Root*                         m_pRoot;
 
     Ogre::ResourceGroupManager*         m_pResourceGroupManager;
-    Ogre::MaterialManager*              m_pMaterialManager;
 
     Ogre::RenderSystem*                 m_pRenderSystem;
     Ogre::RenderWindow*                 m_pRenderWindow;

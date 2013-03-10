@@ -63,6 +63,6 @@ protected:
 private:
 
     OGREGraphicsScene*                  m_pScene;
-    Ogre::Root*                         m_pRoot;
+    std::shared_ptr<Ogre::Root>         m_pRoot;
 };
 

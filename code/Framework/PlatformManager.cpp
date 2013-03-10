@@ -24,23 +24,11 @@ extern TaskManager*     g_pTaskManager;
 PlatformManager::SystemLibrary::~SystemLibrary( void)
 {
     // Iterate through all the loaded libraries.
-    std::vector<SystemLib>::const_iterator it;
-    for ( it=m_SystemLibs.begin(); it!=m_SystemLibs.end(); it++ )
+    for ( auto it : m_SystemLibs)
     {
-        void* hLib = reinterpret_cast<void*>(it->hLib);
-        
-        // Get the system functions struct.
-        struct SystemFuncs *systemFuncs = reinterpret_cast<SystemFuncs*>(dlsym(hLib, it->pSystem->GetName()));
-        if ( systemFuncs != NULL )
-        {
-            systemFuncs->DestroySystem( it->pSystem );
-        }
-        else
-        {
-            std::cerr << dlerror() << std::endl;
-        }
-
-        dlclose( hLib );
+        struct SystemFuncs *pSystemFuncs = reinterpret_cast<SystemFuncs*>(dlsym(it.hLib, it.strSysLib.c_str() ));
+        pSystemFuncs->DestroySystem( it.pSystem );
+        dlclose( it.hLib );
     }
 
     m_SystemLibs.clear();
@@ -56,7 +44,7 @@ PlatformManager::SystemLibrary::LoadSystemLibrary(
 {
     Error   Err = Errors::Failure;
     
-    #if defined(__GNUC__) || defined(__clang__) || defined(__INTEL_COMPILER) 
+    #if defined(__GNUC__) || defined(__clang__)
     // Load the .so
     void* hLib = dlopen( std::string(strSysLibPath + "/" + strSysLib + ".so").c_str(), RTLD_NOW);
     #elif defined(_MSC_VER)
@@ -67,8 +55,8 @@ PlatformManager::SystemLibrary::LoadSystemLibrary(
     if ( hLib != NULL )
     {
         // Get the system functions struct.
-        struct SystemFuncs *systemFuncs = reinterpret_cast<SystemFuncs*>(dlsym(hLib, strSysLib.c_str() ));
-        if ( systemFuncs != NULL )
+        struct SystemFuncs *pSystemFuncs = reinterpret_cast<SystemFuncs*>(dlsym(hLib, strSysLib.c_str() ));
+        if ( pSystemFuncs != NULL )
         {
             ManagerInterfaces Managers;
             Managers.pEnvironment = &EnvironmentManager::getInstance();
@@ -77,10 +65,10 @@ PlatformManager::SystemLibrary::LoadSystemLibrary(
             Managers.pPlatform    = &PlatformManager::getInstance();
 
             // Initialize the system.
-            systemFuncs->InitSystem( &Managers );
+            pSystemFuncs->InitSystem( &Managers );
 
             // Create the system.
-            ISystem* pSystem = systemFuncs->CreateSystem();
+            ISystem* pSystem = pSystemFuncs->CreateSystem();
 
             if ( pSystem != NULL )
             {
@@ -95,7 +83,7 @@ PlatformManager::SystemLibrary::LoadSystemLibrary(
                     // Add the system to the collection.
                     SystemManager::getInstance().Add( pSystem );
 
-                    SystemLib sl = { reinterpret_cast<Handle>(hLib), pSystem };
+                    SystemLib sl = { hLib, pSystem, strSysLib};
                     m_SystemLibs.push_back( sl );
 
                     *ppSystem = pSystem;

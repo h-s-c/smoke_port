@@ -92,7 +92,6 @@ OGREGraphicsSystem::OGREGraphicsSystem(
     : ISystem()
     , m_pRoot( NULL )
     , m_pResourceGroupManager( NULL )
-    , m_pMaterialManager( NULL )
     , m_pRenderSystem( NULL )
     , m_pRenderWindow( NULL )
     , m_uShadowTextureCount( 0 )
@@ -108,28 +107,12 @@ OGREGraphicsSystem::~OGREGraphicsSystem(
     void
     )
 {
-    // quit listening to the RenderWindow
-    Ogre::WindowEventUtilities::removeWindowEventListener( m_pRenderWindow, this );
-
-    m_pResourceGroupManager->shutdownAll();
-    
-    // Note: it appears that attempting to unload or uninstall the ParticleFX plugin at all with Ogre1.9
-    // will cause heap corruption around the guard pages allocated by the NT memory manager.  Luckily it seems
-    // like this is not leaking appreciable resources as the app will soon exit.  This should eventually be revisited
-    // should a new version of the ParticleFX plugin and/or Ogre become available.
-    // m_pRoot->unloadPlugin("Plugin_ParticleFX");
-    // m_pRoot->uninstallPlugin("Plugin_ParticleFX");
-    
-    m_pRoot->shutdown();
-
-    SAFE_DELETE( m_pRoot );
-    SAFE_DELETE( m_pLogManager );
 }
 
 
 void
 OGREGraphicsSystem::windowClosed(
-    Ogre::RenderWindow* pRenderWindow
+    Ogre::RenderWindow*
     )
 {
     ASSERT( pRenderWindow == m_pRenderWindow );
@@ -164,20 +147,19 @@ OGREGraphicsSystem::Initialize(
 {
     ASSERT( !m_bInitialized );
     
-    
+    // Reroute log, disable cout logging
     m_pLogManager = new Ogre::LogManager();
-    m_pLog = Ogre::LogManager::getSingleton().createLog("logs/Ogre.log", true, false, false); 
-
+    m_pLog = Ogre::LogManager::getSingleton().createLog("logs/Ogre.log", true, false, false);    
+    
     //
     // Create Ogre's root.
     //
-    m_pRoot = new Ogre::Root( "", "", "" );
-    ASSERT( m_pRoot != NULL );
+    m_pRoot = new Ogre::Root("", "", "");
 
     //
     // Get the resource manager.
     //
-    m_pResourceGroupManager = Ogre::ResourceGroupManager::getSingletonPtr();
+    m_pResourceGroupManager =  Ogre::ResourceGroupManager::getSingletonPtr();
 
     //
     // Read in the properties required to initialize Ogre.
@@ -260,8 +242,7 @@ OGREGraphicsSystem::Initialize(
 #endif
 
     auto pRenderList = m_pRoot->getAvailableRenderers();
-
-
+    
     m_pRenderSystem = pRenderList.front();
     m_pRoot->setRenderSystem(m_pRenderSystem);
     m_pRoot->initialise( false );
@@ -281,7 +262,7 @@ OGREGraphicsSystem::Initialize(
     // Note: createRenderWindow() is now called directly so that a render winow is created.  The old calling steps
     // yielded a render system with no render window until after plugins load which causes assertions for CreateParticleSystem
     // which requires a render window at the time the billboard renderer loads.
-    m_pRenderWindow = m_pRoot->createRenderWindow( szWindowName, Width, Height, bFullScreen == True, &params );
+    m_pRenderWindow = m_pRoot->createRenderWindow( szWindowName, Width, Height, bFullScreen == True, &params);
     ASSERT( m_pRenderWindow != NULL );
     
     //make the window accessible by the input system
