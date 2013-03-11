@@ -1,4 +1,4 @@
-add_subdirectory(AI)
+add_subdirectory(Ai)
 add_subdirectory(AudioFMOD)
 add_subdirectory(Explosion)
 add_subdirectory(Geometry)

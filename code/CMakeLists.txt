@@ -63,7 +63,7 @@ project (Smoke)
     list(APPEND SMOKE_LIBRARIES Framework)
     
     add_subdirectory(Systems)
-    list(APPEND SMOKE_DEPEDENCIES SystemAI)
+    list(APPEND SMOKE_DEPEDENCIES SystemAi)
     list(APPEND SMOKE_DEPEDENCIES SystemAudioFMOD)
     list(APPEND SMOKE_DEPEDENCIES SystemExplosion)
     list(APPEND SMOKE_DEPEDENCIES SystemGeometry)
