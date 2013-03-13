@@ -10,6 +10,7 @@
 #include <OgreParticleFXPlugin.h>
 #include <OgreWindowEventUtilities.h>
 //system
+#include "Systems/GraphicsOGRE/Extras/CgPlugin.hpp"
 #include "Systems/GraphicsOGRE/System.hpp"
 #include "Systems/GraphicsOGRE/Scene.hpp"
 
@@ -154,12 +155,31 @@ OGREGraphicsSystem::Initialize(
     //
     // Create Ogre's root.
     //
-    m_pRoot = new Ogre::Root("", "", "");
+    m_pRoot = new Ogre::Root("", "", "logs/Ogre.log");
 
     //
     // Get the resource manager.
     //
     m_pResourceGroupManager =  Ogre::ResourceGroupManager::getSingletonPtr();
+    
+    // Install the gl rendersystem
+#ifdef _DEBUG
+    m_pRoot->loadPlugin("RenderSystem_GL_d");
+#else
+    m_pRoot->loadPlugin("RenderSystem_GL");
+#endif
+
+    // Install the particle fx plugin
+#ifdef _DEBUG
+    m_pRoot->loadPlugin("Plugin_ParticleFX_d");
+#else
+    m_pRoot->loadPlugin("Plugin_ParticleFX");
+#endif
+
+    // Create new plugin
+    m_pCgPlugin = new Ogre::CgPlugin();
+    // Register
+    m_pRoot->installPlugin(m_pCgPlugin);
 
     //
     // Read in the properties required to initialize Ogre.
@@ -234,25 +254,13 @@ OGREGraphicsSystem::Initialize(
     //
     // Intialize the render system and render window.
     //
-
-#ifdef _DEBUG
-    m_pRoot->loadPlugin("RenderSystem_GL_d");
-#else
-    m_pRoot->loadPlugin("RenderSystem_GL");
-#endif
-
     auto pRenderList = m_pRoot->getAvailableRenderers();
     
     m_pRenderSystem = pRenderList.front();
     m_pRoot->setRenderSystem(m_pRenderSystem);
     m_pRoot->initialise( false );
 
-    // Install the particle fx plugin
-#ifdef _DEBUG
-    m_pRoot->loadPlugin("Plugin_ParticleFX_d");
-#else
-    m_pRoot->loadPlugin("Plugin_ParticleFX");
-#endif
+
 
     // Setup the Full-screen Anti-Aliasing mode
     Ogre::NameValuePairList params;

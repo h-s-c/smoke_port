@@ -1,5 +1,10 @@
 project (SystemGraphicsOGRE)
     set( SYSTEM_SOURCE
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/CgFxScriptLoader.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/CgPlugin.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/CgProgram.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/CgProgramError.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/CgProgramFactory.cpp
         ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/DynamicBuffer.cpp
         ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/DynamicLines.cpp
         ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/DynamicRenderable.cpp
@@ -37,6 +42,11 @@ project (SystemGraphicsOGRE)
     find_package(PagedGeometry REQUIRED)
     list(APPEND SYSTEM_INCLUDE_DIRS ${PG_INCLUDE_DIR})
     list(APPEND SYSTEM_LIBRARIES ${PG_LIBRARIES}) 
+    
+    ##cg
+    find_package(Cg REQUIRED)
+    list(APPEND SYSTEM_INCLUDE_DIRS ${Cg_INCLUDE_DIRS})
+    list(APPEND SYSTEM_LIBRARIES ${Cg_LIBRARIES}) 
     
      ##base
     list(APPEND SYSTEM_LIBRARIES Base)
