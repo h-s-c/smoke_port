@@ -1,6 +1,4 @@
-bin/release
-bin/debug
-bin/logs
+bin
 build/
 docs/
 media/

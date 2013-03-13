@@ -1,7 +1,0 @@
-<Object Name="Sinbad">
-  <Properties SystemType="Graphics" ObjectType="MeshAnimated">
-    <Property Name="Mesh" Value1="Sinbad.mesh"/>
-    <Property Name="CastShadows" Value1="1"/>
-    <Property Name="Skeleton" Value1="Sinbad.skeleton"/>
-  </Properties>
-</Object>

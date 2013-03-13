@@ -6,7 +6,7 @@
 int main()
 {
 
-    std::string sGdfPath = "Test.gdf";
+    std::string sGdfPath = "Smoke.gdf";
     std::clog << "Initializing Smoke" << std::endl;
     EngineExecuteGDF(sGdfPath.c_str());
     std::clog << "Exiting Smoke" << std::endl;  
