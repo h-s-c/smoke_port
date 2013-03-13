@@ -473,9 +473,10 @@ UObject::Extend(
     {
         std::cerr << "pSystemObject == NULL" << std::endl;
     }
-
-    Extend( pSystemObject );
-
+    else
+    {
+        Extend( pSystemObject );
+    }
     return pSystemObject;
 }
 

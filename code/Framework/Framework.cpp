@@ -856,10 +856,12 @@ Framework::GDFParser::BeginElement( void* pElement)
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << "." 
                         << std::endl;
         }
+        else
+        {
+            bProcessChildren = False;
 
-        bProcessChildren = False;
-
-        m_GdfMarker = GDFM_Scenes;
+            m_GdfMarker = GDFM_Scenes;
+        }
     }
     else if ( strcmp( pszName, "Scene" ) == 0 )
     {
@@ -932,45 +934,47 @@ Framework::GDFParser::BeginElement( void* pElement)
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << "." 
                         << std::endl;
         }
-
-        if ( m_ObjectLevel == 0 )
+        else
         {
-            m_pszObjectName = NULL;
-
-            //
-            // Create the object and add the required geometry extension.
-            //
-            m_pUObject = m_pScene->CreateObject();
-            if (m_pUObject == NULL)
+            if ( m_ObjectLevel == 0 )
             {
-                std::cerr << "m_pUObject == NULL" << std::endl;
+                m_pszObjectName = NULL;
+
+                //
+                // Create the object and add the required geometry extension.
+                //
+                m_pUObject = m_pScene->CreateObject();
+                if (m_pUObject == NULL)
+                {
+                    std::cerr << "m_pUObject == NULL" << std::endl;
+                }
+
+                UScene::SystemScenesConstIt it = 
+                    m_pScene->GetSystemScenes().find( System::Types::Geometry );
+                    
+                if (it == m_pScene->GetSystemScenes().end())
+                {
+                    std::cerr << "The geometry system has to have already been loaded." << std::endl;
+                }
+
+                ISystemScene* pGeometryScene = it->second;
+                if (pGeometryScene == NULL)
+                {
+                    std::cerr << "pGeometryScene == NULL" << std::endl;
+                }
+
+                m_pUObject->Extend( pGeometryScene, NULL );
+
+                //
+                // Ready the propeties map for setting the properties.
+                //
+                m_SetPropertiesMap.clear();
+
+                m_SetPropertiesMap[ System::Types::Geometry ] = Properties::Array();
             }
 
-            UScene::SystemScenesConstIt it = 
-                m_pScene->GetSystemScenes().find( System::Types::Geometry );
-                
-            if (it == m_pScene->GetSystemScenes().end())
-            {
-                std::cerr << "The geometry system has to have already been loaded." << std::endl;
-            }
-
-            ISystemScene* pGeometryScene = it->second;
-            if (pGeometryScene == NULL)
-            {
-                std::cerr << "pGeometryScene == NULL" << std::endl;
-            }
-
-            m_pUObject->Extend( pGeometryScene, NULL );
-
-            //
-            // Ready the propeties map for setting the properties.
-            //
-            m_SetPropertiesMap.clear();
-
-            m_SetPropertiesMap[ System::Types::Geometry ] = Properties::Array();
+            m_GdfMarker = GDFM_Object;
         }
-
-        m_GdfMarker = GDFM_Object;
     }
     else if ( strcmp( pszName, "Properties" ) == 0 )
     {
@@ -981,31 +985,37 @@ Framework::GDFParser::BeginElement( void* pElement)
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << "." 
                         << std::endl;
         }
-
-        if ( m_GdfMarker == GDFM_System )
+        else
         {
-            if (m_pSystem == NULL)
+            if ( m_GdfMarker == GDFM_System )
             {
-                std::cerr << "Parser could not find an instantiated system." << std::endl;
+                if (m_pSystem == NULL)
+                {
+                    std::cerr << "Parser could not find an instantiated system." << std::endl;
+                }
+                else
+                {
+                    m_GdfMarker = GDFM_SystemProperties;
+                }
             }
-
-            m_GdfMarker = GDFM_SystemProperties;
-        }
-        else if ( m_GdfMarker == GDFM_Scene )
-        {
-            if (m_pSystem == NULL)
+            else if ( m_GdfMarker == GDFM_Scene )
             {
-                std::cerr << "Parser could not find an instantiated system." << std::endl;
+                if (m_pSystem == NULL)
+                {
+                    std::cerr << "Parser could not find an instantiated system." << std::endl;
+                }
+                else
+                {
+                    m_GdfMarker = GDFM_SceneProperties;
+                }
             }
+            else if ( m_GdfMarker == GDFM_Object )
+            {
+                m_pszObjectType = NULL;
+                m_pSystemObject = NULL;
 
-            m_GdfMarker = GDFM_SceneProperties;
-        }
-        else if ( m_GdfMarker == GDFM_Object )
-        {
-            m_pszObjectType = NULL;
-            m_pSystemObject = NULL;
-
-            m_GdfMarker = GDFM_ObjectProperties;
+                m_GdfMarker = GDFM_ObjectProperties;
+            }
         }
     }
     else if ( strcmp( pszName, "Property" ) == 0 )
@@ -1019,18 +1029,20 @@ Framework::GDFParser::BeginElement( void* pElement)
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << "." 
                         << std::endl;
         }
-
-        if ( m_GdfMarker == GDFM_SystemProperties )
+        else
         {
-            m_GdfMarker = GDFM_SystemProperty;
-        }
-        else if ( m_GdfMarker == GDFM_SceneProperties )
-        {
-            m_GdfMarker = GDFM_SceneProperty;
-        }
-        else if ( m_GdfMarker == GDFM_ObjectProperties )
-        {
-            m_GdfMarker = GDFM_ObjectProperty;
+            if ( m_GdfMarker == GDFM_SystemProperties )
+            {
+                m_GdfMarker = GDFM_SystemProperty;
+            }
+            else if ( m_GdfMarker == GDFM_SceneProperties )
+            {
+                m_GdfMarker = GDFM_SceneProperty;
+            }
+            else if ( m_GdfMarker == GDFM_ObjectProperties )
+            {
+                m_GdfMarker = GDFM_ObjectProperty;
+            }
         }
     }
     else if ( strcmp( pszName, "Links" ) == 0 )
@@ -1042,8 +1054,10 @@ Framework::GDFParser::BeginElement( void* pElement)
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << "." 
                         << std::endl;
         }
-
-        m_GdfMarker = GDFM_Links;
+        else
+        {
+            m_GdfMarker = GDFM_Links;
+        }
     }
     else if ( strcmp( pszName, "Link" ) == 0 )
     {
@@ -1104,8 +1118,10 @@ Framework::GDFParser::EndElement(
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                         << std::endl;
         }
-
-        m_GdfMarker = GDFM_None;
+        else
+        {
+            m_GdfMarker = GDFM_None;
+        }
     }
     else if ( strcmp( pszName, "Environment" ) == 0 )
     {
@@ -1117,8 +1133,10 @@ Framework::GDFParser::EndElement(
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                         << std::endl;
         }
-
-        m_GdfMarker = GDFM_Gdf;
+        else
+        {
+            m_GdfMarker = GDFM_Gdf;
+        }
     }
     else if ( strcmp( pszName, "Variable" ) == 0 )
     {
@@ -1130,8 +1148,10 @@ Framework::GDFParser::EndElement(
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                         << std::endl;
         }
-
-        m_GdfMarker = GDFM_Environment;
+        else
+        {
+            m_GdfMarker = GDFM_Environment;
+        }
     }
     else if ( strcmp( pszName, "Systems" ) == 0 )
     {
@@ -1143,8 +1163,10 @@ Framework::GDFParser::EndElement(
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                         << std::endl;
         }
-
-        m_GdfMarker = GDFM_Gdf;
+        else
+        {
+            m_GdfMarker = GDFM_Gdf;
+        }
     }
     else if ( strcmp( pszName, "System" ) == 0 )
     {
@@ -1156,15 +1178,17 @@ Framework::GDFParser::EndElement(
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                         << std::endl;
         }
-
-        if ( m_SystemLevel == 0 )
+        else
         {
-            m_pSystem->Initialize( m_SetProperties );
-            m_GetProperties.clear();
-            m_SetProperties.clear();
-        }
+            if ( m_SystemLevel == 0 )
+            {
+                m_pSystem->Initialize( m_SetProperties );
+                m_GetProperties.clear();
+                m_SetProperties.clear();
+            }
 
-        m_GdfMarker = GDFM_Systems;
+            m_GdfMarker = GDFM_Systems;
+        }
     }
     else if ( strcmp( pszName, "Scenes" ) == 0 )
     {
@@ -1176,8 +1200,10 @@ Framework::GDFParser::EndElement(
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                         << std::endl;
         }
-
-        m_GdfMarker = GDFM_Gdf;
+        else
+        {
+            m_GdfMarker = GDFM_Gdf;
+        }
     }
     else if ( strcmp( pszName, "Scene" ) == 0 )
     {
@@ -1189,61 +1215,63 @@ Framework::GDFParser::EndElement(
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                         << std::endl;
         }
-
-        bProcessSiblings = False;
-
-        m_GdfMarker = GDFM_Scenes;
-
-        //
-        // Initialize all the objects and Send "post-loading objects" message to the scene extensions.
-        //
-        if ( !m_FirstObjectsMarker && m_SceneLevel < 2 )
+        else
         {
-            m_FirstObjectsMarker = True;
+            bProcessSiblings = False;
+
+            m_GdfMarker = GDFM_Scenes;
 
             //
-            // Initialize all the objects at once.
+            // Initialize all the objects and Send "post-loading objects" message to the scene extensions.
             //
-            for ( std::map< UObject*,std::map<u32,Properties::Array> >::iterator
-                   itAll=m_AllObjectProperties.begin();
-                  itAll != m_AllObjectProperties.end(); itAll++ )
+            if ( !m_FirstObjectsMarker && m_SceneLevel < 2 )
             {
-                UObject* pUObject = itAll->first;
+                m_FirstObjectsMarker = True;
 
-                for ( std::map<u32,Properties::Array>::iterator it = itAll->second.begin();
-                      it != itAll->second.end(); it++ )
+                //
+                // Initialize all the objects at once.
+                //
+                for ( std::map< UObject*,std::map<u32,Properties::Array> >::iterator
+                       itAll=m_AllObjectProperties.begin();
+                      itAll != m_AllObjectProperties.end(); itAll++ )
                 {
-                    //
-                    // Get the extension.
-                    //
-                    ISystemObject* pObject = pUObject->GetExtension( it->first );
-                    if ( pObject == NULL)
-                    {
-                        std::cerr << "pObject == NULL" << std::endl;
-                    }
+                    UObject* pUObject = itAll->first;
 
-                    //
-                    // Initialize the extension.
-                    //
-                    if ( pObject != NULL )
+                    for ( std::map<u32,Properties::Array>::iterator it = itAll->second.begin();
+                          it != itAll->second.end(); it++ )
                     {
-                        pObject->Initialize( it->second );
-                    }
+                        //
+                        // Get the extension.
+                        //
+                        ISystemObject* pObject = pUObject->GetExtension( it->first );
+                        if ( pObject == NULL)
+                        {
+                            std::cerr << "pObject == NULL" << std::endl;
+                        }
 
-                    //
-                    // Remove all the properties.
-                    //
-                    it->second.clear();
+                        //
+                        // Initialize the extension.
+                        //
+                        if ( pObject != NULL )
+                        {
+                            pObject->Initialize( it->second );
+                        }
+
+                        //
+                        // Remove all the properties.
+                        //
+                        it->second.clear();
+                    }
                 }
-            }
-            m_AllObjectProperties.clear();
+                m_AllObjectProperties.clear();
 
-            const UScene::SystemScenes Scenes = m_pScene->GetSystemScenes();
-            for ( UScene::SystemScenesConstIt it=Scenes.begin(); it != Scenes.end(); it++ )
-            {
-                it->second->GlobalSceneStatusChanged(
-                    ISystemScene::GlobalSceneStatus::PostLoadingObjects
-                    );
+                const UScene::SystemScenes Scenes = m_pScene->GetSystemScenes();
+                for ( UScene::SystemScenesConstIt it=Scenes.begin(); it != Scenes.end(); it++ )
+                {
+                    it->second->GlobalSceneStatusChanged(
+                        ISystemScene::GlobalSceneStatus::PostLoadingObjects
+                        );
+                }
             }
         }
     }
@@ -1257,8 +1285,10 @@ Framework::GDFParser::EndElement(
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                         << std::endl;
         }
-
-        m_GdfMarker = GDFM_Scene;
+        else
+        {
+            m_GdfMarker = GDFM_Scene;
+        }
     }
     else if ( strcmp( pszName, "Objects" ) == 0 )
     {
@@ -1270,8 +1300,10 @@ Framework::GDFParser::EndElement(
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                         << std::endl;
         }
-
-        m_GdfMarker = GDFM_Scene;
+        else
+        {
+            m_GdfMarker = GDFM_Scene;
+        }
     }
     else if ( strcmp( pszName, "Object" ) == 0 )
     {
@@ -1283,27 +1315,29 @@ Framework::GDFParser::EndElement(
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                         << std::endl;
         }
-
-        if ( m_ObjectLevel == 0 )
+        else
         {
-            if ( m_pUObject == NULL)
+            if ( m_ObjectLevel == 0 )
             {
-                std::cerr << "A UObject should have already been created by this point." << std::endl;
+                if ( m_pUObject == NULL)
+                {
+                    std::cerr << "A UObject should have already been created by this point." << std::endl;
+                }
+
+                //
+                // Add this object's properties to the global collection.
+                //
+                m_AllObjectProperties[ m_pUObject ] = m_SetPropertiesMap;
+                m_SetPropertiesMap.clear();
+
+                //
+                // We're done manipulating this object.
+                //
+                m_pUObject = NULL;
             }
 
-            //
-            // Add this object's properties to the global collection.
-            //
-            m_AllObjectProperties[ m_pUObject ] = m_SetPropertiesMap;
-            m_SetPropertiesMap.clear();
-
-            //
-            // We're done manipulating this object.
-            //
-            m_pUObject = NULL;
+            m_GdfMarker = GDFM_Objects;
         }
-
-        m_GdfMarker = GDFM_Objects;
     }
     else if ( strcmp( pszName, "Properties" ) == 0 )
     {
@@ -1315,41 +1349,49 @@ Framework::GDFParser::EndElement(
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                         << std::endl;
         }
-
-        if ( m_GdfMarker == GDFM_SystemProperties )
+        else
         {
-            m_GdfMarker = GDFM_System;
-        }
-        else if ( m_GdfMarker == GDFM_SceneProperties )
-        {
-            if ( m_SceneLevel > 2)
+            if ( m_GdfMarker == GDFM_SystemProperties )
             {
-                std::cerr << "Scene properties are not valid for included CDFs."
-                            << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
-                            << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
-                            << std::endl;
+                m_GdfMarker = GDFM_System;
             }
-            if ( m_pSystemScene == NULL)
+            else if ( m_GdfMarker == GDFM_SceneProperties )
             {
-                std::cerr << "m_pSystemScene == NULL" << std::endl;
+                if ( m_SceneLevel > 2)
+                {
+                    std::cerr << "Scene properties are not valid for included CDFs."
+                                << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                                << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                                << std::endl;
+                }
+                else
+                {
+                    if ( m_pSystemScene == NULL)
+                    {
+                        std::cerr << "m_pSystemScene == NULL" << std::endl;
+                    }
+                    else
+                    {
+                        m_pSystemScene->Initialize( m_SetProperties );
+                        m_GetProperties.clear();
+                        m_SetProperties.clear();
+
+                        m_GdfMarker = GDFM_Scene;
+                    }
+                }
             }
-
-            m_pSystemScene->Initialize( m_SetProperties );
-            m_GetProperties.clear();
-            m_SetProperties.clear();
-
-            m_GdfMarker = GDFM_Scene;
-        }
-        else if ( m_GdfMarker == GDFM_ObjectProperties )
-        {
-            if ( m_pSystemObject == NULL)
+            else if ( m_GdfMarker == GDFM_ObjectProperties )
             {
-                std::cerr << "m_pSystemObject == NULL" << std::endl;
+                if ( m_pSystemObject == NULL)
+                {
+                    std::cerr << "m_pSystemObject == NULL" << std::endl;
+                }
+                else
+                {
+                    m_GetProperties.clear();
+                    m_GdfMarker = GDFM_Object;
+                }
             }
-
-            m_GetProperties.clear();
-
-            m_GdfMarker = GDFM_Object;
         }
     }
     else if ( strcmp( pszName, "Property" ) == 0 )
@@ -1362,18 +1404,20 @@ Framework::GDFParser::EndElement(
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                         << std::endl;
         }
-
-        if ( m_GdfMarker == GDFM_SystemProperty )
+        else
         {
-            m_GdfMarker = GDFM_SystemProperties;
-        }
-        else if ( m_GdfMarker == GDFM_SceneProperty )
-        {
-            m_GdfMarker = GDFM_SceneProperties;
-        }
-        else if ( m_GdfMarker == GDFM_ObjectProperty )
-        {
-            m_GdfMarker = GDFM_ObjectProperties;
+            if ( m_GdfMarker == GDFM_SystemProperty )
+            {
+                m_GdfMarker = GDFM_SystemProperties;
+            }
+            else if ( m_GdfMarker == GDFM_SceneProperty )
+            {
+                m_GdfMarker = GDFM_SceneProperties;
+            }
+            else if ( m_GdfMarker == GDFM_ObjectProperty )
+            {
+                m_GdfMarker = GDFM_ObjectProperties;
+            }
         }
     }
     else if ( strcmp( pszName, "Links" ) == 0 )
@@ -1399,8 +1443,10 @@ Framework::GDFParser::EndElement(
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                         << std::endl;
         }
-
-        m_GdfMarker = GDFM_Links;
+        else
+        {
+            m_GdfMarker = GDFM_Links;
+        }
     }
     else if ( strcmp( pszName, "Include" ) == 0 )
     {
@@ -1411,8 +1457,10 @@ Framework::GDFParser::EndElement(
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                         << std::endl;
         }
-        
-        m_GdfMarker = GDFM_Scene;
+        else
+        {
+            m_GdfMarker = GDFM_Scene;
+        }
     }
     else
     {
@@ -1582,8 +1630,10 @@ Framework::GDFParser::ReadAttributes(
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                         << std::endl;
         }
-
-        ReadPropertyAttributes( pXmlElement, pXmlAttrib, m_GetProperties, m_SetProperties );
+        else
+        {
+            ReadPropertyAttributes( pXmlElement, pXmlAttrib, m_GetProperties, m_SetProperties );
+        }
     }
     else if ( m_GdfMarker == GDFM_Scenes )
     {
@@ -1622,15 +1672,20 @@ Framework::GDFParser::ReadAttributes(
                                 << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                                 << std::endl;
                 }
-                if ( m_SceneLevel != 0 && strcmp( m_pszSceneName, pszValue ) != 0)
+                else
                 {
-                    std::cerr << "Parser identified an incorrect scene name. It should be " << m_pszSceneName  
-                                << ". (" << pXmlElement->GetDocument()->Value() << ", Row " 
-                                << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
-                                << std::endl;
+                    if ( m_SceneLevel != 0 && strcmp( m_pszSceneName, pszValue ) != 0)
+                    {
+                        std::cerr << "Parser identified an incorrect scene name. It should be " << m_pszSceneName  
+                                    << ". (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                                    << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                                    << std::endl;
+                    }
+                    else
+                    {
+                        m_pszSceneName = pszValue;
+                    }
                 }
-
-                m_pszSceneName = pszValue;
             }
             else if ( strcmp( pszName, "CDF" ) == 0 )
             {
@@ -1641,31 +1696,35 @@ Framework::GDFParser::ReadAttributes(
                                 << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                                 << std::endl;
                 }
-
-                //
-                // Create a new xml document for the cdf.
-                //
-                char    pszCDF[ 256 ];
-                strcpy_s( pszCDF, sizeof pszCDF, pszValue );
-                strcat_s( pszCDF, sizeof pszCDF, ".cdf" );
-
-                TiXmlDocument XmlDoc( pszCDF );
-
-                if ( XmlDoc.LoadFile() == False )
+                else
                 {
-                    std::cerr << "Parser was unable to load CDF file " << pszCDF << "." << std::endl;
+                    //
+                    // Create a new xml document for the cdf.
+                    //
+                    char    pszCDF[ 256 ];
+                    strcpy_s( pszCDF, sizeof pszCDF, pszValue );
+                    strcat_s( pszCDF, sizeof pszCDF, ".cdf" );
+
+                    TiXmlDocument XmlDoc( pszCDF );
+
+                    if ( XmlDoc.LoadFile() == False )
+                    {
+                        std::cerr << "Parser was unable to load CDF file " << pszCDF << "." << std::endl;
+                    }
+                    else
+                    {
+                        //
+                        // Parse the sdf.
+                        //
+                        m_GdfMarker = GDFM_Scenes;
+                        m_SceneLevel++;
+
+                        ParseElement( XmlDoc.FirstChildElement() );
+
+                        m_SceneLevel--;
+                        m_GdfMarker = GDFM_Scene;
+                    }
                 }
-
-                //
-                // Parse the sdf.
-                //
-                m_GdfMarker = GDFM_Scenes;
-                m_SceneLevel++;
-
-                ParseElement( XmlDoc.FirstChildElement() );
-
-                m_SceneLevel--;
-                m_GdfMarker = GDFM_Scene;
             }
             else if ( strcmp( pszName, "NextScene" ) == 0 )
             {
@@ -1700,15 +1759,14 @@ Framework::GDFParser::ReadAttributes(
             if ( strcmp( pszName, "SystemType" ) == 0 )
             {
                 m_pSystem = SystemManager::getInstance().Get( pszValue );
-                if (  m_pSystem == NULL)
+                if ( m_pSystem == NULL)
                 {
                     std::cerr << "Parser was unable to get system " << pszValue
                                 << ". (" << pXmlElement->GetDocument()->Value() << ", Row " 
                                 << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                                 << std::endl;
                 }
-
-                if ( m_pSystem != NULL )
+                else
                 {
                     m_GetProperties.clear();
                     m_SetProperties.clear();
@@ -1752,8 +1810,10 @@ Framework::GDFParser::ReadAttributes(
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                         << std::endl;
         } 
-
-        ReadPropertyAttributes( pXmlElement, pXmlAttrib, m_GetProperties, m_SetProperties );
+        else
+        {
+            ReadPropertyAttributes( pXmlElement, pXmlAttrib, m_GetProperties, m_SetProperties );
+        }
     }
     else if ( m_GdfMarker == GDFM_Object )
     {
@@ -1797,17 +1857,19 @@ Framework::GDFParser::ReadAttributes(
                 {
                     std::cerr <<  "Parser was unable to load ODF file " << pszODF << "." << std::endl;
                 }
+                else
+                {
+                    //
+                    // Parse the sdf.
+                    //
+                    m_GdfMarker = GDFM_Objects;
+                    m_ObjectLevel++;
 
-                //
-                // Parse the sdf.
-                //
-                m_GdfMarker = GDFM_Objects;
-                m_ObjectLevel++;
+                    ParseElement( XmlDoc.FirstChildElement() );
 
-                ParseElement( XmlDoc.FirstChildElement() );
-
-                m_ObjectLevel--;
-                m_GdfMarker = GDFM_Object;
+                    m_ObjectLevel--;
+                    m_GdfMarker = GDFM_Object;
+                }
             }
             else
             {
@@ -1851,8 +1913,7 @@ Framework::GDFParser::ReadAttributes(
                                 << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                                 << std::endl;
                 } 
-
-                if ( m_pSystem != NULL )
+                else
                 {
                     m_pSystemObject = m_pUObject->GetExtension( m_pSystem->GetSystemType() );
 
@@ -1893,19 +1954,23 @@ Framework::GDFParser::ReadAttributes(
                                 << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                                 << std::endl;
                 }
-
-                m_pSystemObject = m_pUObject->Extend( it->second, m_pszObjectType );
-                if ( m_pSystemObject == NULL )
+                else
                 {
-                    std::cerr << "m_pSystemObject == NULL" << std::endl;
+                    m_pSystemObject = m_pUObject->Extend( it->second, m_pszObjectType );
+                    if ( m_pSystemObject == NULL )
+                    {
+                        std::cerr << "m_pSystemObject == NULL" << std::endl;
+                    }
+                    else
+                    {
+                        m_pSystemObject->GetProperties( m_GetProperties );
+
+                        //
+                        // Create an entry in the set properties map.
+                        //
+                        m_SetPropertiesMap[ m_pSystem->GetSystemType() ] = Properties::Array();
+                    }
                 }
-
-                m_pSystemObject->GetProperties( m_GetProperties );
-
-                //
-                // Create an entry in the set properties map.
-                //
-                m_SetPropertiesMap[ m_pSystem->GetSystemType() ] = Properties::Array();
             }
         }
     }
@@ -1918,27 +1983,29 @@ Framework::GDFParser::ReadAttributes(
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                         << std::endl;
         }
-
-        //
-        // Get the system object's type.
-        //
-        System::Type SystemType = m_pSystem->GetSystemType();
-
-        //
-        // If there isn't any entry in the properties map then create one.
-        //
-        std::map<u32,Properties::Array>::const_iterator it =
-            m_SetPropertiesMap.find( SystemType );
-
-        if ( it == m_SetPropertiesMap.end() )
+        else
         {
-            m_SetPropertiesMap[ SystemType ] = Properties::Array();
-        }
+            //
+            // Get the system object's type.
+            //
+            System::Type SystemType = m_pSystem->GetSystemType();
 
-        //
-        // Read in the properties.
-        //
-        ReadPropertyAttributes( pXmlElement, pXmlAttrib, m_GetProperties, m_SetPropertiesMap[ SystemType ] );
+            //
+            // If there isn't any entry in the properties map then create one.
+            //
+            std::map<u32,Properties::Array>::const_iterator it =
+                m_SetPropertiesMap.find( SystemType );
+
+            if ( it == m_SetPropertiesMap.end() )
+            {
+                m_SetPropertiesMap[ SystemType ] = Properties::Array();
+            }
+
+            //
+            // Read in the properties.
+            //
+            ReadPropertyAttributes( pXmlElement, pXmlAttrib, m_GetProperties, m_SetPropertiesMap[ SystemType ] );
+        }
     }
     else if ( m_GdfMarker == GDFM_Links )
     {
@@ -1982,88 +2049,96 @@ Framework::GDFParser::ReadAttributes(
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                         << std::endl;
         }
-        if ( pObserver == NULL)
+        else if ( pObserver == NULL)
         {
             std::cerr << "Parser did not find the UObject observer."
                         << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                         << std::endl;
         }
-        if ( sSystemSubject.empty() )
+        else if ( sSystemSubject.empty() )
         {
             std::cerr << "Parser did not find the system subject."
                         << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                         << std::endl;
         }
-        if ( sSystemObserver.empty() )
+        else if ( sSystemObserver.empty() )
         {
             std::cerr << "Parser did not find the system observer."
                         << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                         << std::endl;
         }
-
-        ISystemObject* pSystemSubject = NULL;
-        ISystemObject* pSystemObserver = NULL;
-
-        ISystem* pSystem;
-
-        //
-        // Get the extension for the subject.
-        //
-        if ( !sSystemSubject.empty() )
+        else 
         {
-            pSystem = SystemManager::getInstance().Get( sSystemSubject.c_str() );
+            ISystemObject* pSystemSubject = NULL;
+            ISystemObject* pSystemObserver = NULL;
+
+            ISystem* pSystem;
+
+            //
+            // Get the extension for the subject.
+            //
+            if ( !sSystemSubject.empty() )
+            {
+                pSystem = SystemManager::getInstance().Get( sSystemSubject.c_str() );
+                if ( pSystem == NULL )
+                {
+                    std::cerr << "Parser identified system " << sSystemSubject.c_str() << " as not loaded."
+                                << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                                << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                                << std::endl;
+                }
+                else
+                {
+                    pSystemSubject = pSubject->GetExtension( pSystem->GetSystemType() );
+                    if ( pSystemSubject == NULL )
+                    {
+                        std::cerr << "Parser identifed subject system as not extending subject object."
+                                    << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                                    << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                                    << std::endl;
+                    }
+                }   
+            }
+
+            //
+            // Get the extension for the object.
+            //
+            pSystem = SystemManager::getInstance().Get( sSystemObserver.c_str() );
             if ( pSystem == NULL )
             {
-                std::cerr << "Parser identified system " << sSystemSubject.c_str() << " as not loaded."
+                std::cerr << "Parser identified system " << sSystemObserver.c_str() << " as not loaded."
                             << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
                             << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                             << std::endl;
             }
-            
-            pSystemSubject = pSubject->GetExtension( pSystem->GetSystemType() );
-            if ( pSystemSubject == NULL )
+            else
             {
-                std::cerr << "Parser identifed subject system as not extending subject object."
-                            << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
-                            << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
-                            << std::endl;
+                pSystemObserver = pObserver->GetExtension( pSystem->GetSystemType() );
+                if ( pSystemObserver == NULL )
+                {
+                    std::cerr << "Parser identifed observer system as not extending observer object."
+                                << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                                << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                                << std::endl;
+                }
+                else
+                {
+                    //
+                    // Call the scene to register the links.
+                    //
+                    if ( pSystemSubject != NULL )
+                    {
+                        m_pScene->CreateObjectLink( pSystemSubject, pSystemObserver );
+                    }
+                    else
+                    {
+                        m_pScene->CreateObjectLink( pSubject, pSystemObserver );
+                    }
+                }
             }
-        }
-
-        //
-        // Get the extension for the object.
-        //
-        pSystem = SystemManager::getInstance().Get( sSystemObserver.c_str() );
-        if ( pSystem == NULL )
-        {
-            std::cerr << "Parser identified system " << sSystemObserver.c_str() << " as not loaded."
-                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
-                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
-                        << std::endl;
-        }
-
-        pSystemObserver = pObserver->GetExtension( pSystem->GetSystemType() );
-        if ( pSystemObserver == NULL )
-        {
-            std::cerr << "Parser identifed observer system as not extending observer object."
-                        << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
-                        << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
-                        << std::endl;
-        }
-
-        //
-        // Call the scene to register the links.
-        //
-        if ( pSystemSubject != NULL )
-        {
-            m_pScene->CreateObjectLink( pSystemSubject, pSystemObserver );
-        }
-        else
-        {
-            m_pScene->CreateObjectLink( pSubject, pSystemObserver );
         }
     }
     else if ( m_GdfMarker == GDFM_Include )
@@ -2088,17 +2163,19 @@ Framework::GDFParser::ReadAttributes(
                 {
                     std::cerr <<  "Parser was unable to load CDF file " << pszCDF << "." << std::endl;
                 }
+                else
+                {
+                    //
+                    // Parse the sdf.
+                    //
+                    m_GdfMarker = GDFM_Scenes;
+                    m_SceneLevel++;
 
-                //
-                // Parse the sdf.
-                //
-                m_GdfMarker = GDFM_Scenes;
-                m_SceneLevel++;
+                    ParseElement( XmlDoc.FirstChildElement() );
 
-                ParseElement( XmlDoc.FirstChildElement() );
-
-                m_SceneLevel--;
-                m_GdfMarker = GDFM_Include;
+                    m_SceneLevel--;
+                    m_GdfMarker = GDFM_Include;
+                }
             }
             else
             {
@@ -2177,85 +2254,89 @@ Framework::GDFParser::ReadPropertyAttributes(
                             << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                             << std::endl;
             }
-
-            //
-            // Determine the index of the value.
-            //
-            u32 iValue;
-            for ( iValue=0; iValue < Properties::Values::Count; iValue++ )
+            else
             {
-                if ( _stricmp( pszName, GetPropIt->GetValueName( iValue ) ) == 0 )
+                //
+                // Determine the index of the value.
+                //
+                u32 iValue;
+                for ( iValue=0; iValue < Properties::Values::Count; iValue++ )
                 {
-                    break;
-                }
-            }
-            if ( iValue == Properties::Values::Count )
-            {
-                std::cerr << "Parser encoutered an unknown value '" << pszName
-                            << ". (" << pXmlElement->GetDocument()->Value() << ", Row " 
-                            << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
-                            << std::endl;
-            }
-
-            //
-            // Read in the property from the xml.
-            //
-            switch ( GetPropIt->GetValueType( iValue ) )
-            {
-            case Properties::Values::None:
-                std::cerr << "Parser encoutered a value '" << pszName << "' with no type."
-                            << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
-                            << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
-                            << std::endl;
-                break;
-
-            case Properties::Values::Boolean:
-            case Properties::Values::Int32:
-                SetProperties[ iProp ].SetValue( iValue, pXmlAttrib->IntValue() );
-                break;
-
-            case Properties::Values::Enum:
-            {
-                pcstr pszEnumOption = pXmlAttrib->Value();
-
-                for ( i32 i=0; GetPropIt->GetEnumOption( i ) != NULL; i++ )
-                {
-                    if ( strcmp( pszEnumOption, GetPropIt->GetEnumOption( i ) ) == 0 )
+                    if ( _stricmp( pszName, GetPropIt->GetValueName( iValue ) ) == 0 )
                     {
-                        SetProperties[ iProp ].SetValue( iValue, i );
                         break;
                     }
                 }
-                break;
-            }
+                if ( iValue == Properties::Values::Count )
+                {
+                    std::cerr << "Parser encoutered an unknown value '" << pszName
+                                << ". (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                                << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                                << std::endl;
+                }
+                else
+                {
+                    //
+                    // Read in the property from the xml.
+                    //
+                    switch ( GetPropIt->GetValueType( iValue ) )
+                    {
+                    case Properties::Values::None:
+                        std::cerr << "Parser encoutered a value '" << pszName << "' with no type."
+                                    << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
+                                    << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
+                                    << std::endl;
+                        break;
 
-            case Properties::Values::Float32:
-            case Properties::Values::Vector3 & Properties::Values::Mask:
-            case Properties::Values::Vector4 & Properties::Values::Mask:
-            case Properties::Values::Quaternion & Properties::Values::Mask:
-            case Properties::Values::Color3 & Properties::Values::Mask:
-            case Properties::Values::Color4 & Properties::Values::Mask:
-                SetProperties[ iProp ].SetValue( iValue,
-                                                 static_cast<f32>(pXmlAttrib->DoubleValue()) );
-                break;
+                    case Properties::Values::Boolean:
+                    case Properties::Values::Int32:
+                        SetProperties[ iProp ].SetValue( iValue, pXmlAttrib->IntValue() );
+                        break;
 
-            case Properties::Values::Angle:
-                SetProperties[ iProp ].SetValue(
-                    iValue, Base::Angle::Deg2Rad( static_cast<f32>(pXmlAttrib->DoubleValue()) )
-                    );
-                break;
+                    case Properties::Values::Enum:
+                    {
+                        pcstr pszEnumOption = pXmlAttrib->Value();
 
-            case Properties::Values::String:
-            case Properties::Values::Path:
-                SetProperties[ iProp ].SetValue( iValue, pXmlAttrib->Value() );
-                break;
+                        for ( i32 i=0; GetPropIt->GetEnumOption( i ) != NULL; i++ )
+                        {
+                            if ( strcmp( pszEnumOption, GetPropIt->GetEnumOption( i ) ) == 0 )
+                            {
+                                SetProperties[ iProp ].SetValue( iValue, i );
+                                break;
+                            }
+                        }
+                        break;
+                    }
 
-            default:
-                std::cerr << "Parser encountered an unsupported property value."
-                            << " File " << pXmlElement->GetDocument()->Value() << ", Row " 
-                            << pXmlElement->Row() << ", Column " << pXmlElement->Column() << "." 
-                            << std::endl;
-                break;
+                    case Properties::Values::Float32:
+                    case Properties::Values::Vector3 & Properties::Values::Mask:
+                    case Properties::Values::Vector4 & Properties::Values::Mask:
+                    case Properties::Values::Quaternion & Properties::Values::Mask:
+                    case Properties::Values::Color3 & Properties::Values::Mask:
+                    case Properties::Values::Color4 & Properties::Values::Mask:
+                        SetProperties[ iProp ].SetValue( iValue,
+                                                         static_cast<f32>(pXmlAttrib->DoubleValue()) );
+                        break;
+
+                    case Properties::Values::Angle:
+                        SetProperties[ iProp ].SetValue(
+                            iValue, Base::Angle::Deg2Rad( static_cast<f32>(pXmlAttrib->DoubleValue()) )
+                            );
+                        break;
+
+                    case Properties::Values::String:
+                    case Properties::Values::Path:
+                        SetProperties[ iProp ].SetValue( iValue, pXmlAttrib->Value() );
+                        break;
+
+                    default:
+                        std::cerr << "Parser encountered an unsupported property value."
+                                    << " File " << pXmlElement->GetDocument()->Value() << ", Row " 
+                                    << pXmlElement->Row() << ", Column " << pXmlElement->Column() << "." 
+                                    << std::endl;
+                        break;
+                    }
+                }
             }
         }
         else
