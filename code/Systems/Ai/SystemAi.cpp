@@ -54,7 +54,7 @@ DestroyAISystem( ISystem* pSystem)
 
 extern "C" 
 {
-    struct SystemFuncs SystemAI = {
+    struct SystemFuncs SystemAi = {
         &InitAISystem,
         &CreateAISystem,
         &DestroyAISystem
