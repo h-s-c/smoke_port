@@ -1,3 +1,5 @@
+// public domain
+
 #pragma once
 
 #include "Base/Platform.hpp"

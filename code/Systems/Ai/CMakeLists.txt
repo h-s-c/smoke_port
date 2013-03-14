@@ -1,3 +1,5 @@
+# public domain
+
 project (SystemAi)
     set( SYSTEM_SOURCE
         ${CMAKE_SOURCE_DIR}/Systems/Ai/Object.cpp

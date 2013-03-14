@@ -1,3 +1,5 @@
+# public domain
+
 include(ExternalProject)
 
 project (Framework)

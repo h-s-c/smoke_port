@@ -1,3 +1,5 @@
+// public domain
+
 #include "Framework/FrameworkAPI.hpp"
 
 #include <iostream>

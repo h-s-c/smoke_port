@@ -1,3 +1,5 @@
+# public domain
+
 project (SystemGraphicsOGRE)
     set( SYSTEM_SOURCE
         ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/CgFxScriptLoader.cpp

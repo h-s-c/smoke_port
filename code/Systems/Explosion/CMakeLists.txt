@@ -1,3 +1,5 @@
+# public domain
+
 project (SystemExplosion)
     set( SYSTEM_SOURCE
         ${CMAKE_SOURCE_DIR}/Systems/Explosion/System.cpp

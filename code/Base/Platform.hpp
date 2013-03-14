@@ -1,3 +1,5 @@
+// public doamin
+
 #pragma once
 
 /* detect 32 or 64 platform */

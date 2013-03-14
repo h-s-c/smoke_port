@@ -1,3 +1,5 @@
+# public domain
+
 project (SystemAudioFMOD)
     set( SYSTEM_SOURCE
         ${CMAKE_SOURCE_DIR}/Systems/AudioFMOD/Object.cpp

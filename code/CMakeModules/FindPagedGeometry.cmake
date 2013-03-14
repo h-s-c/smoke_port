@@ -1,3 +1,5 @@
+# public domain
+
 # - Find PagedGeometry plugin
 
 find_package(PkgConfig)
@@ -7,8 +9,8 @@ find_path(PG_INCLUDE_DIR PagedGeometry.h HINTS
     /usr/include/OGRE/PagedGeometry
     /usr/local/include/ogre/PagedGeometry
     /usr/local/include/OGRE/PagedGeometry
-	${CMAKE_SOURCE_DIR}/External/PagedGeometry/include/PagedGeometry
-	)
+    ${CMAKE_SOURCE_DIR}/External/PagedGeometry/include/PagedGeometry
+    )
 
 find_library(PG_LIBRARY NAMES PagedGeometry libPagedGeometry HINTS 
     /usr/lib${LIB_SUFFIX}/ogre
@@ -16,8 +18,8 @@ find_library(PG_LIBRARY NAMES PagedGeometry libPagedGeometry HINTS
     /usr/lib64/OGRE
     /usr/local/lib${LIB_SUFFIX}/ogre
     /usr/local/lib${LIB_SUFFIX}/OGRE
-	${CMAKE_SOURCE_DIR}/External/PagedGeometry/lib
-	)
+    ${CMAKE_SOURCE_DIR}/External/PagedGeometry/lib
+    )
 
 set(PG_LIBRARIES ${PG_LIBRARY} )
 set(PG_INCLUDE_DIRS ${PG_INCLUDE_DIR} )

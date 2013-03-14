@@ -1,3 +1,5 @@
+# public domain
+
 project (Base)
     set( BASE_SOURCE
         ${CMAKE_SOURCE_DIR}/Base/Math.cpp

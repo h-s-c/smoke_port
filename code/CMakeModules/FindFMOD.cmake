@@ -1,3 +1,5 @@
+# public domain
+
 # - Locate FMOD library
 # This module defines
 #  FMOD_LIBRARY, the library to link against
@@ -38,11 +40,11 @@ IF(WIN32 AND NOT UNIX)
 ENDIF(WIN32 AND NOT UNIX)
 
 IF (UNIX)
-	IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
-		set(LINUXLIBS libfmodex64)
-	ELSEIF(CMAKE_SIZEOF_VOID_P EQUAL 4)
-		set(LINUXLIBS libfmodex)
-	ENDIF()
+    IF(CMAKE_SIZEOF_VOID_P EQUAL 8)
+        set(LINUXLIBS libfmodex64)
+    ELSEIF(CMAKE_SIZEOF_VOID_P EQUAL 4)
+        set(LINUXLIBS libfmodex)
+    ENDIF()
 ENDIF()
 
 IF(UNIX AND NOT WIN32)

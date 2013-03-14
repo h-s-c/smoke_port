@@ -1,3 +1,5 @@
+# public domain
+
 project (SystemGeometry)
     set( SYSTEM_SOURCE
         ${CMAKE_SOURCE_DIR}/Systems/Geometry/Object.cpp

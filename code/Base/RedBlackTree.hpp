@@ -1,3 +1,17 @@
+// Copyright © 2008-2009 Intel Corporation
+// All Rights Reserved
+//
+// Permission is granted to use, copy, distribute and prepare derivative works of this
+// software for any purpose and without fee, provided, that the above copyright notice
+// and this statement appear in all copies.  Intel makes no representations about the
+// suitability of this software for any purpose.  THIS SOFTWARE IS PROVIDED "AS IS."
+// INTEL SPECIFICALLY DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, AND ALL LIABILITY,
+// INCLUDING CONSEQUENTIAL AND OTHER INDIRECT DAMAGES, FOR THE USE OF THIS SOFTWARE,
+// INCLUDING LIABILITY FOR INFRINGEMENT OF ANY PROPRIETARY RIGHTS, AND INCLUDING THE
+// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  Intel does not
+// assume any responsibility for any errors which may appear in this software nor any
+// responsibility to update it.
+
 #pragma once
 #include <cstdint>
 
@@ -45,7 +59,7 @@ protected:
     UnitAllocator m_Allocator;
     CMP compare;
 
-//	RBNode* _find(const T& element) const ;
+//  RBNode* _find(const T& element) const ;
     void rotateLeft(RBNode* pNode);
     void rotateRight(RBNode* pNode);
     void rebalanceAfterInsert(RBNode* pInsertedNode);
@@ -60,13 +74,13 @@ public:
         friend class RedBlackTree;
         public :
         RBNode* iter;
-        iterator(RBNode * p = 0):iter(p){};	
+        iterator(RBNode * p = 0):iter(p){}; 
         T operator*() const { return iter->data;}
     };
 
     TRedBlackTree(uint32_t noElements=8,uint32_t noGrowElements=8)
     {
-        m_Root = 0;	
+        m_Root = 0; 
         m_Allocator.Initialize(sizeof(RBNode),noElements,noGrowElements);
         NIL = (RBNode*)m_Allocator.Allocate();
         if( NIL );
@@ -101,8 +115,8 @@ public:
     }
     
     
-//	iterator begin() const { return iterator(m_Root)};
-//	iterator end() const   { return iterator(0)};
+//  iterator begin() const { return iterator(m_Root)};
+//  iterator end() const   { return iterator(0)};
     
     //not const as UnitAllocator does not return a const;
     uint32_t  size() { return m_Allocator.NumAllocatedUnits()};
@@ -197,8 +211,8 @@ public:
         }
     }
 
-    //	void traversePostOrder(void (*nf)(iterator iter, void* data),void * inData =0);
-    //	void postOrderNode(RBNode* n, void (*nf)(iterator, void* data), void * inData =0);
+    //  void traversePostOrder(void (*nf)(iterator iter, void* data),void * inData =0);
+    //  void postOrderNode(RBNode* n, void (*nf)(iterator, void* data), void * inData =0);
 #ifdef _DEBUGTREE 
     FILE * fp;
     void dump();
@@ -221,7 +235,7 @@ void TRedBlackTree<T,  K, CMP>::insert(const T& data)
         if (!cmp) // Data element already exists
             return;
         pParentNode = pCurrentNode;
-        pCurrentNode = cmp < 0 ?	pCurrentNode->left : pCurrentNode->right;
+        pCurrentNode = cmp < 0 ?    pCurrentNode->left : pCurrentNode->right;
     }
 
     // Alloc & init new node 

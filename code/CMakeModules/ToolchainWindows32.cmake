@@ -1,3 +1,5 @@
+# public domain
+
 # the name of the target operating system
 SET(CMAKE_SYSTEM_NAME Windows)
 

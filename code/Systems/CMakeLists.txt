@@ -1,3 +1,5 @@
+# public domain
+
 add_subdirectory(Ai)
 add_subdirectory(AudioFMOD)
 add_subdirectory(Explosion)
