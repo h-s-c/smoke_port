@@ -13,6 +13,7 @@ FIND_PATH(HAVOK_INCLUDE_DIR Common/Base/hkBase.h
     PATHS
         ${CMAKE_SOURCE_DIR}/External/hk550/Source
 )
+mark_as_advanced(HAVOK_INCLUDE_DIR)
 
 SET(HAVOK_LIBS hkBase hkSerialize hkSceneData hkVisualize hkCompat hkpCollide hkpConstraintSolver hkpDynamics hkpInternal hkpUtilities hkpVehicle)
 SET(HAVOK_LIBRARIES)
@@ -29,6 +30,7 @@ FOREACH(CUR_LIB ${HAVOK_LIBS})
         PATHS
             ${CMAKE_SOURCE_DIR}/External/hk550
     )
+    mark_as_advanced(HAVOK_LIBRARY_${CUR_LIB})
 
     FIND_LIBRARY(HAVOK_LIBRARY_${CUR_LIB}_DEBUG
         NAMES ${CUR_LIB} ${CUR_LIB_LOWER} "${CUR_LIB}d" "${CUR_LIB_LOWER}d" "${CUR_LIB}_d" "${CUR_LIB_LOWER}_d"
@@ -40,6 +42,7 @@ FOREACH(CUR_LIB ${HAVOK_LIBS})
         PATHS
             ${CMAKE_SOURCE_DIR}/External/hk550
     )
+    mark_as_advanced(HAVOK_LIBRARY_${CUR_LIB}_DEBUG)
 
     # Combine all libs to one variable
     IF(HAVOK_LIBRARY_${CUR_LIB})

@@ -20,6 +20,7 @@ FIND_PATH(FMOD_INCLUDE_DIR
   "$ENV{PROGRAMFILES}/FMOD SoundSystem/FMOD Programmers API Windows/api/inc"
   PATH_SUFFIXES fmod
 )
+mark_as_advanced(FMOD_INCLUDE_DIR)
 
 set(WINLIBNAME " ")
 set(WINLIBEXT " ")
@@ -97,6 +98,7 @@ FIND_LIBRARY(FMOD_LIBRARY
   /opt/fmod/api/lib
   "$ENV{PROGRAMFILES}/FMOD SoundSystem/FMOD Programmers API Windows/api/lib"
 )
+mark_as_advanced(FMOD_LIBRARY)
 
 IF(FMOD_LIBRARY AND FMOD_INCLUDE_DIR)
   SET(FMOD_FOUND "YES")
