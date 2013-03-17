@@ -57,12 +57,12 @@ protected:
     /// </summary>
     /// <returns>Bool - Returns if this system should only run on the primary thread.</returns>
     /// <seealso cref="ISystemTask::IsPrimaryThreadOnly"/>
-    virtual Bool IsPrimaryThreadOnly( void );
+    virtual Bool IsPrimaryThreadOnly( void ) { return True; } 
 
 
 private:
 
     OGREGraphicsScene*                  m_pScene;
-    std::shared_ptr<Ogre::Root>         m_pRoot;
+    Ogre::Root*                         m_pRoot;
 };
 

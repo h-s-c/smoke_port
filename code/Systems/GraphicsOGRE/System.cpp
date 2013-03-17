@@ -163,14 +163,14 @@ OGREGraphicsSystem::Initialize(
     m_pResourceGroupManager =  Ogre::ResourceGroupManager::getSingletonPtr();
     
     // Install the gl rendersystem
-#ifdef _DEBUG
+#if defined(_DEBUG) && !defined(PLATFORM_LINUX)
     m_pRoot->loadPlugin("RenderSystem_GL_d");
 #else
     m_pRoot->loadPlugin("RenderSystem_GL");
 #endif
 
     // Install the particle fx plugin
-#ifdef _DEBUG
+#if defined(_DEBUG) && !defined(PLATFORM_LINUX)
     m_pRoot->loadPlugin("Plugin_ParticleFX_d");
 #else
     m_pRoot->loadPlugin("Plugin_ParticleFX");

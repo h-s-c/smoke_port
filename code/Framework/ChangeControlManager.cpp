@@ -25,13 +25,14 @@
 #include "Framework/ChangeControlManager.hpp"
 #include "Framework/PlatformManager.hpp"
 
+__thread ChangeManager::NotifyList* ChangeManager::m_tlsNotifyList;
+
 ///////////////////////////////////////////////////////////////////////////////
 // ChangeManager - Default constructor 
 ChangeManager::ChangeManager(
     void
     )
     : m_lastID(0)
-    , m_tlsNotifyList(TLS_OUT_OF_INDEXES)
     , m_pTaskManager(NULL)
 {
     // Reserve some reasonable space to avoid delays because of multiple reallocations
@@ -39,13 +40,11 @@ ChangeManager::ChangeManager(
     m_subjectsList.reserve(8192);
     m_subjectsList.resize(1);
 
-    // Setup per thread local storage (tls) of NotifyList
-    TLSALLOC(&m_tlsNotifyList);
-
     // Get ready to process changes in the main (this) thread
     NotifyList *pList = new NotifyList();
     pList->reserve(8192);
-    TLSSET(m_tlsNotifyList, pList);
+    m_tlsNotifyList = pList;
+    
     m_NotifyLists.push_back(pList);
 }
 
@@ -72,10 +71,11 @@ ChangeManager::~ChangeManager(
         }
     }
 
-    // Free thread local storage (tls)
-    if ( m_tlsNotifyList != TLS_OUT_OF_INDEXES )
+    // Free tls (thread local storage) data
+    if ( m_tlsNotifyList != NULL )
     {
-        TLSFREE(m_tlsNotifyList);
+        // Free NotifyList if it exists
+        delete m_tlsNotifyList;
     }
 
     NotifyList *pList = (NotifyList *)m_NotifyLists.back();
@@ -206,11 +206,11 @@ ChangeManager::RemoveSubject (
         u32 uID = pSubject->GetID(this);
         if( uID == CSubject::InvalidID)
         {
-            std::cerr << "uID == CSubject::InvalidID" << std::endl;
+            std::cerr << "ChangeManager::RemoveSubject - uID == CSubject::InvalidID" << std::endl;
         }
         if( m_subjectsList[uID].m_pSubject != pSubject)
         {
-            std::cerr << "m_subjectsList[uID].m_pSubject != pSubject" << std::endl;
+            std::cerr << "ChangeManager::RemoveSubject - m_subjectsList[uID].m_pSubject != pSubject" << std::endl;
         }
 
         if ( m_subjectsList.size() <= uID  ||  m_subjectsList[uID].m_pSubject != pSubject )
@@ -232,16 +232,6 @@ ChangeManager::RemoveSubject (
     return curError;
 }
 
-
-///////////////////////////////////////////////////////////////////////////////
-// GetNotifyList - Get the NotifyList for this thread (using tls)
-inline ChangeManager::NotifyList&
-GetNotifyList( u32 tlsIndex )
-{
-    return *static_cast<ChangeManager::NotifyList*>(TLSGET(tlsIndex));
-}
-
-
 ///////////////////////////////////////////////////////////////////////////////
 // ChangeOccurred - Process a change.  This stores all information needed to 
 //                  process the change when DistributeQueuedChanges is called.
@@ -253,7 +243,7 @@ ChangeManager::ChangeOccurred(
 {
     Error curError = Errors::Undefined;
 
-    if( pInChangedSubject )
+    if(pInChangedSubject)
     {
         if(!uInChangedBits)
         {
@@ -263,8 +253,8 @@ ChangeManager::ChangeOccurred(
         else
         {
             // Get thread local notification list
-            NotifyList& notifyList = GetNotifyList( m_tlsNotifyList );
-
+            NotifyList* notifyList = this->m_tlsNotifyList;
+            
             // IMPLEMENTATION NOTE
             // Don't check for duplicate instertions
             //
@@ -273,14 +263,13 @@ ChangeManager::ChangeOccurred(
             // Frequent locking hurts incomparably more than even high percentage 
             // of duplicated insertions, especially taking into account that the memory 
             // is preallocated most of the time.
-            notifyList.push_back( Notification(pInChangedSubject, uInChangedBits) );
-
-            curError = Errors::Success;            
+            notifyList->push_back( Notification(pInChangedSubject, uInChangedBits) );
+            curError = Errors::Success;           
         }
     }
     else
     {
-        std::cerr << "pInChangedSubject == NULL" << std::endl;
+        std::cerr << "ChangeManager::ChangeOccurred - pInChangedSubject == NULL" << std::endl;
     }
 
     return curError;
@@ -307,10 +296,8 @@ ChangeManager::DistributeQueuedChanges(
         m_indexList.resize( m_subjectsList.size() );
 
         // Loop through all list and build m_cumulativeNotifyList
-        ListOfNotifyLists::iterator itList;
-        for( itList = m_NotifyLists.begin(); itList != m_NotifyLists.end(); itList++ )
+        for( auto& pList : m_NotifyLists)
         {
-            NotifyList *pList = *itList;
             size_t nOrigSize = pList->size();
             for( size_t i = 0; i < nOrigSize; i++ )
             {
@@ -318,16 +305,15 @@ ChangeManager::DistributeQueuedChanges(
                 Notification &notif = pList->at(i);
 
                 // Get subject for notification
-                u32 uID = notif.m_pSubject->GetID(this);
+                auto uID = notif.m_pSubject->GetID(this);
                 if( uID == CSubject::InvalidID )
                 {
-                    std::cerr << "uID == CSubject::InvalidID" << std::endl;
+                    std::cerr << "ChangeManager::DistributeQueuedChanges - uID == CSubject::InvalidID" << std::endl;
                 }
-
-                if( uID != CSubject::InvalidID )
+                else
                 {
                     // Get the index for this subject
-                    u32 index = m_indexList[uID];
+                    auto index = m_indexList[uID];
 
                     // If index is set, then this subject is already part of the m_cumulativeNotifyList
                     if( index )
@@ -339,7 +325,7 @@ ChangeManager::DistributeQueuedChanges(
                     else
                     {
                         // Set the index for this subject
-                        m_indexList[uID] = (u32)m_cumulativeNotifyList.size();
+                        m_indexList[uID] = (std::uint32_t)m_cumulativeNotifyList.size();
 
                         // Add a new entry to m_cumulativeNotifyList
                         m_cumulativeNotifyList.push_back( MappedNotification(uID, notif.m_changedBits) );
@@ -463,11 +449,11 @@ ChangeManager::SetTaskManager(
 
     if( m_pTaskManager )
     {
-        std::cerr << "ChangeManager: Call ResetTaskManager before using SetTaskManager to set the new task manager" << std::endl;
+        std::cerr << "ChangeManager::SetTaskManager - Call ResetTaskManager before using SetTaskManager to set the new task manager" << std::endl;
     }
 
     // Set up prethread NotiftyList
-    if ( m_tlsNotifyList != TLS_OUT_OF_INDEXES )
+    if ( m_tlsNotifyList != NULL )
     {
         // Store TaskManager
         m_pTaskManager = pTaskManager;
@@ -497,7 +483,7 @@ void ChangeManager::ResetTaskManager(
 
         // Restore main (this) thread data
         NotifyList *pList = new NotifyList();
-        TLSSET(m_tlsNotifyList, pList);
+        m_tlsNotifyList = pList;
         m_NotifyLists.push_back(pList);
     }
 }
@@ -512,20 +498,20 @@ ChangeManager::InitThreadLocalData(
 {  
     if( !arg )
     {
-        std::cerr << "ChangeManager: No manager pointer passed to InitThreadLocalNotifyList" << std::endl;
+        std::cerr << "ChangeManager::InitThreadLocalData - No manager pointer passed to InitThreadLocalNotifyList" << std::endl;
     }
 
     ChangeManager *mgr = (ChangeManager*)arg;
 
     // Check if we have allocated a NotifyList for this thread.
     // The notify list is keep in tls (thread local storage).
-    if( NULL == TLSGET(mgr->m_tlsNotifyList) )
+    if( mgr->m_tlsNotifyList == NULL)
     {
         NotifyList *pList = new NotifyList();
 
         // Reserve some reasonable space to avoid delays because of multiple reallocations
         pList->reserve(8192);
-        TLSSET(mgr->m_tlsNotifyList, pList);
+        mgr->m_tlsNotifyList = pList;
 
         // Lock out the updates and add this NotifyList to m_NotifyLists
         std::lock_guard<std::mutex> lock(mgr->m_UpdateMutex);
@@ -543,16 +529,15 @@ ChangeManager::FreeThreadLocalData(
 {
     if( !arg )
     {
-        std::cerr << "ChangeManager: No manager pointer passed to FreeThreadLocalNotifyList" << std::endl;
+        std::cerr << "ChangeManager::FreeThreadLocalData - No manager pointer passed to FreeThreadLocalNotifyList" << std::endl;
     }
     
     ChangeManager *mgr = (ChangeManager*)arg;
 
     // Free tls (thread local storage) data
-    if ( mgr->m_tlsNotifyList != TLS_OUT_OF_INDEXES )
+    if ( mgr->m_tlsNotifyList != NULL )
     {
         // Free NotifyList if it exists
-        delete static_cast<NotifyList*>(TLSGET(mgr->m_tlsNotifyList));
-        TLSSET(mgr->m_tlsNotifyList, NULL);
+        delete mgr->m_tlsNotifyList;
     }
 } 

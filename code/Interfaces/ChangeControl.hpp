@@ -364,13 +364,9 @@ public :
             it->m_interestBits |= uInIntrestBits;
     #else
             // No lock is used, but updates can happen concurrently. So use interlocked operation
-            uint32_t prevBits; 
-            uint32_t newBits = uint32_t(it->m_interestBits | uInIntrestBits);
-            do
-            {
-                prevBits = it->m_interestBits.load();
-            }
-            while ( !it->m_interestBits.compare_exchange_weak(prevBits, newBits)  /*!= prevBits*/ );
+            auto prevBits = it->m_interestBits.load();
+            while( !it->m_interestBits.compare_exchange_weak( prevBits, prevBits | uInIntrestBits ) )
+                { }
     #endif
             curError = Errors::Success;
         }
@@ -381,12 +377,11 @@ public :
     // GetID - Get the ID for the given observer within this subject
     virtual u32 GetID ( IObserver* pObserver ) const
     {
-        ObserverList::const_iterator it = m_observerList.begin();
-        for ( ; it != m_observerList.end(); ++it )
+        for ( auto& it : m_observerList )
         {
-            if ( it->m_pObserver == pObserver)
+            if ( it.m_pObserver == pObserver)
             {
-                return it->m_myID;
+                return it.m_myID;
             }
         }
         return InvalidID;
@@ -412,10 +407,9 @@ public :
 
                 aPostData = (PostData*)alloca( m_observerList.size() * sizeof(PostData) );
 
-                ObserverList::iterator it = m_observerList.begin();
-                for ( ; it != m_observerList.end(); ++it )
+                for ( auto& it : m_observerList)
                 {
-                    u32 changedBitsOfInterest = GetBitsToPost( *it, changedBits );
+                    std::uint32_t changedBitsOfInterest = GetBitsToPost( it, changedBits );
                     if ( changedBitsOfInterest )
                     {
                         aPostData[nNotificationsToPost] = std::make_pair(it->m_pObserver, changedBitsOfInterest);
@@ -438,13 +432,12 @@ public :
     #if SUPPORT_CONCURRENT_ATTACH_DETACH_TO_SUBJECTS
         std::lock_guard<std::mutex> lock(m_observerListMutex);
     #endif
-        ObserverList::iterator it = m_observerList.begin();
-        for ( ; it != m_observerList.end(); ++it )
+        for (auto& it : m_observerList)
         {
-            u32 changedBitsOfInterest = GetBitsToPost( *it, changedBits );
+            std::uint32_t changedBitsOfInterest = GetBitsToPost( it, changedBits );
             if ( changedBitsOfInterest )
             {
-                it->m_pObserver->ChangeOccurred( this, changedBitsOfInterest );
+                it.m_pObserver->ChangeOccurred( this, changedBitsOfInterest );
             }
         }
     }
@@ -458,10 +451,9 @@ public :
         // the future it is called concurrently, then locking similar to that
         // in the CSubject::Detach method will have to be added.
 
-        ObserverList::iterator it = m_observerList.begin();
-        for ( ; it != m_observerList.end(); ++it )
+        for ( auto& it : m_observerList)
         {
-            it->m_pObserver->ChangeOccurred( this, 0 );
+            it.m_pObserver->ChangeOccurred( this, 0 );
         }
         m_observerList.clear();
 
@@ -484,16 +476,20 @@ protected:
             , m_interestBits( Interests )
             , m_myID( myID )
         {}
+
+        IObserver*                  m_pObserver;
+        #if SUPPORT_CONCURRENT_ATTACH_DETACH_TO_SUBJECTS
+        std::uint32_t               m_interestBits;
+        #else
+        std::atomic<std::uint32_t>  m_interestBits; 
         //std::atomic requires explicit copy constructor
         ObserverRequest( const ObserverRequest& other )
             : m_pObserver( other.m_pObserver )
             , m_interestBits( other.m_interestBits.load() )
             , m_myID( other.m_myID )
         {}
-
-        IObserver*              m_pObserver;
-        std::atomic<uint32_t>   m_interestBits; 
-        u32                     m_myID;
+        #endif
+         std::uint32_t              m_myID;
 
         bool operator == ( IObserver* rhs ) const
         {

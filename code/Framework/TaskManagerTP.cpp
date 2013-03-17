@@ -30,9 +30,17 @@ void Worker::operator()()
 {
     std::function<void()> task;
     while(true)
-    {
+    {       
         {   // acquire lock
             std::unique_lock<std::mutex> lock(this->pool.queue_mutex);
+            
+            // per thread callback
+            if (this->pool.callback && (*this->callback.target<void()>() != *this->pool.callback.target<void()>()))
+            //if (this->pool.callback && (this->callback.target_type() != this->pool.callback.target_type()))
+            {
+                this->callback = this->pool.callback;
+                this->callback();
+            }
  
            // look for a work item
             while(!this->pool.stop && this->pool.tasks.empty())
@@ -56,34 +64,34 @@ void Worker::operator()()
 
 void TaskManagerTP::Init( void)
 {
-    if( this->uNumberOfThreads <= 0 ) 
+    auto uNumberOfThreads = EnvironmentManager::getInstance().Variables().GetAsInt( "TaskManager::Threads", 0 );
+    if( uNumberOfThreads <= 0 ) 
     {
-        this->uNumberOfThreads = EnvironmentManager::getInstance().Variables().GetAsInt( "TaskManager::Threads", 0 );
-        if( this->uNumberOfThreads <= 0 ) 
-        {
-            this->uNumberOfThreads = std::thread::hardware_concurrency() - 1;
-        } 
+        SetNumberOfThreads(std::thread::hardware_concurrency() - 1);
     } 
-    for(uint32_t i = 0;i<this->uNumberOfThreads;++i)
-        this->workers.push_back(std::thread(Worker(*this)));
+    else
+    {
+        SetNumberOfThreads(uNumberOfThreads);
+    }
+    // SetNumberOfThreads calls Start()
 }
 
 void TaskManagerTP::Shutdown( void)
 {
-    // stop all threads
-    this->stop = true;
-    this->condition.notify_all();
+    Stop();
  
     // join them
     for(size_t i = 0;i<this->workers.size();++i)
+    {
         this->workers[i].join();
+    }
 }
 
 void TaskManagerTP::IssueJobsForSystemTasks( ISystemTask** pTasks, u32 uCount, f32 DeltaTime)
 {
     for ( u32 i=0; i < uCount; i++ )
     {
-        this->enqueue([pTasks, i, DeltaTime]
+        this->Enqueue([pTasks, i, DeltaTime]
             {
                 pTasks[i]->Update(DeltaTime);
             });
@@ -92,9 +100,11 @@ void TaskManagerTP::IssueJobsForSystemTasks( ISystemTask** pTasks, u32 uCount, f
 
 void TaskManagerTP::WaitForAllSystemTasks( void )
 {
-    while(!this->tasks.empty())
+    auto empty = false;
+    while(!empty)
     {
-
+        std::unique_lock<std::mutex> lock(this->queue_mutex);
+        empty = this->tasks.empty();
     }
 }
 
@@ -102,20 +112,15 @@ void TaskManagerTP::WaitForSystemTasks( ISystemTask** pTasks, u32 uCount )
 {
     // NOTE: not properly implemented
     // currently waits for all tasks
-    DBG_UNREFERENCED_PARAM( pTasks );
-    DBG_UNREFERENCED_PARAM( uCount );
     WaitForAllSystemTasks();
 }
 
 void TaskManagerTP::NonStandardPerThreadCallback( JobFunction pfnCallback, void* pData)
 {
-    for ( u32 i=0; i < this->uNumberOfThreads; i++ )
-    {
-        this->enqueue([pfnCallback, pData]
-            {
-                pfnCallback( pData );
-            });
-    }
+    this->SetCallback([pfnCallback, pData]
+        {
+            pfnCallback( pData );
+        });
     // call it for ourself, too
     pfnCallback( pData );
 }
@@ -125,8 +130,6 @@ uint32_t TaskManagerTP::GetRecommendedJobCount( ITaskManager::JobCountInstructio
     //
     // Ignoring hints for now and just returning the number of available threads.
     //
-    UNREFERENCED_PARAM( Hints );
-
     return this->uNumberOfThreads;
 }
 
@@ -137,19 +140,9 @@ uint32_t TaskManagerTP::GetNumberOfThreads( void)
 
 void TaskManagerTP::SetNumberOfThreads( uint32_t uNumberOfThreads)
 {
-    if (this->uNumberOfThreads < uNumberOfThreads)
-    {
-        for(uint32_t i = this->uNumberOfThreads;i<uNumberOfThreads;++i)
-            this->workers.push_back(std::thread(Worker(*this)));
-
-        this->uNumberOfThreads = uNumberOfThreads;
-    }
-    else if (this->uNumberOfThreads > uNumberOfThreads)
-    {
-        this->uNumberOfThreads = uNumberOfThreads;
-        this->Shutdown();
-        this->Init();
-    }
+    Stop();
+    this->uNumberOfThreads = uNumberOfThreads;
+    Start();
 }
 
 void TaskManagerTP::ParallelFor(
@@ -195,7 +188,7 @@ void TaskManagerTP::ParallelFor(
         for( u32 t = 1; t < uThreads; t++ )
         {
             uEnd = ( uStart + uGrainSize );
-            this->enqueue([pfnJobFunction, pParam, uStart, uEnd]
+            this->Enqueue([pfnJobFunction, pParam, uStart, uEnd]
                 {
                     pfnJobFunction( pParam, uStart, uEnd);
                 });
@@ -211,4 +204,19 @@ void TaskManagerTP::ParallelFor(
         // just do it ourselves
         pfnJobFunction( pParam, begin, end );
     }
+}
+
+void TaskManagerTP::Stop( void)
+{
+    // stop all threads
+    this->stop = true;
+    this->condition.notify_all();
+}
+
+void TaskManagerTP::Start( void)
+{
+    this->stop = false;
+    this->workers.clear();    
+    for(size_t i = 0;i<this->uNumberOfThreads;++i)
+        this->workers.push_back(std::thread(Worker(*this)));
 }

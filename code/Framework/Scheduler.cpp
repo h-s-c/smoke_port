@@ -94,11 +94,8 @@ Scheduler::SetScene(
             m_SceneExecs[ it->first ] = it->second;
         }
     }
-
-    //
-    // Re-create the timer as a scene load may have taken a long time.
-    //
-    _start = std::chrono::high_resolution_clock::now();
+    
+    m_OldTime = std::chrono::high_resolution_clock::now();
 }
 
 
@@ -107,10 +104,23 @@ Scheduler::Execute(
     void
     )
 {
-    // Get the delta time; seconds since last Execute call.
-    auto DeltaTime = 0.0f;
-
-    DeltaTime = std::chrono::duration_cast<std::chrono::duration<float>>( std::chrono::high_resolution_clock::now() - _start).count();
+    m_NewTime = std::chrono::high_resolution_clock::now();
+    
+    // Ticks per second;
+    auto DeltaTime =std::chrono::duration<float, std::ratio<1>>(m_NewTime - m_OldTime).count();
+    m_OldTime = m_NewTime;  
+    
+    // Force 120hz      
+    m_Akkumulator += DeltaTime;
+    if( m_Akkumulator < (1.0f / 120.0f))
+    {
+        return;
+    }
+    else
+    {
+        m_Akkumulator = 0.0f;
+    }
+    
     
     // Check if the execution is paused, and set delta time to 0 if so.
     if ( EnvironmentManager::getInstance().Runtime().GetStatus() ==

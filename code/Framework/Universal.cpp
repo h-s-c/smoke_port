@@ -501,8 +501,12 @@ UObject::Extend(
     )
 {
     Bool bSuccess = False;
-
-    if ( m_ObjectExtensions.find( pSystemObject->GetSystemType() ) == m_ObjectExtensions.end() )
+    
+    if ( pSystemObject == NULL )
+    {
+        std::cerr << "pSystemObject == NULL" << std::endl;
+    }
+    else if ( m_ObjectExtensions.find( pSystemObject->GetSystemType() ) == m_ObjectExtensions.end() )
     {
         //
         // Set this as the parent.
@@ -575,12 +579,18 @@ UObject::Extend(
             m_pGeometryObject = dynamic_cast<IGeometryObject*>(pSystemObject);
             if ( m_pGeometryObject == NULL )
             {
-                std::cerr << "m_pGraphicsObject == NULL" << std::endl;
+                std::cerr << "UObject::Extend - m_pGeometryObject == NULL" << std::endl;
+                return False;
             }
         }
         else if ( SystemType == System::Types::Graphics )
         {
             m_pGraphicsObject = dynamic_cast<IGraphicsObject*>(pSystemObject);
+            if ( m_pGraphicsObject == NULL )
+            {
+                std::cerr << "UObject::Extend - m_pGraphicsObject == NULL" << std::endl;
+                return False;
+            }
         }
 
         bSuccess = True;
@@ -597,7 +607,7 @@ UObject::Unextend(
 {
     if ( pSystemScene  == NULL )
     {
-        std::cerr << "pSystemScene  == NULL" << std::endl;
+        std::cerr << "UObject::Unextend - pSystemScene  == NULL" << std::endl;
     }
 
     //
@@ -608,7 +618,7 @@ UObject::Unextend(
     SystemObjectsIt SysObjIt = m_ObjectExtensions.find( SystemType );
     if ( SysObjIt == m_ObjectExtensions.end() )
     {
-        std::cerr << "The object to delete doesn't exist in the scene." << std::endl;
+        std::cerr << "UObject::Unextend - The object to delete doesn't exist in the scene." << std::endl;
     }
 
     ISystemObject* pSystemObject = SysObjIt->second;
@@ -734,7 +744,7 @@ UObject::GetPosition(
 {
     if ( m_pGeometryObject == NULL )
     {
-        std::cerr << "m_pGraphicsObject == NULL" << std::endl;
+        std::cerr << "UObject::GetPosition - m_pGeometryObject == NULL" << std::endl;
     }
 
     return m_pGeometryObject->GetPosition();
@@ -748,7 +758,7 @@ UObject::GetOrientation(
 {
     if ( m_pGeometryObject == NULL )
     {
-        std::cerr << "m_pGraphicsObject == NULL" << std::endl;
+        std::cerr << "UObject::GetOrientation - m_pGeometryObject == NULL" << std::endl;
     }
 
     return m_pGeometryObject->GetOrientation();
@@ -762,7 +772,7 @@ UObject::GetScale(
 {
     if ( m_pGeometryObject == NULL )
     {
-        std::cerr << "m_pGraphicsObject == NULL" << std::endl;
+        std::cerr << "UObject::GetScale - m_pGeometryObject == NULL" << std::endl;
     }
 
     return m_pGeometryObject->GetScale();
@@ -774,7 +784,7 @@ UObject::GetSubMeshCount(
     void
     )
 {
-    std::cerr << "Not applicable for UObject." << std::endl;
+    std::cerr << "UObject::GetSubMeshCount - Not applicable for UObject." << std::endl;
     return 0;
 }
 
@@ -784,7 +794,7 @@ UObject::GetIndexDeclaration(
     In  u16 nSubMeshIndex
     )
 {
-    std::cerr << "Not applicable for UObject." << std::endl;
+    std::cerr << "UObject::GetIndexDeclaration - Not applicable for UObject." << std::endl;
     return 0;
 }
 
@@ -794,7 +804,7 @@ UObject::GetVertexDeclarationCount(
     In  u16 nSubMeshIndex
     )
 {
-    std::cerr << "Not applicable for UObject." << std::endl;
+    std::cerr << "UObject::GetVertexDeclarationCount - Not applicable for UObject." << std::endl;
     return 0;
 }
 
@@ -805,7 +815,7 @@ UObject::GetVertexDeclaration(
     In  u16 nSubMeshIndex
     )
 {
-    std::cerr << "Not applicable for UObject." << std::endl;
+    std::cerr << "UObject::GetVertexDeclaratio - Not applicable for UObject." << std::endl;
 }
 
 
@@ -814,7 +824,7 @@ UObject::GetIndexCount(
     In  u16 nSubMeshIndex
     )
 {
-    std::cerr << "Not applicable for UObject." << std::endl;
+    std::cerr << "UObject::GetIndexCount - Not applicable for UObject." << std::endl;
     return 0;
 }
 
@@ -824,7 +834,7 @@ UObject::GetVertexCount(
     In  u16 nSubMeshIndex
     )
 {
-    std::cerr << "Not applicable for UObject." << std::endl;
+    std::cerr << "UObject::GetVertexCount - Not applicable for UObject." << std::endl;
     return 0;
 }
 
@@ -835,7 +845,7 @@ UObject::GetIndices(
     In  u16 nSubMeshIndex
     )
 {
-    std::cerr << "Not applicable for UObject." << std::endl;
+    std::cerr << "UObject::GetIndices - Not applicable for UObject." << std::endl;
 }
 
 
@@ -848,7 +858,7 @@ UObject::GetVertices(
     In  VertexDecl::Element* pVertexDecl
     )
 {
-    std::cerr << "Not applicable for UObject." << std::endl;
+    std::cerr << "UObject::GetVertices - Not applicable for UObject." << std::endl;
 }
 
 
@@ -857,7 +867,7 @@ UObject::GetStreamsChanged(
     void
     )
 {
-    std::cerr << "Not applicable for UObject." << std::endl;
+    std::cerr << "UObject::GetStreamsChanged - Not applicable for UObject." << std::endl;
     return 0;
 }
 
@@ -870,7 +880,7 @@ UObject::GetAABB(
 {
     if ( m_pGraphicsObject == NULL )
     {
-        std::cerr << "m_pGraphicsObject == NULL" << std::endl;
+        std::cerr << "UObject::GetAABB - m_pGraphicsObject == NULL" << std::endl;
     }
 
     return m_pGraphicsObject->GetAABB( Min, Max );

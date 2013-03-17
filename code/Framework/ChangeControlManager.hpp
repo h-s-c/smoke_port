@@ -18,24 +18,6 @@
 #include <list>
 #include <vector>
 #include <mutex>
-// External
-#if defined(__GNUC__) || defined(__clang__)
-#include <pthread.h>
-#define TLS_OUT_OF_INDEXES ((uint32_t)0xFFFFFFFF)
-#define TLSVAR         pthread_key_t
-#define TLSALLOC(k)    pthread_key_create(k, 0)
-#define TLSFREE(k)     pthread_key_delete(k)
-#define TLSGET(k)      pthread_getspecific(k)
-#define TLSSET(k, a)   pthread_setspecific(k, a)
-#elif defined(_MSC_VER)
-#include <Processthreadsapi.h>
-#define TLSVAR         uint32_t
-#define TLSALLOC(k)    (*(k)=TlsAlloc(), TLS_OUT_OF_INDEXES==*(k))
-#define TLSFREE(k)     (!TlsFree(k))
-#define TLSGET(k)      TlsGetValue(k)
-#define TLSSET(k, a)   (!TlsSetValue(k, a))
-#endif 
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// <summary>
@@ -167,9 +149,9 @@ protected:
         ISubject*   m_pSubject;
         u32         m_changedBits;
     };
-
+public:    
     typedef std::vector<Notification> NotifyList;
-
+protected:
     typedef  std::list<NotifyList*>  ListOfNotifyLists;
 
     /// <summary>
@@ -181,7 +163,7 @@ protected:
     ///   TLS slot that store pointers to NotifyListInfo values, containing pointer 
     ///   to thread local notification lists with fast search ability and .
     /// </summary>
-    TLSVAR              m_tlsNotifyList;
+    static __thread NotifyList*  m_tlsNotifyList;
 
     struct MappedNotification
     {
@@ -216,8 +198,6 @@ private:
     static void FreeThreadLocalData( void* mgr );
 
     Error RemoveSubject ( ISubject* pSubject );
-
-    friend NotifyList& GetNotifyList( u32 tlsIndex );
 
     static void DistributionCallback( void *param, u32 begin, u32 end );
     void DistributeRange ( u32 begin, u32 end );

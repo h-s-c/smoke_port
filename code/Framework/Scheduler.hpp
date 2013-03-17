@@ -73,7 +73,9 @@ protected:
 
     TaskManager*                    m_pTaskManager;
 
-    std::chrono::high_resolution_clock::time_point _start;
+    std::chrono::high_resolution_clock::time_point m_OldTime;
+    std::chrono::high_resolution_clock::time_point m_NewTime;
+    float                           m_Akkumulator;
 
     Bool                            m_bBenchmarkingEnabled;
     Bool                            m_bThreadingEnabled;

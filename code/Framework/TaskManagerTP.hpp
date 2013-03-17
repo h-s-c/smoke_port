@@ -28,6 +28,8 @@ public:
     void operator()();
 private:
     TaskManagerTP &pool;
+    std::function<void()> callback;
+    
 };
 
 class TaskManagerTP : public TaskManager
@@ -115,6 +117,7 @@ private:
     uint32_t uNumberOfThreads;
 
     // need to keep track of threads so we can join them
+    
     std::vector< std::thread > workers;
  
     // the task queue
@@ -124,9 +127,11 @@ private:
     std::mutex queue_mutex;
     std::condition_variable condition;
     bool stop;
+    
+    std::function<void()> callback;
 
     template<class F>
-    void enqueue(F f)
+    void Enqueue(F f)
     {
         { // acquire lock
             std::unique_lock<std::mutex> lock(this->queue_mutex);
@@ -138,4 +143,20 @@ private:
         // wake up one thread
         this->condition.notify_one();
     }
+    
+    template<class F>
+    void SetCallback(F f)
+    {
+        { // acquire lock
+            std::unique_lock<std::mutex> lock(this->queue_mutex);
+     
+            // add the callback
+            this->callback = std::function<void()>(f);
+        } // release lock
+     
+        // wake up one thread
+        this->condition.notify_all();
+    }
+    void Start();
+    void Stop();
 };

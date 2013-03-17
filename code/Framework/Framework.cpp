@@ -963,8 +963,7 @@ Framework::GDFParser::BeginElement( void* pElement)
                     std::cerr << "m_pUObject == NULL" << std::endl;
                 }
 
-                UScene::SystemScenesConstIt it = 
-                    m_pScene->GetSystemScenes().find( System::Types::Geometry );
+                UScene::SystemScenesConstIt it = m_pScene->GetSystemScenes().find( System::Types::Geometry );
                     
                 if (it == m_pScene->GetSystemScenes().end())
                 {

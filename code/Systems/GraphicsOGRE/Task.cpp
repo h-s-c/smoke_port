@@ -384,8 +384,3 @@ void OGREGraphicsTask::Update( f32 DeltaTime )
     m_pScene->Update( DeltaTime );
 
 }
-
-
-Bool OGREGraphicsTask::IsPrimaryThreadOnly( void ) {
-    return False;
-}
