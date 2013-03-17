@@ -75,11 +75,21 @@ project (Smoke)
     if (HAVOK_FOUND)
         list(APPEND SMOKE_DEPEDENCIES SystemPhysicsHAVOK)
     endif ()
+   
+    find_package(LibBfd)
+    if (LIBBFD_FOUND)
+        list(APPEND SMOKE_LIBRARIES ${LIBBFD_LIBRARIES})
+        list(APPEND SMOKE_INCLUDE_DIRS ${LIBBFD_INCLUDE_DIRS})
+        add_definitions(-DBACKWARD_HAS_BFD=1)
+        list(APPEND SMOKE_SOURCE ${CMAKE_SOURCE_DIR}/External/backward-cpp/backward.cpp)
+    endif ()
     
-    list(APPEND SKUNKWORKS_INCLUDE_DIRS ${CMAKE_SOURCE_DIR})
+    list(APPEND SMOKE_SOURCE ${CMAKE_SOURCE_DIR}/Main.cpp)
     
+    list(APPEND SMOKE_INCLUDE_DIRS ${CMAKE_SOURCE_DIR})
+
     include_directories(${SMOKE_INCLUDE_DIRS} )
-    add_executable(Smoke Main.cpp)
+    add_executable(Smoke ${SMOKE_SOURCE})
     add_dependencies(Smoke ${SMOKE_DEPEDENCIES} )
     target_link_libraries(Smoke ${SMOKE_LIBRARIES})
     
