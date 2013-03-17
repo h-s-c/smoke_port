@@ -5,4 +5,5 @@ media/
 code/External/hk550/
 code/External/PagedGeometry/
 code/External/dlfcn-win32/
+code/External/backward-cpp
 tools/OgreMeshUpgrade.log
