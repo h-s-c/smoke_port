@@ -85,6 +85,7 @@ void Worker::operator()()
 void TaskManagerTP::Init( void)
 {
     auto uNumberOfThreads = EnvironmentManager::getInstance().Variables().GetAsInt( "TaskManager::Threads", 0 );
+    // SetNumberOfThreads calls Start()
     if( uNumberOfThreads <= 0 ) 
     {
         SetNumberOfThreads(std::thread::hardware_concurrency());
@@ -93,7 +94,6 @@ void TaskManagerTP::Init( void)
     {
         SetNumberOfThreads(uNumberOfThreads);
     }
-    // SetNumberOfThreads calls Start()
 }
 
 void TaskManagerTP::Shutdown( void)
@@ -169,7 +169,7 @@ void TaskManagerTP::NonStandardPerThreadCallback( JobFunction pfnCallback, void*
     }
     // call it for ourself, too
     pfnCallback( pData );
-    std::clog << "TaskManagerTP - Callback called on thread " << std::this_thread::get_id() << " (Main)" << std::endl;
+    std::clog << "TaskManagerTP - Callback called on thread " << std::this_thread::get_id() << " (Primary)" << std::endl;
     
     std::clog << "TaskManagerTP - All Callbacks executed" << std::endl;
 }
