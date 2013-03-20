@@ -167,7 +167,7 @@ OGREGraphicsScene::OGREGraphicsScene(
     ISystem* pSystem
     )
     : ISystemScene( pSystem )
-    , m_pTask( NULL )
+    , m_pTask( nullptr )
     , m_pSceneManager( NULL )
     , m_pRootNode( NULL )
     , m_bUseStaticGeom( 1 )

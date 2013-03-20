@@ -37,14 +37,14 @@
 #include "Framework/Framework.hpp"
 
 
-TaskManager*    g_pTaskManager = NULL;
+TaskManager*    g_pTaskManager = nullptr;
 
 void
 EngineExecuteGDF( pcstr pszGDF)
 {
     Framework   Framework;
 
-    pcstr GDF = (pszGDF != NULL) ? pszGDF : "engine.gdf";
+    pcstr GDF = (pszGDF != nullptr) ? pszGDF : "engine.gdf";
     if ( Framework.Initialize( GDF ) == Errors::Success )
     {
         Framework.Execute();
@@ -53,21 +53,21 @@ EngineExecuteGDF( pcstr pszGDF)
 }
 
 Framework::Framework( void) 
-    : m_pScheduler( NULL )
-    , m_pSceneCCM( NULL )
-    , m_pObjectCCM( NULL )
+    : m_pScheduler( nullptr )
+    , m_pSceneCCM( nullptr )
+    , m_pObjectCCM( nullptr )
     , m_bExecuteLoop( True )
 {
     // g_pTaskManager and m_pScheduler are instantiated after the environment variables
     // in the config file are parsed
     m_pSceneCCM = new ChangeManager();
-    if ( m_pSceneCCM == NULL)
+    if ( m_pSceneCCM == nullptr)
     {
         std::cerr << "m_pSceneCCM == NULL" << std::endl;
     }
 
     m_pObjectCCM = new ChangeManager();
-    if ( m_pObjectCCM == NULL)
+    if ( m_pObjectCCM == nullptr)
     {
         std::cerr << "m_pObjectCCM == NULL" << std::endl;
     }
@@ -99,7 +99,7 @@ Framework::Initialize( pcstr pszGDF)
 
     // Create the initial universal scene.
     m_pScene = new UScene( m_pSceneCCM, m_pObjectCCM );
-    if ( m_pScene == NULL )
+    if ( m_pScene == nullptr )
     {
         std::cerr << "m_pScene == NULL" << std::endl;
         return Errors::Memory::OutOfMemory;
@@ -126,21 +126,21 @@ Framework::Initialize( pcstr pszGDF)
     }
     else if ( sTaskManager == "None" )
     {
-        g_pTaskManager = NULL;
+        g_pTaskManager = nullptr;
     }
     else
     {
         std::cerr << "Unknown TaskManager: " << sTaskManager.c_str() << std::endl;
     }
 
-    if ( g_pTaskManager != NULL )
+    if ( g_pTaskManager !=nullptr )
     {
         g_pTaskManager->Init();
     }
 
     // Instantiate the scheduler.
     m_pScheduler = new Scheduler( g_pTaskManager );
-    if ( m_pScheduler == NULL )
+    if ( m_pScheduler == nullptr )
     {
         std::cerr << "m_pScheduler == NULL" << std::endl;
         return Errors::Memory::OutOfMemory;

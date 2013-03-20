@@ -38,7 +38,7 @@ class IChangeManager;
 // Yet concurrent _repeated_ attaches (updating interest bits for already registered 
 // CCM observer) are possible, so the protection against race conditions introduced
 // by them must always be in place. 
-#define SUPPORT_CONCURRENT_ATTACH_DETACH_TO_SUBJECTS 0
+#define SUPPORT_CONCURRENT_ATTACH_DETACH_TO_SUBJECTS 1
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -284,7 +284,7 @@ public:
 class CSubject : public ISubject 
 {
 public :
-    static const u32 InvalidID = u32(-1);
+    static const std::uint32_t InvalidID = std::uint32_t(-1);
 
     CSubject( void ) {}
     ~CSubject( void ) { PreDestruct();}
@@ -377,7 +377,7 @@ public :
     // GetID - Get the ID for the given observer within this subject
     virtual u32 GetID ( IObserver* pObserver ) const
     {
-        for ( auto& it : m_observerList )
+        for ( const auto& it : m_observerList )
         {
             if ( it.m_pObserver == pObserver)
             {
@@ -470,7 +470,7 @@ protected:
         ObserverRequest(
             IObserver* pObserver = NULL,
             u32 Interests = 0,
-            u32 myID = 0
+            std::uint32_t myID = 0
             )
             : m_pObserver( pObserver )
             , m_interestBits( Interests )
@@ -491,7 +491,7 @@ protected:
         #endif
          std::uint32_t              m_myID;
 
-        bool operator == ( IObserver* rhs ) const
+        bool operator == (const IObserver* rhs ) const
         {
             return m_pObserver == rhs;
         }
@@ -518,7 +518,11 @@ private:
 
     friend INLINE u32 GetBitsToPost( CSubject::ObserverRequest& req, System::Changes::BitMask changedBits )
     {
+#if SUPPORT_CONCURRENT_ATTACH_DETACH_TO_SUBJECTS
+        u32 changedBitsOfInterest = req.m_interestBits & changedBits;
+#else
         u32 changedBitsOfInterest = req.m_interestBits.load() & changedBits;
+#endif
         return changedBitsOfInterest;
     }
 };

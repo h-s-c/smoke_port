@@ -57,26 +57,20 @@ Scheduler::SetScene(
     //
     // Wait for any executing scenes to finish and clear out the list.
     //
-    ISystemTask* aScenesToWaitFor[ System::Types::MAX ];
-    u32 cScenesToWaitFor = 0;
 
-    for ( SceneExecsIt it=m_SceneExecs.begin(); it != m_SceneExecs.end(); it++ )
+    std::vector <ISystemTask*> aScenesToWaitFor;
+    for (const auto &it : m_SceneExecs)
     {
-        ISystemScene* pSystemScene = it->second;
-        
-        if ( cScenesToWaitFor > System::Types::MAX )
-        {
-                std::cerr << "cScenesToWaitFor > System::Types::MAX" << std::endl;
-        }
-        
-        aScenesToWaitFor[ cScenesToWaitFor++ ] = pSystemScene->GetSystemTask();
+        ISystemScene* pSystemScene = it.second;        
+        aScenesToWaitFor.push_back(pSystemScene->GetSystemTask());
     }
     m_SceneExecs.clear();
 
-    if ( cScenesToWaitFor > 0 )
+    if ( aScenesToWaitFor.size() > 0 )
     {
-        m_pTaskManager->WaitForSystemTasks( aScenesToWaitFor, cScenesToWaitFor );
+        m_pTaskManager->WaitForSystemTasks( aScenesToWaitFor );
     }
+    
 
     //
     // Copy over all the system scenes.
@@ -136,20 +130,33 @@ Scheduler::Execute(
     if ( m_bThreadingEnabled )
     {
         // Schedule the scenes that are ready for execution.
-        ISystemTask* aScenesToExecute[ System::Types::MAX ];
-        u32 cScenesToExecute = 0;
+        std::vector<ISystemTask*> aScenesToExecute;
+        std::vector<ISystemTask*> aScenesToExecuteOnPrimaryThread;
 
-        for ( SceneExecsIt it=m_SceneExecs.begin(); it != m_SceneExecs.end(); it++ )
+        for (const auto &it : m_SceneExecs)
         {
-            if ( cScenesToExecute > System::Types::MAX )
+            ISystemScene* pSystemScene = it.second;
+            
+            ISystemTask*  pSystemTask = pSystemScene->GetSystemTask();
+            if(pSystemTask != nullptr && pSystemTask != NULL)
             {
-                std::cerr << "cScenesToExecute > System::Types::MAX" << std::endl;
+                if(pSystemTask->IsPrimaryThreadOnly())
+                {
+                    aScenesToExecuteOnPrimaryThread.push_back(pSystemTask);
+                }
+                else
+                {
+                    aScenesToExecute.push_back(pSystemTask);
+                }
             }
-            ISystemScene* pSystemScene = it->second;
-            aScenesToExecute[ cScenesToExecute++ ] = pSystemScene->GetSystemTask();
         }
 
-        m_pTaskManager->IssueJobsForSystemTasks( aScenesToExecute, cScenesToExecute, DeltaTime );
+        m_pTaskManager->IssueJobsForSystemTasks( aScenesToExecute, DeltaTime );
+
+        for (auto task : aScenesToExecuteOnPrimaryThread)
+        {
+            task->Update(DeltaTime);
+        }
 
         //
         // Wait for the scenes that will be completing execution in this frame.
@@ -168,15 +175,15 @@ Scheduler::Execute(
             aScenesToWaitFor[ cScenesToWaitFor++ ] = pSystemScene->GetSystemTask();
         }
 
-        m_pTaskManager->WaitForSystemTasks( aScenesToWaitFor, cScenesToWaitFor );
+        m_pTaskManager->WaitForSystemTasks( aScenesToWaitFor );
 #endif /* 0 */
-        m_pTaskManager->WaitForSystemTasks( aScenesToExecute, cScenesToExecute );
+        m_pTaskManager->WaitForSystemTasks( aScenesToExecute );
     }
     else
     {
-        for ( SceneExecsIt it=m_SceneExecs.begin(); it != m_SceneExecs.end(); it++ )
+        for (const auto &it : m_SceneExecs)
         {
-            ISystemScene* pSystemScene = it->second;
+            ISystemScene* pSystemScene = it.second;
             pSystemScene->GetSystemTask()->Update( DeltaTime );
         }
     }

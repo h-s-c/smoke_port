@@ -27,9 +27,7 @@ public:
     Worker(TaskManagerTP &s) : pool(s) { }
     void operator()();
 private:
-    TaskManagerTP &pool;
-    std::function<void()> callback;
-    
+    TaskManagerTP &pool;    
 };
 
 class TaskManagerTP : public TaskManager
@@ -46,16 +44,8 @@ public:
     /// </summary>
     void Shutdown( void );
 
-    /// <summary cref="TaskManagerTP::IssueJobsForSystemTasks">
-    /// Call this from the primary thread to schedule system work.
-    /// </summary>
-    /// <param name="pTasks">an array of <c>ISystemTask</c> objects which should have their
-    /// <c>Update()</c> methods called asynchronously</param>
-    /// <param name="uCount">the size of the <paramref name="pTasks"/> array</param>
-    /// <param name="fDeltaTime">amount of time to be passed to each system's <c>Update</c> method</param>
-    /// <seealso cref="TaskManagerTP::WaitForSystemTasks"/>
-    /// <seealso cref="ISystemTask::Update"/>
-    void IssueJobsForSystemTasks( ISystemTask** pTasks, u32 uCount, f32 fDeltaTime );
+    /* Call this from the primary thread to schedule system work.*/
+    void IssueJobsForSystemTasks( std::vector<ISystemTask*> pTasks, float fDeltaTime );
     
     /// <summary cref="TaskManagerTP::WaitForAllSystemTasks">
     /// Call this from the primary thread to wait until all tasks spawned with <c>IssueJobsForSystemTasks</c>
@@ -64,18 +54,9 @@ public:
     /// <seealso cref="TaskManagerTP::IssueJobsForSystemTasks"/>
     void WaitForAllSystemTasks( void );
     
-    /// <summary cref="TaskManagerTP::WaitForSystemTasks">
-    /// Call this from the primary thread to wait until specified tasks spawned with <c>IssueJobsForSystemTasks</c>
-    /// and all of their subtasks are complete.
-    /// </summary>
-    /// <remarks>
-    /// This method ignores its parameters and waits for all system tasks.
-    /// This is adequate if each system is designed to run exactly once per frame.
-    /// </remarks>
-    /// <param name="pTasks">an array of <c>ISystemTask</c> objects</param>
-    /// <param name="uCount">the length of the <paramref name="pTasks"> array</param>
-    /// <seealso cref="TaskManagerTP::IssueJobsForSystemTasks"/>
-    void WaitForSystemTasks( ISystemTask** pTasks, u32 uCount );
+    /* Call this from the primary thread to wait until all tasks spawned with IssueJobsForSystemTasks
+     * and all of their subtasks are complete.*/
+    void WaitForSystemTasks( std::vector<ISystemTask*> pTasks );
 
     /// <summary cref="TaskManagerTP::GetNumberOfThreads">
     /// Call this method to get the number of threads in the thread pool which are active for running work.
@@ -129,6 +110,7 @@ private:
     bool stop;
     
     std::function<void()> callback;
+    std::vector<std::thread::id> callbackDone;            
 
     template<class F>
     void Enqueue(F f)
@@ -142,21 +124,7 @@ private:
      
         // wake up one thread
         this->condition.notify_one();
-    }
-    
-    template<class F>
-    void SetCallback(F f)
-    {
-        { // acquire lock
-            std::unique_lock<std::mutex> lock(this->queue_mutex);
-     
-            // add the callback
-            this->callback = std::function<void()>(f);
-        } // release lock
-     
-        // wake up one thread
-        this->condition.notify_all();
-    }
+    }    
     void Start();
     void Stop();
 };

@@ -28,22 +28,33 @@
 
 void Worker::operator()()
 {
-    std::function<void()> task;
+    std::function<void()> task = nullptr;
     while(true)
     {       
         {   // acquire lock
             std::unique_lock<std::mutex> lock(this->pool.queue_mutex);
             
-            // per thread callback
-            if (this->pool.callback && (*this->callback.target<void()>() != *this->pool.callback.target<void()>()))
-            //if (this->pool.callback && (this->callback.target_type() != this->pool.callback.target_type()))
+            // check if we already executed the callback on this thread
+            bool callbackExecuted = false;
+            for(const auto &threadid : this->pool.callbackDone)
             {
-                this->callback = this->pool.callback;
-                this->callback();
+                if (threadid == std::this_thread::get_id())
+                {
+                    callbackExecuted = true;
+                }
+                
             }
- 
-           // look for a work item
-            while(!this->pool.stop && this->pool.tasks.empty())
+            if (callbackExecuted == false && this->pool.callback)
+            {
+                // excute callback
+                this->pool.callback();
+                std::clog << "TaskManagerTP - Callback called on thread " << std::this_thread::get_id() << std::endl;
+                // add this thread to called back list
+                this->pool.callbackDone.push_back(std::this_thread::get_id());
+            }
+            
+            // look for a work item
+            while(!this->pool.stop && this->pool.tasks.empty() && (this->pool.workers.size() == this->pool.callbackDone.size())  )
             { // if there are none wait for notification
                 this->pool.condition.wait(lock);
             }
@@ -52,13 +63,22 @@ void Worker::operator()()
                 return;
 
             // get the task from the queue
-            task = this->pool.tasks.front();
-            this->pool.tasks.pop_front();
- 
+            if (!this->pool.tasks.empty())
+            {
+                task = this->pool.tasks.front();
+                this->pool.tasks.pop_front();
+            }
+            else
+            {
+                task = nullptr;
+            }
         }   // release lock
  
         // execute the task
-        task();
+        if (task != nullptr && task != NULL)
+        {
+            task();
+        }
     }
 }
 
@@ -67,7 +87,7 @@ void TaskManagerTP::Init( void)
     auto uNumberOfThreads = EnvironmentManager::getInstance().Variables().GetAsInt( "TaskManager::Threads", 0 );
     if( uNumberOfThreads <= 0 ) 
     {
-        SetNumberOfThreads(std::thread::hardware_concurrency() - 1);
+        SetNumberOfThreads(std::thread::hardware_concurrency());
     } 
     else
     {
@@ -87,13 +107,13 @@ void TaskManagerTP::Shutdown( void)
     }
 }
 
-void TaskManagerTP::IssueJobsForSystemTasks( ISystemTask** pTasks, u32 uCount, f32 DeltaTime)
+void TaskManagerTP::IssueJobsForSystemTasks( std::vector<ISystemTask*> pTasks, float DeltaTime)
 {
-    for ( u32 i=0; i < uCount; i++ )
+    for (auto task : pTasks)
     {
-        this->Enqueue([pTasks, i, DeltaTime]
+        this->Enqueue([task, DeltaTime]
             {
-                pTasks[i]->Update(DeltaTime);
+                task->Update(DeltaTime);
             });
     }
 }
@@ -108,7 +128,7 @@ void TaskManagerTP::WaitForAllSystemTasks( void )
     }
 }
 
-void TaskManagerTP::WaitForSystemTasks( ISystemTask** pTasks, u32 uCount )
+void TaskManagerTP::WaitForSystemTasks( std::vector<ISystemTask*> pTasks )
 {
     // NOTE: not properly implemented
     // currently waits for all tasks
@@ -117,12 +137,41 @@ void TaskManagerTP::WaitForSystemTasks( ISystemTask** pTasks, u32 uCount )
 
 void TaskManagerTP::NonStandardPerThreadCallback( JobFunction pfnCallback, void* pData)
 {
-    this->SetCallback([pfnCallback, pData]
-        {
-            pfnCallback( pData );
-        });
+    WaitForAllSystemTasks();
+    
+    { // acquire lock
+        std::unique_lock<std::mutex> lock(this->queue_mutex);
+        
+        // clear called back list
+        this->callbackDone.clear();
+        
+        // add the callback
+        this->callback = std::bind(pfnCallback, pData);
+        std::clog << "TaskManagerTP - Callback added" << std::endl;
+    } // release lock
+     
+    // wait for workers to execute callback
+    auto done = false;
+    while(!done)
+    {
+        { // acquire lock
+            std::unique_lock<std::mutex> lock(this->queue_mutex);
+            if (this->workers.size() != this->callbackDone.size()) 
+            {
+                done = false;
+            }
+            else
+            {
+                done = true;
+            }
+        }
+        this->condition.notify_all();
+    }
     // call it for ourself, too
     pfnCallback( pData );
+    std::clog << "TaskManagerTP - Callback called on thread " << std::this_thread::get_id() << " (Main)" << std::endl;
+    
+    std::clog << "TaskManagerTP - All Callbacks executed" << std::endl;
 }
 
 uint32_t TaskManagerTP::GetRecommendedJobCount( ITaskManager::JobCountInstructionHints Hints)
@@ -211,6 +260,7 @@ void TaskManagerTP::Stop( void)
     // stop all threads
     this->stop = true;
     this->condition.notify_all();
+    WaitForAllSystemTasks();
 }
 
 void TaskManagerTP::Start( void)

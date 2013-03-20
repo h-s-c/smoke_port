@@ -151,7 +151,7 @@ GeometryScene::GetSystemTask(
     void
     )
 {
-    return NULL;
+    return nullptr;
 }
 
 

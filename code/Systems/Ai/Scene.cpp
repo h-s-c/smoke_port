@@ -40,7 +40,7 @@ u32 JobsComplete( void* pScene );
 
 ///////////////////////////////////////////////////////////////////////////////
 // AIScene - Constructor
-AIScene::AIScene( ISystem* pSystem ) : ISystemScene( pSystem ), m_pAITask( NULL ), m_bParallelize(True)
+AIScene::AIScene( ISystem* pSystem ) : ISystemScene( pSystem ), m_pAITask( nullptr ), m_bParallelize(True)
 {
 }
 

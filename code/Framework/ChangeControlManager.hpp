@@ -66,7 +66,7 @@ protected:
     {
     public:
         ObserverRequest(
-            IObserver* pObserver = NULL,
+            IObserver* pObserver = nullptr,
             u32 Interests = 0,
             u32 idBits = System::Changes::All
             )
@@ -99,8 +99,9 @@ protected:
     struct SubjectInfo
     {
         SubjectInfo ()
-            : m_pSubject(NULL)
+            : m_pSubject(nullptr)
             , m_interestBits(0)
+            , m_observersList()
         {}
 
         /// <summary>

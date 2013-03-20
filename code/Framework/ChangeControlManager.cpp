@@ -21,11 +21,12 @@
 #include <algorithm>
 #include <utility>
 #include <iostream>
+#include <thread>
 // Framework
 #include "Framework/ChangeControlManager.hpp"
 #include "Framework/PlatformManager.hpp"
 
-__thread ChangeManager::NotifyList* ChangeManager::m_tlsNotifyList;
+__thread ChangeManager::NotifyList* ChangeManager::m_tlsNotifyList = nullptr;
 
 ///////////////////////////////////////////////////////////////////////////////
 // ChangeManager - Default constructor 
@@ -33,19 +34,10 @@ ChangeManager::ChangeManager(
     void
     )
     : m_lastID(0)
-    , m_pTaskManager(NULL)
+    , m_pTaskManager(nullptr)
 {
-    // Reserve some reasonable space to avoid delays because of multiple reallocations
-    m_cumulativeNotifyList.reserve(4096);
-    m_subjectsList.reserve(8192);
-    m_subjectsList.resize(1);
-
     // Get ready to process changes in the main (this) thread
-    NotifyList *pList = new NotifyList();
-    pList->reserve(8192);
-    m_tlsNotifyList = pList;
-    
-    m_NotifyLists.push_back(pList);
+    InitThreadLocalData(this);
 }
 
 
@@ -72,14 +64,7 @@ ChangeManager::~ChangeManager(
     }
 
     // Free tls (thread local storage) data
-    if ( m_tlsNotifyList != NULL )
-    {
-        // Free NotifyList if it exists
-        delete m_tlsNotifyList;
-    }
-
-    NotifyList *pList = (NotifyList *)m_NotifyLists.back();
-    SAFE_DELETE (pList);
+    FreeThreadLocalData(this);
 }
 
 
@@ -100,18 +85,25 @@ ChangeManager::Register(
         // Lock out updates while we register a subjext
         std::lock_guard<std::mutex> lock(m_UpdateMutex);
 
-        u32 uID = pInSubject->GetID(this);
+        std::uint32_t uID = pInSubject->GetID(this);
 
         if( uID != CSubject::InvalidID )
         {
             // Subject has already been registered. Add new observer to the list
             SubjectInfo &si = m_subjectsList[uID];
-            si.m_observersList.push_back( ObserverRequest(pInObserver, observerIntrestBits, observerIdBits) );
-            observerIntrestBits &= ~si.m_interestBits;
-            if( observerIntrestBits )
+            if( si.m_pSubject != pInSubject)
             {
-                si.m_interestBits |= observerIntrestBits;
-                pInSubject->UpdateInterestBits(this, observerIntrestBits);
+                std::cerr << "m_subjectsList[uID].m_pSubject != pInSubject" << std::endl;
+            }
+            else
+            {
+                si.m_observersList.push_back( ObserverRequest(pInObserver, observerIntrestBits, observerIdBits) );
+                observerIntrestBits &= ~si.m_interestBits;
+                if( observerIntrestBits )
+                {
+                    si.m_interestBits |= observerIntrestBits;
+                    pInSubject->UpdateInterestBits(this, observerIntrestBits);
+                }
             }
         }
         else 
@@ -121,10 +113,6 @@ ChangeManager::Register(
             {
                 // No zero ID should ever be assigned, so use pre-increment
                 uID = ++m_lastID;
-                if( uID != m_subjectsList.size() ) 
-                {
-                    std::cerr << "uID != m_subjectsList.size()" << std::endl;
-                }
                 m_subjectsList.resize( uID + 1 );
             }
             else
@@ -132,7 +120,10 @@ ChangeManager::Register(
                 uID = m_freeIDsList.back();
                 m_freeIDsList.pop_back();
             }
-
+            if( uID == CSubject::InvalidID )
+            {
+                std::cerr << "uID == CSubject::InvalidID" << std::endl;
+            }
             SubjectInfo &si = m_subjectsList[uID];
             si.m_pSubject = pInSubject;
             si.m_observersList.push_back( ObserverRequest(pInObserver, observerIntrestBits, observerIdBits) );
@@ -178,7 +169,7 @@ ChangeManager::Unregister(
             observersList.erase(itObs);
             if( observersList.empty() )
             {
-                m_subjectsList[uID].m_pSubject = NULL;
+                m_subjectsList[uID].m_pSubject = nullptr;
                 m_freeIDsList.push_back(uID);
                 pInSubject->Detach(this);
             } 
@@ -218,7 +209,7 @@ ChangeManager::RemoveSubject (
             return Errors::Failure;
         }
         observersList = m_subjectsList[uID].m_observersList;
-        m_subjectsList[uID].m_pSubject = NULL;
+        m_subjectsList[uID].m_pSubject = nullptr;
         m_freeIDsList.push_back(uID);
         curError = Errors::Success;
     }
@@ -243,7 +234,11 @@ ChangeManager::ChangeOccurred(
 {
     Error curError = Errors::Undefined;
 
-    if(pInChangedSubject)
+    if(pInChangedSubject == nullptr)
+    {
+        std::cerr << "ChangeManager::ChangeOccurred - pInChangedSubject == nullptr" << std::endl;
+    }
+    else
     {
         if(!uInChangedBits)
         {
@@ -266,10 +261,6 @@ ChangeManager::ChangeOccurred(
             notifyList->push_back( Notification(pInChangedSubject, uInChangedBits) );
             curError = Errors::Success;           
         }
-    }
-    else
-    {
-        std::cerr << "ChangeManager::ChangeOccurred - pInChangedSubject == NULL" << std::endl;
     }
 
     return curError;
@@ -296,7 +287,7 @@ ChangeManager::DistributeQueuedChanges(
         m_indexList.resize( m_subjectsList.size() );
 
         // Loop through all list and build m_cumulativeNotifyList
-        for( auto& pList : m_NotifyLists)
+        for( auto &pList : m_NotifyLists)
         {
             size_t nOrigSize = pList->size();
             for( size_t i = 0; i < nOrigSize; i++ )
@@ -308,7 +299,7 @@ ChangeManager::DistributeQueuedChanges(
                 auto uID = notif.m_pSubject->GetID(this);
                 if( uID == CSubject::InvalidID )
                 {
-                    std::cerr << "ChangeManager::DistributeQueuedChanges - uID == CSubject::InvalidID" << std::endl;
+                   std::cerr << "ChangeManager::DistributeQueuedChanges - uID == CSubject::InvalidID" << std::endl;
                 }
                 else
                 {
@@ -348,10 +339,10 @@ ChangeManager::DistributeQueuedChanges(
 
         // If we have a task manager and there are more than 50 notifications to process, let's do it parallel
         static const u32 GrainSize = 50;
-        if( m_pTaskManager != NULL && (u32)NumberOfChanges > GrainSize )
+        if( !m_pTaskManager && (u32)NumberOfChanges > GrainSize )
         {
             // Process noticitions in parallel
-            m_pTaskManager->ParallelFor( NULL, DistributionCallback, this, 0, (u32)NumberOfChanges, GrainSize );
+            m_pTaskManager->ParallelFor( nullptr, DistributionCallback, this, 0, (u32)NumberOfChanges, GrainSize );
         }
         else
         {
@@ -445,24 +436,22 @@ ChangeManager::SetTaskManager(
     )
 {
     if ( !pTaskManager )
+    {
+        std::cerr << "ChangeManager::SetTaskManager - !pTaskManager" << std::endl;
         return Errors::Undefined;
+    }
 
     if( m_pTaskManager )
     {
         std::cerr << "ChangeManager::SetTaskManager - Call ResetTaskManager before using SetTaskManager to set the new task manager" << std::endl;
     }
 
-    // Set up prethread NotiftyList
-    if ( m_tlsNotifyList != NULL )
-    {
-        // Store TaskManager
-        m_pTaskManager = pTaskManager;
+    // Store TaskManager
+    m_pTaskManager = pTaskManager;
 
-        // Make each thread call InitThreadLocalData
-        m_pTaskManager->NonStandardPerThreadCallback( InitThreadLocalData, this );
-        return Errors::Success;
-    }
-    return Errors::Failure;
+    // Make each thread call InitThreadLocalData
+    m_pTaskManager->NonStandardPerThreadCallback( InitThreadLocalData, this );
+    return Errors::Success;
 }
 
 
@@ -479,12 +468,7 @@ void ChangeManager::ResetTaskManager(
         // Make each thread call FreeThreadLocalData
         m_pTaskManager->NonStandardPerThreadCallback( FreeThreadLocalData, this );
         m_NotifyLists.clear();
-        m_pTaskManager = NULL;
-
-        // Restore main (this) thread data
-        NotifyList *pList = new NotifyList();
-        m_tlsNotifyList = pList;
-        m_NotifyLists.push_back(pList);
+        m_pTaskManager = nullptr;
     }
 }
 
@@ -500,23 +484,20 @@ ChangeManager::InitThreadLocalData(
     {
         std::cerr << "ChangeManager::InitThreadLocalData - No manager pointer passed to InitThreadLocalNotifyList" << std::endl;
     }
-
     ChangeManager *mgr = (ChangeManager*)arg;
-
     // Check if we have allocated a NotifyList for this thread.
     // The notify list is keep in tls (thread local storage).
-    if( mgr->m_tlsNotifyList == NULL)
+    if( mgr->m_tlsNotifyList == nullptr)
     {
-        NotifyList *pList = new NotifyList();
-
-        // Reserve some reasonable space to avoid delays because of multiple reallocations
-        pList->reserve(8192);
-        mgr->m_tlsNotifyList = pList;
-
+        mgr->m_tlsNotifyList = new NotifyList();
         // Lock out the updates and add this NotifyList to m_NotifyLists
         std::lock_guard<std::mutex> lock(mgr->m_UpdateMutex);
-        mgr->m_NotifyLists.push_back(pList);
+        mgr->m_NotifyLists.push_back(mgr->m_tlsNotifyList);
     }
+    else
+    {
+        std::clog << "Thread local data already initialized on thread " << std::this_thread::get_id() << std::endl;
+    }   
 }
 
 
@@ -535,9 +516,10 @@ ChangeManager::FreeThreadLocalData(
     ChangeManager *mgr = (ChangeManager*)arg;
 
     // Free tls (thread local storage) data
-    if ( mgr->m_tlsNotifyList != NULL )
+    if ( mgr->m_tlsNotifyList != nullptr )
     {
         // Free NotifyList if it exists
         delete mgr->m_tlsNotifyList;
+        mgr->m_tlsNotifyList = nullptr;
     }
 } 

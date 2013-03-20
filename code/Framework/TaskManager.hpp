@@ -35,23 +35,11 @@ public:
     /// </summary>
     virtual void Shutdown( void )=0;
 
-    /// <summary cref="TaskManager::IssueJobsForSystemTasks">
-    /// Call this from the primary thread to schedule system work.
-    /// </summary>
-    /// <param name="pTasks">an array of <c>ISystemTask</c> objects which should have their
-    /// <c>Update</c> methods called asynchronously</param>
-    /// <param name="uCount">the size of the <paramref name="pTasks"/> array</param>
-    /// <param name="fDeltaTime">amount of time to be passed to each system's <c>Update</c> method</param>
-    /// <seealso cref="TaskManager::WaitForSystemTasks"/>
-    /// <seealso cref="ISystemTask::Update"/>
-    virtual void IssueJobsForSystemTasks( ISystemTask** pTasks, u32 uCount, f32 fDeltaTime )=0;
+
+    /* Call this from the primary thread to schedule system work.*/
+    virtual void IssueJobsForSystemTasks( std::vector<ISystemTask*> pTasks, float fDeltaTime )=0;
     
-    /// <summary cref="TaskManager::WaitForSystemTasks">
-    /// Call this from the primary thread to wait until all tasks spawned with <c>IssueJobsForSystemTasks</c>
-    /// and all of their subtasks are complete.
-    /// </summary>
-    /// <param name="pTasks">an array of <c>ISystemTask</c> objects</param>
-    /// <param name="uCount">the length of the <paramref name="pTasks"/> array</param>
-    /// <seealso cref="TaskManager::IssueJobsForSystemTasks"/>
-    virtual void WaitForSystemTasks( ISystemTask** pTasks, u32 uCount )=0;
+    /* Call this from the primary thread to wait until all tasks spawned with IssueJobsForSystemTasks
+     * and all of their subtasks are complete.*/
+    virtual void WaitForSystemTasks( std::vector<ISystemTask*> pTasks )=0;
 };

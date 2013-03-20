@@ -576,8 +576,8 @@ UObject::Extend(
         //
         if ( SystemType == System::Types::Geometry )
         {
-            m_pGeometryObject = dynamic_cast<IGeometryObject*>(pSystemObject);
-            if ( m_pGeometryObject == NULL )
+            m_pGeometryObject = reinterpret_cast<IGeometryObject*>(pSystemObject);
+            if ( m_pGeometryObject == nullptr )
             {
                 std::cerr << "UObject::Extend - m_pGeometryObject == NULL" << std::endl;
                 return False;
@@ -585,8 +585,8 @@ UObject::Extend(
         }
         else if ( SystemType == System::Types::Graphics )
         {
-            m_pGraphicsObject = dynamic_cast<IGraphicsObject*>(pSystemObject);
-            if ( m_pGraphicsObject == NULL )
+            m_pGraphicsObject = reinterpret_cast<IGraphicsObject*>(pSystemObject);
+            if ( m_pGraphicsObject == nullptr )
             {
                 std::cerr << "UObject::Extend - m_pGraphicsObject == NULL" << std::endl;
                 return False;
