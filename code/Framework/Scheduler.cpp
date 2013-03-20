@@ -52,7 +52,7 @@ Scheduler::SetScene(
     //
     // If we have a TaskManager, then we can thread things.
     //
-    m_bThreadingEnabled = ( m_pTaskManager != NULL );
+    m_bThreadingEnabled = ( m_pTaskManager != nullptr );
    
     //
     // Wait for any executing scenes to finish and clear out the list.
@@ -89,7 +89,7 @@ Scheduler::SetScene(
         //
         // Make sure the system has a task.
         //
-        if ( it->second->GetSystemTask() != NULL )
+        if ( it->second->GetSystemTask() != nullptr )
         {
             m_SceneExecs[ it->first ] = it->second;
         }
@@ -111,14 +111,18 @@ Scheduler::Execute(
     m_OldTime = m_NewTime;  
     
     // Force 120hz      
-    m_Akkumulator += DeltaTime;
-    if( m_Akkumulator < (1.0f / 120.0f))
+    if (!m_bBenchmarkingEnabled)
     {
-        return;
-    }
-    else
-    {
-        m_Akkumulator = 0.0f;
+        m_Akkumulator += DeltaTime;
+        if( m_Akkumulator < (1.0f / 120.0f))
+        {
+            return;
+        }
+        else
+        {
+            DeltaTime = m_Akkumulator;
+            m_Akkumulator = 0.0f;
+        }
     }
     
     
@@ -128,7 +132,7 @@ Scheduler::Execute(
     {
         DeltaTime = 0.0f;
     }
-
+    
     if ( m_bThreadingEnabled )
     {
         // Schedule the scenes that are ready for execution.
