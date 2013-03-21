@@ -80,7 +80,7 @@ ChangeManager::Register(
     )
 {
     Error curError = Errors::Failure;
-    if( pInSubject && pInObserver )
+    if( pInSubject || pInObserver )
     {
         // Lock out updates while we register a subjext
         std::lock_guard<std::mutex> lock(m_UpdateMutex);
@@ -93,7 +93,7 @@ ChangeManager::Register(
             SubjectInfo &si = m_subjectsList[uID];
             if( si.m_pSubject != pInSubject)
             {
-                std::cerr << "m_subjectsList[uID].m_pSubject != pInSubject" << std::endl;
+                std::cerr << "ChangeManager::Register - m_subjectsList[uID].m_pSubject != pInSubject" << std::endl;
             }
             else
             {
@@ -113,6 +113,10 @@ ChangeManager::Register(
             {
                 // No zero ID should ever be assigned, so use pre-increment
                 uID = ++m_lastID;
+                if( uID >= 2 && m_subjectsList.size() != uID )
+                {
+                    std::cerr << "ChangeManager::Register - m_subjectsList.size() != uID" << std::endl;
+                }
                 m_subjectsList.resize( uID + 1 );
             }
             else
@@ -122,7 +126,7 @@ ChangeManager::Register(
             }
             if( uID == CSubject::InvalidID )
             {
-                std::cerr << "uID == CSubject::InvalidID" << std::endl;
+                std::cerr << "ChangeManager::Register - uID == CSubject::InvalidID" << std::endl;
             }
             SubjectInfo &si = m_subjectsList[uID];
             si.m_pSubject = pInSubject;
@@ -132,6 +136,10 @@ ChangeManager::Register(
             pInSubject->Attach(this, observerIntrestBits, uID);
         }
         curError = Errors::Success;
+    }
+    else
+    {
+        std::cerr << "ChangeManager::Register - InSubject || pInObserver" << std::endl;
     }
     return curError;
 }
@@ -147,18 +155,15 @@ ChangeManager::Unregister(
 {
     Error curError = Errors::Failure;
 
-    if( pInSubject && pInObserver )
+    if( pInSubject || pInObserver )
     {
         std::lock_guard<std::mutex> lock(m_UpdateMutex);
 
         u32 uID = pInSubject->GetID(this);
         if ( m_subjectsList.size() <= uID  ||  m_subjectsList[uID].m_pSubject != pInSubject )
         {
+            std::cerr << "ChangeManager::Unregister - m_subjectsList.size() <= uID  ||  m_subjectsList[uID].m_pSubject != pInSubject" << std::endl;
             return Errors::Failure;
-        }
-        if( m_subjectsList[uID].m_pSubject != pInSubject)
-        {
-            std::cerr << "m_subjectsList[uID].m_pSubject != pInSubject" << std::endl;
         }
 
         ObserversList &observersList = m_subjectsList[uID].m_observersList;
@@ -176,6 +181,10 @@ ChangeManager::Unregister(
             curError = Errors::Success;
         }
     } 
+    else
+    {
+        std::cerr << "ChangeManager::Unregister - InSubject || pInObserver" << std::endl;
+    }
     return curError;
 }
 
@@ -199,13 +208,9 @@ ChangeManager::RemoveSubject (
         {
             std::cerr << "ChangeManager::RemoveSubject - uID == CSubject::InvalidID" << std::endl;
         }
-        if( m_subjectsList[uID].m_pSubject != pSubject)
-        {
-            std::cerr << "ChangeManager::RemoveSubject - m_subjectsList[uID].m_pSubject != pSubject" << std::endl;
-        }
-
         if ( m_subjectsList.size() <= uID  ||  m_subjectsList[uID].m_pSubject != pSubject )
         {
+            std::cerr << "ChangeManager::RemoveSubject - m_subjectsList[uID].m_pSubject != pSubject" << std::endl;
             return Errors::Failure;
         }
         observersList = m_subjectsList[uID].m_observersList;
@@ -234,9 +239,9 @@ ChangeManager::ChangeOccurred(
 {
     Error curError = Errors::Undefined;
 
-    if(pInChangedSubject == nullptr)
+    if(!pInChangedSubject)
     {
-        std::cerr << "ChangeManager::ChangeOccurred - pInChangedSubject == nullptr" << std::endl;
+        std::cerr << "ChangeManager::ChangeOccurred - !pInChangedSubject" << std::endl;
     }
     else
     {
@@ -287,14 +292,10 @@ ChangeManager::DistributeQueuedChanges(
         m_indexList.resize( m_subjectsList.size() );
 
         // Loop through all list and build m_cumulativeNotifyList
-        for( auto &pList : m_NotifyLists)
+        for(const auto &pList : m_NotifyLists)
         {
-            size_t nOrigSize = pList->size();
-            for( size_t i = 0; i < nOrigSize; i++ )
+            for(const auto &notif : *pList)
             {
-                // Get notification
-                Notification &notif = pList->at(i);
-
                 // Get subject for notification
                 auto uID = notif.m_pSubject->GetID(this);
                 if( uID == CSubject::InvalidID )
@@ -339,12 +340,12 @@ ChangeManager::DistributeQueuedChanges(
 
         // If we have a task manager and there are more than 50 notifications to process, let's do it parallel
         static const u32 GrainSize = 50;
-        if( !m_pTaskManager && (u32)NumberOfChanges > GrainSize )
+        /*if( !m_pTaskManager && (u32)NumberOfChanges > GrainSize )
         {
             // Process noticitions in parallel
             m_pTaskManager->ParallelFor( nullptr, DistributionCallback, this, 0, (u32)NumberOfChanges, GrainSize );
         }
-        else
+        else*/
         {
             // Not enough notifications to worry about running in parallel, just distribute in this thread
             DistributeRange( 0, (u32)NumberOfChanges );

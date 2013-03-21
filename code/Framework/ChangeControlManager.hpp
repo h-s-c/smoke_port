@@ -67,8 +67,8 @@ protected:
     public:
         ObserverRequest(
             IObserver* pObserver = nullptr,
-            u32 Interests = 0,
-            u32 idBits = System::Changes::All
+            std::uint32_t Interests = 0,
+            std::uint32_t idBits = CSubject::InvalidID
             )
             : m_pObserver( pObserver )
             , m_interestBits( Interests )
@@ -76,16 +76,16 @@ protected:
         {
         }
 
-        IObserver*  m_pObserver;
-        u32         m_interestBits;
-        u32         m_observerIdBits;
+        IObserver*      m_pObserver;
+        std::uint32_t   m_interestBits;
+        std::uint32_t   m_observerIdBits;
 
         bool operator < ( const ObserverRequest& rhs ) const
         {
             return m_pObserver < rhs.m_pObserver;
         }
 
-        bool operator == ( IObserver* rhs ) const
+        bool operator == ( const IObserver* rhs ) const
         {
             return m_pObserver == rhs;
         }

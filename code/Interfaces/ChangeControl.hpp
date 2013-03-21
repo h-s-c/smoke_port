@@ -38,7 +38,7 @@ class IChangeManager;
 // Yet concurrent _repeated_ attaches (updating interest bits for already registered 
 // CCM observer) are possible, so the protection against race conditions introduced
 // by them must always be in place. 
-#define SUPPORT_CONCURRENT_ATTACH_DETACH_TO_SUBJECTS 1
+#define SUPPORT_CONCURRENT_ATTACH_DETACH_TO_SUBJECTS 0
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -468,9 +468,9 @@ protected:
     struct ObserverRequest
     {
         ObserverRequest(
-            IObserver* pObserver = NULL,
+            IObserver* pObserver = nullptr,
             u32 Interests = 0,
-            std::uint32_t myID = 0
+            std::uint32_t myID = InvalidID
             )
             : m_pObserver( pObserver )
             , m_interestBits( Interests )

@@ -60,16 +60,17 @@ Framework::Framework( void)
 {
     // g_pTaskManager and m_pScheduler are instantiated after the environment variables
     // in the config file are parsed
-    m_pSceneCCM = new ChangeManager();
-    if ( m_pSceneCCM == nullptr)
-    {
-        std::cerr << "m_pSceneCCM == NULL" << std::endl;
-    }
-
+    
     m_pObjectCCM = new ChangeManager();
-    if ( m_pObjectCCM == nullptr)
+    if (!m_pObjectCCM)
     {
         std::cerr << "m_pObjectCCM == NULL" << std::endl;
+    }
+    
+    m_pSceneCCM = new ChangeManager();
+    if (!m_pSceneCCM)
+    {
+        std::cerr << "m_pSceneCCM == NULL" << std::endl;
     }
 }
 
