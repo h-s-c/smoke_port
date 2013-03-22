@@ -1,7 +1,7 @@
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
 #include "Interfaces/Interface.hpp"
-#include "Systems/ProceduralTrees/System.hpp"
+#include "Systemss/ProceduralTrees/System.hpp"
 
 
 #if defined(COMPILER_MSVC)
@@ -37,7 +37,7 @@ InitProceduralTreesSystem( ManagerInterfaces* pManagers)
 
 
 ISystem* STDCALL
-CreateFMODAudioSystem()
+CreateProceduralTreesSystem()
 {
     return new TreeSystem();
 }

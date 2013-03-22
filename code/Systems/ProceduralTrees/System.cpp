@@ -1,8 +1,8 @@
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
 #include "Interfaces/Interface.hpp"
-#include "System/ProceduralTrees/System.hpp"
-#include "System/ProceduralTrees/Scene.hpp"
+#include "Systems/ProceduralTrees/System.hpp"
+#include "Systems/ProceduralTrees/Scene.hpp"
 
 
 TreeSystem::TreeSystem(

@@ -173,10 +173,10 @@ protected:
 
     //Structures
     struct PointPair {
-        V3 basePoint;
-        V3 extendPoint;
+        Base::Vector3 basePoint;
+        Base::Vector3 extendPoint;
         B3  basis;
-        aabb AABB;
+        AABB aabb;
         Bool burning;
     };
 
@@ -190,7 +190,7 @@ protected:
     LevelDetail *                   m_GrammarDetails;
     std::vector<BranchBase*>        m_TreeNodeList;
     std::vector<Canopy*>            m_TreeNodeCanopyList;
-    aabb                            m_ObjectBoundingBox;
+    AABB                            m_ObjectBoundingBox;
     pPostedData                     m_pPostedData;
 
 

@@ -27,22 +27,16 @@
 // a way for the application using the library to pass in the data without having extern in or out a bunch
 // of variables.  You can call the instance at any point and know you have the variables in there present state.
 //
-class observer;
+#pragma once
 
-#ifndef OBSERVER_H
-#define OBSERVER_H
-
-#include <d3d9.h>
-#include <d3dx9.h>
-#include <dxerr.h>
-#include "Vertex.h"
-#include "Vector3.h"
-#include "branch.h"
-#include "tree.h"
-#include "aabb.h"
-#include "stdlib.h"
+#include "Systems/Common/AABB.h"
+#include "Systems/ProceduralTrees/Trees/Vertex.hpp"
+#include "Systems/ProceduralTrees/Trees/Branch.hpp"
+#include "Systems/ProceduralTrees/Trees/Tree.hpp"
+#include <cstdlib>
 #include <vector>
 
+class observer;
 
 struct RenderStructure {
     VertexType type;    
@@ -51,9 +45,9 @@ struct RenderStructure {
     WORD *ptrIBData;  //index buffer pointer
     DWORD CurrentIndex;
     DWORD CurrentVIndex; 
-	WORD BranchCount;
+    WORD BranchCount;
     bool ReverseWindingOrder;
-    aabb AABB;
+    AABB aabb;
 };
 
 
@@ -71,8 +65,8 @@ public:
     int randi(int min, int max);
     void seed(unsigned int theSeed);
     Tree *m_tree;
-	BranchBase *m_SoughtAfterBranch;
-	bool m_branchFound;
+    BranchBase *m_SoughtAfterBranch;
+    bool m_branchFound;
     
 protected:
     observer(){};
@@ -80,4 +74,3 @@ private:
     static observer* _instance;
     
 };
-#endif //OBSERVER_H

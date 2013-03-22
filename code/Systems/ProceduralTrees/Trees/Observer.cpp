@@ -16,7 +16,8 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
 
-#include "observer.h"
+#include "Systems/ProceduralTrees/Trees/Observer.hpp"
+
 observer* observer::_instance =0;
 RenderStructure *observer::DXRS =0; 
 observer* observer::Instance() {

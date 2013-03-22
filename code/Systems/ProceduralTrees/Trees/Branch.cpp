@@ -18,14 +18,14 @@
 
 #include "Systems/ProceduralTrees/Trees/Branch.hpp"
 
-Branch::Branch(int level, V3 basePosition) {
+Branch::Branch(int level, Base::Vector3 basePosition) {
     m_nodeLevel = level;
     m_position = basePosition;
     m_pSegments = 0;
     m_pSpeciesLevelGrammar = 0;
 }
 
-Branch *Branch::CreateNextBranch(int level, V3 basePosition){
+Branch *Branch::CreateNextBranch(int level, Base::Vector3 basePosition){
     return new Branch(level,basePosition);
 }
 
@@ -34,7 +34,7 @@ Branch *Branch::CreateNextBranch(int level, V3 basePosition){
 //that will fill the tree node with all the branch segments in a multi level linked list.
 //This is the area that is most ripe for tweaking to refine the behavior of the parsing as 
 //new tokens are added to the grammar.
-void Branch::growBranch(Branch *pBranch, treeNode *ctreeNode, Grammar *grammar, V3 startHeading)
+void Branch::growBranch(Branch *pBranch, treeNode *ctreeNode, Grammar *grammar, Base::Vector3 startHeading)
 {
     ctreeNode->tree->m_BranchCount++;
     observer *Observe = observer::Instance();
@@ -83,9 +83,9 @@ void Branch::growBranch(Branch *pBranch, treeNode *ctreeNode, Grammar *grammar, 
             m_pSegments[i].m_type = SegmentType::BASIC_SEGMENT;
         }
         // Get a rotation matrix about the axis
-        V3 arbitrary;
+        Base::Vector3 arbitrary;
         D3DXMATRIX rot;
-        V3 axis;
+        Base::Vector3 axis;
         float twistAngle;
         float dropAngle;
         // there are three main types of segment roles conceived of right now.

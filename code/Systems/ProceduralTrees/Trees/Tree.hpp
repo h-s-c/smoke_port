@@ -15,19 +15,14 @@
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  Intel does not
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
+#pragma once
 
-class Tree;
-#ifndef _Tree
-#define _Tree
-#include "Branch.h"
-#include "Observer.h"
-#include "Canopy.h"
-#include "aabb.h"
+#include "Systems/ProceduralTrees/TreesBranch.hpp"
+#include "Systems/ProceduralTrees/TreesObserver.hpp"
+#include "Systems/ProceduralTrees/TreesCanopy.hpp"
+#include "Systems/Common/AABB.hpp"
 #include <vector>
-#include <d3d9.h>
-#include <d3dx9.h>
-#include <dxerr.h>
-#include "GrammarDef.h"
+#include "Systems/ProceduralTrees/TreesGrammarDef.hpp"
 
 
 class Tree;
@@ -42,20 +37,20 @@ struct treeNode {
 
 class Tree {
 public:
-	Tree(std::string grammarName, V3 position, long seed);
-	~Tree();
-    virtual Branch* createTrunk(int level, V3 basePosition);
-	void deleteNode(treeNode *ctn);
+    Tree(std::string grammarName, Base::Vector3 position, long seed);
+    ~Tree();
+    virtual Branch* createTrunk(int level, Base::Vector3 basePosition);
+    void deleteNode(treeNode *ctn);
     void BoundingBox(treeNode *ctn, bool Canopy=false);
-	void countVertices(treeNode *ctn);
-	void countBranches(treeNode *ctn);
-	void getBranch(treeNode *ctn, int branch);
+    void countVertices(treeNode *ctn);
+    void countBranches(treeNode *ctn);
+    void getBranch(treeNode *ctn, int branch);
     virtual void growTree(bool justCount=false);
     virtual void growCanopy(treeNode *ctn);
     //virtual void growCanopySegment(treeNode *rootOfTree, branchBase *pCanopyBranch);
     // pruneTree will be a function to split up the tree or remove branches.  
     // It is strictly a placeholder for future development
-    void pruneTree(V3 *pVertexBuffer);
+    void pruneTree(Base::Vector3 *pVertexBuffer);
     void sprout();
     void fillBuffers(Canopy *cnpy);
     void fillBuffers(BranchBase *branch);
@@ -65,30 +60,30 @@ public:
     void CanopyToList(treeNode *ctn, std::vector<Canopy*> *treeNodeCanopyList);
 
     observer *theOverseer;
-    aabb m_boundingBox;
-    aabb *m_pBoundingboxes;
+    AABB m_boundingBox;
+    AABB *m_pBoundingboxes;
     Grammar m_grammar;
     int m_levelCount;
-    V3 m_position;
+    Base::Vector3 m_position;
     int m_seed;
-	long m_StartBranchIndexBuffer;
-	long m_EndBranchIndexBuffer;
-	long m_StartBranchVertexBuffer;
-	long m_EndBranchVertexBuffer;
-	long m_StartCanopyIndexBuffer;
-	long m_EndCanopyIndexBuffer;
-	long m_StartCanopyVertexBuffer;
-	long m_EndCanopyVertexBuffer;
+    long m_StartBranchIndexBuffer;
+    long m_EndBranchIndexBuffer;
+    long m_StartBranchVertexBuffer;
+    long m_EndBranchVertexBuffer;
+    long m_StartCanopyIndexBuffer;
+    long m_EndCanopyIndexBuffer;
+    long m_StartCanopyVertexBuffer;
+    long m_EndCanopyVertexBuffer;
     long m_StartAttribBuffer;
     long m_EndAttribBuffer;
     treeNode *m_nodeTree; // node tree of branch base points.  doesn't include segment info.
     bool m_OnFire;
     int m_Life;
-	int m_FaceCount;
-	int m_BranchCount;
+    int m_FaceCount;
+    int m_BranchCount;
     int m_CanopyCount;
     int m_CanopyCountTest;
-	static bool counting;
+    static bool counting;
     // this is a function used strictly for Release mode debugging. 
     // you can pass a variable into this function and the compiler won't optimize it out.  
     virtual void KeepVariableAlive(void * a);
@@ -97,9 +92,8 @@ protected:
     void *                                  m_KAV;
 
     void bounds(BranchBase *branch);
-	Grammar * createGrammar(std::string grammarName);
+    Grammar * createGrammar(std::string grammarName);
     void bounds(Canopy *Canopy);
     Tree(){};
 
 };
-#endif
