@@ -39,7 +39,7 @@ public:
     /// <summary>
     ///   Destructor.
     /// </summary>
-    ~Scheduler( void );
+    ~Scheduler( void ){};
 
     /// <summary>
     ///   Turns benchmarking on or off.
@@ -47,14 +47,6 @@ public:
     void EnableBenchmarking( Bool bEnable=True )
     {
         m_bBenchmarkingEnabled = bEnable;
-    }
-
-    /// <summary>
-    ///   Turns threading on or off.
-    /// </summary>
-    void EnableThreading( Bool bEnable=True )
-    {
-        m_bThreadingEnabled = bEnable;
     }
 
     /// <summary>

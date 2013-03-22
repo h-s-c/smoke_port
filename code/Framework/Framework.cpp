@@ -1522,7 +1522,11 @@ Framework::GDFParser::ReadAttributes(
                 //
                 // Load the system library.
                 //
-                PlatformManager::getInstance().SystemLibrary().LoadSystemLibrary(std::string(pXmlAttrib->Value()), m_sOldpath, &m_pSystem);
+                //g_pTaskManager->Enqueue([pXmlAttrib, m_sOldpath, m_pSystem]
+                    //{
+                        PlatformManager::getInstance().SystemLibrary().LoadSystemLibrary(std::string(pXmlAttrib->Value()), m_sOldpath, &m_pSystem);
+                    //});
+                    
                 if (m_pSystem == NULL)
                 {
                     std::cerr << "Parser could not load the system " <<  pXmlAttrib->Value()

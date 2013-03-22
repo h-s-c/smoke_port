@@ -41,7 +41,11 @@ PlatformManager::SystemLibrary::~SystemLibrary( void)
     for ( auto it : m_SystemLibs)
     {
         struct SystemFuncs *pSystemFuncs = reinterpret_cast<SystemFuncs*>(dlsym(it.hLib, it.strSysLib.c_str() ));
-        pSystemFuncs->DestroySystem( it.pSystem );
+        // System creation/destruction need to happen on the same thread
+        //g_pTaskManager->Enqueue([pSystemFuncs, it]
+            //{
+                pSystemFuncs->DestroySystem(it.pSystem);
+            //});
         dlclose( it.hLib );
     }
 

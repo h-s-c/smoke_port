@@ -420,28 +420,28 @@ InputScene::keyPressed( const OIS::KeyEvent &arg )
     {
         if(g_Managers.pTask != NULL )
         {
-            g_Managers.pTask->SetNumberOfThreads( 4 );
+            //g_Managers.pTask->SetNumberOfThreads( 4 );
         }
     }
     if( arg.key == OIS::KC_2 && mModifiers == OIS::Keyboard::Modifier::Ctrl )
     {
         if(g_Managers.pTask != NULL )
         {
-            g_Managers.pTask->SetNumberOfThreads( 2 );
+            //g_Managers.pTask->SetNumberOfThreads( 2 );
         }
     }
     if( arg.key == OIS::KC_1 && mModifiers == OIS::Keyboard::Modifier::Ctrl )
     {
         if(g_Managers.pTask != NULL )
         {
-            g_Managers.pTask->SetNumberOfThreads( 1 );
+            //g_Managers.pTask->SetNumberOfThreads( 1 );
         }
     }
     if( arg.key == OIS::KC_X && mModifiers == OIS::Keyboard::Modifier::Ctrl )
     {
         if(g_Managers.pTask != NULL )
         {
-            g_Managers.pTask->SetNumberOfThreads( 0 );
+            //g_Managers.pTask->SetNumberOfThreads( 0 );
         }
     }
     const float        fMovementSpeed = 800.0f;

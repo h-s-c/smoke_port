@@ -380,12 +380,9 @@ public:
     /// <param name="DeltaTime">The time delta from the last call.</param>
     virtual void Update( f32 DeltaTime ) = 0;
 
-    /// <summary cref="ISystemTask::IsPrimaryThreadOnly">
-    ///   Implementing tasks should return True to indicate that their <c>Update</c> function
-    ///   should only be called from the primary thread.  False allows their <c>Update</c> function
-    ///   to be called from an arbitrary thread.
-    /// </summary>
-    virtual Bool IsPrimaryThreadOnly( void ) = 0;
+    /* tells the taskmanager to always run tasks from this 
+     * system on the same thread if they are not thread-safe*/
+    virtual bool IsThreadSafe( void ) = 0;
 
 protected:
 

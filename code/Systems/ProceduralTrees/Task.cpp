@@ -1,9 +1,9 @@
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
 #include "Interfaces/Interface.hpp"
-#include "System/ProceduralTrees/Scene.hpp"
-#include "System/ProceduralTrees/Task.hpp"
-#include "System/ProceduralTrees/Object.hpp"
+#include "Systems/ProceduralTrees/Scene.hpp"
+#include "Systems/ProceduralTrees/Task.hpp"
+#include "Systems/ProceduralTrees/Object.hpp"
 
 
 TreeTask::TreeTask(

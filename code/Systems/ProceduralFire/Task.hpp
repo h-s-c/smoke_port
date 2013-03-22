@@ -51,7 +51,9 @@ protected:
     /// <param name="DeltaTime">The time delta from the last call.</param>
     virtual void Update( f32 fDeltaTime );
 
-    virtual Bool IsPrimaryThreadOnly( void ) { return False; } 
+    /* tells the taskmanager to always run tasks from this 
+     * system on the same thread if they are not thread-safe*/
+    virtual bool IsThreadSafe( void ) { return true; } 
 
 private:
 
@@ -60,23 +62,23 @@ private:
     /// <summary cref="FireTask::UpdateCallback">
     ///   Invoked by ParalellFor algorithm to update a range of objects.
     /// </summary>
-	static void UpdateCallback( void *param, u32 begin, u32 end );
+    static void UpdateCallback( void *param, u32 begin, u32 end );
 
     /// <summary cref="FireTask::UpdateCallback">
     ///   Updates the given range of fire objects.
     /// </summary>
-	void UpdateRange( u32 begin, u32 end );
+    void UpdateRange( u32 begin, u32 end );
 
 #if FIRETASK_PARALLEL_PREBUILD_VERTICES
     /// <summary cref="FireTask::UpdateCallback">
     ///   Invoked by ParalellFor algorithm to build a range of vertex buffers.
     /// </summary>
-	static void BuildVertexBuffersCallback( void *param, u32 begin, u32 end );
+    static void BuildVertexBuffersCallback( void *param, u32 begin, u32 end );
 
     /// <summary cref="FireTask::UpdateCallback">
     ///   Builds a range of vertex buffers.
     /// </summary>
-	void BuildVertexBuffersRange( u32 begin, u32 end );
+    void BuildVertexBuffersRange( u32 begin, u32 end );
 #endif /* FIRETASK_PARALLEL_PREBUILD_VERTICES */
 
 private:

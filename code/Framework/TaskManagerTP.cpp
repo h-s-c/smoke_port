@@ -19,6 +19,9 @@
 #include "Interfaces/Interface.hpp"
 //stdlib
 #include <iostream>
+//workarround for gcc4.7
+#define _GLIBCXX_USE_SCHED_YIELD
+#include <thread>
 //framework
 #include "Framework/EnvironmentManager.hpp"
 #include "Framework/ServiceManager.hpp"
@@ -55,7 +58,9 @@ void Worker::operator()()
             
             // look for a work item
             while(!this->pool.stop && this->pool.tasks.empty() && (this->pool.workers.size() == this->pool.callbackDone.size())  )
-            { // if there are none wait for notification
+            { 
+                // if there are none wait for notification
+                std::this_thread::yield();
                 this->pool.condition.wait(lock);
             }
  
@@ -85,15 +90,15 @@ void Worker::operator()()
 void TaskManagerTP::Init( void)
 {
     auto uNumberOfThreads = EnvironmentManager::getInstance().Variables().GetAsInt( "TaskManager::Threads", 0 );
-    // SetNumberOfThreads calls Start()
     if( uNumberOfThreads <= 0 ) 
     {
-        SetNumberOfThreads(std::thread::hardware_concurrency());
+        this->uNumberOfThreads = std::thread::hardware_concurrency();
     } 
     else
     {
-        SetNumberOfThreads(uNumberOfThreads);
+        this->uNumberOfThreads = uNumberOfThreads;
     }
+    Start();
 }
 
 void TaskManagerTP::Shutdown( void)
@@ -109,12 +114,27 @@ void TaskManagerTP::Shutdown( void)
 
 void TaskManagerTP::IssueJobsForSystemTasks( std::vector<ISystemTask*> pTasks, float DeltaTime)
 {
-    for (auto task : pTasks)
+    std::vector<ISystemTask*> notThreadSafeTasks;
+    // sort tasks for thread-safety
+    for (const auto &task : pTasks)
     {
-        this->Enqueue([task, DeltaTime]
-            {
-                task->Update(DeltaTime);
-            });
+        if(task->IsThreadSafe())
+        {
+            // enqueue thread-safe tasks in general tasklist
+            this->Enqueue([task, DeltaTime]
+                {
+                    task->Update(DeltaTime);
+                });
+        }
+        else
+        {
+            notThreadSafeTasks.push_back(task);
+        }
+    }    
+    // execute non-thread-safe tasks
+    for (const auto &task : notThreadSafeTasks)
+    {
+        task->Update(DeltaTime);
     }
 }
 
@@ -185,13 +205,6 @@ uint32_t TaskManagerTP::GetRecommendedJobCount( ITaskManager::JobCountInstructio
 uint32_t TaskManagerTP::GetNumberOfThreads( void)
 {
     return this->uNumberOfThreads;
-}
-
-void TaskManagerTP::SetNumberOfThreads( uint32_t uNumberOfThreads)
-{
-    Stop();
-    this->uNumberOfThreads = uNumberOfThreads;
-    Start();
 }
 
 void TaskManagerTP::ParallelFor(

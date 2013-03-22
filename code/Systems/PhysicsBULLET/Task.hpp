@@ -79,14 +79,9 @@ protected:
     /// <param name="uEnd">End time (currently unused)</param>
     static void StepUpdateS( BulletPhysicsTask* pTask, u32 uStart, u32 uEnd );
 
-    /// <summary cref="BulletPhysicsTask::IsPrimaryThreadOnly">
-    ///   Implementation of the <c>ISystemTask::IsPrimaryThreadOnly</c> function.
-    ///   This function returns False for BulletPhysicsTask.  BulletPhysicsTask does 
-    ///   not need to run only on the primary thread.
-    /// </summary>
-    /// <returns>Bool - Returns if this system should only run on the primary thread.</returns>
-    /// <seealso cref="ISystemTask::IsPrimaryThreadOnly"/>
-    virtual Bool IsPrimaryThreadOnly( void ) { return False; } 
+    /* tells the taskmanager to always run tasks from this 
+     * system on the same thread if they are not thread-safe*/
+    virtual bool IsThreadSafe( void ) { return false; } 
 
 
 private:

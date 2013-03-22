@@ -75,18 +75,13 @@ protected:
     ///   Advance the world owned by this thread (static version).
     /// </summary>
     /// <param name="pTask">Pointer to Task that generated this call.</param>
-	/// <param name="uStart">Start time (currently unused)</param>
-	/// <param name="uEnd">End time (currently unused)</param>
+    /// <param name="uStart">Start time (currently unused)</param>
+    /// <param name="uEnd">End time (currently unused)</param>
     static void StepUpdateS( HavokPhysicsTask* pTask, u32 uStart, u32 uEnd );
 
-    /// <summary cref="HavokPhysicsTask::IsPrimaryThreadOnly">
-    ///   Implementation of the <c>ISystemTask::IsPrimaryThreadOnly</c> function.
-    ///   This function returns False for HavokPhysicsTask.  HavokPhysicsTask does 
-    ///   not need to run only on the primary thread.
-    /// </summary>
-    /// <returns>Bool - Returns if this system should only run on the primary thread.</returns>
-    /// <seealso cref="ISystemTask::IsPrimaryThreadOnly"/>
-    virtual Bool IsPrimaryThreadOnly( void ) { return False; } 
+    /* tells the taskmanager to always run tasks from this 
+     * system on the same thread if they are not thread-safe*/
+    virtual bool IsThreadSafe( void ) { return false; } 
 
 
 private:

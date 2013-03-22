@@ -52,12 +52,9 @@ protected:
     /// <seealso cref="ISystemTask::Update"/>
     virtual void Update( f32 DeltaTime );
 
-    /// <summary cref="OGREGraphicsTask::IsPrimaryThreadOnly">
-    ///   Implementation of the <c>ISystemTask::IsPrimaryThreadOnly</c> function.
-    /// </summary>
-    /// <returns>Bool - Returns if this system should only run on the primary thread.</returns>
-    /// <seealso cref="ISystemTask::IsPrimaryThreadOnly"/>
-    virtual Bool IsPrimaryThreadOnly( void ) { return True; } 
+    /* tells the taskmanager to always run tasks from this 
+     * system on the same thread if they are not thread-safe*/
+    virtual bool IsThreadSafe( void ) { return false; } 
 
 
 private:

@@ -39,7 +39,10 @@ protected:
     virtual System::Type GetSystemType( void );
 
     virtual void Update( f32 DeltaTime );
-    virtual Bool IsPrimaryThreadOnly( void ) { return True; } 
+
+    /* tells the taskmanager to always run tasks from this 
+     * system on the same thread if they are not thread-safe*/
+    virtual bool IsThreadSafe( void ) { return false; } 
 
 private:
 

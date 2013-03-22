@@ -47,15 +47,12 @@ public:
     /* Call this from the primary thread to schedule system work.*/
     void IssueJobsForSystemTasks( std::vector<ISystemTask*> pTasks, float fDeltaTime );
     
-    /// <summary cref="TaskManagerTP::WaitForAllSystemTasks">
-    /// Call this from the primary thread to wait until all tasks spawned with <c>IssueJobsForSystemTasks</c>
-    /// and all of their subtasks are complete.
-    /// </summary>
-    /// <seealso cref="TaskManagerTP::IssueJobsForSystemTasks"/>
+    /* Call this from the primary thread to wait until all tasks 
+     * spawned with IssueJobsForSystemTasks and all of their subtasks are complete.*/
     void WaitForAllSystemTasks( void );
     
-    /* Call this from the primary thread to wait until all tasks spawned with IssueJobsForSystemTasks
-     * and all of their subtasks are complete.*/
+    /* Call this from the primary thread to wait until all specified tasks 
+     * spawned with IssueJobsForSystemTasks and all of their subtasks are complete.*/
     void WaitForSystemTasks( std::vector<ISystemTask*> pTasks );
 
     /// <summary cref="TaskManagerTP::GetNumberOfThreads">
@@ -63,12 +60,6 @@ public:
     /// </summary>
     /// <returns>the number of threads being used</returns>
     u32 GetNumberOfThreads( void );
-    
-    /// <summary cref="TaskManagerTP::SetNumberOfThreads">
-    /// This method constrains the number of threads used by the <c>TaskManagerTP</c>.
-    /// </summary>
-    /// <param name="uNumberOfThreads">the limit of the number of threads to use</param>
-    void SetNumberOfThreads( u32 uNumberOfThreads );
 
     /// <summary cref="TaskManagerTP::NonStandardPerThreadCallback">
     /// This method triggers a synchronized callback to be called once by each thread used by the <c>TaskManagerTP</c>.
@@ -109,8 +100,9 @@ private:
     std::condition_variable condition;
     bool stop;
     
+    // per thread callback
     std::function<void()> callback;
-    std::vector<std::thread::id> callbackDone;            
+    std::vector<std::thread::id> callbackDone;  
 
     template<class F>
     void Enqueue(F f)
