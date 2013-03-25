@@ -44,8 +44,7 @@ private:
         return *this;
     }
 
-    EnvironmentManager() 
-    : m_RuntimeStatus( IEnvironment::IRuntime::Status::Unknown ) {}
+    EnvironmentManager() {m_RuntimeStatus.store(IEnvironment::IRuntime::Status::Unknown);}
     
 public:
 

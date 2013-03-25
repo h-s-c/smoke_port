@@ -182,7 +182,7 @@ EnvironmentManager::GetStatus(
     void
     )
 {
-    return m_RuntimeStatus;
+    return m_RuntimeStatus.load();
 }
 
 
@@ -191,5 +191,5 @@ EnvironmentManager::SetStatus(
     IEnvironment::IRuntime::Status Status
     )
 {
-    m_RuntimeStatus.exchange(Status);
+    m_RuntimeStatus.store(Status);
 }
