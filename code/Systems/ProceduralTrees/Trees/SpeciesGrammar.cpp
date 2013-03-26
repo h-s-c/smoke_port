@@ -12,358 +12,361 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
 
-#include "SpeciesGrammar.h"
+#include "Base/Compat.hpp"
+#include "Base/Platform.hpp"
+#include "Base/Math.hpp"
+#include "Interfaces/Interface.hpp"
+#include "Systems/ProceduralTrees/Trees/SpeciesGrammar.hpp"
 
-#pragma warning( push )
-#pragma warning( disable : 6011 )
+#include <tinyxml.h>
+#include <unistd.h>
 
 void Grammar::loadLevel(std::string filename)
 {
-	const char* pcsName;
-	const char* pcsValue;
-	std::string sTDF("tgtest.tdf");
-	TiXmlAttribute *pAset;
-	TiXmlDocument   XmlDoc( filename.c_str() );
-	int levelID =0;
-	int splitCount =0;
-	int splitID =0;
-	if ( XmlDoc.LoadFile() == false )
-	{
-		//load failed.  need assert
-	}
+    const char* pcsName;
+    const char* pcsValue;
+    TiXmlAttribute *pAset;
+    TiXmlDocument   XmlDoc( filename.c_str() );
+    int levelID =0;
+    int splitCount =0;
+    int splitID =0;
+    if ( XmlDoc.LoadFile() == false )
+    {
+        //load failed.  need assert
+        throw std::runtime_error("Could not load tree grammar file!");
+    }
 
-	//
-	// Find the "environment" element.
-	//
-	TiXmlElement* pTreeGrammarElement = XmlDoc.FirstChildElement();
-	TiXmlElement* pGrammarElement=0;
-	TiXmlElement* pPropertiesElement=0;
-	TiXmlElement* pPropertyElement=0;
-	TiXmlElement* pChildElement=0;
-	TiXmlElement* pSiblingElement=0;
+    //
+    // Find the "environment" element.
+    //
+    TiXmlElement* pTreeGrammarElement = XmlDoc.FirstChildElement();
+    TiXmlElement* pGrammarElement=0;
+    TiXmlElement* pPropertiesElement=0;
+    TiXmlElement* pPropertyElement=0;
+    TiXmlElement* pChildElement=0;
+    TiXmlElement* pSiblingElement=0;
 
-	assert( pTreeGrammarElement != NULL );
 
-	if(strcmp( pTreeGrammarElement->Value(), "TreeGrammar" ) !=0)
-	{
-		//Not a valid Grammar file; need assertion
+    if(strcmp( pTreeGrammarElement->Value(), "TreeGrammar" ) !=0)
+    {
+        //Not a valid Grammar file; need assertion
+        throw std::runtime_error("This is not a valid tree grammar file!");
+    }
 
-	}
+    //Get Grammar Definition Values
+    pGrammarElement = pTreeGrammarElement->FirstChildElement();
+    if(strcmp(pGrammarElement->Value(),"GrammarElement") ==0)
+    {
+        pAset = pGrammarElement->FirstAttribute();
+        pcsName  = pAset->Name();
+        pcsValue = pAset->Value();
+        if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"GDV"))
+        {
+            pPropertyElement=pGrammarElement->FirstChildElement();
+            while (pPropertyElement != NULL && !strcmp(pPropertyElement->Value(), "Property") !=0 )
+            {
+                pAset = pPropertyElement->FirstAttribute();
+                pcsName  = pAset->Name();
+                pcsValue = pAset->Value();
+                if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"Name"))
+                {
+                    pAset = pAset->Next();
+                    pcsName  = pAset->Name();
+                    pcsValue = pAset->Value();
+                }
+                else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"LevelCount"))
+                {
+                    pAset = pAset->Next();
+                    pcsName  = pAset->Name();
+                    pcsValue = pAset->Value();
+                    m_levelCount = pAset->IntValue();
+                    m_pLevels = new LevelDetail[m_levelCount];
 
-	//Get Grammar Definition Values
-	pGrammarElement = pTreeGrammarElement->FirstChildElement();
-	if(strcmp(pGrammarElement->Value(),"GrammarElement") ==0)
-	{
-		pAset = pGrammarElement->FirstAttribute();
-		pcsName  = pAset->Name();
-		pcsValue = pAset->Value();
-		if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"GDV"))
-		{
-			pPropertyElement=pGrammarElement->FirstChildElement();
-			while (pPropertyElement != NULL && !strcmp(pPropertyElement->Value(), "Property") !=0 )
-			{
-				pAset = pPropertyElement->FirstAttribute();
-				pcsName  = pAset->Name();
-				pcsValue = pAset->Value();
-				if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"Name"))
-				{
-					pAset = pAset->Next();
-					pcsName  = pAset->Name();
-					pcsValue = pAset->Value();
-				}
-				else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"LevelCount"))
-				{
-					pAset = pAset->Next();
-					pcsName  = pAset->Name();
-					pcsValue = pAset->Value();
-					m_levelCount = pAset->IntValue();
-					m_pLevels = new LevelDetail[m_levelCount];
+                }
 
-				}
+                pPropertyElement = pPropertyElement->NextSiblingElement();
+            }
 
-				pPropertyElement = pPropertyElement->NextSiblingElement();
-			}
+        }
+    }
 
-		}
-	}
+    //pSiblingElement = pElement->FirstChildElement();
+    pGrammarElement = pGrammarElement->NextSiblingElement();
+    while ( pGrammarElement != NULL && !strcmp( pGrammarElement->Value(), "GrammarElement" ) != 0 )
+    {
+        pPropertiesElement = pGrammarElement->FirstChildElement();
+        while (pPropertiesElement != NULL && !strcmp(pPropertiesElement->Value(), "Properties") !=0 )
+        {
+            pAset = pPropertiesElement->FirstAttribute();
+            pcsName  = pAset->Name();
+            pcsValue = pAset->Value();
+            if(!strcmp(pcsName,"GrammarToken")&&!strcmp(pcsValue,"Level"))
+            {
+                pPropertyElement=pPropertiesElement->FirstChildElement();
+                while (pPropertyElement != NULL && !strcmp(pPropertyElement->Value(), "Property") !=0 )
+                {
+                    pAset = pPropertyElement->FirstAttribute();
+                    pcsName  = pAset->Name();
+                    pcsValue = pAset->Value();
+                    if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"LevelID"))
+                    {
+                        pAset = pAset->Next();
+                        pcsName  = pAset->Name();
+                        pcsValue = pAset->Value();
+                        levelID = pAset->IntValue();
+                        m_pLevels[levelID].LevelID = levelID;
+                    }
+                    else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"tipPointCount"))
+                    {
+                        pAset = pAset->Next();
+                        pcsName  = pAset->Name();
+                        pcsValue = pAset->Value();
+                        m_pLevels[levelID].tipPointCount = pAset->IntValue();
 
-	//pSiblingElement = pElement->FirstChildElement();
-	pGrammarElement = pGrammarElement->NextSiblingElement();
-	while ( pGrammarElement != NULL && !strcmp( pGrammarElement->Value(), "GrammarElement" ) != 0 )
-	{
-		pPropertiesElement = pGrammarElement->FirstChildElement();
-		while (pPropertiesElement != NULL && !strcmp(pPropertiesElement->Value(), "Properties") !=0 )
-		{
-			pAset = pPropertiesElement->FirstAttribute();
-			pcsName  = pAset->Name();
-			pcsValue = pAset->Value();
-			if(!strcmp(pcsName,"GrammarToken")&&!strcmp(pcsValue,"Level"))
-			{
-				pPropertyElement=pPropertiesElement->FirstChildElement();
-				while (pPropertyElement != NULL && !strcmp(pPropertyElement->Value(), "Property") !=0 )
-				{
-					pAset = pPropertyElement->FirstAttribute();
-					pcsName  = pAset->Name();
-					pcsValue = pAset->Value();
-					if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"LevelID"))
-					{
-						pAset = pAset->Next();
-						pcsName  = pAset->Name();
-						pcsValue = pAset->Value();
-						levelID = pAset->IntValue();
-						m_pLevels[levelID].LevelID = levelID;
-					}
-					else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"tipPointCount"))
-					{
-						pAset = pAset->Next();
-						pcsName  = pAset->Name();
-						pcsValue = pAset->Value();
-						m_pLevels[levelID].tipPointCount = pAset->IntValue();
+                    }
+                    else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"AxialBias"))
+                    {
+                        pAset = pAset->Next();
+                        pcsName  = pAset->Name();
+                        pcsValue = pAset->Value();
+                        if(!strcmp(pcsName,"MinAngle"))
+                        {
+                            m_pLevels[levelID].AxialBias.minAngle = (float)(pAset->DoubleValue()/ RadianDegree);
+                        } 
+                        else if(!strcmp(pcsName,"MaxAngle"))
+                        {
+                            m_pLevels[levelID].AxialBias.maxAngle = (float)(pAset->DoubleValue()/ RadianDegree);
+                        } 
+                    }
+                    else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"Length"))
+                    {
+                        pAset = pAset->Next();
+                        pcsName  = pAset->Name();
+                        pcsValue = pAset->Value();
+                        m_pLevels[levelID].length = (float)(pAset->DoubleValue());
+                    }
+                    else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"Diameter"))
+                    {
+                        pAset = pAset->Next();
+                        pcsName  = pAset->Name();
+                        pcsValue = pAset->Value();
+                        m_pLevels[levelID].diameter = (float)(pAset->DoubleValue());
+                    }
+                    else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"taper"))
+                    {
+                        pAset = pAset->Next();
+                        pcsName  = pAset->Name();
+                        pcsValue = pAset->Value();
+                        m_pLevels[levelID].taper = (float)(pAset->DoubleValue());
+                    }
+                    else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"dropAngle"))
+                    {
+                        pAset = pAset->Next();
+                        pcsName  = pAset->Name();
+                        pcsValue = pAset->Value();
+                        if(!strcmp(pcsName,"MinAngle"))
+                        {
+                            m_pLevels[levelID].dropAngle.minAngle = (float)(pAset->DoubleValue()/ RadianDegree);
+                        } 
+                        else if(!strcmp(pcsName,"MaxAngle"))
+                        {
+                            m_pLevels[levelID].dropAngle.maxAngle = (float)(pAset->DoubleValue()/ RadianDegree);
+                        } 
+                        else if(!strcmp(pcsName,"BiasAngle"))
+                        {
+                            m_pLevels[levelID].dropAngle.biasAngle = (float)(pAset->DoubleValue()/ RadianDegree);
+                        }
 
-					}
-					else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"AxialBias"))
-					{
-						pAset = pAset->Next();
-						pcsName  = pAset->Name();
-						pcsValue = pAset->Value();
-						if(!strcmp(pcsName,"MinAngle"))
-						{
-							m_pLevels[levelID].AxialBias.minAngle = (float)(pAset->DoubleValue()/ RadianDegree);
-						} 
-						else if(!strcmp(pcsName,"MaxAngle"))
-						{
-							m_pLevels[levelID].AxialBias.maxAngle = (float)(pAset->DoubleValue()/ RadianDegree);
-						} 
-					}
-					else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"Length"))
-					{
-						pAset = pAset->Next();
-						pcsName  = pAset->Name();
-						pcsValue = pAset->Value();
-						m_pLevels[levelID].length = (float)(pAset->DoubleValue());
-					}
-					else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"Diameter"))
-					{
-						pAset = pAset->Next();
-						pcsName  = pAset->Name();
-						pcsValue = pAset->Value();
-						m_pLevels[levelID].diameter = (float)(pAset->DoubleValue());
-					}
-					else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"taper"))
-					{
-						pAset = pAset->Next();
-						pcsName  = pAset->Name();
-						pcsValue = pAset->Value();
-						m_pLevels[levelID].taper = (float)(pAset->DoubleValue());
-					}
-					else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"dropAngle"))
-					{
-						pAset = pAset->Next();
-						pcsName  = pAset->Name();
-						pcsValue = pAset->Value();
-						if(!strcmp(pcsName,"MinAngle"))
-						{
-							m_pLevels[levelID].dropAngle.minAngle = (float)(pAset->DoubleValue()/ RadianDegree);
-						} 
-						else if(!strcmp(pcsName,"MaxAngle"))
-						{
-							m_pLevels[levelID].dropAngle.maxAngle = (float)(pAset->DoubleValue()/ RadianDegree);
-						} 
-						else if(!strcmp(pcsName,"BiasAngle"))
-						{
-							m_pLevels[levelID].dropAngle.biasAngle = (float)(pAset->DoubleValue()/ RadianDegree);
-						}
+                    }
+                    else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"Heading"))
+                    {
+                        pAset = pAset->Next();
+                        pcsName  = pAset->Name();
+                        pcsValue = pAset->Value();
+                        if(!strcmp(pcsName,"value1"))
+                        {
+                            float x,y,z;
+                            x = (float)(pAset->DoubleValue());
+                            pAset = pAset->Next();
+                            y = (float)(pAset->DoubleValue());
+                            pAset = pAset->Next();
+                            z = (float)(pAset->DoubleValue());
+                            m_pLevels[levelID].heading.Heading = Base::Vector3(x,y,z);                     
+                        } else if(!strcmp(pcsName,"MinAngle"))
+                        {
+                            m_pLevels[levelID].heading.biasRange.minAngle = (float)(pAset->DoubleValue()/ RadianDegree);                        
+                        } else if(!strcmp(pcsName,"MaxAngle"))
+                        {
+                            m_pLevels[levelID].heading.biasRange.maxAngle = (float)(pAset->DoubleValue()/ RadianDegree);
+                        } 
 
-					}
-					else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"Heading"))
-					{
-						pAset = pAset->Next();
-						pcsName  = pAset->Name();
-						pcsValue = pAset->Value();
-						if(!strcmp(pcsName,"value1"))
-						{
-							float x,y,z;
-							x = (float)(pAset->DoubleValue());
-							pAset = pAset->Next();
-							y = (float)(pAset->DoubleValue());
-							pAset = pAset->Next();
-							z = (float)(pAset->DoubleValue());
-							m_pLevels[levelID].heading.Heading = V3(x,y,z);						
-						} else if(!strcmp(pcsName,"MinAngle"))
-						{
-							m_pLevels[levelID].heading.biasRange.minAngle = (float)(pAset->DoubleValue()/ RadianDegree);						
-						} else if(!strcmp(pcsName,"MaxAngle"))
-						{
-							m_pLevels[levelID].heading.biasRange.maxAngle = (float)(pAset->DoubleValue()/ RadianDegree);
-						} 
+                    }
+                    else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"branchType"))
+                    {
+                        pAset = pAset->Next();
+                        pcsName  = pAset->Name();
+                        pcsValue = pAset->Value();
+                        if(!strcmp(pcsValue,"TRUNK"))
+                        {
+                            m_pLevels[levelID].brnchType = branchType::TRUNK;
+                        }   
+                        else if(!strcmp(pcsValue,"BRANCH"))
+                        {
+                            m_pLevels[levelID].brnchType = branchType::BRANCH;
+                        }   
+                        else if(!strcmp(pcsValue,"STEM"))
+                        {
+                            m_pLevels[levelID].brnchType = branchType::STEM;
+                        }   
+                        else if(!strcmp(pcsValue,"LEAF"))
+                        {
+                            m_pLevels[levelID].brnchType = branchType::LEAF;
+                        }   
+                        else if(!strcmp(pcsValue,"FLOWER"))
+                        {
+                            m_pLevels[levelID].brnchType = branchType::FLOWER;
+                        }   
+                        else if(!strcmp(pcsValue,"FRUIT"))
+                        {
+                            m_pLevels[levelID].brnchType = branchType::FRUIT;
+                        }   
+                        else if(!strcmp(pcsValue,"BUD"))
+                        {
+                            m_pLevels[levelID].brnchType = branchType::BUD;
+                        }   
+                        else if(!strcmp(pcsValue,"NULL_BRANCH"))
+                        {
+                            m_pLevels[levelID].brnchType = branchType::NULL_BRANCH;
+                        } 
+                    }
+                    else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"canopyType"))
+                    {
+                        pAset = pAset->Next();
+                        pcsName  = pAset->Name();
+                        pcsValue = pAset->Value();
+                        if(!strcmp(pcsValue,"PATCH"))
+                        {
+                            m_pLevels[levelID].cnpyType = canopyType::PATCH;
+                        }   
+                        else if(!strcmp(pcsValue,"HEX"))
+                        {
+                            m_pLevels[levelID].cnpyType = canopyType::HEX;
+                        }   
+                        else if(!strcmp(pcsValue,"PROCEDURAL"))
+                        {
+                            m_pLevels[levelID].cnpyType = canopyType::PROCEDURAL;
+                        }   
+                        else if(!strcmp(pcsValue,"NULL_CANOPY"))
+                        {
+                            m_pLevels[levelID].cnpyType = canopyType::NULL_CANOPY;
+                        }   
+                    }
+                    else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"splitListcount"))
+                    {
+                        pAset = pAset->Next();
+                        pcsName  = pAset->Name();
+                        pcsValue = pAset->Value();
+                        splitCount = pAset->IntValue();
+                        m_pLevels[levelID].splitList = new split[splitCount];
 
-					}
-					else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"branchType"))
-					{
-						pAset = pAset->Next();
-						pcsName  = pAset->Name();
-						pcsValue = pAset->Value();
-						if(!strcmp(pcsValue,"TRUNK"))
-						{
-							m_pLevels[levelID].brnchType = branchType::TRUNK;
-						}   
-						else if(!strcmp(pcsValue,"BRANCH"))
-						{
-							m_pLevels[levelID].brnchType = branchType::BRANCH;
-						}   
-						else if(!strcmp(pcsValue,"STEM"))
-						{
-							m_pLevels[levelID].brnchType = branchType::STEM;
-						}   
-						else if(!strcmp(pcsValue,"LEAF"))
-						{
-							m_pLevels[levelID].brnchType = branchType::LEAF;
-						}   
-						else if(!strcmp(pcsValue,"FLOWER"))
-						{
-							m_pLevels[levelID].brnchType = branchType::FLOWER;
-						}   
-						else if(!strcmp(pcsValue,"FRUIT"))
-						{
-							m_pLevels[levelID].brnchType = branchType::FRUIT;
-						}   
-						else if(!strcmp(pcsValue,"BUD"))
-						{
-							m_pLevels[levelID].brnchType = branchType::BUD;
-						}   
-						else if(!strcmp(pcsValue,"NULL_BRANCH"))
-						{
-							m_pLevels[levelID].brnchType = branchType::NULL_BRANCH;
-						} 
-					}
-					else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"canopyType"))
-					{
-						pAset = pAset->Next();
-						pcsName  = pAset->Name();
-						pcsValue = pAset->Value();
-						if(!strcmp(pcsValue,"PATCH"))
-						{
-							m_pLevels[levelID].cnpyType = canopyType::PATCH;
-						}   
-						else if(!strcmp(pcsValue,"HEX"))
-						{
-							m_pLevels[levelID].cnpyType = canopyType::HEX;
-						}   
-						else if(!strcmp(pcsValue,"PROCEDURAL"))
-						{
-							m_pLevels[levelID].cnpyType = canopyType::PROCEDURAL;
-						}   
-						else if(!strcmp(pcsValue,"NULL_CANOPY"))
-						{
-							m_pLevels[levelID].cnpyType = canopyType::NULL_CANOPY;
-						}   
-					}
-					else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"splitListcount"))
-					{
-						pAset = pAset->Next();
-						pcsName  = pAset->Name();
-						pcsValue = pAset->Value();
-						splitCount = pAset->IntValue();
-						m_pLevels[levelID].splitList = new split[splitCount];
+                    }
+                    else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"PerturbFactor"))
+                    {
+                        pAset = pAset->Next();
+                        pcsName  = pAset->Name();
+                        pcsValue = pAset->Value();
+                        m_pLevels[levelID].perturbFactor = (float)(pAset->DoubleValue());
+                    }
 
-					}
-					else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"PerturbFactor"))
-					{
-						pAset = pAset->Next();
-						pcsName  = pAset->Name();
-						pcsValue = pAset->Value();
-						m_pLevels[levelID].perturbFactor = (float)(pAset->DoubleValue());
-					}
+                    pPropertyElement = pPropertyElement->NextSiblingElement();
+                }
 
-					pPropertyElement = pPropertyElement->NextSiblingElement();
-				}
-
-			}else if(!strcmp(pcsName,"GrammarToken")&&!strcmp(pcsValue,"SplitList"))
-			{
-				pPropertyElement=pPropertiesElement->FirstChildElement();
-				while (pPropertyElement != NULL && !strcmp(pPropertyElement->Value(), "Property") !=0 )
-				{
-					pAset = pPropertyElement->FirstAttribute();
-					pcsName  = pAset->Name();
-					pcsValue = pAset->Value();
-					if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"splitID"))
-					{
-						pAset = pAset->Next();
-						pcsName  = pAset->Name();
-						pcsValue = pAset->Value();
-						splitID = pAset->IntValue();
-					}
-					else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"probability"))
-					{
-						pAset = pAset->Next();
-						pcsName  = pAset->Name();
-						pcsValue = pAset->Value();
-						m_pLevels[levelID].splitList[splitID].probability = (float)(pAset->DoubleValue());
-					}
-					else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"splitCount"))
-					{
-						pAset = pAset->Next();
-						pcsName  = pAset->Name();
-						pcsValue = pAset->Value();
-						m_pLevels[levelID].splitList[splitID].splitCount = pAset->IntValue();
-					}
-					else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"type"))
-					{
-						pAset = pAset->Next();
-						pcsName  = pAset->Name();
-						pcsValue = pAset->Value();
-						if(!strcmp(pcsValue,"ORDINARY"))
-						{
-							m_pLevels[levelID].splitList[splitID].type = splitType::ORDINARY;
-						}   
-						else if(!strcmp(pcsValue,"REPEAT_ORDINARY"))
-						{
-							m_pLevels[levelID].splitList[splitID].type = splitType::REPEAT_ORDINARY;
-						}   
-						else if(!strcmp(pcsValue,"SQUARE"))
-						{
-							m_pLevels[levelID].splitList[splitID].type = splitType::SQUARE;
-						}   
-						else if(!strcmp(pcsValue,"OPPOSED"))
-						{
-							m_pLevels[levelID].splitList[splitID].type = splitType::OPPOSED;
-						}   
-						else if(!strcmp(pcsValue,"UNIFORM"))
-						{
-							m_pLevels[levelID].splitList[splitID].type = splitType::UNIFORM;
-						}   
-						else if(!strcmp(pcsValue,"SPEAR"))
-						{
-							m_pLevels[levelID].splitList[splitID].type = splitType::SPEAR;
-						}   
-						else if(!strcmp(pcsValue,"REPEAT_SQUARE"))
-						{
-							m_pLevels[levelID].splitList[splitID].type = splitType::REPEAT_SQUARE;
-						}   
-						else if(!strcmp(pcsValue,"REPEAT_OPPOSED"))
-						{
-							m_pLevels[levelID].splitList[splitID].type = splitType::REPEAT_OPPOSED;
-						}   
-						else if(!strcmp(pcsValue,"CANOPY"))
-						{
-							m_pLevels[levelID].splitList[splitID].type = splitType::CANOPY;
-						}   
-						else if(!strcmp(pcsValue,"ORDINARY_CANOPY"))
-						{
-							m_pLevels[levelID].splitList[splitID].type = splitType::ORDINARY_CANOPY;
-						}   
-						else if(!strcmp(pcsValue,"REPEAT_CANOPY"))
-						{
-							m_pLevels[levelID].splitList[splitID].type = splitType::REPEAT_CANOPY;
-						}   
-					}
-					pPropertyElement = pPropertyElement->NextSiblingElement();
-				}
-			}
-			pPropertiesElement = pPropertiesElement->NextSiblingElement();
-		}
-		pGrammarElement = pGrammarElement->NextSiblingElement();
-	}
+            }else if(!strcmp(pcsName,"GrammarToken")&&!strcmp(pcsValue,"SplitList"))
+            {
+                pPropertyElement=pPropertiesElement->FirstChildElement();
+                while (pPropertyElement != NULL && !strcmp(pPropertyElement->Value(), "Property") !=0 )
+                {
+                    pAset = pPropertyElement->FirstAttribute();
+                    pcsName  = pAset->Name();
+                    pcsValue = pAset->Value();
+                    if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"splitID"))
+                    {
+                        pAset = pAset->Next();
+                        pcsName  = pAset->Name();
+                        pcsValue = pAset->Value();
+                        splitID = pAset->IntValue();
+                    }
+                    else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"probability"))
+                    {
+                        pAset = pAset->Next();
+                        pcsName  = pAset->Name();
+                        pcsValue = pAset->Value();
+                        m_pLevels[levelID].splitList[splitID].probability = (float)(pAset->DoubleValue());
+                    }
+                    else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"splitCount"))
+                    {
+                        pAset = pAset->Next();
+                        pcsName  = pAset->Name();
+                        pcsValue = pAset->Value();
+                        m_pLevels[levelID].splitList[splitID].splitCount = pAset->IntValue();
+                    }
+                    else if(!strcmp(pcsName,"Name")&&!strcmp(pcsValue,"type"))
+                    {
+                        pAset = pAset->Next();
+                        pcsName  = pAset->Name();
+                        pcsValue = pAset->Value();
+                        if(!strcmp(pcsValue,"ORDINARY"))
+                        {
+                            m_pLevels[levelID].splitList[splitID].type = splitType::ORDINARY;
+                        }   
+                        else if(!strcmp(pcsValue,"REPEAT_ORDINARY"))
+                        {
+                            m_pLevels[levelID].splitList[splitID].type = splitType::REPEAT_ORDINARY;
+                        }   
+                        else if(!strcmp(pcsValue,"SQUARE"))
+                        {
+                            m_pLevels[levelID].splitList[splitID].type = splitType::SQUARE;
+                        }   
+                        else if(!strcmp(pcsValue,"OPPOSED"))
+                        {
+                            m_pLevels[levelID].splitList[splitID].type = splitType::OPPOSED;
+                        }   
+                        else if(!strcmp(pcsValue,"UNIFORM"))
+                        {
+                            m_pLevels[levelID].splitList[splitID].type = splitType::UNIFORM;
+                        }   
+                        else if(!strcmp(pcsValue,"SPEAR"))
+                        {
+                            m_pLevels[levelID].splitList[splitID].type = splitType::SPEAR;
+                        }   
+                        else if(!strcmp(pcsValue,"REPEAT_SQUARE"))
+                        {
+                            m_pLevels[levelID].splitList[splitID].type = splitType::REPEAT_SQUARE;
+                        }   
+                        else if(!strcmp(pcsValue,"REPEAT_OPPOSED"))
+                        {
+                            m_pLevels[levelID].splitList[splitID].type = splitType::REPEAT_OPPOSED;
+                        }   
+                        else if(!strcmp(pcsValue,"CANOPY"))
+                        {
+                            m_pLevels[levelID].splitList[splitID].type = splitType::CANOPY;
+                        }   
+                        else if(!strcmp(pcsValue,"ORDINARY_CANOPY"))
+                        {
+                            m_pLevels[levelID].splitList[splitID].type = splitType::ORDINARY_CANOPY;
+                        }   
+                        else if(!strcmp(pcsValue,"REPEAT_CANOPY"))
+                        {
+                            m_pLevels[levelID].splitList[splitID].type = splitType::REPEAT_CANOPY;
+                        }   
+                    }
+                    pPropertyElement = pPropertyElement->NextSiblingElement();
+                }
+            }
+            pPropertiesElement = pPropertiesElement->NextSiblingElement();
+        }
+        pGrammarElement = pGrammarElement->NextSiblingElement();
+    }
 
 }
 /*  XML Grammar file copied here in case it gets lost
@@ -615,5 +618,3 @@ void Grammar::loadLevel(std::string filename)
 
 </TreeGrammar>
 */
-
-#pragma warning( pop )

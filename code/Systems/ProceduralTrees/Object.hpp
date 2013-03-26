@@ -19,11 +19,12 @@
 
 #include "Systems/Common/AABB.hpp"
 #include "Systems/ProceduralTrees/Scene.hpp"
+#include "Systems/ProceduralTrees/Trees/Canopy.hpp"
+
 class TreeSystem;
 class TreeScene;
 class TreeTask;
 class Tree;
-class Canopy;
 struct LevelDetail;
 class BranchBase;
 
@@ -175,7 +176,7 @@ protected:
     struct PointPair {
         Base::Vector3 basePoint;
         Base::Vector3 extendPoint;
-        B3  basis;
+        B3 basis;
         AABB aabb;
         Bool burning;
     };

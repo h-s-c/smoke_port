@@ -1,11 +1,38 @@
 #pragma once
 
 #include "Base/Math.hpp"
+#include "Systems/Common/AABB.hpp"
+#include "Systems/ProceduralTrees/Trees/Observer.hpp"
+#include "Systems/ProceduralTrees/Trees/SpeciesGrammar.hpp"
+#include "Systems/ProceduralTrees/Trees/Tree.hpp"
+
+#include <cstdint>
 #include <vector>
-#include "System/Common/AABB.hpp"
-#include "System/ProceduralTrees/Trees/Observer.hpp"
-#include "System/ProceduralTrees/Trees/SpeciesGrammar.hpp"
-struct treeNode;
+
+
+class B3
+{
+public:
+    B3(){};
+    B3(Base::Vector3 i,Base::Vector3 j, Base::Vector3 k)
+    { 
+        iAxis = i;
+        jAxis = j;
+        kAxis = k;
+    };
+    void normalize()
+    {
+        iAxis.Normalize();
+        jAxis.Normalize();
+        kAxis.Normalize();
+    };
+    Base::Vector3 iAxis;
+    Base::Vector3 jAxis;
+    Base::Vector3 kAxis;
+
+};
+
+
 enum CanopyType {HEX_CANOPY=0x01, PATCH_CANOPY=0x10, PROCEDURAL_CANOPY=0x100, TIP_CANOPY=0x1000};
 
 class Canopy {
@@ -18,11 +45,11 @@ public:
         m_widthStep  = WidthStep ; 
         m_heightStep = HeightStep; 
     };
-    void heading(V3 Heading);
-    V3 AxisHeading; // unlike the branch heading this is the normal from the plane of the tipPointList
+    void heading(Base::Vector3 Heading);
+    Base::Vector3 AxisHeading; // unlike the branch heading this is the normal from the plane of the tipPointList
     B3 Basis; 
     CanopyType type; 
-    std::vector<V3 *> m_Canopy;
+    std::vector<Base::Vector3 *> m_Canopy;
     int   m_width     ;
     int   m_height    ;
     float m_widthStep ;
@@ -32,15 +59,15 @@ public:
     int m_vertexCount;
     int m_indexCount; 
     int m_attribute;
-    aabb m_AABB;
+    AABB m_AABB;
     bool m_burning;
     observer *theOverseer;
     int m_nodeLevel; //level of grammar or present depth of tree growth.
     LevelDetail *m_pSpeciesLevelGrammar; //just the facts needed for this branch. no sense dragging the whole grammar along
-    void growCanopySegment(treeNode *rootOfTree, BranchBase *pCanopyBranch,aabb TreeBoundingBox, Grammar *grammar);
-    void growPatchSegment(treeNode *rootOfTree, BranchBase *pCanopyBranch,aabb TreeBoundingBox, LevelDetail *grammar, V3 startHeading);
-    void growHexSegment(treeNode *rootOfTree, BranchBase *pCanopyBranch,aabb TreeBoundingBox, LevelDetail *grammar, V3 startHeading);
+    void growCanopySegment(treeNode *rootOfTree, BranchBase *pCanopyBranch,AABB TreeBoundingBox, Grammar *grammar);
+    void growPatchSegment(treeNode *rootOfTree, BranchBase *pCanopyBranch,AABB TreeBoundingBox, LevelDetail *grammar, Base::Vector3 startHeading);
+    void growHexSegment(treeNode *rootOfTree, BranchBase *pCanopyBranch,AABB TreeBoundingBox, LevelDetail *grammar, Base::Vector3 startHeading);
 
 private:
-    aabb setAABB();
+    AABB setAABB();
 };

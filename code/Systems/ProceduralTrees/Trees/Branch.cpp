@@ -16,7 +16,14 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
 
+#include "Base/Compat.hpp"
+#include "Base/Platform.hpp"
+#include "Base/Math.hpp"
+#include "Interfaces/Interface.hpp"
+#include "Systems/ProceduralTrees/Trees/Tree.hpp"
 #include "Systems/ProceduralTrees/Trees/Branch.hpp"
+
+#include <limits>
 
 Branch::Branch(int level, Base::Vector3 basePosition) {
     m_nodeLevel = level;
@@ -37,7 +44,6 @@ Branch *Branch::CreateNextBranch(int level, Base::Vector3 basePosition){
 void Branch::growBranch(Branch *pBranch, treeNode *ctreeNode, Grammar *grammar, Base::Vector3 startHeading)
 {
     ctreeNode->tree->m_BranchCount++;
-    observer *Observe = observer::Instance();
     m_pSpeciesLevelGrammar = &grammar->m_pLevels[m_nodeLevel];
     calcSegmentDepth(m_pSpeciesLevelGrammar);
     int tps = m_pSpeciesLevelGrammar->tipPointCount;//tps is TipPoints per Segment
@@ -84,7 +90,7 @@ void Branch::growBranch(Branch *pBranch, treeNode *ctreeNode, Grammar *grammar, 
         }
         // Get a rotation matrix about the axis
         Base::Vector3 arbitrary;
-        D3DXMATRIX rot;
+        Base::Matrix4x4 rot;
         Base::Vector3 axis;
         float twistAngle;
         float dropAngle;
@@ -108,16 +114,16 @@ void Branch::growBranch(Branch *pBranch, treeNode *ctreeNode, Grammar *grammar, 
             m_pSegments[i].m_AxisHeading = startHeading; // * ROTik => ax0
             axis = startHeading;
             axis.Normalize();
-            D3DXMatrixRotationAxis(&rot, &axis, D3DX_PI*2.0f/(float)(tps-1));
-            arbitrary = V3(axis.z,-axis.x,-axis.y);
+            rot.MatrixRotationAxis(rot, axis, Base::Angle::Pi*2.0f/(float)(tps-1));
+            arbitrary = Base::Vector3(axis.z,-axis.x,-axis.y);
 
-            arbitrary = CrossProduct(axis,arbitrary);//create true orthogonal vector
+            arbitrary = arbitrary.Cross(axis);//create true orthogonal vector
             arbitrary.Normalize();
             m_pSegments[i].m_pointOHeading = arbitrary; // n0
             if(m_pSpeciesLevelGrammar->brnchType == branchType::TRUNK){
                 for(int h=1;h<tps;h++){//tps change  int h=1;h<=6;h++
                     m_pSegments[i].m_tipPointList[h] = m_pSegments[i].m_tipPointList[0] + (arbitrary * m_pSegments[i].m_base);//m_pSpeciesLevelGrammar->diameter); //p0
-                    D3DXVec3TransformCoord(&arbitrary,&arbitrary,&rot);
+                    arbitrary.TransformCoord(arbitrary,arbitrary,rot);
                 }
             }else{
                 for(int h=1;h<tps;h++){//tps change  int h=1;h<=6;h++
@@ -135,27 +141,27 @@ void Branch::growBranch(Branch *pBranch, treeNode *ctreeNode, Grammar *grammar, 
             axis.Normalize();
             
 
-            arbitrary = V3(axis.z,-axis.x,-axis.y);
+            arbitrary = Base::Vector3(axis.z,-axis.x,-axis.y);
             
-            arbitrary = CrossProduct(axis,arbitrary);
+            arbitrary.Cross(axis);
             arbitrary.Normalize();
             m_pSegments[i].m_pointOHeading = arbitrary; 
 
             //
-            twistAngle = Observe->randf(m_pSpeciesLevelGrammar->heading.biasRange.minAngle,m_pSpeciesLevelGrammar->heading.biasRange.maxAngle);
-            D3DXMatrixRotationAxis(&rot,&axis,twistAngle);
-            D3DXVec3TransformCoord(&arbitrary,&arbitrary,&rot); // rotate by phi
-            dropAngle = Observe->randf(m_pSpeciesLevelGrammar->heading.biasRange.minAngle,m_pSpeciesLevelGrammar->heading.biasRange.maxAngle);
-            D3DXMatrixRotationAxis(&rot,&arbitrary,dropAngle);
-            D3DXVec3TransformCoord(&axis,&axis,&rot); // rotate by Theta
+            twistAngle = observer::Instance().randf(m_pSpeciesLevelGrammar->heading.biasRange.minAngle,m_pSpeciesLevelGrammar->heading.biasRange.maxAngle);
+            rot.MatrixRotationAxis(rot,axis,twistAngle);
+            arbitrary.TransformCoord(arbitrary,arbitrary,rot); // rotate by phi
+            dropAngle = observer::Instance().randf(m_pSpeciesLevelGrammar->heading.biasRange.minAngle,m_pSpeciesLevelGrammar->heading.biasRange.maxAngle);
+            rot.MatrixRotationAxis(rot,arbitrary,dropAngle);
+            arbitrary.TransformCoord(axis,axis,rot); // rotate by Theta
             //
             m_pSegments[i].m_AxisHeading = axis;
 
-            D3DXMatrixRotationAxis(&rot, &axis, D3DX_PI*2.0f/(float)(tps-1));
+            rot.MatrixRotationAxis(rot, axis, Base::Angle::Pi*2.0f/(float)(tps-1));
             m_pSegments[i].m_tipPointList[0] = m_pSegments[i-1].m_tipPointList[0] + (m_pSegments[i].m_AxisHeading * m_pSpeciesLevelGrammar->length);
             for(int h=1;h<tps;h++){//tps change  int h=1;h<=6;h++
                 m_pSegments[i].m_tipPointList[h] = m_pSegments[i].m_tipPointList[0] + (arbitrary * m_pSegments[i].m_base);
-                D3DXVec3TransformCoord(&arbitrary,&arbitrary,&rot);
+                arbitrary.TransformCoord(arbitrary,arbitrary,rot);
             }
 
             break;
@@ -164,34 +170,34 @@ void Branch::growBranch(Branch *pBranch, treeNode *ctreeNode, Grammar *grammar, 
             // ROTik = Ax1
             axis = m_pSegments[i-1].m_AxisHeading; // * ROTik => Ax1
             axis.Normalize();
-            arbitrary = V3(axis.z,-axis.x,-axis.y);
+            arbitrary = Base::Vector3(axis.z,-axis.x,-axis.y);
 
-            arbitrary = CrossProduct(axis,arbitrary);
+            arbitrary.Cross(axis);
             arbitrary.Normalize();
             m_pSegments[i].m_pointOHeading = arbitrary; 
             //
-            twistAngle = Observe->randf(m_pSpeciesLevelGrammar->heading.biasRange.minAngle,m_pSpeciesLevelGrammar->heading.biasRange.maxAngle);
-            D3DXMatrixRotationAxis(&rot,&axis,twistAngle);
-            D3DXVec3TransformCoord(&arbitrary,&arbitrary,&rot); // rotate by phi
-            dropAngle = Observe->randf(m_pSpeciesLevelGrammar->heading.biasRange.minAngle,m_pSpeciesLevelGrammar->heading.biasRange.maxAngle);
-            D3DXMatrixRotationAxis(&rot,&arbitrary,dropAngle);
-            D3DXVec3TransformCoord(&axis,&axis,&rot); // rotate by Theta
+            twistAngle = observer::Instance().randf(m_pSpeciesLevelGrammar->heading.biasRange.minAngle,m_pSpeciesLevelGrammar->heading.biasRange.maxAngle);
+            rot.MatrixRotationAxis(rot,axis,twistAngle);
+            arbitrary.TransformCoord(arbitrary,arbitrary,rot); // rotate by phi
+            dropAngle = observer::Instance().randf(m_pSpeciesLevelGrammar->heading.biasRange.minAngle,m_pSpeciesLevelGrammar->heading.biasRange.maxAngle);
+            rot.MatrixRotationAxis(rot,arbitrary,dropAngle);
+            axis.TransformCoord(axis,axis,rot); // rotate by Theta
             //
             m_pSegments[i].m_AxisHeading = axis;
 
 
-            D3DXMatrixRotationAxis(&rot, &axis, D3DX_PI*2.0f/(float)(tps-1));
+            rot.MatrixRotationAxis(rot, axis, Base::Angle::Pi*2.0f/(float)(tps-1));
             m_pSegments[i].m_tipPointList[0] = m_pSegments[i-1].m_tipPointList[0] + (m_pSegments[i].m_AxisHeading * m_pSpeciesLevelGrammar->length);//c1
             for(int h=1;h<tps;h++){//tps change  int h=1;h<=6;h++
                 m_pSegments[i].m_tipPointList[h] = m_pSegments[i].m_tipPointList[0] + (arbitrary * m_pSegments[i].m_base);
-                D3DXVec3TransformCoord(&arbitrary,&arbitrary,&rot);
+                arbitrary.TransformCoord(arbitrary,arbitrary,rot);
             }
-            V3 twist = m_pSegments[i].m_pointOHeading;
-            V3 nextHeading;
+            Base::Vector3 twist = m_pSegments[i].m_pointOHeading;
+            Base::Vector3 nextHeading;
             BranchBase *core = new BranchBase();
             core->canopies = 0;
             core->isCanopy = false;
-            Observe->DXRS->BranchCount++;
+            observer::Instance().DXRS->BranchCount++;
             core->segmentCount = m_segmentCount;
             core->segments = m_pSegments;
             core->position = m_position;
@@ -199,9 +205,9 @@ void Branch::growBranch(Branch *pBranch, treeNode *ctreeNode, Grammar *grammar, 
             core->tipPoint = m_pSegments[i].m_tipPointList[0];
             core->life = 100;
             core->burning = false;
-            core->startVertex = Observe->DXRS->CurrentVIndex;
-            core->startIndex  = Observe->DXRS->CurrentIndex;
-            core->AABB = setAABB();
+            core->startVertex = observer::Instance().DXRS->CurrentVIndex;
+            core->startIndex  = observer::Instance().DXRS->CurrentIndex;
+            core->aabb = setAABB();
 
              
             if(m_splitCount>0){
@@ -216,14 +222,14 @@ void Branch::growBranch(Branch *pBranch, treeNode *ctreeNode, Grammar *grammar, 
             // so we subtract 1 from all segments. 
             // We then add back in 2 for the tipPoints that are the end segments.
             // number of segments * tipPoints used in each segment + the two tipPoints for the end segments
-            Observe->DXRS->CurrentVIndex = Observe->DXRS->CurrentVIndex + (m_segmentCount * (tps-1)) + 2; //tps change
+            observer::Instance().DXRS->CurrentVIndex = observer::Instance().DXRS->CurrentVIndex + (m_segmentCount * (tps-1)) + 2; //tps change
             // account for the vertices of each triangle of each segment pair.
             // that is the segmentcount * the indexes per face times the tipPoints used per segment.
-            Observe->DXRS->CurrentIndex =  Observe->DXRS->CurrentIndex + (m_segmentCount)*6*(tps-1);
+            observer::Instance().DXRS->CurrentIndex =  observer::Instance().DXRS->CurrentIndex + (m_segmentCount)*6*(tps-1);
 
             //fillBuffers();
-            core->vertexCount =  Observe->DXRS->CurrentVIndex - core->startVertex;
-            core->indexCount  =  Observe->DXRS->CurrentIndex  - core->startIndex;
+            core->vertexCount =  observer::Instance().DXRS->CurrentVIndex - core->startVertex;
+            core->indexCount  =  observer::Instance().DXRS->CurrentIndex  - core->startIndex;
             //Split functionality
             for (int j=0;j<m_splitCount;j++)
             {   
@@ -270,12 +276,12 @@ void Branch::growBranch(Branch *pBranch, treeNode *ctreeNode, Grammar *grammar, 
                     }
                     // Phi  Rot about AX1  
                     // Theta Drop angle 
-                    twistAngle = Observe->randf(m_pSpeciesLevelGrammar->AxialBias.minAngle,m_pSpeciesLevelGrammar->AxialBias.maxAngle);
-                    D3DXMatrixRotationAxis(&rot,&axis,twistAngle);
-                    D3DXVec3TransformCoord(&twist,&twist,&rot); // rotate by phi
-                    dropAngle = Observe->randf(m_pSpeciesLevelGrammar->dropAngle.minAngle,m_pSpeciesLevelGrammar->dropAngle.maxAngle);
-                    D3DXMatrixRotationAxis(&rot,&twist,dropAngle);
-                    D3DXVec3TransformCoord(&nextHeading,&axis,&rot); // rotate by Theta
+                    twistAngle = observer::Instance().randf(m_pSpeciesLevelGrammar->AxialBias.minAngle,m_pSpeciesLevelGrammar->AxialBias.maxAngle);
+                    rot.MatrixRotationAxis(rot,axis,twistAngle);
+                    twist.TransformCoord(twist,twist,rot); // rotate by phi
+                    dropAngle = observer::Instance().randf(m_pSpeciesLevelGrammar->dropAngle.minAngle,m_pSpeciesLevelGrammar->dropAngle.maxAngle);
+                    rot.MatrixRotationAxis(rot,twist,dropAngle);
+                    nextHeading.TransformCoord(nextHeading,axis,rot); // rotate by Theta
                     Branch *NextBranch = CreateNextBranch(m_nodeLevel+1, m_pSegments[i].m_tipPointList[0]);
                     NextBranch->growBranch(this,&(ctreeNode->pNextNodes[j]), grammar, nextHeading.Normalize());
                     delete NextBranch;
@@ -298,11 +304,10 @@ void Branch::growBranch(Branch *pBranch, treeNode *ctreeNode, Grammar *grammar, 
 
 void Branch::calcSegmentDepth(LevelDetail * levelGrammar)
 {
-    observer* ob=observer::Instance();
     bool completed =false;
     float rangeMin = 0.0;
     float rangeMax = 1.0;
-    float testArg = ob->randf(0.0, 1.0);
+    float testArg = observer::Instance().randf(0.0, 1.0);
     m_segmentCount = 1;
     while (!completed)
     {
@@ -326,30 +331,30 @@ void Branch::calcSegmentDepth(LevelDetail * levelGrammar)
 
     testArg = testArg;
 }
-aabb Branch::setAABB(){
-    m_AABB.xMin = FLT_MAX;
-    m_AABB.yMin = FLT_MAX;
-    m_AABB.zMin = FLT_MAX;
-    m_AABB.xMax = -FLT_MAX;
-    m_AABB.yMax = -FLT_MAX;
-    m_AABB.zMax = -FLT_MAX;
-    m_AABB.max = V3(m_AABB.xMax,
+AABB Branch::setAABB(){
+    m_AABB.xMin = std::numeric_limits<float>::max();
+    m_AABB.yMin = std::numeric_limits<float>::max();
+    m_AABB.zMin = std::numeric_limits<float>::max();
+    m_AABB.xMax = -std::numeric_limits<float>::max();
+    m_AABB.yMax = -std::numeric_limits<float>::max();
+    m_AABB.zMax = -std::numeric_limits<float>::max();
+    m_AABB.max = Base::Vector3(m_AABB.xMax,
                   m_AABB.yMax,
                   m_AABB.zMax);
-    m_AABB.min = V3(m_AABB.xMin,
+    m_AABB.min = Base::Vector3(m_AABB.xMin,
                   m_AABB.yMin,
                   m_AABB.zMin);
     for(int i=0;i<m_segmentCount;i++){
         for(int j=0;j<m_pSegments[i].m_tipPointCount;j++){
-            V3 vertex = m_pSegments[i].m_tipPointList[j];
+            Base::Vector3 vertex = m_pSegments[i].m_tipPointList[j];
             if (m_AABB.xMin > vertex.x) m_AABB.xMin = vertex.x;
             if (m_AABB.xMax < vertex.x) m_AABB.xMax = vertex.x;
             if (m_AABB.yMin > vertex.y) m_AABB.yMin = vertex.y;
             if (m_AABB.yMax < vertex.y) m_AABB.yMax = vertex.y;
             if (m_AABB.zMin > vertex.z) m_AABB.zMin = vertex.z;
             if (m_AABB.zMax < vertex.z) m_AABB.zMax = vertex.z;
-            m_AABB.min = V3(m_AABB.xMin,m_AABB.yMin,m_AABB.zMin);
-            m_AABB.max = V3(m_AABB.xMax,m_AABB.yMax,m_AABB.zMax);
+            m_AABB.min = Base::Vector3(m_AABB.xMin,m_AABB.yMin,m_AABB.zMin);
+            m_AABB.max = Base::Vector3(m_AABB.xMax,m_AABB.yMax,m_AABB.zMax);
         }
     }
 

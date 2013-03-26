@@ -15,10 +15,9 @@
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  Intel does not
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
+#pragma once
 
-#ifndef _PlainTreeGrammar
-#define _PlainTreeGrammar
-#include "SpeciesGrammar.h"
+#include "Systems/ProceduralTrees/Trees/SpeciesGrammar.hpp"
 
 class PlainTree:Grammar 
 {
@@ -26,4 +25,4 @@ public:
     PlainTree();
     ~PlainTree();
 };
-#endif
+

@@ -89,6 +89,13 @@ namespace Base
 
         float             x;
         float             y;
+        
+        Vector2(float _x, float _y)
+        {
+            x = _x;
+            y = _y;
+        }
+
     };
 
 
@@ -97,6 +104,7 @@ namespace Base
     ///   Provides the functionality of a 3D vector.
     /// </summary>
     ////////////////////////////////////////////////////////////////////////////////////////////////
+    struct Matrix4x4;
 
     struct Vector3
     {
@@ -231,17 +239,6 @@ namespace Base
             return v;
         }
 
-
-        //Vector3 operator/(const float &v)const
-        //{
-        //    return Vector3(*this) /= v;
-        //}
-
-        //Vector3 operator*(const float &v)const
-        //{
-        //    return Vector3(*this) *= v;
-        //}
-
         /// <summary>
         ///   unary minus.
         /// </summary>
@@ -258,7 +255,7 @@ namespace Base
         /// <remarks>Inlined for performance.</remarks>
         /// <param name="Vector">The vector to multiply to this vector.</param>
         /// <returns>The new vector created by this operation.</returns>
-        Vector3 operator*( Vector3 Vector ) const
+        Vector3 operator*( const Vector3 &Vector ) const
         {
             Vector3 v(x * Vector.x, y * Vector.y, z * Vector.z);
             return v;
@@ -270,7 +267,8 @@ namespace Base
         /// <remarks>Inlined for performance.</remarks>
         /// <param name="Scalar">The scalar to multiply to this vector.</param>
         /// <returns>The new vector created by this operation.</returns>
-        Vector3 operator*( float Scalar ) const
+        
+        Vector3 operator*( const float Scalar ) const
         {
             Vector3 v(x * Scalar, y * Scalar, z * Scalar);
             return v;
@@ -365,6 +363,13 @@ namespace Base
             Vector3 r( y * a.z - z * a.y, z * a.x - x * a.z, x * a.y - y * a.x);
             return r;
         }
+        
+        Vector3 Cross ( const Vector3& v1, const Vector3& v2 ) 
+        {   
+            return Vector3 (( v1.y * v2.z ) - ( v1.z * v2.y ),
+                           ( v1.z * v2.x ) - ( v1.x * v2.z ),
+                           ( v1.x * v2.y ) - ( v1.y * v2.x ));
+        }
 
 
         /// <summary>
@@ -390,7 +395,8 @@ namespace Base
         {
             x = y = z = _v;
         }
-
+        
+        const Vector3& TransformCoord(Vector3& pout, const Vector3& pv, const Matrix4x4& pm);
 
         /// <summary>
         ///   Construct an uninitialized vector
@@ -892,6 +898,9 @@ namespace Base
         }
 
         float m[ 16 ];
+        
+        
+        const Matrix4x4& MatrixRotationAxis(Matrix4x4& pout, const Vector3& pv, float angle);        
     };
 
 

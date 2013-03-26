@@ -1,5 +1,6 @@
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
+#include "Base/Math.hpp"
 #include "Interfaces/Interface.hpp"
 #include "Systems/ProceduralTrees/Trees/Vertex.hpp"
 #include "Systems/ProceduralTrees/Trees/Tree.hpp"
@@ -68,12 +69,6 @@ TreeObject::~TreeObject(
     void
     )
 {
-    // Clean up static elements in Overseer class, and the object itself.
-    observer* Overseer = observer::Instance();
-    //SAFE_DELETE( Overseer->m_tree );
-    SAFE_DELETE( Overseer->DXRS );
-    SAFE_DELETE( Overseer );
-
     SAFE_DELETE( m_pPostedData );
 
     reinterpret_cast<TreeScene*>(GetSystemScene())->GetForest().remove(this);
@@ -127,24 +122,21 @@ TreeObject::Initialize( std::vector<Properties::Property> Properties )
             }
     }
 
-    observer *Overseer = observer::Instance();
-    ASSERT( Overseer != NULL );
-    DBG_UNREFERENCED_LOCAL_VAR( Overseer );
-    if (Overseer->DXRS) {delete Overseer->DXRS;}
-    Overseer->DXRS = new RenderStructure();
-    Overseer->DXRS->CurrentIndex    = 0;
-    Overseer->DXRS->CurrentVIndex   = 0;
-    Overseer->DXRS->ptrIBData;
-    Overseer->DXRS->BranchCount = 0;
-    Overseer->DXRS->ReverseWindingOrder = true;
+    if (observer::Instance().DXRS) {delete observer::Instance().DXRS;}
+    observer::Instance().DXRS = new RenderStructure();
+    observer::Instance().DXRS->CurrentIndex    = 0;
+    observer::Instance().DXRS->CurrentVIndex   = 0;
+    observer::Instance().DXRS->ptrIBData;
+    observer::Instance().DXRS->BranchCount = 0;
+    observer::Instance().DXRS->ReverseWindingOrder = true;
 
 
 
-    m_Tree = new Tree(m_GrammarType.c_str(),V3(m_Position.x,m_Position.y,m_Position.z),m_Seed);
+    m_Tree = new Tree(m_GrammarType.c_str(),Base::Vector3(m_Position.x,m_Position.y,m_Position.z));
 
     m_Tree->growTree();
     m_Tree->BoundingBox(m_Tree->m_nodeTree);
-    m_ObjectBoundingBox = Overseer->DXRS->AABB;
+    m_ObjectBoundingBox = observer::Instance().DXRS->aabb;
     if(m_PrimitiveType == Primitive_Branches)
     {
         m_Tree->BranchToList(m_Tree->m_nodeTree, &m_TreeNodeList);
@@ -155,11 +147,11 @@ TreeObject::Initialize( std::vector<Properties::Property> Properties )
     FillPostedData();
     
     reinterpret_cast<TreeScene*>(GetSystemScene())->GetForest().push_back(this);
-    Overseer->DXRS->CurrentIndex    = 0;
-    Overseer->DXRS->CurrentVIndex   = 0;
-    Overseer->DXRS->ptrIBData;
-    Overseer->DXRS->BranchCount = 0;
-    Overseer->DXRS->ReverseWindingOrder = true;
+    observer::Instance().DXRS->CurrentIndex    = 0;
+    observer::Instance().DXRS->CurrentVIndex   = 0;
+    observer::Instance().DXRS->ptrIBData;
+    observer::Instance().DXRS->BranchCount = 0;
+    observer::Instance().DXRS->ReverseWindingOrder = true;
 
     PostChanges( System::Changes::Graphics::AllMesh | System::Changes::Custom );
 
@@ -180,7 +172,7 @@ void TreeObject::FillPostedData(){
            PointPair * pp = new PointPair();
            pp->basePoint = (*i)->position;
            pp->extendPoint = (*i)->segments[(*i)->segmentCount-1].m_tipPointList[0];
-           pp->AABB = (*i)->AABB;
+           pp->aabb = (*i)->aabb;
            pp->burning = (*i)->burning;
            m_pPostedData->pointPairs.push_back(pp);           
         }
@@ -199,7 +191,7 @@ void TreeObject::FillPostedData(){
            pp->basePoint = *(cnpy->m_Canopy[((cnpy->m_width)/2) + ((cnpy->m_height)/2)*cnpy->m_width ]);
            pp->basis = cnpy->Basis;
            
-           pp->AABB = cnpy->m_AABB;
+           pp->aabb = cnpy->m_AABB;
            pp->burning = cnpy->m_burning;
            m_pPostedData->pointPairs.push_back(pp);           
 
@@ -284,7 +276,7 @@ TreeObject::ChangeOccurred(
     System::Changes::BitMask ChangeType
     )
 {
-   if ( ChangeType & (System::Changes::Custom) )
+   /*if ( ChangeType & (System::Changes::Custom) )
     {
                 //
         ISystemObject* pSysObj = dynamic_cast<ISystemObject*>(pSubject);
@@ -302,7 +294,7 @@ TreeObject::ChangeOccurred(
             UNREFERENCED_PARAM(pTreeObj);
         }
 
-    }
+    }*/
 
     return Errors::Success;
 }
@@ -363,9 +355,9 @@ TreeObject::GetVertexDeclaration(
     static const u32 Size = sizeof (VertexDecl::Element) * NUM_VERTEXDECL_ELEMENTS;
     static const VertexDecl::Element Decl[ NUM_VERTEXDECL_ELEMENTS ] =
     {
-        { VertexDecl::Type ::Float3, VertexDecl::Usage::Position, 0 },
-        { VertexDecl::Type ::Float3, VertexDecl::Usage::Normal, 0 },
-        { VertexDecl::Type ::Float2, VertexDecl::Usage::Texture, 0 },
+        { VertexDecl::Type ::Float3, VertexDecl::Usage::Position, 0, 0 },
+        { VertexDecl::Type ::Float3, VertexDecl::Usage::Normal, 0, 0 },
+        { VertexDecl::Type ::Float2, VertexDecl::Usage::Texture, 0, 0 },
     };
 
     ::memcpy_s( pVertexDecl, Size, Decl, Size );
@@ -425,18 +417,15 @@ TreeObject::GetIndices(
     // Ignored as we use only one SubMesh
     UNREFERENCED_PARAM( nSubMeshIndex );
 
-    observer *Overseer = observer::Instance();
-    ASSERT( Overseer != NULL );
-    DBG_UNREFERENCED_LOCAL_VAR( Overseer );
     //added code
-    Overseer->DXRS->CurrentIndex    = 0;
-    Overseer->DXRS->CurrentVIndex   = 0;
-    Overseer->DXRS->ptrIBData;
-    Overseer->DXRS->BranchCount = 0;
-    Overseer->DXRS->ReverseWindingOrder = true;
+    observer::Instance().DXRS->CurrentIndex    = 0;
+    observer::Instance().DXRS->CurrentVIndex   = 0;
+    observer::Instance().DXRS->ptrIBData;
+    observer::Instance().DXRS->BranchCount = 0;
+    observer::Instance().DXRS->ReverseWindingOrder = true;
     //end added Code
-    Overseer->DXRS->ptrIBData = reinterpret_cast<WORD*>(pIndices);
-    Overseer->DXRS->vpnt = NULL;
+    observer::Instance().DXRS->ptrIBData = reinterpret_cast<std::uint16_t*>(pIndices);
+    observer::Instance().DXRS->vpnt = NULL;
     if(m_PrimitiveType == Primitive_Branches)
     {
         m_Tree->fillBranches( m_Tree->m_nodeTree );
@@ -467,19 +456,16 @@ TreeObject::GetVertices(
     UNREFERENCED_PARAM( pVertexDecl );
     UNREFERENCED_PARAM( nVertexDeclCount );
 
-    observer *Overseer = observer::Instance();
-    ASSERT( Overseer != NULL );
-    DBG_UNREFERENCED_LOCAL_VAR( Overseer );
     //added code
-    Overseer->DXRS->CurrentIndex    = 0;
-    Overseer->DXRS->CurrentVIndex   = 0;
-    Overseer->DXRS->ptrIBData;
-    Overseer->DXRS->BranchCount = 0;
-    Overseer->DXRS->ReverseWindingOrder = true;
+    observer::Instance().DXRS->CurrentIndex    = 0;
+    observer::Instance().DXRS->CurrentVIndex   = 0;
+    observer::Instance().DXRS->ptrIBData;
+    observer::Instance().DXRS->BranchCount = 0;
+    observer::Instance().DXRS->ReverseWindingOrder = true;
     //end added Code
 
-    Overseer->DXRS->ptrIBData = NULL;
-    Overseer->DXRS->vpnt = reinterpret_cast<VertexPNT*>(pVertices);
+    observer::Instance().DXRS->ptrIBData = NULL;
+    observer::Instance().DXRS->vpnt = reinterpret_cast<VertexPNT*>(pVertices);
     if(m_PrimitiveType == Primitive_Branches)
     {
         m_Tree->fillBranches( m_Tree->m_nodeTree );
@@ -500,13 +486,13 @@ TreeObject::GetAABB(
     //observer *Overseer = observer::Instance();
     //ASSERT( Overseer != NULL );
 
-    //Min.x = Overseer->DXRS->AABB.xMin;
-    //Min.y = Overseer->DXRS->AABB.yMin;
-    //Min.z = Overseer->DXRS->AABB.zMin;
+    //Min.x = observer::Instance().DXRS->AABB.xMin;
+    //Min.y = observer::Instance().DXRS->AABB.yMin;
+    //Min.z = observer::Instance().DXRS->AABB.zMin;
 
-    //Max.x = Overseer->DXRS->AABB.xMax;
-    //Max.y = Overseer->DXRS->AABB.yMax;
-    //Max.z = Overseer->DXRS->AABB.zMax;
+    //Max.x = observer::Instance().DXRS->AABB.xMax;
+    //Max.y = observer::Instance().DXRS->AABB.yMax;
+    //Max.z = observer::Instance().DXRS->AABB.zMax;
     Min.x = m_ObjectBoundingBox.xMin;
     Min.y = m_ObjectBoundingBox.yMin;
     Min.z = m_ObjectBoundingBox.zMin;

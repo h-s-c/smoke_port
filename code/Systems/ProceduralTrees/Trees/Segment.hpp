@@ -16,10 +16,9 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
 
-#ifndef _Segment
-#define _Segment
+#pragma once
 //#define TipPointCount 11
-#include "vector3.h"
+
 enum SegmentType {INITIAL_SEGMENT=0x01, BASIC_SEGMENT=0x10, ONLY_SEGMENT=0x100, TIP_SEGMENT=0x1000};
 
 class Segment {
@@ -27,14 +26,13 @@ public:
     Segment(){};
     ~Segment();
     Segment(float baseWidth, float tipWidth);
-	void initialize(int tpc);
-    V3 *m_tipPointList;//1 center point c0 and 6 rim points p0-p0''''', tps change
-    V3 m_AxisHeading; // unlike the branch heading this is the normal from the plane of the tipPointList
-    V3 m_pointOHeading; // the Normal vector between the center c0 and the rim point p0.
+    void initialize(std::int32_t tpc);
+    Base::Vector3 *m_tipPointList;//1 center point c0 and 6 rim points p0-p0''''', tps change
+    Base::Vector3 m_AxisHeading; // unlike the branch heading this is the normal from the plane of the tipPointList
+    Base::Vector3 m_pointOHeading; // the Normal vector between the center c0 and the rim point p0.
     SegmentType m_type; 
     float m_base; // radius: information comes from previous segment
     float m_tip;  // radius
-	int m_tipPointCount;
+    std::int32_t m_tipPointCount;
 private:
 };
-#endif

@@ -573,8 +573,14 @@ OGREGraphicsObjectMesh::ChangeOccurred(
             //
             // Create the mesh and an accompanying sub-mesh.
             //
-            pMesh =
-                Ogre::MeshManager::getSingleton().createManual( szMeshName, "ProceduralMeshes" );
+            if (!Ogre::ResourceGroupManager::getSingleton().resourceGroupExists("ProceduralMeshes"))
+            {
+                Ogre::ResourceGroupManager::getSingleton().createResourceGroup("ProceduralMeshes");
+                Ogre::ResourceGroupManager::getSingleton().initialiseResourceGroup("ProceduralMeshes");
+    
+            }
+            
+            pMesh = Ogre::MeshManager::getSingleton().createManual( szMeshName, "ProceduralMeshes" );
 
             Ogre::SubMesh* pSubMesh = pMesh->createSubMesh(); // Lock it, see THREAD SAFETY NOTE above
 

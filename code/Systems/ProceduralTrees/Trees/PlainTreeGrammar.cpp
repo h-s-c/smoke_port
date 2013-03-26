@@ -16,45 +16,48 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
 
-#include "PlainTreeGrammar.h"
-#include "math.h"
+#include "Base/Compat.hpp"
+#include "Base/Platform.hpp"
+#include "Base/Math.hpp"
+#include "Interfaces/Interface.hpp"
+#include "Systems/ProceduralTrees/Trees/PlainTreeGrammar.hpp"
 
 /*
-Probability	Split 	Axial Bias	Segment Length	Segment Diameter	DropAngle	Trajectory	    Taper
+Probability Split   Axial Bias  Segment Length  Segment Diameter    DropAngle   Trajectory      Taper
 -----------------------------------------------------------------------------------------------------
-Level 0						
-5	        2	    30-330	    10	            6	                35[B]-80	0-20 (bias up)	0.25
-5	        2	  				            
-5	        3					            
-85	        2					            
-Probability	Split 	Axial Bias	Segment Length	Segment Diameter	DropAngle	Trajectory	    Taper
+Level 0                     
+5           2       30-330      10              6                   35[B]-80    0-20 (bias up)  0.25
+5           2                               
+5           3                               
+85          2                               
+Probability Split   Axial Bias  Segment Length  Segment Diameter    DropAngle   Trajectory      Taper
 -----------------------------------------------------------------------------------------------------
-Level 1				30-330		               
-5	        2	  		        7               5	                35[B]-50	0-35	        0.20
-5	        2		                               	                		
-25	        3		                               	                		
-60	        2		                               	                		
-5	        3		                               	                		
-Probability	Split 	Axial Bias	Segment Length	Segment Diameter	DropAngle	Trajectory	    Taper
+Level 1             30-330                     
+5           2                   7               5                   35[B]-50    0-35            0.20
+5           2                                                               
+25          3                                                               
+60          2                                                               
+5           3                                                               
+Probability Split   Axial Bias  Segment Length  Segment Diameter    DropAngle   Trajectory      Taper
 -----------------------------------------------------------------------------------------------------------
-Level 2				30-330                               	                	
-0	        1		            6               4	                35[b]-50	0-20	        0.33
-0	        1		                               	                		
-100	        2		                               	                		
-Probability	Split 	Axial Bias	Segment Length	Segment Diameter	DropAngle	Trajectory	    Taper
+Level 2             30-330                                                      
+0           1                   6               4                   35[b]-50    0-20            0.33
+0           1                                                               
+100         2                                                               
+Probability Split   Axial Bias  Segment Length  Segment Diameter    DropAngle   Trajectory      Taper
 -----------------------------------------------------------------------------------------------------------
-Level 3				30-330                               	                	
-0	        1		            4               3	                55-70	    0-10	        0.50
-100	        2		                               	                		    
-Probability	Split 	Axial Bias	Segment Length	Segment Diameter	DropAngle	Trajectory	    Taper
+Level 3             30-330                                                      
+0           1                   4               3                   55-70       0-10            0.50
+100         2                                                                   
+Probability Split   Axial Bias  Segment Length  Segment Diameter    DropAngle   Trajectory      Taper
 -----------------------------------------------------------------------------------------------------------
-Level 4				30-330                               	                	
-0	        1		            3               2	                70-90	    0-5	            0.0
-0	        1					
-Probability	Split 	Axial Bias	Segment Length	Segment Diameter	DropAngle	Trajectory	    Taper
+Level 4             30-330                                                      
+0           1                   3               2                   70-90       0-5             0.0
+0           1                   
+Probability Split   Axial Bias  Segment Length  Segment Diameter    DropAngle   Trajectory      Taper
 --------------------------------------------------------------------------------------------------
-Level 5				30-330			
-	        leaf						
+Level 5             30-330          
+            leaf                        
 
 ' convert from degrees to radians
 
@@ -71,7 +74,7 @@ PlainTree::PlainTree()
     m_pLevels = new LevelDetail[6];
     m_levelCount = 6;
     //level 0
-	m_pLevels[0].tipPointCount = 11;
+    m_pLevels[0].tipPointCount = 11;
     m_pLevels[0].AxialBias.maxAngle = 330.0f / RadianDegree; //convert to radians
     m_pLevels[0].AxialBias.minAngle = 30.0f / RadianDegree;
     m_pLevels[0].length = 10.0f;
@@ -81,7 +84,7 @@ PlainTree::PlainTree()
     m_pLevels[0].dropAngle.minAngle = 35.0f / RadianDegree;
     m_pLevels[0].dropAngle.maxAngle = 80.0f / RadianDegree;
     m_pLevels[0].dropAngle.biasAngle = 50.0f / RadianDegree;
-    m_pLevels[0].heading.Heading = V3(0.0,1.0,0.0);
+    m_pLevels[0].heading.Heading = Base::Vector3(0.0,1.0,0.0);
     m_pLevels[0].heading.biasRange.minAngle = -35.0f/ RadianDegree;
     m_pLevels[0].heading.biasRange.maxAngle = 35.0f / RadianDegree;
     m_pLevels[0].splitList = new split[4];
@@ -102,7 +105,7 @@ PlainTree::PlainTree()
 //    levels[0].splitList[4].splitCount = ;
     
     //level 1
-	m_pLevels[1].tipPointCount = 11;
+    m_pLevels[1].tipPointCount = 11;
     m_pLevels[1].AxialBias.maxAngle = 330.0f / RadianDegree; //convert to radians
     m_pLevels[1].AxialBias.minAngle = 30.0f / RadianDegree;
     m_pLevels[1].length = 7.0f;
@@ -134,7 +137,7 @@ PlainTree::PlainTree()
     m_pLevels[1].cnpyType = canopyType::NULL_CANOPY;
     
     //level 2
-	m_pLevels[2].tipPointCount = 11;
+    m_pLevels[2].tipPointCount = 11;
     m_pLevels[2].AxialBias.maxAngle = 330.0f / RadianDegree; //convert to radians
     m_pLevels[2].AxialBias.minAngle = 30.0f / RadianDegree;
     m_pLevels[2].length = 6.0;
@@ -160,7 +163,7 @@ PlainTree::PlainTree()
     m_pLevels[2].cnpyType = canopyType::NULL_CANOPY;
 
     //level 3
-	m_pLevels[3].tipPointCount = 11;
+    m_pLevels[3].tipPointCount = 11;
     m_pLevels[3].AxialBias.maxAngle = 330.0f / RadianDegree; //convert to radians
     m_pLevels[3].AxialBias.minAngle = 30.0f / RadianDegree;
     m_pLevels[3].length = 4.0f;
@@ -183,7 +186,7 @@ PlainTree::PlainTree()
     m_pLevels[3].cnpyType = canopyType::NULL_CANOPY;
 
     //level 4
-	m_pLevels[4].tipPointCount = 11;
+    m_pLevels[4].tipPointCount = 11;
     m_pLevels[4].AxialBias.maxAngle = 330.0f / RadianDegree; //convert to radians
     m_pLevels[4].AxialBias.minAngle = 30.0f / RadianDegree;
     m_pLevels[4].length = 3.0f;

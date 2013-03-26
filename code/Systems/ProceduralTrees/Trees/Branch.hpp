@@ -15,17 +15,14 @@
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  Intel does not
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
-
-
-class Branch;
-class BranchBase;
+#pragma once
 
 #include "Systems/ProceduralTrees/Trees/SpeciesGrammar.hpp"
 #include "Systems/ProceduralTrees/Trees/Segment.hpp"
 #include "Systems/ProceduralTrees/Trees/Observer.hpp"
 #include "Systems/ProceduralTrees/Trees/Canopy.hpp"
-#include "Systems/Common/AABB.hpp"
 
+struct AABB;
 struct treeNode;
 class Canopy;
 class BranchBase 
@@ -62,6 +59,7 @@ public:
     Branch(int level, Base::Vector3 basePosition);
     void growBranch(Branch *pBranch, treeNode *ctreeNode, Grammar *grammar,Base::Vector3 startHeading);
     virtual Branch *CreateNextBranch(int level, Base::Vector3 basePosition);
+    virtual ~Branch(){};
     void calcSegmentDepth(LevelDetail * levelGrammar);
     AABB setAABB();
 
@@ -75,7 +73,7 @@ public:
 //    branchNode *nodeBranch;
     float m_dropAngle; //angle from previous branch. Could actually be upward so name could be missleading
     LevelDetail *m_pSpeciesLevelGrammar; //just the facts needed for this branch. no sense dragging the whole grammar along
-    AABB m_aabb;
+    AABB m_AABB;
 protected:
     Branch(){};
 };

@@ -16,7 +16,11 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
 
-#include "segment.h"
+#include "Base/Compat.hpp"
+#include "Base/Platform.hpp"
+#include "Base/Math.hpp"
+#include "Interfaces/Interface.hpp"
+#include "Systems/ProceduralTrees/Trees/Segment.hpp"
 
 Segment::Segment(float baseWidth, float tipWidth)
 {
@@ -25,9 +29,9 @@ Segment::Segment(float baseWidth, float tipWidth)
 
 }
 
-void Segment::initialize(int tpc)
+void Segment::initialize(std::int32_t tpc)
 {
-	m_tipPointList = new V3[tpc];
+    m_tipPointList = new Base::Vector3[tpc];
 }
 
 Segment::~Segment()

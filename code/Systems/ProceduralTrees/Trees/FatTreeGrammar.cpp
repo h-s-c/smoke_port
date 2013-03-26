@@ -16,6 +16,10 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
 
+#include "Base/Compat.hpp"
+#include "Base/Platform.hpp"
+#include "Base/Math.hpp"
+#include "Interfaces/Interface.hpp"
 #include "Systems/ProceduralTrees/Trees/FatTreeGrammar.hpp"
 /*
 Probability Split   Split Type  DropAngle   Axial Bias  Segment Length  Segment Diameter    Wobble          Taper
@@ -86,7 +90,7 @@ FatTree::FatTree()
     //levels[0].dropAngle.minAngle = 10.0f / RadianDegree;
     //levels[0].dropAngle.maxAngle = 25.0f / RadianDegree;
     m_pLevels[0].dropAngle.biasAngle = 50.0f / RadianDegree;
-    m_pLevels[0].heading.Heading = V3(0.0,1.0,0.0);
+    m_pLevels[0].heading.Heading = Base::Vector3(0.0,1.0,0.0);
     m_pLevels[0].heading.biasRange.minAngle = -5.0f/ RadianDegree;
     m_pLevels[0].heading.biasRange.maxAngle = 5.0f / RadianDegree;
     m_pLevels[0].splitList = new split[4];

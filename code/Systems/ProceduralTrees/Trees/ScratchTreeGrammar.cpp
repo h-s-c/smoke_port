@@ -16,20 +16,24 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
 
-#include "ScratchTreeGrammar.h"
-#include "math.h"
+#include "Base/Compat.hpp"
+#include "Base/Platform.hpp"
+#include "Base/Math.hpp"
+#include "Interfaces/Interface.hpp"
+#include "Systems/ProceduralTrees/Trees/ScratchTreeGrammar.hpp"
+
 /*
-Probability	Split 	Split Type	DropAngle	Axial Bias	Segment Length	Segment Diameter	Wobble	        Taper
------------------	----------  ---------   ----------  --------------  ----------------    -------------   -------
-Level        0								   
-5	         3        general	45-80	    30-330	        10	            2	            0-20 	        0.25
-5	         2        Square		  			            	                            (bias up)
-25	         3        Opposed					            	
-0	         1        						
-0	         1        						
-10	         3        Opposed						
-55	         2        					            	
-Probability	Split 		        DropAngle	Axial Bias	Segment Length	Segment Diameter	Trajectory	    Taper
+Probability Split   Split Type  DropAngle   Axial Bias  Segment Length  Segment Diameter    Wobble          Taper
+-----------------   ----------  ---------   ----------  --------------  ----------------    -------------   -------
+Level        0                                 
+5            3        general   45-80       30-330          10              2               0-20            0.25
+5            2        Square                                                                (bias up)
+25           3        Opposed                                   
+0            1                              
+0            1                              
+10           3        Opposed                       
+55           2                                          
+Probability Split               DropAngle   Axial Bias  Segment Length  Segment Diameter    Trajectory      Taper
 
 */
 
@@ -39,7 +43,7 @@ ScratchTree::ScratchTree()
     m_pLevels = new LevelDetail[3];
     m_levelCount = 3;
     //level 0
-	m_pLevels[0].tipPointCount = 13;
+    m_pLevels[0].tipPointCount = 13;
     m_pLevels[0].AxialBias.maxAngle = 330.0f / RadianDegree; //convert to radians
     m_pLevels[0].AxialBias.minAngle = 30.0f / RadianDegree;
     m_pLevels[0].length = 10.0f;
@@ -51,7 +55,7 @@ ScratchTree::ScratchTree()
     //levels[0].dropAngle.minAngle = 10.0f / RadianDegree;
     //levels[0].dropAngle.maxAngle = 25.0f / RadianDegree;
     m_pLevels[0].dropAngle.biasAngle = 50.0f / RadianDegree;
-    m_pLevels[0].heading.Heading = V3(0.0,1.0,0.0);
+    m_pLevels[0].heading.Heading = Base::Vector3(0.0,1.0,0.0);
     m_pLevels[0].heading.biasRange.minAngle = -5.0f/ RadianDegree;
     m_pLevels[0].heading.biasRange.maxAngle = 5.0f / RadianDegree;
     m_pLevels[0].splitList = new split[2];
@@ -68,7 +72,7 @@ ScratchTree::ScratchTree()
 //    levels[0].splitList[4].splitCount = ;
     
     //level 1
-	m_pLevels[1].tipPointCount = 11;
+    m_pLevels[1].tipPointCount = 11;
     m_pLevels[1].AxialBias.maxAngle = 330.0f / RadianDegree; //convert to radians
     m_pLevels[1].AxialBias.minAngle = 30.0f / RadianDegree;
     m_pLevels[1].length = 7.0f;

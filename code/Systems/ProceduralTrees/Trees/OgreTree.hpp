@@ -3,14 +3,13 @@
 // Part of Tree Grammar Structure for creating procedural trees 
 // Created for Nehalem Demo to be compatable with OGRE Rendering methodologies
 
-
-#include "Tree.h"
+#include "Systems/ProceduralTrees/Trees/Tree.hpp"
 
 class OgreTree : public Tree {
 public: 
-    OgreTree(Grammar *theGrammar, V3 position, long seed);
-    ~OgreTree();
-    virtual branch* createTrunk(int level, V3 basePosition);
+    OgreTree(std::string grammarName, Base::Vector3 position){}
+    ~OgreTree(){}
+    virtual Branch* createTrunk(int level, Base::Vector3 basePosition);
 private:
     OgreTree(){};
 };

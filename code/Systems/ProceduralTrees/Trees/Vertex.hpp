@@ -4,16 +4,8 @@
 // This file contains all of our vertex structures.  We will add to it
 // as needed throughout the book.
 //=============================================================================
-#include <d3dx9.h>
+#pragma once
 
-#ifndef VERTEX_H
-#define VERTEX_H
-
-
-
-// Call in constructor and destructor, respectively, of derived application class.
-void InitAllVertexDeclarations();
-//void DestroyAllVertexDeclarations();
 enum VertexType {VP, VC, VPN, VPNT};
 
 //===============================================================
@@ -29,12 +21,12 @@ struct VertexPos
 //===============================================================
 struct VertexCol
 {
-    VertexCol():pos(0.0f, 0.0f, 0.0f),col(0x00000000){}
-    VertexCol(float x, float y, float z, D3DCOLOR c):pos(x,y,z), col(c){}
-    VertexCol(const D3DXVECTOR3& v, D3DCOLOR c):pos(v),col(c){}
+    VertexCol():pos(0.0f, 0.0f, 0.0f),col(Base::Color4::Black){}
+    VertexCol(float x, float y, float z, Base::Color4 c):pos(x,y,z), col(c){}
+    VertexCol(const Base::Vector3& v, Base::Color4 c):pos(v),col(c){}
 
-    D3DXVECTOR3 pos;
-    D3DCOLOR    col;
+    Base::Vector3 pos;
+    Base::Color4  col;
 };
 
 //===============================================================
@@ -58,16 +50,16 @@ struct VertexPNT
     VertexPNT()
         :pos(0.0f, 0.0f, 0.0f),
         normal(0.0f, 0.0f, 0.0f),
-        tex0(0.0f, 0.0f){}
+        tex0(Base::Vector2::Zero){}
     VertexPNT(float x, float y, float z, 
         float nx, float ny, float nz,
         float u, float v):pos(x,y,z), normal(nx,ny,nz), tex0(u,v){}
-    VertexPNT(const Base::Vector3& v, const Base::Vector3& n, const D3DXVECTOR2& uv)
+    VertexPNT(const Base::Vector3& v, const Base::Vector3& n, const Base::Vector2& uv)
         :pos(v),normal(n), tex0(uv){}
 
     Base::Vector3 pos;
     Base::Vector3 normal;
-    D3DXVECTOR2 tex0;
+    Base::Vector2 tex0;
 };
 
 //===============================================================
@@ -79,8 +71,6 @@ struct Particle
     float           initialTime;
     float           lifeTime;
     float           mass;
-    D3DCOLOR        initialColor;
+    Base::Color4    initialColor;
 
 };
-
-#endif // VERTEX_H

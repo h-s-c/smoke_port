@@ -15,16 +15,9 @@
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  Intel does not
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
+#pragma once
 
-#ifndef _SpeciesGrammar
-#define _SpeciesGrammar
-#include "Vector3.h"
 #include <string>
-
-#pragma warning( push )
-#pragma warning( disable : 4635 6011 )
-#include "TinyXml.h"
-#pragma warning( pop )
 
 #define RadianDegree (float)57.29578
 
@@ -43,7 +36,7 @@ enum splitType {ORDINARY, REPEAT_ORDINARY, SQUARE, OPPOSED, UNIFORM, SPEAR,
                 REPEAT_SQUARE, REPEAT_OPPOSED, CANOPY, ORDINARY_CANOPY, REPEAT_CANOPY};
 
 struct split{
-    int splitCount;
+    std::int32_t splitCount;
     float probability;
     splitType type;
 };
@@ -55,35 +48,35 @@ struct range{
 };
 
 struct plumbBias{
-    V3 biasDirection;
+    Base::Vector3 biasDirection;
     range biasRange;
 };
 
 struct HeadingBias{
-    V3 Heading;
+    Base::Vector3 Heading;
     range biasRange;
 };
 
 struct CanopyDefinition{
     canopyType cnpyType;
-    int patchWidth;
-    int patchHeight;
+    std::int32_t patchWidth;
+    std::int32_t patchHeight;
     float hexRadius;
 };
 
 struct LevelDetail {
 
-    int LevelID;
+    std::int32_t LevelID;
     split *splitList;
     HeadingBias heading;
     range dropAngle;
     range AxialBias;
     float diameter; //radius
     float length; //radius
-    int maxSegmentCount;
+    std::int32_t maxSegmentCount;
     float taper; 
     float perturbFactor;
-	int tipPointCount;
+    std::int32_t tipPointCount;
     branchType brnchType;
     canopyType cnpyType;
 };
@@ -92,17 +85,16 @@ struct LevelDetail {
 class Grammar {
 public:
     LevelDetail *m_pLevels;
-    int m_levelCount;
+    std::int32_t m_levelCount;
     std::string m_species;
-	std::string m_filename;
+    std::string m_filename;
     treeType m_type;
     Grammar(){ 
     };
-	Grammar(std::string fn){ 
-		m_filename = fn;
-		loadLevel(m_filename);
-	};
-	void loadLevel(std::string filename);
+    Grammar(std::string fn){ 
+        m_filename = fn;
+        loadLevel(m_filename);
+    };
+    void loadLevel(std::string filename);
     LevelDetail *m_pCurrentLevel;
 };
-#endif

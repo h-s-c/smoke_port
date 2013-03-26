@@ -29,12 +29,15 @@
 //
 #pragma once
 
-#include "Systems/Common/AABB.h"
+#include "Systems/Common/AABB.hpp"
 #include "Systems/ProceduralTrees/Trees/Vertex.hpp"
-#include "Systems/ProceduralTrees/Trees/Branch.hpp"
-#include "Systems/ProceduralTrees/Trees/Tree.hpp"
 #include <cstdlib>
+#include <cstdint>
 #include <vector>
+#include <memory>
+#include <mutex>
+#include <random>
+
 
 class observer;
 
@@ -42,35 +45,66 @@ struct RenderStructure {
     VertexType type;    
     VertexPos *vpos;  //vertex buffer pointer
     VertexPNT *vpnt;  //vertex buffer pointer
-    WORD *ptrIBData;  //index buffer pointer
-    DWORD CurrentIndex;
-    DWORD CurrentVIndex; 
-    WORD BranchCount;
+    std::uint16_t *ptrIBData;  //index buffer pointer
+    std::uint32_t CurrentIndex;
+    std::uint32_t CurrentVIndex; 
+    std::uint16_t BranchCount;
     bool ReverseWindingOrder;
     AABB aabb;
 };
 
+class Tree;
+class BranchBase;
+class observer 
+{
+    // Singleton
+    static std::shared_ptr<observer> instance_;
+    static std::once_flag                   only_one;
+     
+    observer(const observer& rs) {
+        instance_  = rs.instance_;
+    }
+ 
+    observer& operator = (const observer& rs) 
+    {
+        if (this != &rs) {
+            instance_  = rs.instance_;
+        }
+ 
+        return *this;
+    }
 
-class observer {
+    observer() {}
+    
 public:
-    static observer * Instance();
-    static RenderStructure *DXRS;
-    void BoundingBox(V3 vertex);
 
-    int addVertex(VertexType type, V3 vertex, V3 normal, V3 theTexture);
-    void addIndexes(WORD a, WORD b, WORD c);
+    static observer& Instance() 
+    {
+        std::call_once( observer::only_one, [] () 
+        { 
+            observer::instance_.reset( 
+                new observer()); 
+        });
+ 
+        return *observer::instance_;
+    }
+    
+    ~observer() {}
+
+    static RenderStructure *DXRS;
+    void BoundingBox(Base::Vector3 vertex);
+
+    int addVertex(VertexType type, Base::Vector3 vertex, Base::Vector3 normal, Base::Vector3 theTexture);
+    void addIndexes(std::uint16_t a, std::uint16_t b, std::uint16_t c);
     float randf(float f);//defaults to number between 0(inclusive)-1(exclusive) 
     float randf(float min, float max);
-    int randi(unsigned int i);
-    int randi(int min, int max);
-    void seed(unsigned int theSeed);
+    std::int32_t randi(std::int32_t i);
+    std::int32_t randi(std::int32_t min, std::int32_t max);
     Tree *m_tree;
     BranchBase *m_SoughtAfterBranch;
     bool m_branchFound;
     
-protected:
-    observer(){};
-private:
-    static observer* _instance;
+  private:
+    std::default_random_engine m_randomEngine;
     
 };

@@ -16,42 +16,49 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
 
+#include "Base/Compat.hpp"
+#include "Base/Platform.hpp"
+#include "Base/Math.hpp"
+#include "Interfaces/Interface.hpp"
+#include "Systems/ProceduralTrees/Trees/Tree.hpp"
 #include "Systems/ProceduralTrees/Trees/Canopy.hpp"
+
+#include <limits>
 
 void Canopy::heading(Base::Vector3 Heading)
 {
     AxisHeading = Heading;
 }
 
-aabb Canopy::setAABB(){
-    m_aabb.xMin = FLT_MAX;
-    m_aabb.yMin = FLT_MAX;
-    m_aabb.zMin = FLT_MAX;
-    m_aabb.xMax = -FLT_MAX;
-    m_aabb.yMax = -FLT_MAX;
-    m_aabb.zMax = -FLT_MAX;
-    m_aabb.max = Base::Vector3(m_aabb.xMax,
-                  m_aabb.yMax,
-                  m_aabb.zMax);
-    m_aabb.min = Base::Vector3(m_aabb.xMin,
-                  m_aabb.yMin,
-                  m_aabb.zMin);
+AABB Canopy::setAABB(){
+    m_AABB.xMin = std::numeric_limits<float>::max();
+    m_AABB.yMin = std::numeric_limits<float>::max();
+    m_AABB.zMin = std::numeric_limits<float>::max();
+    m_AABB.xMax = -std::numeric_limits<float>::max();
+    m_AABB.yMax = -std::numeric_limits<float>::max();
+    m_AABB.zMax = -std::numeric_limits<float>::max();
+    m_AABB.max = Base::Vector3(m_AABB.xMax,
+                  m_AABB.yMax,
+                  m_AABB.zMax);
+    m_AABB.min = Base::Vector3(m_AABB.xMin,
+                  m_AABB.yMin,
+                  m_AABB.zMin);
     std::vector<Base::Vector3*>::iterator it,itend;
     it = m_Canopy.begin();
     itend = m_Canopy.end();
     for(it;it!=itend;it++){
             Base::Vector3 vertex = *(*it);
-            if (m_aabb.xMin > vertex.x) m_aabb.xMin = vertex.x;
-            if (m_aabb.xMax < vertex.x) m_aabb.xMax = vertex.x;
-            if (m_aabb.yMin > vertex.y) m_aabb.yMin = vertex.y;
-            if (m_aabb.yMax < vertex.y) m_aabb.yMax = vertex.y;
-            if (m_aabb.zMin > vertex.z) m_aabb.zMin = vertex.z;
-            if (m_aabb.zMax < vertex.z) m_aabb.zMax = vertex.z;
-            m_aabb.min = Base::Vector3(m_aabb.xMin,m_aabb.yMin,m_aabb.zMin);
-            m_aabb.max = Base::Vector3(m_aabb.xMax,m_aabb.yMax,m_aabb.zMax);
+            if (m_AABB.xMin > vertex.x) m_AABB.xMin = vertex.x;
+            if (m_AABB.xMax < vertex.x) m_AABB.xMax = vertex.x;
+            if (m_AABB.yMin > vertex.y) m_AABB.yMin = vertex.y;
+            if (m_AABB.yMax < vertex.y) m_AABB.yMax = vertex.y;
+            if (m_AABB.zMin > vertex.z) m_AABB.zMin = vertex.z;
+            if (m_AABB.zMax < vertex.z) m_AABB.zMax = vertex.z;
+            m_AABB.min = Base::Vector3(m_AABB.xMin,m_AABB.yMin,m_AABB.zMin);
+            m_AABB.max = Base::Vector3(m_AABB.xMax,m_AABB.yMax,m_AABB.zMax);
     }
 
-    return m_aabb;
+    return m_AABB;
 
 }
 
@@ -59,10 +66,8 @@ aabb Canopy::setAABB(){
 // a canopy is defined.  To create the patch we need to know what the drop angle will be. This is calculated based on the established 
 // grammar drop angle along with the fulcrum calculation for the tree.  The patch will not be flat but will be perturbed from the plane in
 // a random way based on a given weight factor for perturbation.  
-void Canopy::growPatchSegment(treeNode *rootOfTree, BranchBase *pCanopyBranch,aabb TreeBoundingBox, LevelDetail *grammar, Base::Vector3 startHeading)
+void Canopy::growPatchSegment(treeNode *rootOfTree, BranchBase *pCanopyBranch,AABB TreeBoundingBox, LevelDetail *grammar, Base::Vector3 startHeading)
 {
-    
-    theOverseer = observer::Instance();
     //int cwidth =9;
     //int cheight =9;
     //float m_widthStep =1;
@@ -81,12 +86,12 @@ void Canopy::growPatchSegment(treeNode *rootOfTree, BranchBase *pCanopyBranch,aa
     CanopyHeading.Normalize();
     Base::Vector3 CanopyArbitrary(CanopySegmentRoot-root);
     CanopyArbitrary.Normalize();
-    Base::Vector3 Left = CrossProduct(CanopyArbitrary,CanopyHeading);
-    Base::Vector3 Right = CrossProduct(CanopyHeading,CanopyArbitrary);
+    Base::Vector3 Left = CanopyArbitrary.Cross(CanopyHeading);
+    Base::Vector3 Right = CanopyHeading.Cross(CanopyArbitrary);
     Left.Normalize();
     Right.Normalize();
-    Base::Vector3 Down = CrossProduct(Left,CanopyHeading);
-    Base::Vector3 Up = CrossProduct(CanopyHeading,Left);
+    Base::Vector3 Down = Left.Cross(CanopyHeading);
+    Base::Vector3 Up = CanopyHeading.Cross(Left);
     float perturbFactor = grammar->perturbFactor;
     Base::Vector3 perturb = CanopyHeading;
     Down.Normalize();
@@ -98,9 +103,9 @@ void Canopy::growPatchSegment(treeNode *rootOfTree, BranchBase *pCanopyBranch,aa
     float nudge =0.0f;
     for(int j=0;j<m_height;j++){
         for(int i=0;i<m_width;i++){
-            nudge = theOverseer->randf(-(perturbFactor),(perturbFactor));
+            nudge = observer::Instance().randf(-(perturbFactor),(perturbFactor));
             perturb = perturb * nudge;
-            Base::Vector3 tcb = pCanopyBranch->tipPoint + ((i+shift)*m_widthStep)* Left + (j*m_heightStep)*Down;
+            Base::Vector3 tcb = pCanopyBranch->tipPoint + (Left * (i+shift * m_widthStep)) + (Down * j * this->m_heightStep);
             Base::Vector3 *cb;
             if(!(j==0&&i==(m_width/2))){
                 tcb = tcb + perturb;
@@ -112,18 +117,16 @@ void Canopy::growPatchSegment(treeNode *rootOfTree, BranchBase *pCanopyBranch,aa
             perturb = CanopyHeading;
         }
     }
-    theOverseer = observer::Instance();
-    m_startIndex = theOverseer->DXRS->CurrentIndex;
-    m_startVertex = theOverseer->DXRS->CurrentVIndex;
-    m_aabb = setAABB();
-    theOverseer->DXRS->CurrentIndex = theOverseer->DXRS->CurrentIndex + ((m_height-1)*(m_width-1)*12); // 6 per quad per side = 12
-    theOverseer->DXRS->CurrentVIndex = theOverseer->DXRS->CurrentVIndex + ( m_height*m_width*2); // two sides = 2
+    m_startIndex = observer::Instance().DXRS->CurrentIndex;
+    m_startVertex = observer::Instance().DXRS->CurrentVIndex;
+    m_AABB = setAABB();
+    observer::Instance().DXRS->CurrentIndex = observer::Instance().DXRS->CurrentIndex + ((m_height-1)*(m_width-1)*12); // 6 per quad per side = 12
+    observer::Instance().DXRS->CurrentVIndex = observer::Instance().DXRS->CurrentVIndex + ( m_height*m_width*2); // two sides = 2
     m_burning = false;
    
 }
-void Canopy::growHexSegment(treeNode *rootOfTree, BranchBase *pCanopyBranch,aabb TreeBoundingBox, LevelDetail *grammar, Base::Vector3 startHeading)
+void Canopy::growHexSegment(treeNode *rootOfTree, BranchBase *pCanopyBranch,AABB TreeBoundingBox, LevelDetail *grammar, Base::Vector3 startHeading)
 {
-    theOverseer = observer::Instance();
     rootOfTree->tree->m_CanopyCount++;
     Base::Vector3 root(rootOfTree->pbranch->segments[0].m_tipPointList[0]);
     Base::Vector3 CanopySegmentRoot(pCanopyBranch->tipPoint);// canopySegmentRoot
@@ -138,12 +141,12 @@ void Canopy::growHexSegment(treeNode *rootOfTree, BranchBase *pCanopyBranch,aabb
     CanopyHeading.Normalize();
     Base::Vector3 CanopyArbitrary(CanopySegmentRoot-root);
     CanopyArbitrary.Normalize();
-    Base::Vector3 Left = CrossProduct(CanopyArbitrary,CanopyHeading);
-    Base::Vector3 Right = CrossProduct(CanopyHeading,CanopyArbitrary);
+    Base::Vector3 Left = CanopyArbitrary.Cross(CanopyHeading);
+    Base::Vector3 Right = CanopyHeading.Cross(CanopyArbitrary);
     Left.Normalize();
     Right.Normalize();
-    Base::Vector3 Down = CrossProduct(Left,CanopyHeading);
-    Base::Vector3 Up = CrossProduct(CanopyHeading,Left);
+    Base::Vector3 Down = Left.Cross(CanopyHeading);
+    Base::Vector3 Up = CanopyHeading.Cross(Left);
     Base::Vector3 perturb = CanopyHeading;
     Down.Normalize();
     Up.Normalize();

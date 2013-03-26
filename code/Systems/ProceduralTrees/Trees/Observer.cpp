@@ -18,25 +18,24 @@
 
 #include "Systems/ProceduralTrees/Trees/Observer.hpp"
 
-observer* observer::_instance =0;
+std::once_flag             
+observer::only_one;
+std::shared_ptr<observer> 
+observer::instance_ = nullptr;
+
 RenderStructure *observer::DXRS =0; 
-observer* observer::Instance() {
-    if(_instance == 0) {
-        _instance = new observer;
-    }
-    return _instance;
+
+void observer::BoundingBox(Base::Vector3 vertex){
+    if (DXRS->aabb.xMin > vertex.x) DXRS->aabb.xMin = vertex.x;
+    if (DXRS->aabb.xMax < vertex.x) DXRS->aabb.xMax = vertex.x;
+    if (DXRS->aabb.yMin > vertex.y) DXRS->aabb.yMin = vertex.y;
+    if (DXRS->aabb.yMax < vertex.y) DXRS->aabb.yMax = vertex.y;
+    if (DXRS->aabb.zMin > vertex.z) DXRS->aabb.zMin = vertex.z;
+    if (DXRS->aabb.zMax < vertex.z) DXRS->aabb.zMax = vertex.z;
+    DXRS->aabb.min = Base::Vector3(DXRS->aabb.xMin,DXRS->aabb.yMin,DXRS->aabb.zMin);
+    DXRS->aabb.max = Base::Vector3(DXRS->aabb.xMax,DXRS->aabb.yMax,DXRS->aabb.zMax);
 }
-void observer::BoundingBox(V3 vertex){
-    if (DXRS->AABB.xMin > vertex.x) DXRS->AABB.xMin = vertex.x;
-    if (DXRS->AABB.xMax < vertex.x) DXRS->AABB.xMax = vertex.x;
-    if (DXRS->AABB.yMin > vertex.y) DXRS->AABB.yMin = vertex.y;
-    if (DXRS->AABB.yMax < vertex.y) DXRS->AABB.yMax = vertex.y;
-    if (DXRS->AABB.zMin > vertex.z) DXRS->AABB.zMin = vertex.z;
-    if (DXRS->AABB.zMax < vertex.z) DXRS->AABB.zMax = vertex.z;
-    DXRS->AABB.min = V3(DXRS->AABB.xMin,DXRS->AABB.yMin,DXRS->AABB.zMin);
-    DXRS->AABB.max = V3(DXRS->AABB.xMax,DXRS->AABB.yMax,DXRS->AABB.zMax);
-}
-int observer::addVertex(VertexType type, V3 vertex, V3 normal = V3(0.0,1.0,0.0), V3 theTexture = V3(0.5, 0.5, 0.0))
+int observer::addVertex(VertexType type, Base::Vector3 vertex, Base::Vector3 normal = Base::Vector3(0.0,1.0,0.0), Base::Vector3 theTexture = Base::Vector3(0.5, 0.5, 0.0))
 {
     BoundingBox(vertex);
     if (type == VertexType::VPNT && DXRS->vpnt) {
@@ -47,7 +46,7 @@ int observer::addVertex(VertexType type, V3 vertex, V3 normal = V3(0.0,1.0,0.0),
     }
    return 1;
 }
-void observer::addIndexes(WORD a, WORD b, WORD c)
+void observer::addIndexes(std::uint16_t a, std::uint16_t b, std::uint16_t c)
 {
     if (DXRS->ptrIBData) {
         DXRS->ptrIBData[DXRS->CurrentIndex++]=a;
@@ -58,19 +57,22 @@ void observer::addIndexes(WORD a, WORD b, WORD c)
 
 
 
-float observer::randf(float f = 1.0f){
-    return f*(float)rand()/429496796.0f;
+float observer::randf(float max = 1.0f){
+    std::uniform_real_distribution<float> distribution(std::numeric_limits<float>::min(),max);
+    return distribution(m_randomEngine);
 }
-float observer::randf(float min, float max){
-    return min + (max-min)*(float)rand()/(RAND_MAX + 1) ;
-
+float observer::randf(float min, float max)
+{
+    std::uniform_real_distribution<float> distribution(min,max);
+    return distribution(m_randomEngine);
 }
-int observer::randi(unsigned int max=101){
-    return rand() % max;
+std::int32_t observer::randi(std::int32_t max=101)
+{
+    std::uniform_int_distribution<std::int32_t> distribution(std::numeric_limits<std::int32_t>::min(),max);
+    return distribution(m_randomEngine);
 }
-int observer::randi(int min, int max){
-    return (int) randf((float)min, float(max));
-}
-void observer::seed(unsigned int theSeed){
-    srand(theSeed);   
+std::int32_t observer::randi(std::int32_t min, std::int32_t max)
+{
+    std::uniform_int_distribution<std::int32_t> distribution(min,max);
+    return distribution(m_randomEngine);
 }

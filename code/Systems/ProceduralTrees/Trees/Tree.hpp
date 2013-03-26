@@ -17,14 +17,16 @@
 // responsibility to update it.
 #pragma once
 
-#include "Systems/ProceduralTrees/TreesBranch.hpp"
-#include "Systems/ProceduralTrees/TreesObserver.hpp"
-#include "Systems/ProceduralTrees/TreesCanopy.hpp"
-#include "Systems/Common/AABB.hpp"
+class Tree;
+struct treeNode;
+#include "Systems/ProceduralTrees/Trees/Branch.hpp"
+#include "Systems/ProceduralTrees/Trees/Observer.hpp"
 #include <vector>
-#include "Systems/ProceduralTrees/TreesGrammarDef.hpp"
 
 
+struct AABB;
+class Canopy;
+class Grammar;
 class Tree;
 
 struct treeNode {
@@ -37,7 +39,7 @@ struct treeNode {
 
 class Tree {
 public:
-    Tree(std::string grammarName, Base::Vector3 position, long seed);
+    Tree(std::string grammarName, Base::Vector3 position);
     ~Tree();
     virtual Branch* createTrunk(int level, Base::Vector3 basePosition);
     void deleteNode(treeNode *ctn);
@@ -65,7 +67,6 @@ public:
     Grammar m_grammar;
     int m_levelCount;
     Base::Vector3 m_position;
-    int m_seed;
     long m_StartBranchIndexBuffer;
     long m_EndBranchIndexBuffer;
     long m_StartBranchVertexBuffer;

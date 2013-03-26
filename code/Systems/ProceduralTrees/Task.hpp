@@ -37,7 +37,7 @@ class TreeTask : public ISystemTask
 protected:
 
     TreeTask( TreeScene* pScene );
-    ~TreeTask( void );
+    virtual ~TreeTask( void );
 
     /// <summary cref="ISystemScene::GetSystemType">
     ///   Implementation of the ISystemScene GetSystemType function.
@@ -45,7 +45,10 @@ protected:
     virtual System::Type GetSystemType( void );
 
     virtual void Update( f32 DeltaTime );
-    virtual Bool IsPrimaryThreadOnly( void ) { return False; } 
+    
+    /* tells the taskmanager to always run tasks from this 
+     * system on the same thread if they are not thread-safe*/
+    virtual bool IsThreadSafe( void ) { return true; } 
 
 private:
 

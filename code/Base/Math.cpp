@@ -54,6 +54,28 @@ const Color3 Color3::White = { 1.0f, 1.0f, 1.0f };
 const Color4 Color4::Black = { 0.0f, 0.0f, 0.0f, 1.0f };
 const Color4 Color4::White = { 1.0f, 1.0f, 1.0f, 1.0f };
 
+// Wine, LGPL
+const Vector3& Vector3::TransformCoord(Vector3& pout, const Vector3& pv, const Matrix4x4& pm)
+{
+    float norm;
+
+    norm = pm.m[3] * pv.x + pm.m[7] * pv.y + pm.m[11] *pv.z + pm.m[15];
+
+    if ( norm )
+    {
+     pout.x = (pm.m[0] * pv.x + pm.m[4] * pv.y + pm.m[8] * pv.z + pm.m[12]) / norm;
+     pout.y = (pm.m[1] * pv.x + pm.m[5] * pv.y + pm.m[9] * pv.z + pm.m[13]) / norm;
+     pout.z = (pm.m[2] * pv.x + pm.m[6] * pv.y + pm.m[10] * pv.z + pm.m[14]) / norm;
+    }
+    else
+    {
+     pout.x = 0.0f;
+     pout.y = 0.0f;
+     pout.z = 0.0f;
+    }
+    return pout;
+}
+
 
 const Quaternion&
 Quaternion::Set(
@@ -381,6 +403,25 @@ float Matrix4x4::Cofactor9(float a, float b, float c, float d, float e, float f,
     return (a*Cofactor4(e,f,h,i)) + (b*Cofactor4(d,f,g,i)) + (c*Cofactor4(d,e,g,h));
 
 }
+
+// Wine, LGPL
+const Matrix4x4& Matrix4x4::MatrixRotationAxis(Out Matrix4x4& pout, const Vector3& pv, float angle)
+{
+    Vector3 v = pv;
+
+    v = v.Normalize();
+    pout = pout.Identity;
+    pout.m[0] = (1.0f - std::cos(angle)) * v.x * v.x + std::cos(angle);
+    pout.m[1] = (1.0f - std::cos(angle)) * v.x * v.y - std::sin(angle) * v.z;
+    pout.m[2] = (1.0f - std::cos(angle)) * v.x * v.z + std::sin(angle) * v.y;
+    pout.m[4] = (1.0f - std::cos(angle)) * v.y * v.x + std::sin(angle) * v.z;
+    pout.m[5] = (1.0f - std::cos(angle)) * v.y * v.y + std::cos(angle);
+    pout.m[6] = (1.0f - std::cos(angle)) * v.y * v.z - std::sin(angle) * v.x;
+    pout.m[8] = (1.0f - std::cos(angle)) * v.z * v.x - std::sin(angle) * v.y;
+    pout.m[9] = (1.0f - std::cos(angle)) * v.z * v.y + std::sin(angle) * v.x;
+    pout.m[10] = (1.0f - std::cos(angle)) * v.z * v.z + std::cos(angle);
+    return pout;
+} 
 
 
 float Random::GetRandomFloat(float a, float b)

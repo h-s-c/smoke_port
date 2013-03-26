@@ -15,10 +15,9 @@
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  Intel does not
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
+#pragma once
 
-#ifndef _TreeGrammar1
-#define _TreeGrammar1
-#include "SpeciesGrammar.h"
+#include "Systems/ProceduralTrees/Trees/SpeciesGrammar.hpp"
 
 class TG1Tree:Grammar 
 {
@@ -26,4 +25,3 @@ public:
     TG1Tree();
     ~TG1Tree();
 };
-#endif

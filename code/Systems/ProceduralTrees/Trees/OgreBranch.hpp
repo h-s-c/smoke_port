@@ -1,12 +1,14 @@
-#include "Branch.h"
+#include "Systems/ProceduralTrees/Trees/Tree.hpp"
+#include "Systems/ProceduralTrees/Trees/Branch.hpp"
 
-class OgreBranch : public branch {
+class OgreBranch : public Branch
+{
 
-public:
-    OgreBranch(int level, V3 basePosition);
-    virtual branch *CreateNextBranch(int level, V3 basePosition);
+  public:
+    OgreBranch(std::int32_t level, Base::Vector3 basePosition);
+    virtual Branch *CreateNextBranch(std::int32_t level, Base::Vector3 basePosition);
     virtual void fillBuffers();
 
-private:
+  private:
     OgreBranch(){};
 };
