@@ -15,9 +15,10 @@
 
 #pragma once
 
+#include "Systems/Water/Object.hpp"
+
 class WaterSystem;
 class WaterTask;
-class WaterObject;
 
 /*******************************************************************************
 * CLASS: WaterScene

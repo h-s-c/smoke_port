@@ -34,7 +34,7 @@ class WaterTask : public ISystemTask
 protected:
 
     WaterTask( WaterScene* pScene );
-    ~WaterTask( void );
+    virtual ~WaterTask( void );
 
     /// <summary cref="ISystemScene::GetSystemType">
     ///   Implementation of the ISystemScene GetSystemType function.

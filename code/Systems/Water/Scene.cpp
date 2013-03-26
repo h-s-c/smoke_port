@@ -12,25 +12,14 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
 
-//
-// core includes
-//
-#include "..\BaseTypes\BaseTypes.h"
-#include "..\Interfaces\Interface.h"
-
-//
-// System includes
-//
-#include "..\SystemInput\Object.h"
-
-//
-// Water system includes
-//
-#include "Scene.h"
-#include "Object.h"
-#include "Task.h"
-
-#include "Objects\WaterStream.h"
+#include "Base/Compat.hpp"
+#include "Base/Platform.hpp"
+#include "Base/Math.hpp"
+#include "Interfaces/Interface.hpp"
+#include "Systems/Water/Scene.hpp"
+#include "Systems/Water/Object.hpp"
+#include "Systems/Water/Task.hpp"
+#include "Systems/Water/ObjectWaterStream.hpp"
 
 // Local Structures
 struct ProcessData
@@ -59,7 +48,7 @@ WaterScene::WaterScene( ISystem* pSystem ) : ISystemScene( pSystem ), m_pWaterTa
 // ~WaterScene - Destructor
 WaterScene::~WaterScene( void )
 {
-	SAFE_DELETE( m_pWaterTask );
+    SAFE_DELETE( m_pWaterTask );
 
     // Free all the remaining objects.
     for( std::vector<WaterObject*>::iterator it = m_Objects.begin(); it != m_Objects.end(); it++ )
@@ -88,7 +77,7 @@ Error WaterScene::Initialize( std::vector<Properties::Property> Properties )
     m_pWaterTask = new WaterTask( this );
     ASSERT( m_pWaterTask != NULL );
 
-	m_bInitialized = True;
+    m_bInitialized = True;
 
     return Errors::Success;
 }
@@ -128,18 +117,18 @@ ISystemObject* WaterScene::CreateObject( pcstr pszName, pcstr pszType )
 
     ASSERT( m_bInitialized );
 
-	// Create the Water object
-	WaterObject* pObject = NULL;
-	if( strcmp( pszType, "WaterStream" ) == 0 )
-	{
-		pObject = (WaterObject*)new WaterStream( this, pszName, m_StreamObjectID++ );
-	}
-	else
-	{
-		// Create a default Water object (this is probably an error, so assert)
-		ASSERT( false );
-		pObject = new WaterObject( this, pszName );
-	}
+    // Create the Water object
+    WaterObject* pObject = NULL;
+    if( strcmp( pszType, "WaterStream" ) == 0 )
+    {
+        pObject = (WaterObject*)new WaterStream( this, pszName, m_StreamObjectID++ );
+    }
+    else
+    {
+        // Create a default Water object (this is probably an error, so assert)
+        ASSERT( false );
+        pObject = new WaterObject( this, pszName );
+    }
 
     if ( pObject != NULL )
     {
@@ -161,15 +150,15 @@ Error WaterScene::DestroyObject( ISystemObject* pSystemObject )
     WaterObject* pObject = reinterpret_cast<WaterObject*>(pSystemObject);
 
     // Remove the object from the list and delete it
-	u32 index = 0;
-	for( std::vector<WaterObject*>::iterator it=m_Objects.begin(); it != m_Objects.end(); it++ )
+    u32 index = 0;
+    for( std::vector<WaterObject*>::iterator it=m_Objects.begin(); it != m_Objects.end(); it++ )
     {
-		if( *it == pObject )
-		{
-			m_Objects.erase( m_Objects.begin() + index );
-			break;
-		}
-		index++;
+        if( *it == pObject )
+        {
+            m_Objects.erase( m_Objects.begin() + index );
+            break;
+        }
+        index++;
     }
 
     SAFE_DELETE( pSystemObject );
@@ -210,5 +199,5 @@ Error WaterScene::ChangeOccurred( ISubject* pSubject, System::Changes::BitMask C
     UNREFERENCED_PARAM( pSubject );
     UNREFERENCED_PARAM( ChangeType );
 
-	return Errors::Success;
+    return Errors::Success;
 }

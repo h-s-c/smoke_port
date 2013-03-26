@@ -12,19 +12,13 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
 
-
-//
-// core includes
-//
-#include "..\BaseTypes\BaseTypes.h"
-#include "..\Interfaces\Interface.h"
-
-//
-// Water system includes
-//
-#include "System.h"
-#include "Scene.h"
-#include "Object.h"
+#include "Base/Compat.hpp"
+#include "Base/Platform.hpp"
+#include "Base/Math.hpp"
+#include "Interfaces/Interface.hpp"
+#include "Systems/Water/System.hpp"
+#include "Systems/Water/Scene.hpp"
+#include "Systems/Water/Object.hpp"
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -63,7 +57,7 @@ Error WaterSystem::Initialize( Properties::Array Properties )
 {
     ASSERT( !m_bInitialized );
 
-	m_bInitialized = True;
+    m_bInitialized = True;
 
     return Errors::Success;
 }

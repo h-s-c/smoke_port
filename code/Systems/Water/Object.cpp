@@ -12,19 +12,11 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
 
-
-//
-// Core includes
-//
-#include "..\BaseTypes\BaseTypes.h"
-#include "..\Interfaces\Interface.h"
-
-
-
-//
-// Water system includes
-//
-#include "Object.h"
+#include "Base/Compat.hpp"
+#include "Base/Platform.hpp"
+#include "Base/Math.hpp"
+#include "Interfaces/Interface.hpp"
+#include "Systems/Water/Object.hpp"
 
 ///////////////////////////////////////////////////////////////////////////////
 // WaterObject - Constructor

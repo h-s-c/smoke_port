@@ -12,45 +12,14 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
 
-//
-// core includes
-//
+#include "Base/Compat.hpp"
+#include "Base/Platform.hpp"
+#include "Base/Math.hpp"
+#include "Interfaces/Interface.hpp"
+#include "Systems/Water/System.hpp"
+#include "Systems/Water/Scene.hpp"
+#include "Systems/Water/ObjectWaterStream.hpp"
 
-// Temporarily switching warning level to 0 to ignore warnings with the STL list that originate in conflicts in extern/Ogre 
-#pragma warning( push, 0 )
-#include "..\..\BaseTypes\BaseTypes.h"
-#pragma warning( pop )
-
-#include "..\..\Interfaces\Interface.h"
-#include "..\..\Interfaces\Services\CollisionAPI.h"
-#include "..\..\Framework\ServiceManager.h"
-
-//
-// System includes
-//
-#include "..\..\SystemInput\Object.h"
-
-// Temporarily switching warning level to 0 to ignore warnings in extern/Ogre and SystemGraphicsOgre's extern/Ogre
-#pragma warning( push, 0 )
-#include "OgreSceneNode.h"
-#pragma warning( pop )
-
-#include "..\..\SystemGraphicsOgre\Object.h"
-#include "..\..\SystemGraphicsOgre\Task.h"
-#include "..\..\SystemGraphicsOgre\ObjectCamera.h"
-
-//
-// WaterStream system includes
-//
-#include "..\System.h"
-#include "..\Scene.h"
-
-#include "WaterStream.h"
-
-#include <windows.h>
-
-#pragma warning( push, 0 )
-#pragma warning( disable : 6011 )
 
 #define MAX_WATERSTREAM_LIFE 1.2f
 //#define POSITION_UNDERGROUND Base::Vector3::Vector3( 0.0f, -2000.0f, 0.0f )
@@ -120,7 +89,7 @@ Error WaterStream::ChangeOccurred( ISubject* pSubject, System::Changes::BitMask 
 
     if( ChangeType & System::Changes::Geometry::Position )
     {
-        OGREGraphicsObjectCamera* pOgreCamObj = dynamic_cast<OGREGraphicsObjectCamera*>(pSubject);
+        IGeometryObject* pOgreCamObj = dynamic_cast<IGeometryObject*>(pSubject);
         if( pOgreCamObj )
         {
             m_CameraPosition = *pOgreCamObj->GetPosition();
@@ -129,7 +98,7 @@ Error WaterStream::ChangeOccurred( ISubject* pSubject, System::Changes::BitMask 
 
     if( ChangeType & System::Changes::Geometry::Orientation )
     {
-        OGREGraphicsObjectCamera* pOgreCamObj = dynamic_cast<OGREGraphicsObjectCamera*>(pSubject);
+        IGeometryObject* pOgreCamObj = dynamic_cast<IGeometryObject*>(pSubject);
         if( pOgreCamObj )
         {
             m_CameraOrientation = *pOgreCamObj->GetOrientation();
@@ -276,5 +245,3 @@ void WaterStream::SetProperties( Properties::Array Properties )
         ASSERT( False );  // No properties currently exist for this object
     }
 }
-
-#pragma warning( pop )

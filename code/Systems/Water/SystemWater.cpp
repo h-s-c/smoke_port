@@ -12,29 +12,25 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
 
+//core
+#include "Base/Compat.hpp"
+#include "Base/Platform.hpp"
+//interface
+#include "Interfaces/Interface.hpp"
+//system
+#include "Systems/Water/System.hpp"
 
+
+#if defined(COMPILER_MSVC)
 #include <windows.h>
 
-//
-// core includes
-//
-#include "..\BaseTypes\BaseTypes.h"
-#include "..\Interfaces\Interface.h"
-
-//
-// system includes
-//
-#include "System.h"
-
-ManagerInterfaces   g_Managers;
-
-///////////////////////////////////////////////////////////////////////////////
-// DllMain - API entry point for SystemWater DLL
-BOOL APIENTRY DllMain( HMODULE hModule, DWORD Reason, LPVOID pReserved )
+BOOL APIENTRY
+DllMain(
+    HMODULE hModule,
+    DWORD Reason,
+    LPVOID pReserved
+    )
 {
-    UNREFERENCED_PARAM( hModule );
-    UNREFERENCED_PARAM( pReserved );
-
     switch ( Reason )
     {
     case DLL_PROCESS_ATTACH:
@@ -46,34 +42,37 @@ BOOL APIENTRY DllMain( HMODULE hModule, DWORD Reason, LPVOID pReserved )
 
     return TRUE;
 }
+#endif
 
+ManagerInterfaces   g_Managers;
 
-///////////////////////////////////////////////////////////////////////////////
-// InitializeNewtonPhysicsCollision - Initialize the Water system
-extern "C" void __stdcall InitializeWaterSystem( ManagerInterfaces* pManagers )
+void STDCALL
+InitWaterSystem( ManagerInterfaces* pManagers )
 {
     g_Managers = *pManagers;
 }
 
-
-
-///////////////////////////////////////////////////////////////////////////////
-// CreateWaterSystem - Create the Water system
-extern "C" ISystem* __stdcall CreateWaterSystem( Debug::Debugger* p_Debugger )
+ISystem* STDCALL
+CreateWaterSystem()
 {
-	// Set up the debugger
-	Debug::Init( p_Debugger );
-
-	// Create the Water system
+    // Create the Water system
     return new WaterSystem();
 }
 
 
-///////////////////////////////////////////////////////////////////////////////
-// DestroyWaterSystem - Release all resources allocated for the given SystemWater
-extern "C" void __stdcall DestroyWaterSystem( ISystem* pSystem )
+void STDCALL
+DestroyWaterSystem( ISystem* pSystem)
 {
     WaterSystem* pWaterSystem = reinterpret_cast<WaterSystem*>(pSystem);
     SAFE_DELETE( pWaterSystem );
+}
+
+extern "C" 
+{
+    struct SystemFuncs SystemWater = {
+        &InitWaterSystem,
+        &CreateWaterSystem,
+        &DestroyWaterSystem
+    };
 }
 

@@ -7,6 +7,7 @@ add_subdirectory(Geometry)
 add_subdirectory(GraphicsOGRE)
 add_subdirectory(InputOIS)
 add_subdirectory(ProceduralTrees)
+add_subdirectory(Water)
 
 find_package(HAVOK)
 if (HAVOK_FOUND)

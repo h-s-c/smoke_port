@@ -12,24 +12,13 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
 
-
-//
-// extern includes
-//
-#include <windows.h>
-
-//
-// core includes
-//
-#include "..\BaseTypes\BaseTypes.h"
-#include "..\Interfaces\Interface.h"
-
-//
-// system includes
-//
-#include "Scene.h"
-#include "Object.h"
-#include "Task.h"
+#include "Base/Compat.hpp"
+#include "Base/Platform.hpp"
+#include "Base/Math.hpp"
+#include "Interfaces/Interface.hpp"
+#include "Systems/Water/Scene.hpp"
+#include "Systems/Water/Object.hpp"
+#include "Systems/Water/Task.hpp"
 
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -61,9 +50,9 @@ void WaterTask::Update( f32 DeltaTime )
 {
     // Make sure DeltaTime isn't too large
     if ( DeltaTime > 0.04f )
-	{
-		DeltaTime = 0.04f;
-	}
+    {
+        DeltaTime = 0.04f;
+    }
 
     //
     // The delta time must be greater than 0 and less than 0.2 for ODE to be stable.

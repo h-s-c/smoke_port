@@ -14,17 +14,6 @@
 
 #pragma once
 
-//
-// core includes
-//
-#include "..\..\Interfaces\Services\CollisionAPI.h"
-
-//
-// WaterStream system includes
-//
-#include "..\Object.h"
-
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// <summary>
 ///   <c>WaterStream</c> Base class for WaterStream objects.
@@ -87,7 +76,7 @@ public:
     /// <returns>Magnitude of the velocity of the object.
     /// </returns>
     /// <seealso cref="IMoveObject::GetMaxVelocity"/>
-    virtual const f32 GetMaxVelocity( void ) { return m_Velocity.Magnitude(); }
+    virtual f32 GetMaxVelocity() { return m_Velocity.Magnitude(); }
 
 protected:
 
@@ -127,7 +116,7 @@ public:
     /// Sets the velocity for the WaterStream object.
     /// </summary>
     /// <param name="velocity">Velocity of the object.</param>
-    void WaterStream::SetVelocity(Base::Vector3 velocity);
+    void SetVelocity(Base::Vector3 velocity);
 
 private:
 
