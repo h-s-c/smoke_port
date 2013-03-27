@@ -1,16 +1,6 @@
 #pragma once
 
-// Base
-#include "Base/Platform.hpp"
-#include "Base/Math.hpp"
-// Standard library
-#include <cstdint>
-#include <list>
-#include <vector>
-// System
-#include "Systems/ProceduralFire/aabb.h"
-#include "Systems/ProceduralFire/HeatParticle.h"
-#include "Systems/ProceduralFire/PSystem.h"
+#include "Systems/ProceduralFire/ParticleEmitter/HeatParticle.hpp"
 
 namespace ParticleEmitter
 {
@@ -25,7 +15,7 @@ namespace ParticleEmitter
         HeatEmitter * m_pColdParticles;
 
         ColdParticle( const Base::Vector3& accelbias, const Base::Vector3& accelshift, const Base::Vector3 Radius, const Base::Vector3 pos,
-            const aabb& box, int maxNumParticles, float timePerParticle, float minLifeTime = 1.0f,
+            const AABB& box, int maxNumParticles, float timePerParticle, float minLifeTime = 1.0f,
             float maxLifeTime = 2.0f, float minSize = 10.0f, float maxSize = 15.0f, float minAmplitude = 1.0f,
             float maxAmplitude = 2.0f
         )

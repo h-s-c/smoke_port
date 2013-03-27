@@ -30,7 +30,7 @@
 #pragma once
 
 #include "Systems/Common/AABB.hpp"
-#include "Systems/ProceduralTrees/Trees/Vertex.hpp"
+#include "Systems/Common/Vertex.hpp"
 #include <cstdlib>
 #include <cstdint>
 #include <vector>

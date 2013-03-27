@@ -15,24 +15,19 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
 
-//
-// extern includes
-//
-
-
-//
-// core includes
-//
-#include "..\BaseTypes\BaseTypes.h"
-#include "..\Interfaces\Interface.h"
-#include "..\Interfaces\Environment.h"
-
-//
-// Ogre system includes
-//
-#include "FireScene.h"
-#include "FireObject.h"
-#include "FireTask.h"
+#include "Base/Compat.hpp"
+#include "Base/Platform.hpp"
+#include "Base/Math.hpp"
+#include "Interfaces/Interface.hpp"
+#include "Systems/Common/AABB.hpp"
+#include "Systems/Common/Vertex.hpp"
+#include "Systems/ProceduralFire/ParticleEmitter/Fire.hpp"
+#include "Systems/ProceduralFire/ParticleEmitter/FireBall.hpp"
+#include "Systems/ProceduralFire/ParticleEmitter/FirePatch.hpp"
+#include "Systems/ProceduralFire/ParticleEmitter/ColdParticle.hpp"
+#include "Systems/ProceduralFire/Scene.hpp"
+#include "Systems/ProceduralFire/Object.hpp"
+#include "Systems/ProceduralFire/Task.hpp"
 
 extern ManagerInterfaces   g_Managers;
 
@@ -49,7 +44,7 @@ static const u32    FireSystemTaskGrainSize = 8;
 FireTask::FireTask(
     FireScene* pScene
     )
-	: ISystemTask( pScene )
+    : ISystemTask( pScene )
     , m_pScene( pScene )
 {
 }
@@ -84,30 +79,30 @@ FireTask::Update(
  
     u32 size = (u32)m_pScene->m_FireObjects.size();
 
-	if (
-		m_pScene->m_bParallelize &&
-		( g_Managers.pTask != NULL ) &&
-		( FireSystemTaskGrainSize < size )
-	)
+    if (
+        m_pScene->m_bParallelize &&
+        ( g_Managers.pTask != NULL ) &&
+        ( FireSystemTaskGrainSize < size )
+    )
     {
         g_Managers.pTask->ParallelFor( this, UpdateCallback, this, 0, size, FireSystemTaskGrainSize );
-	}
-	else
-	{
+    }
+    else
+    {
         UpdateRange( 0, size );
     }
 
 #if FIRETASK_PARALLEL_PREBUILD_VERTICES
-	if (
-		m_pScene->m_bParallelize &&
-		( g_Managers.pTask != NULL ) &&
-		( BuildVetrexBuffersGrainSize < size )
-	)
+    if (
+        m_pScene->m_bParallelize &&
+        ( g_Managers.pTask != NULL ) &&
+        ( BuildVetrexBuffersGrainSize < size )
+    )
     {
         g_Managers.pTask->ParallelFor( this, BuildVertexBuffersCallback, this, 0, size, BuildVetrexBuffersGrainSize );
-	}
-	else
-	{
+    }
+    else
+    {
         BuildVertexBuffersRange( 0, size );
     }
 #endif /* FIRETASK_PARALLEL_PREBUILD_VERTICES */

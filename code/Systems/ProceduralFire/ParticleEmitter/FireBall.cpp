@@ -15,13 +15,19 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
 
+#include "Base/Compat.hpp"
+#include "Base/Platform.hpp"
+#include "Base/Math.hpp"
+#include "Interfaces/Interface.hpp"
+#include "Systems/Common/AABB.hpp"
+#include "Systems/Common/Vertex.hpp"
+#include "Systems/ProceduralFire/ParticleEmitter/FireBall.hpp"
+#include "Systems/ProceduralFire/ParticleEmitter/ParticleSystem.hpp"
+
+#include <cstdint>
 #include <list>
 #include <vector>
-#include "PSystem.h"
-#include "..\BaseTypes\BaseTypes.h"
-#include "..\Interfaces\Interface.h"
-#include "FireBall.h"
-
+#include <cmath>
 
 
 namespace ParticleEmitter{
@@ -29,22 +35,22 @@ namespace ParticleEmitter{
 
 void FireBall::initParticle(ParticleEmitter::Particle& out)
 {
-	// Time particle is created relative to the global running
-	// time of the particle system.
-	out.initialTime = mTime;
+    // Time particle is created relative to the global running
+    // time of the particle system.
+    out.initialTime = mTime;
     out.age=mTime;
 
-	// Flare lives for 2-4 seconds.
-	// original values //out.lifeTime   = GetRandomFloat(2.0f, 8.0f);
-	out.lifeTime   = GetRandomFloat(mMinLifeTime, mMaxLifeTime);
+    // Flare lives for 2-4 seconds.
+    // original values //out.lifeTime   = GetRandomFloat(2.0f, 8.0f);
+    out.lifeTime   = Base::Random::GetRandomFloat(mMinLifeTime, mMaxLifeTime);
 
-	// Initial size in pixels.
-	// original values //out.initialSize  = GetRandomFloat(10.0f, 15.0f);
-	out.initialSize  = GetRandomFloat(mMinSize, mMaxSize);
+    // Initial size in pixels.
+    // original values //out.initialSize  = GetRandomFloat(10.0f, 15.0f);
+    out.initialSize  = Base::Random::GetRandomFloat(mMinSize, mMaxSize);
 
-	// Give a very small initial velocity to give the flares
-	// some randomness.
-	GetRandomVec(out.initialVelocity);
+    // Give a very small initial velocity to give the flares
+    // some randomness.
+    GetRandomVec(out.initialVelocity);
     out.initialVelocity.x *= mAccelImpulse.x;
     out.initialVelocity.y *= mAccelImpulse.y;
     out.initialVelocity.z *= mAccelImpulse.z;
@@ -52,22 +58,22 @@ void FireBall::initParticle(ParticleEmitter::Particle& out)
     out.initialVelocity.y += mAccelShift.y;
     out.initialVelocity.z += mAccelShift.z;
 
-	// Scalar value used in vertex shader as an amplitude factor.
-	out.mass = GetRandomFloat(1.0f, 2.0f);
+    // Scalar value used in vertex shader as an amplitude factor.
+    out.mass = Base::Random::GetRandomFloat(1.0f, 2.0f);
 
-	// Start color at 50-100% intensity when born for variation.
-	out.initialColor = static_cast<DWORD>(GetRandomFloat(0.5f, 1.0f) *    1.0f);//white;
+    // Start color at 50-100% intensity when born for variation.
+    out.initialColor = static_cast<std::uint32_t>(Base::Random::GetRandomFloat(0.5f, 1.0f) *    1.0f);//white;
 
-	V3 temp = mParticleRadius - mInitPos;
-    float length = temp.Length();
-    V3 tempNormal = temp.Normalize();
-	
-	D3DXMATRIX outmtx;
-	D3DXMatrixRotationYawPitchRoll(&outmtx,GetRandomFloat(0.0f,2.0f)*D3DX_PI,GetRandomFloat(0.0f,2.0f)*D3DX_PI,0.0f);
-	
-	D3DXVec3TransformCoord(&temp,&temp,&outmtx);	
-	
-	out.initialPos = mInitPos + (temp * length);
+    Base::Vector3 temp = mParticleRadius - mInitPos;
+    float length = std::sqrt(temp.Magnitude());
+    Base::Vector3 tempNormal = temp.Normalize();
+    
+    Base::Matrix4x4 outmtx;
+    outmtx.MatrixRotationYawPitchRoll(outmtx,Base::Random::GetRandomFloat(0.0f,2.0f)*Base::Angle::Pi,Base::Random::GetRandomFloat(0.0f,2.0f)*Base::Angle::Pi,0.0f);
+    
+    temp.TransformCoord(temp,temp,outmtx);    
+    
+    out.initialPos = mInitPos + (temp * length);
 }
 
 }

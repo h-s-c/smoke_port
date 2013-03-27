@@ -14,17 +14,34 @@
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  Intel does not
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
+#pragma once
 
-#ifndef FIREPATCH_H
-#define FIREPATCH_H
-#include <list>
-#include <vector>
-#include "PSystem.h"
-#include "..\BaseTypes\BaseTypes.h"
-#include "..\Interfaces\Interface.h"
-#include "aabb.h"
-#include "HeatParticle.h"
+#include "Systems/ProceduralFire/ParticleEmitter/HeatParticle.hpp"
+
+class B3
+{
+public:
+    B3(){};
+    B3(Base::Vector3 i,Base::Vector3 j, Base::Vector3 k)
+    { 
+        iAxis = i;
+        jAxis = j;
+        kAxis = k;
+    };
+    void normalize()
+    {
+        iAxis.Normalize();
+        jAxis.Normalize();
+        kAxis.Normalize();
+    };
+    Base::Vector3 iAxis;
+    Base::Vector3 jAxis;
+    Base::Vector3 kAxis;
+
+};
+
 namespace ParticleEmitter{
+
 
 ///////////////////////////////////////////////////////////////////////////////
 /// <summary>
@@ -34,16 +51,16 @@ namespace ParticleEmitter{
 class FirePatch : public ParticleSystemWithEmitter
 {
 public:
-	B3 mBasis;
+    B3 mBasis;
 
-	FirePatch(
-        const V3& accelbias, 
-        const V3& accelshift, 
-		const B3 basis,
-		const V3 pos, 
-		const aabb& box,
-		int maxNumParticles,
-		float timePerParticle,
+    FirePatch(
+        const Base::Vector3& accelbias, 
+        const Base::Vector3& accelshift, 
+        const B3 basis,
+        const Base::Vector3 pos, 
+        const AABB& box,
+        int maxNumParticles,
+        float timePerParticle,
         float minLifeTime = 1.0f,
         float maxLifeTime = 2.0f,
         float minSize = 10.0f,
@@ -51,17 +68,17 @@ public:
         float minAmplitude = 1.0f,
         float maxAmplitude = 2.0f
         )
-		: ParticleSystemWithEmitter(
+        : ParticleSystemWithEmitter(
             HeatEmitter::Type_Fire,
             accelbias, accelshift, pos, box, 
-			maxNumParticles, timePerParticle,
+            maxNumParticles, timePerParticle,
             minLifeTime, maxLifeTime, 
             minSize, maxSize,
             minAmplitude, maxAmplitude)
-		, mBasis(basis)
-	{}
+        , mBasis(basis)
+    {}
 
-    void setInitPos(V3 pos)
+    void setInitPos(Base::Vector3 pos)
     {
         mInitPos = pos;
     }
@@ -74,8 +91,7 @@ public:
         mBasis.normalize();
     }
     virtual void reinitialize();
-	void initParticle(Particle& out);
+    void initParticle(Particle& out);
 };
 
 } //end namespace
-#endif // FIRE

@@ -6,6 +6,7 @@ add_subdirectory(Explosion)
 add_subdirectory(Geometry)
 add_subdirectory(GraphicsOGRE)
 add_subdirectory(InputOIS)
+add_subdirectory(ProceduralFire)
 add_subdirectory(ProceduralTrees)
 add_subdirectory(Water)
 

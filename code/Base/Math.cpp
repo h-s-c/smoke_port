@@ -405,7 +405,7 @@ float Matrix4x4::Cofactor9(float a, float b, float c, float d, float e, float f,
 }
 
 // Wine, LGPL
-const Matrix4x4& Matrix4x4::MatrixRotationAxis(Out Matrix4x4& pout, const Vector3& pv, float angle)
+const Matrix4x4& Matrix4x4::MatrixRotationAxis(Matrix4x4& pout, const Vector3& pv, float angle)
 {
     Vector3 v = pv;
 
@@ -422,6 +422,21 @@ const Matrix4x4& Matrix4x4::MatrixRotationAxis(Out Matrix4x4& pout, const Vector
     pout.m[10] = (1.0f - std::cos(angle)) * v.z * v.z + std::cos(angle);
     return pout;
 } 
+
+const Matrix4x4& Matrix4x4::MatrixRotationYawPitchRoll(Matrix4x4& pout, float roll, float pitch, float yaw )
+{
+    pout.m[0] = ( std::cos(roll) * std::cos(yaw) ) + ( std::sin(roll) * std::sin(pitch) * std::sin(yaw) );
+    pout.m[1] = ( std::sin(roll) * std::cos(pitch) );
+    pout.m[2] = ( std::cos(roll) * -std::sin(yaw) ) + ( std::sin(roll) * std::sin(pitch) * std::cos(yaw) );
+    pout.m[4] = (-std::sin(roll) * std::cos(yaw) ) + ( std::cos(roll) * std::sin(pitch) * std::sin(yaw) );
+    pout.m[5] = ( std::cos(roll) * std::cos(pitch) );
+    pout.m[6] = ( std::sin(roll) * std::sin(yaw) ) + ( std::cos(roll) * std::sin(pitch) * std::cos(yaw) );
+    pout.m[8] = ( std::cos(pitch) * std::sin(yaw) );
+    pout.m[9] = -std::sin(pitch);
+    pout.m[10] = ( std::cos(pitch) * std::cos(yaw) );
+    pout.m[15] = 1;
+    return pout;
+}
 
 
 float Random::GetRandomFloat(float a, float b)

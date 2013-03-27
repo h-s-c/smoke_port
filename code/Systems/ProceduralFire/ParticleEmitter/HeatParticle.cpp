@@ -26,46 +26,53 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
 
+#include "Base/Compat.hpp"
+#include "Base/Platform.hpp"
+#include "Base/Math.hpp"
+#include "Interfaces/Interface.hpp"
+#include "Systems/Common/AABB.hpp"
+#include "Systems/Common/Vertex.hpp"
+#include "Systems/ProceduralFire/ParticleEmitter/HeatParticle.hpp"
+#include "Systems/ProceduralFire/ParticleEmitter/ParticleSystem.hpp"
+
+#include <cstdint>
 #include <list>
 #include <vector>
-#include "PSystem.h"
-#include "..\BaseTypes\BaseTypes.h"
-#include "..\Interfaces\Interface.h"
-#include "HeatParticle.h"
+
 
 namespace ParticleEmitter{
 
 void HeatEmitter::initParticle(ParticleEmitter::HeatParticle& out)
 {
-	// Time particle is created relative to the global running
-	// time of the particle system.
-	out.initialTime = mTime;
+    // Time particle is created relative to the global running
+    // time of the particle system.
+    out.initialTime = mTime;
 
-	// Flare lives for 1-2 seconds.
-	out.lifeTime   = GetRandomFloat(mMinLifeTime,mMaxLifeTime );
+    // Flare lives for 1-2 seconds.
+    out.lifeTime   = Base::Random::GetRandomFloat(mMinLifeTime,mMaxLifeTime );
  
-	//  velocity to Heat direction
-	GetRandomVec(out.initialVelocity);
+    //  velocity to Heat direction
+    GetRandomVec(out.initialVelocity);
     out.initialVelocity.x *= mAccelImpulse.x;
     out.initialVelocity.y *= mAccelImpulse.y;
     out.initialVelocity.z *= mAccelImpulse.z;
     out.initialVelocity.x += mAccelShift.x;
     out.initialVelocity.y += mAccelShift.y;
     out.initialVelocity.z += mAccelShift.z;
-	
-	out.mass = GetRandomFloat(mMinAmplitude, mMaxAmplitude);
+    
+    out.mass = Base::Random::GetRandomFloat(mMinAmplitude, mMaxAmplitude);
 
-	out.initialPos = mInitPos;
+    out.initialPos = mInitPos;
     out.currentPos = mInitPos;
     out.prevPos = mInitPos;
 }
 
 void HeatEmitter::Activate( 
-	const V3 pos,
-	const V3 impulse,
-	const V3 shift,
-	int maxNumParticles,
-	float timePerParticle,
+    const Base::Vector3 pos,
+    const Base::Vector3 impulse,
+    const Base::Vector3 shift,
+    int maxNumParticles,
+    float timePerParticle,
     float minLifeTime ,
     float maxLifeTime ,
     float minSize     ,
@@ -73,9 +80,9 @@ void HeatEmitter::Activate(
     float minAmplitude,
     float maxAmplitude)
 {
-	mAccelImpulse=impulse;
-	mAccelShift=shift;
-	mInitPos=pos;
+    mAccelImpulse=impulse;
+    mAccelShift=shift;
+    mInitPos=pos;
     mPrevTime =0;
     mTime = 0;
     mMaxNumParticles = maxNumParticles;
@@ -95,65 +102,65 @@ void HeatEmitter::Activate(
 void HeatEmitter::update(float dt)
 {
     mPrevTime = mTime;
-	mTime += dt;
+    mTime += dt;
 
-	// Rebuild the dead and alive list.  Note that resize(0) does
-	// not deallocate memory (i.e., the capacity of the vector does
-	// not change).
-	mDeadParticles.resize(0);
+    // Rebuild the dead and alive list.  Note that resize(0) does
+    // not deallocate memory (i.e., the capacity of the vector does
+    // not change).
+    mDeadParticles.resize(0);
     mAliveParticles.resize(0);
 
-	// For each particle.
-	for(int i = 0; i < mMaxNumParticles; ++i)
-	{
-		// Is the particle dead?
-  		if( (mTime - mParticles[i].initialTime) > mParticles[i].lifeTime)
+    // For each particle.
+    for(int i = 0; i < mMaxNumParticles; ++i)
+    {
+        // Is the particle dead?
+        if( (mTime - mParticles[i].initialTime) > mParticles[i].lifeTime)
         {
             mParticles[i].currentPos = mParticles[i].prevPos;
-			mDeadParticles.push_back(&mParticles[i]);
-		}
-		else
-		{
+            mDeadParticles.push_back(&mParticles[i]);
+        }
+        else
+        {
 
             mParticles[i].update(dt);
             mAliveParticles.push_back(&mParticles[i]);
-		}
-	}
+        }
+    }
 
 
-	// A negative or zero mTimePerParticle value denotes
-	// not to emit any particles.
-	if( mTimePerParticle > 0.0f )
-	{
-		// Emit particles.
-		static float timeAccum = 0.0f;
-		timeAccum += dt;
-		while( timeAccum >= mTimePerParticle )
-		{
-			addParticle();
-			timeAccum -= mTimePerParticle;
-		}
-	}
+    // A negative or zero mTimePerParticle value denotes
+    // not to emit any particles.
+    if( mTimePerParticle > 0.0f )
+    {
+        // Emit particles.
+        static float timeAccum = 0.0f;
+        timeAccum += dt;
+        while( timeAccum >= mTimePerParticle )
+        {
+            addParticle();
+            timeAccum -= mTimePerParticle;
+        }
+    }
 }
 
 void HeatEmitter::addParticle()
 {
-	if( mDeadParticles.size() > 0)
-	{
-		// Reinitialize a particle.
-		HeatParticle* p = mDeadParticles.back();
-		initParticle(*p);
+    if( mDeadParticles.size() > 0)
+    {
+        // Reinitialize a particle.
+        HeatParticle* p = mDeadParticles.back();
+        initParticle(*p);
 
-		// No longer dead.
-		mDeadParticles.pop_back();
-		mAliveParticles.push_back(p);
-	}
+        // No longer dead.
+        mDeadParticles.pop_back();
+        mAliveParticles.push_back(p);
+    }
 }
 
-Bool HeatEmitter::getPositions( std::vector<V3>  &curPos, 
-                                std::vector<V3>  &prevPos) const 
+Bool HeatEmitter::getPositions( std::vector<Base::Vector3>  &curPos, 
+                                std::vector<Base::Vector3>  &prevPos) const 
 {
-	Bool bOutput = False;
+    Bool bOutput = False;
 
     if(mIsActive ){
         {
@@ -169,7 +176,7 @@ Bool HeatEmitter::getPositions( std::vector<V3>  &curPos,
         }
     }
 
-	return bOutput;
+    return bOutput;
 }
 
 

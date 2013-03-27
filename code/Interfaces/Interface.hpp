@@ -52,5 +52,6 @@ namespace Interface
     #include "Interfaces/Move.hpp"
     #include "Interfaces/Target.hpp"
     #include "Interfaces/Input.hpp"
+    #include "Interfaces/Tree.hpp"
 }
 using namespace Interface;

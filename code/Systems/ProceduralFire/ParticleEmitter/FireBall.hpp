@@ -14,17 +14,12 @@
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  Intel does not
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
+#pragma once
 
-#ifndef FIREBALL_H
-#define FIREBALL_H
-#include <list>
-#include <vector>
-#include "PSystem.h"
-#include "..\BaseTypes\BaseTypes.h"
-#include "..\Interfaces\Interface.h"
-#include "aabb.h"
-#include "HeatParticle.h"
-namespace ParticleEmitter{
+#include "Systems/ProceduralFire/ParticleEmitter/HeatParticle.hpp"
+
+namespace ParticleEmitter
+{
 
 ///////////////////////////////////////////////////////////////////////////////
 /// <summary>
@@ -35,16 +30,16 @@ namespace ParticleEmitter{
 class FireBall : public ParticleSystemWithEmitter
 {
 public:
-	V3 mParticleRadius;
+    Base::Vector3 mParticleRadius;
 
-	FireBall(
-        const V3& accelbias, 
-        const V3& accelshift, 
-		const V3 Radius,
-		const V3 pos,
-		const aabb& box,
-		int maxNumParticles,
-		float timePerParticle,
+    FireBall(
+        const Base::Vector3& accelbias, 
+        const Base::Vector3& accelshift, 
+        const Base::Vector3 Radius,
+        const Base::Vector3 pos,
+        const AABB& box,
+        int maxNumParticles,
+        float timePerParticle,
         float minLifeTime = 1.0f,
         float maxLifeTime = 2.0f,
         float minSize = 10.0f,
@@ -52,30 +47,29 @@ public:
         float minAmplitude = 1.0f,
         float maxAmplitude = 2.0f
         )
-		: ParticleSystemWithEmitter(
+        : ParticleSystemWithEmitter(
             HeatEmitter::Type_Fire,
             accelbias, accelshift, pos, box, 
-			maxNumParticles, timePerParticle,
+            maxNumParticles, timePerParticle,
             minLifeTime, maxLifeTime, 
             minSize, maxSize,
             minAmplitude, maxAmplitude)
         , mParticleRadius(Radius)
-	{}
+    {}
 
     ~FireBall() {}
 
-    void setInitPos(V3 pos)
+    void setInitPos(Base::Vector3 pos)
     {
         mInitPos = pos;
     }
-    void setRadius(V3 radius)
+    void setRadius(Base::Vector3 radius)
     {
         mParticleRadius = radius;
     }
-	void initParticle(Particle& out);
+    void initParticle(Particle& out);
     virtual void reinitialize(){};
 
 };
 
 } //end namespace
-#endif // FIREBALL_H

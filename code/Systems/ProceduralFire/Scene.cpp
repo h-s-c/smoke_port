@@ -15,16 +15,20 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
 
-//
-// core includes
-//
-#include "..\BaseTypes\BaseTypes.h"
-#include "..\Interfaces\Interface.h"
-
-#include "FireSystem.h"
-#include "FireScene.h"
-#include "FireTask.h"
-#include "FireObject.h"
+#include "Base/Compat.hpp"
+#include "Base/Platform.hpp"
+#include "Base/Math.hpp"
+#include "Interfaces/Interface.hpp"
+#include "Systems/Common/AABB.hpp"
+#include "Systems/Common/Vertex.hpp"
+#include "Systems/ProceduralFire/ParticleEmitter/Fire.hpp"
+#include "Systems/ProceduralFire/ParticleEmitter/FireBall.hpp"
+#include "Systems/ProceduralFire/ParticleEmitter/FirePatch.hpp"
+#include "Systems/ProceduralFire/ParticleEmitter/ColdParticle.hpp"
+#include "Systems/ProceduralFire/System.hpp"
+#include "Systems/ProceduralFire/Scene.hpp"
+#include "Systems/ProceduralFire/Task.hpp"
+#include "Systems/ProceduralFire/Object.hpp"
 
 extern ManagerInterfaces   g_Managers;
 

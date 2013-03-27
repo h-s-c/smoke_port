@@ -2,7 +2,7 @@
 #include "Base/Platform.hpp"
 #include "Base/Math.hpp"
 #include "Interfaces/Interface.hpp"
-#include "Systems/ProceduralTrees/Trees/Vertex.hpp"
+#include "Systems/Common/Vertex.hpp"
 #include "Systems/ProceduralTrees/Trees/Tree.hpp"
 #include "Systems/ProceduralTrees/Trees/Observer.hpp"
 #include "Systems/ProceduralTrees/Object.hpp"

@@ -1,13 +1,15 @@
-// Base
+#include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
 #include "Base/Math.hpp"
-// Standard library
+#include "Interfaces/Interface.hpp"
+#include "Systems/Common/AABB.hpp"
+#include "Systems/Common/Vertex.hpp"
+#include "Systems/ProceduralFire/ParticleEmitter/ColdParticle.hpp"
+#include "Systems/ProceduralFire/ParticleEmitter/ParticleSystem.hpp"
+
 #include <cstdint>
 #include <list>
 #include <vector>
-// System
-#include "Systems/ProceduralFire/ColdParticle.h"
-#include "Systems/ProceduralFire/PSystem.h"
 
 namespace ParticleEmitter
 {
@@ -20,7 +22,7 @@ namespace ParticleEmitter
 
         // Flare lives for 2-4 seconds.
         // original values //out.lifeTime   = GetRandomFloat(2.0f, 8.0f);
-        out.lifeTime   = GetRandomFloat(mMinLifeTime, mMaxLifeTime);
+        out.lifeTime   = Base::Random::GetRandomFloat(mMinLifeTime, mMaxLifeTime);
 
         // Initial size in pixels.
         // original values //out.initialSize  = GetRandomFloat(10.0f, 15.0f);
@@ -37,10 +39,10 @@ namespace ParticleEmitter
         out.initialVelocity.z += mAccelShift.z;
 
         // Scalar value used in vertex shader as an amplitude factor.
-        out.mass = GetRandomFloat(1.0f, 2.0f);
+        out.mass = Base::Random::GetRandomFloat(1.0f, 2.0f);
 
         // Start color at 50-100% intensity when born for variation.
-        out.initialColor = static_cast<std::uint32_t>(GetRandomFloat(0.5f, 1.0f) *    1.0f);//white;
+        out.initialColor = static_cast<std::uint32_t>(Base::Random::GetRandomFloat(0.5f, 1.0f) *    1.0f);//white;
    
         out.initialPos = mInitPos;
     }

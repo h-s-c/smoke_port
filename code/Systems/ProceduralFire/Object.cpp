@@ -15,37 +15,23 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it. 
 
+#include "Base/Compat.hpp"
+#include "Base/Platform.hpp"
+#include "Base/Math.hpp"
+#include "Interfaces/Interface.hpp"
+#include "Systems/Common/AABB.hpp"
+#include "Systems/Common/Vertex.hpp"
+#include "Systems/ProceduralFire/ParticleEmitter/Fire.hpp"
+#include "Systems/ProceduralFire/ParticleEmitter/FireBall.hpp"
+#include "Systems/ProceduralFire/ParticleEmitter/FirePatch.hpp"
+#include "Systems/ProceduralFire/ParticleEmitter/ColdParticle.hpp"
+#include "Systems/ProceduralFire/Scene.hpp"
+#include "Systems/ProceduralFire/Object.hpp"
 
-// core includes
-//
-#include "..\BaseTypes\BaseTypes.h"
-#include "..\Interfaces\Interface.h"
 
-// core includes continued...
-//
-#include "Vertex.h"
-#include "Vector3.h"
-#include "Fire.h"
-#include "Tree.h"
-#include "aabb.h"
-#include "Fire.h"
-#include "FireBall.h"
-#include "FirePatch.h"
-#include "ColdParticle.h"
-
-//
-// System includes
-//
-#include "..\SystemInput\Object.h"
-
-#include  "..\SystemProceduralTrees\TreeObject.h"
 #define NUM_VERTEX_FP_DECL_ELEMENTS         8
 #define NUM_VERTEX_HP_DECL_ELEMENTS         1
 
-#include "FireObject.h"
-
-#pragma warning( push )
-#pragma warning( disable : 6386 )
 
 extern ManagerInterfaces   g_Managers;
 
@@ -442,9 +428,9 @@ FireObject::Initialize( std::vector<Properties::Property> Properties )
     // The following operator is commented out because the fire scene adds each 
     // new fire object to its list itself.
     //reinterpret_cast<FireScene*>(GetSystemScene())->GetFires().push_back(this);
-
+#if FIREOBJ_PREBUILD_VERTICES
     m_nVertexSize = m_bRenderHeatParticles ? sizeof(VertexHP) : sizeof(VertexFP);
-
+#endif
 //Fire initialize code goes here
     return Errors::Success;
 }
@@ -466,27 +452,27 @@ void FireObject::FillPostedData(){
 /// </summary>
 
 Bool 
-FireObject::checkCollision(V3 pos,V3 prevPos, aabb AABB)
+FireObject::checkCollision(Base::Vector3 pos,Base::Vector3 prevPos, AABB aabb)
 {
-    if(pos.x <= AABB.xMax && pos.x >= AABB.xMin && 
-        pos.y <= AABB.yMax && pos.y >= AABB.yMin && 
-        pos.z <= AABB.zMax && pos.z >= AABB.zMin )
+    if(pos.x <= aabb.xMax && pos.x >= aabb.xMin && 
+        pos.y <= aabb.yMax && pos.y >= aabb.yMin && 
+        pos.z <= aabb.zMax && pos.z >= aabb.zMin )
     {
         return true;
     }
-    V3 RaySegment = pos-prevPos;
+    Base::Vector3 RaySegment = pos-prevPos;
 
-    V3 normalP0, normalP1, normalP2, normalP3, normalP4, normalP5;
-    V3 PointP0, PointP1, PointP2, PointP3, PointP4, PointP5;
+    Base::Vector3 normalP0, normalP1, normalP2, normalP3, normalP4, normalP5;
+    Base::Vector3 PointP0, PointP1, PointP2, PointP3, PointP4, PointP5;
 
-    // Equivalent to: V3(AABB.xMin,AABB.yMin,AABB.zMax) - V3(AABB.xMin,AABB.yMin,AABB.zMin);
-    normalP0 = V3(0.0f, 0.0f, AABB.zMax - AABB.zMin);
+    // Equivalent to: Base::Vector3(aabb.xMin,aabb.yMin,aabb.zMax) - Base::Vector3(aabb.xMin,aabb.yMin,aabb.zMin);
+    normalP0 = Base::Vector3(0.0f, 0.0f, aabb.zMax - aabb.zMin);
     //normalP0.Normalize();
-    PointP0 = AABB.min; 
+    PointP0 = aabb.min; 
 
     float DotPosNormal;
     float DotPrevNormal;
-    V3 intersectedPoint = V3(0.0f,0.0f,0.0f);
+    Base::Vector3 intersectedPoint = Base::Vector3(0.0f,0.0f,0.0f);
 
     // Equivalent to: Normal = DotProduct(position - Point<n>, normal<n>);
     DotPosNormal = (pos.z - PointP0.z) * normalP0.z;
@@ -496,17 +482,17 @@ FireObject::checkCollision(V3 pos,V3 prevPos, aabb AABB)
         DotPosNormal <= 0 && DotPrevNormal >=0)
     {
         // Equivalent to: intersectedPoint = prevPos + (((DotProduct(normalP0,PointP0))-(DotProduct(normalP0,prevPos)))*RaySegment)/DotProduct(normalP0,RaySegment);
-        intersectedPoint = prevPos + ((PointP0.z - prevPos.z) / RaySegment.z) * RaySegment;
-        if (intersectedPoint.x >= AABB.xMin && intersectedPoint.x <= AABB.xMax  && intersectedPoint.y >= AABB.yMin && intersectedPoint.y <= AABB.yMax)
+        intersectedPoint = RaySegment * ( prevPos + ((PointP0.z - prevPos.z) / RaySegment.z));
+        if (intersectedPoint.x >= aabb.xMin && intersectedPoint.x <= aabb.xMax  && intersectedPoint.y >= aabb.yMin && intersectedPoint.y <= aabb.yMax)
         {
             return true;
         }
     }
 
-    // Equivalent to: normalP1 = V3(AABB.xMax,AABB.yMax,AABB.zMin)-V3(AABB.xMax,AABB.yMax,AABB.zMax);
-    normalP1 = V3(0.0f, 0.0f, AABB.zMin - AABB.zMax);
+    // Equivalent to: normalP1 = Base::Vector3(aabb.xMax,aabb.yMax,aabb.zMin)-Base::Vector3(aabb.xMax,aabb.yMax,aabb.zMax);
+    normalP1 = Base::Vector3(0.0f, 0.0f, aabb.zMin - aabb.zMax);
     //normalP1.Normalize();
-    PointP1 = AABB.max; 
+    PointP1 = aabb.max; 
     
     // Equivalent to: Normal = DotProduct(position - Point<n>, normal<n>);
     DotPosNormal = (pos.z - PointP1.z) * normalP1.z;
@@ -516,17 +502,17 @@ FireObject::checkCollision(V3 pos,V3 prevPos, aabb AABB)
         DotPosNormal <= 0 && DotPrevNormal >=0)
     {
         // Equivalent to: intersectedPoint = prevPos + (((DotProduct(normalP1,PointP1))-(DotProduct(normalP1,prevPos)))*RaySegment)/DotProduct(normalP1,RaySegment);
-        intersectedPoint = prevPos + ((PointP1.z-prevPos.z)/RaySegment.z)*RaySegment;
-        if (intersectedPoint.x >= AABB.xMin && intersectedPoint.x <= AABB.xMax  && intersectedPoint.y >= AABB.yMin && intersectedPoint.y <= AABB.yMax)
+        intersectedPoint = RaySegment * (prevPos + ((PointP1.z-prevPos.z)/RaySegment.z));
+        if (intersectedPoint.x >= aabb.xMin && intersectedPoint.x <= aabb.xMax  && intersectedPoint.y >= aabb.yMin && intersectedPoint.y <= aabb.yMax)
         {
             return true;
         }
     }
 
-    // Equivalent to: normalP2 = V3(AABB.xMax,AABB.yMax,AABB.zMin) - V3(AABB.xMax,AABB.yMin,AABB.zMin);
-    normalP2 = V3(0.0f, AABB.yMax - AABB.yMin, 0.0f);
+    // Equivalent to: normalP2 = Base::Vector3(aabb.xMax,aabb.yMax,aabb.zMin) - Base::Vector3(aabb.xMax,aabb.yMin,aabb.zMin);
+    normalP2 = Base::Vector3(0.0f, aabb.yMax - aabb.yMin, 0.0f);
     //normalP2.Normalize();
-    PointP2 = V3(AABB.xMax,AABB.yMin,AABB.zMin);
+    PointP2 = Base::Vector3(aabb.xMax,aabb.yMin,aabb.zMin);
     
     // Equivalent to: Normal = DotProduct(position - Point<n>, normal<n>);
     DotPosNormal = (pos.y - PointP2.y) * normalP2.y;
@@ -536,17 +522,17 @@ FireObject::checkCollision(V3 pos,V3 prevPos, aabb AABB)
         DotPosNormal <= 0 && DotPrevNormal >=0)
     {
         // Equivalent to: intersectedPoint = prevPos + (((DotProduct(normalP2,PointP2))-(DotProduct(normalP2,prevPos)))*RaySegment)/DotProduct(normalP2,RaySegment);
-        intersectedPoint = prevPos + ((PointP2.y-prevPos.y)/RaySegment.y)*RaySegment;
-        if (intersectedPoint.x >= AABB.xMin && intersectedPoint.x <= AABB.xMax  && intersectedPoint.z >= AABB.zMin && intersectedPoint.z <= AABB.zMax)
+        intersectedPoint = RaySegment * (prevPos + ((PointP2.y-prevPos.y)/RaySegment.y));
+        if (intersectedPoint.x >= aabb.xMin && intersectedPoint.x <= aabb.xMax  && intersectedPoint.z >= aabb.zMin && intersectedPoint.z <= aabb.zMax)
         {
             return true;
         }
     }
 
-    // Equivalent to: normalP3 = V3(AABB.xMin,AABB.yMin,AABB.zMax) - V3(AABB.xMin, AABB.yMax, AABB.zMax); 
-    normalP3 = V3(0.0f,AABB.yMin - AABB.yMax, 0.0f); 
+    // Equivalent to: normalP3 = Base::Vector3(aabb.xMin,aabb.yMin,aabb.zMax) - Base::Vector3(aabb.xMin, aabb.yMax, aabb.zMax); 
+    normalP3 = Base::Vector3(0.0f,aabb.yMin - aabb.yMax, 0.0f); 
     //normalP3.Normalize();
-    PointP3 = V3(AABB.xMin, AABB.yMax, AABB.zMax); 
+    PointP3 = Base::Vector3(aabb.xMin, aabb.yMax, aabb.zMax); 
 
     // Equivalent to: Normal = DotProduct(position - Point<n>, normal<n>);
     DotPosNormal = (pos.y - PointP3.y) * normalP3.y;
@@ -556,17 +542,17 @@ FireObject::checkCollision(V3 pos,V3 prevPos, aabb AABB)
         DotPosNormal <= 0 && DotPrevNormal >=0)
     {
         // Equivalent to: intersectedPoint = prevPos + (((DotProduct(normalP3,PointP3))-(DotProduct(normalP3,prevPos)))*RaySegment)/DotProduct(normalP3,RaySegment);
-        intersectedPoint = prevPos + ((PointP3.y-prevPos.y)/RaySegment.y)*RaySegment;
-        if (intersectedPoint.x >= AABB.xMin && intersectedPoint.x <= AABB.xMax  && intersectedPoint.z >= AABB.zMin && intersectedPoint.z <= AABB.zMax)
+        intersectedPoint = RaySegment * (prevPos + ((PointP3.y-prevPos.y)/RaySegment.y));
+        if (intersectedPoint.x >= aabb.xMin && intersectedPoint.x <= aabb.xMax  && intersectedPoint.z >= aabb.zMin && intersectedPoint.z <= aabb.zMax)
         {
             return true;
         }
     }
 
-    // Equivalent to: normalP4 = V3(AABB.xMin,AABB.yMin,AABB.zMax)-V3(AABB.xMax,AABB.yMin,AABB.zMax); 
-    normalP4 = V3(AABB.xMin - AABB.xMax, 0.0f, 0.0f);
+    // Equivalent to: normalP4 = Base::Vector3(aabb.xMin,aabb.yMin,aabb.zMax)-Base::Vector3(aabb.xMax,aabb.yMin,aabb.zMax); 
+    normalP4 = Base::Vector3(aabb.xMin - aabb.xMax, 0.0f, 0.0f);
     //normalP4.Normalize();
-    PointP4 = V3(AABB.xMax,AABB.yMin,AABB.zMax); 
+    PointP4 = Base::Vector3(aabb.xMax,aabb.yMin,aabb.zMax); 
     
     // Equivalent to: Normal = DotProduct(position - Point<n>, normal<n>);
     DotPosNormal = (pos.x - PointP4.x) * normalP4.x;
@@ -576,8 +562,8 @@ FireObject::checkCollision(V3 pos,V3 prevPos, aabb AABB)
         DotPosNormal <= 0 && DotPrevNormal >=0)
     {
         // Equivalent to: intersectedPoint = prevPos + (((DotProduct(normalP4,PointP4))-(DotProduct(normalP4,prevPos)))*RaySegment)/DotProduct(normalP4,RaySegment);
-        intersectedPoint = prevPos + ((PointP4.x-prevPos.x)/RaySegment.x)*RaySegment;
-        if (intersectedPoint.y >= AABB.yMin && intersectedPoint.y <= AABB.yMax  && intersectedPoint.z >= AABB.zMin && intersectedPoint.z <= AABB.zMax)
+        intersectedPoint = RaySegment * (prevPos + ((PointP4.x-prevPos.x)/RaySegment.x));
+        if (intersectedPoint.y >= aabb.yMin && intersectedPoint.y <= aabb.yMax  && intersectedPoint.z >= aabb.zMin && intersectedPoint.z <= aabb.zMax)
         {
             return true;
         }
@@ -585,9 +571,9 @@ FireObject::checkCollision(V3 pos,V3 prevPos, aabb AABB)
 
     //This 6th check is not needed since after you have checked any five the sixth is by default included.  I've left
     //the note here just so people won't think I left out a check.
-    //normalP5 = V3(AABB.xMax,AABB.yMax,AABB.zMin) - V3(AABB.xMin,AABB.yMax,AABB.zMin);
+    //normalP5 = Base::Vector3(aabb.xMax,aabb.yMax,aabb.zMin) - Base::Vector3(aabb.xMin,aabb.yMax,aabb.zMin);
     ////normalP5.Normalize();
-    //PointP5 = V3(AABB.xMin,AABB.yMax,AABB.zMin);
+    //PointP5 = Base::Vector3(aabb.xMin,aabb.yMax,aabb.zMin);
  
     return false;
 }
@@ -698,8 +684,8 @@ FireObject::SetWSBBox()
     m_ObjectWSBBox.xMin = AABBMin.x;
     m_ObjectWSBBox.yMin = AABBMin.y;
     m_ObjectWSBBox.zMin = AABBMin.z;
-    m_ObjectWSBBox.max = V3(AABBMax.x, AABBMax.y, AABBMax.z);
-    m_ObjectWSBBox.min = V3(AABBMin.x, AABBMin.y, AABBMin.z);
+    m_ObjectWSBBox.max = Base::Vector3(AABBMax.x, AABBMax.y, AABBMax.z);
+    m_ObjectWSBBox.min = Base::Vector3(AABBMin.x, AABBMin.y, AABBMin.z);
 
     PostChanges( System::Changes::POI::Area );
 }
@@ -735,7 +721,7 @@ FireObject::ChangeOccurred(
 
         if ( pSysObj->GetSystemType() == System::Types::MakeCustom( 0 ) )
         {
-            TreeObject* pTreeObj = dynamic_cast<TreeObject*>(pSubject);
+            ITreeObject* pTreeObj = dynamic_cast<ITreeObject*>(pSubject);
 
             //
             // NOTE: Assuming tree object is only sending custom for initialization.
@@ -840,8 +826,8 @@ FireObject::ChangeOccurred(
             m_ObjectOSBBox.xMin = AABBMin.x;
             m_ObjectOSBBox.yMin = AABBMin.y;
             m_ObjectOSBBox.zMin = AABBMin.z;
-            m_ObjectOSBBox.max = V3(AABBMax.x, AABBMax.y, AABBMax.z);
-            m_ObjectOSBBox.min = V3(AABBMin.x, AABBMin.y, AABBMin.z);
+            m_ObjectOSBBox.max = Base::Vector3(AABBMax.x, AABBMax.y, AABBMax.z);
+            m_ObjectOSBBox.min = Base::Vector3(AABBMin.x, AABBMin.y, AABBMin.z);
 
 
 
@@ -863,7 +849,7 @@ FireObject::createFireSystem()
     {
         if (m_Type == Type_CanopyFire){
             B3 Basis;
-            aabb psysBox;
+            AABB psysBox;
             std::vector<FireObject::PointPair *>::iterator i, iend;
             i = m_pRetrievedPostedData->pointPairs.begin();
 
@@ -872,10 +858,10 @@ FireObject::createFireSystem()
             //iend = m_pRetrievedPostedData->pointPairs.begin();
             //iend ++;
             //end restrict to only one pair for debugging
-            V3 impulse(m_FPImpulse.x, m_FPImpulse.y,m_FPImpulse.z);
-            V3 shift(m_FPShift.x, m_FPShift.y,m_FPShift.z);
+            Base::Vector3 impulse(m_FPImpulse.x, m_FPImpulse.y,m_FPImpulse.z);
+            Base::Vector3 shift(m_FPShift.x, m_FPShift.y,m_FPShift.z);
             for ( i; i != iend; i++){
-                psysBox = (*i)->AABB;
+                psysBox = (*i)->aabb;
                 Basis = (*i)->basis;
                 //Basis.iAxis = Basis.iAxis ;//* m_ObjectScale.x
                 //Basis.jAxis = Basis.jAxis ;//* m_ObjectScale.y
@@ -897,14 +883,14 @@ FireObject::createFireSystem()
                 m_Fires.push_back(m_Fire);
                 m_BurningList.push_back((*i)->burning ? Burning : Normal );
                 //m_BurningList.push_back(true);
-                m_BoundingBoxList.push_back((*i)->AABB);
+                m_BoundingBoxList.push_back((*i)->aabb);
             }
             m_pPostedData->Fires=m_Fires;
             m_CreateParams.created = true;
         }
         if (m_Type == Type_TreeFire){
 
-            aabb psysBox;
+            AABB psysBox;
             std::vector<FireObject::PointPair *>::iterator i, iend;
             i = m_pRetrievedPostedData->pointPairs.begin();
 
@@ -914,10 +900,10 @@ FireObject::createFireSystem()
             //iend ++;
             //end restrict to only one pair for debugging
             int Trunk = 0;
-            V3 impulse(m_FPImpulse.x, m_FPImpulse.y,m_FPImpulse.z);
-            V3 shift(m_FPShift.x, m_FPShift.y,m_FPShift.z);
+            Base::Vector3 impulse(m_FPImpulse.x, m_FPImpulse.y,m_FPImpulse.z);
+            Base::Vector3 shift(m_FPShift.x, m_FPShift.y,m_FPShift.z);
             for ( i; i != iend; i++){
-                psysBox = (*i)->AABB;
+                psysBox = (*i)->aabb;
                 ParticleEmitter::Fire * fr = new ParticleEmitter::Fire(
                     impulse,
                     shift, 
@@ -938,13 +924,13 @@ FireObject::createFireSystem()
                     m_BurningList.push_back((*i)->burning ? Burning : Normal );
                 }
                 Trunk++;
-                m_BoundingBoxList.push_back((*i)->AABB);
+                m_BoundingBoxList.push_back((*i)->aabb);
             }
             m_CreateParams.created = true;
         }
         if (m_Type == Type_SphereFire){
-            aabb psysBox;
-            V3 Radius;
+            AABB psysBox;
+            Base::Vector3 Radius;
             Base::Vector3 radius;
             f32 average = 0.5f * (m_ObjectOSBBox.xMax - m_ObjectOSBBox.xMin);
             radius.x = 0.0f;
@@ -954,13 +940,13 @@ FireObject::createFireSystem()
             Radius.x = radius.x;
             Radius.y = radius.y;
             Radius.z = radius.z;
-            V3 Position;
+            Base::Vector3 Position;
             Position.x = m_ObjectPosition.x;
             Position.y = m_ObjectPosition.y;
             Position.z = m_ObjectPosition.z;
 
-            V3 impulse(m_FPImpulse.x, m_FPImpulse.y,m_FPImpulse.z);
-            V3 shift(m_FPShift.x, m_FPShift.y,m_FPShift.z);
+            Base::Vector3 impulse(m_FPImpulse.x, m_FPImpulse.y,m_FPImpulse.z);
+            Base::Vector3 shift(m_FPShift.x, m_FPShift.y,m_FPShift.z);
             ParticleEmitter::FireBall * fr = new ParticleEmitter::FireBall(
                 impulse, 
                 shift, 
@@ -987,7 +973,7 @@ FireObject::createFireSystem()
             m_CreateParams.created = true;
         }
         if (m_Type == Type_PatchFire){
-            aabb psysBox;
+            AABB psysBox;
             B3 Basis;
             Base::Vector3 radius;
             f32 average = 0.5f * (m_ObjectOSBBox.xMax - m_ObjectOSBBox.xMin);
@@ -1004,13 +990,13 @@ FireObject::createFireSystem()
             Basis.kAxis.x = radius.x;
             Basis.kAxis.y = radius.z;
             Basis.kAxis.z = radius.y;
-            V3 Position;
+            Base::Vector3 Position;
             Position.x = m_ObjectPosition.x;
             Position.y = m_ObjectPosition.y;
             Position.z = m_ObjectPosition.z;
 
-            V3 impulse(m_FPImpulse.x, m_FPImpulse.y,m_FPImpulse.z);
-            V3 shift(m_FPShift.x, m_FPShift.y,m_FPShift.z);
+            Base::Vector3 impulse(m_FPImpulse.x, m_FPImpulse.y,m_FPImpulse.z);
+            Base::Vector3 shift(m_FPShift.x, m_FPShift.y,m_FPShift.z);
             ParticleEmitter::FirePatch * fr = new ParticleEmitter::FirePatch(
                 impulse, 
                 shift, 
@@ -1033,8 +1019,8 @@ FireObject::createFireSystem()
         }
         if (m_Type == Type_ColdParticle)
         {
-            aabb psysBox;
-            V3 Radius;
+            AABB psysBox;
+            Base::Vector3 Radius;
             Base::Vector3 radius;
             f32 average = 0.5f * (m_ObjectOSBBox.xMax - m_ObjectOSBBox.xMin);
             radius.x = 0.0f;
@@ -1044,13 +1030,13 @@ FireObject::createFireSystem()
             Radius.x = radius.x;
             Radius.y = radius.y;
             Radius.z = radius.z;
-            V3 Position;
+            Base::Vector3 Position;
             Position.x = m_ObjectPosition.x;
             Position.y = m_ObjectPosition.y;
             Position.z = m_ObjectPosition.z;
 
-            V3 impulse(m_FPImpulse.x, m_FPImpulse.y,m_FPImpulse.z);
-            V3 shift(m_FPShift.x, m_FPShift.y,m_FPShift.z);
+            Base::Vector3 impulse(m_FPImpulse.x, m_FPImpulse.y,m_FPImpulse.z);
+            Base::Vector3 shift(m_FPShift.x, m_FPShift.y,m_FPShift.z);
             ParticleEmitter::ColdParticle * fr = new ParticleEmitter::ColdParticle(
                 impulse, 
                 shift, 
@@ -1181,8 +1167,8 @@ void FireObject::UpdateRange ( u32 begin, u32 end )
                fr->setActive();
                if ( !fr->m_pHeatParticles->isActive())
                {
-                    V3 impulse(m_HPImpulse.x, m_HPImpulse.y,m_HPImpulse.z);
-                    V3 shift(m_HPShift.x, m_HPShift.y,m_HPShift.z);
+                    Base::Vector3 impulse(m_HPImpulse.x, m_HPImpulse.y,m_HPImpulse.z);
+                    Base::Vector3 shift(m_HPShift.x, m_HPShift.y,m_HPShift.z);
                     fr->m_pHeatParticles->Activate(
                         fr->mInitPos + ((fr->mParticleLine - fr->mInitPos) * 0.5f),
                         impulse,
@@ -1221,8 +1207,8 @@ void FireObject::UpdateRange ( u32 begin, u32 end )
                if ( !fr->m_pHeatParticles->isActive())
                {
                     // activate with parameter 3 changed from 1 to 2 will half the Frame rate on some scenes.  
-                    V3 impulse(m_HPImpulse.x, m_HPImpulse.y,m_HPImpulse.z);
-                    V3 shift(m_HPShift.x, m_HPShift.y,m_HPShift.z);
+                    Base::Vector3 impulse(m_HPImpulse.x, m_HPImpulse.y,m_HPImpulse.z);
+                    Base::Vector3 shift(m_HPShift.x, m_HPShift.y,m_HPShift.z);
                     fr->m_pHeatParticles->Activate(
                         fr->mInitPos ,
                         impulse,
@@ -1239,12 +1225,12 @@ void FireObject::UpdateRange ( u32 begin, u32 end )
 
                    fr->m_pHeatParticles->setPos(fr->mInitPos);
                }
-               V3 Position;
+               Base::Vector3 Position;
                Position.x = m_ObjectPosition.x;
                Position.y = m_ObjectPosition.y;
                Position.z = m_ObjectPosition.z;
                fr->setInitPos(Position);
-                V3 Radius;
+                Base::Vector3 Radius;
                 Base::Vector3 radius;
                 f32 average = 0.5f * (m_ObjectOSBBox.xMax - m_ObjectOSBBox.xMin);
                 radius.x = 0.0f;
@@ -1279,8 +1265,8 @@ void FireObject::UpdateRange ( u32 begin, u32 end )
                 if ( !fr->m_pColdParticles->isActive())
                 {
                     // activate with parameter 3 changed from 1 to 2 will half the Frame rate on some scenes.  
-                    V3 impulse(m_HPImpulse.x, m_HPImpulse.y,m_HPImpulse.z);
-                    V3 shift(m_HPShift.x, m_HPShift.y,m_HPShift.z);
+                    Base::Vector3 impulse(m_HPImpulse.x, m_HPImpulse.y,m_HPImpulse.z);
+                    Base::Vector3 shift(m_HPShift.x, m_HPShift.y,m_HPShift.z);
                     fr->m_pColdParticles->Activate(
                         fr->mInitPos ,
                         impulse,
@@ -1298,14 +1284,14 @@ void FireObject::UpdateRange ( u32 begin, u32 end )
                     fr->m_pColdParticles->setPos(fr->mInitPos);
                 }
 
-                V3 Position;
+                Base::Vector3 Position;
                 Position.x = m_ObjectPosition.x;
                 Position.y = m_ObjectPosition.y;
                 Position.z = m_ObjectPosition.z;
 
 
                 fr->setInitPos(Position);
-                V3 Radius;
+                Base::Vector3 Radius;
                 Base::Vector3 radius;
                 f32 average = 0.5f * (m_ObjectOSBBox.xMax - m_ObjectOSBBox.xMin);
                 radius.x = 0.0f;
@@ -1340,8 +1326,8 @@ void FireObject::UpdateRange ( u32 begin, u32 end )
                if ( !fr->m_pHeatParticles->isActive())
                {
                     // activate with parameter 3 changed from 1 to 2 will half the Frame rate on some scenes.  
-                    V3 impulse(m_HPImpulse.x, m_HPImpulse.y,m_HPImpulse.z);
-                    V3 shift(m_HPShift.x, m_HPShift.y,m_HPShift.z);
+                    Base::Vector3 impulse(m_HPImpulse.x, m_HPImpulse.y,m_HPImpulse.z);
+                    Base::Vector3 shift(m_HPShift.x, m_HPShift.y,m_HPShift.z);
                     fr->m_pHeatParticles->Activate(
                         fr->mInitPos ,
                         impulse,
@@ -1360,13 +1346,13 @@ void FireObject::UpdateRange ( u32 begin, u32 end )
                }
                if(m_Type == Type_PatchFire)
                {
-                   V3 Position;
+                   Base::Vector3 Position;
                    Position.x = m_ObjectPosition.x;
                    Position.y = m_ObjectPosition.y;
                    Position.z = m_ObjectPosition.z;
                    fr->setInitPos(Position);
                }
-                //V3 Radius;
+                //Base::Vector3 Radius;
                 //Base::Vector3 radius;
                 //u32 average = 0.5f * (m_ObjectOSBBox.xMax - m_ObjectOSBBox.xMin);
                 //radius.x = 0.0f;
@@ -1396,14 +1382,14 @@ FireObject::StepUpdate(
     return false;
 }
 void 
-FireObject::Vector4_2_V3(Base::Vector4 &v4, V3 &v3)
+FireObject::Vector4_2_V3(Base::Vector4 &v4, Base::Vector3 &v3)
 {
     v3.x = v4.x;
     v3.y = v4.y;
     v3.z = v4.z;
 }
 void 
-FireObject::V3_2_Vector4(V3 &v3, Base::Vector4 &v4)
+FireObject::V3_2_Vector4(Base::Vector3 &v3, Base::Vector4 &v4)
 {
     v4.x = v3.x;
     v4.y = v3.y;
@@ -1499,8 +1485,8 @@ void FireObject::ProcessFireCollisionsRange ( u32 begin, u32 end, CollisionCheck
 
         //for each Fire object in the List of all FireObjects test for collisions with "this" Fire Objects heat particle (rays);
         Emitter_Type    emitterType = pcci->m_EmitterType;
-        std::vector<V3> &positions = pcci->m_vPositions;
-        std::vector<V3> &prevPositions = pcci->m_vPrevPositions;
+        std::vector<Base::Vector3> &positions = pcci->m_vPositions;
+        std::vector<Base::Vector3> &prevPositions = pcci->m_vPrevPositions;
 
         // Transform the particle into local space of current Fire object in the Fire Object List (FOL)
         // This is done by first transforming the particle to world space using the "this" instance of the
@@ -1508,8 +1494,8 @@ void FireObject::ProcessFireCollisionsRange ( u32 begin, u32 end, CollisionCheck
         // using the FOLi instance of the Local Space transform.  This puts the heat particle (ray) of "this" fire object 
         // in the Local space of the Fire Object (FOLi).  The particle or Ray can then be tested for collision
         // First we need to convert both the begin and end point of the heat ray between the 
-        // V3 class and Base::Vector class... we need to transform to V3 and then back to Base::Vector
-        V3 testParticle = positions[i];
+        // Base::Vector3 class and Base::Vector class... we need to transform to Base::Vector3 and then back to Base::Vector
+        Base::Vector3 testParticle = positions[i];
         Base::Vector4 tempTestParticle;
         tempTestParticle.x = testParticle.x;
         tempTestParticle.y = testParticle.y;
@@ -1519,7 +1505,7 @@ void FireObject::ProcessFireCollisionsRange ( u32 begin, u32 end, CollisionCheck
         // transform end point particle or (ray) to World Space
         tempTestParticle = m_Transform2WS * tempTestParticle;
 
-        V3 testPrevParticle = prevPositions[i];
+        Base::Vector3 testPrevParticle = prevPositions[i];
         Base::Vector4 tempTestPrevParticle;
         tempTestPrevParticle.x = testPrevParticle.x;
         tempTestPrevParticle.y = testPrevParticle.y;
@@ -1534,7 +1520,7 @@ void FireObject::ProcessFireCollisionsRange ( u32 begin, u32 end, CollisionCheck
         // bounding box to reduce tests for fire object
         // need to convert from aabb class to Base::Vector do the transform and then 
         // convert back to aabb class.
-        V3 ttp,ttpp;
+        Base::Vector3 ttp,ttpp;
         ttp.x = tempTestParticle.x;
         ttp.y = tempTestParticle.y;
         ttp.z = tempTestParticle.z;
@@ -1554,10 +1540,10 @@ void FireObject::ProcessFireCollisionsRange ( u32 begin, u32 end, CollisionCheck
                 // if it passes this test then we want to finish setting the heat particle (ray) of
                 // "this" fire object to the Local Space of the FOLi Fire Object instance
                 Base::Vector4 tmpTestParticle = pfo->m_Transform2LS * tempTestParticle;
-                V3 testPart = V3( tmpTestParticle.x, tmpTestParticle.y, tmpTestParticle.z );
+                Base::Vector3 testPart = Base::Vector3( tmpTestParticle.x, tmpTestParticle.y, tmpTestParticle.z );
 
                 Base::Vector4 tmpTestPrevParticle = pfo->m_Transform2LS * tempTestPrevParticle;
-                V3 testPrevPart = V3( tmpTestPrevParticle.x, tmpTestPrevParticle.y, tmpTestPrevParticle.z );
+                Base::Vector3 testPrevPart = Base::Vector3( tmpTestPrevParticle.x, tmpTestPrevParticle.y, tmpTestPrevParticle.z );
 
                 u32 size = (u32)pfo->m_BurningList.size();
                 // need to change name from branches to some local burning list
@@ -1571,7 +1557,7 @@ void FireObject::ProcessFireCollisionsRange ( u32 begin, u32 end, CollisionCheck
                         {
                             if (pfo->m_pRetrievedPostedData)
                             {
-                                if (checkCollision(testPart, testPrevPart, pfo->m_pRetrievedPostedData->pointPairs[branches]->AABB))
+                                if (checkCollision(testPart, testPrevPart, pfo->m_pRetrievedPostedData->pointPairs[branches]->aabb))
                                 {
                                     pfo->m_BurningList[branches] = Extinguished;
                                 }
@@ -1585,7 +1571,7 @@ void FireObject::ProcessFireCollisionsRange ( u32 begin, u32 end, CollisionCheck
                     {
                         if (pfo->m_BurningList[branches] == Normal)
                         {
-                            if (checkCollision(testPart, testPrevPart, pfo->m_pRetrievedPostedData->pointPairs[branches]->AABB))
+                            if (checkCollision(testPart, testPrevPart, pfo->m_pRetrievedPostedData->pointPairs[branches]->aabb))
                             {
                                 // Post a change to tell other system that the fire is active
                                 if( !pfo->m_fireIsActive)
@@ -1904,8 +1890,8 @@ FireObject::BuildVertexBuffer( void* pVertices )
     if ( m_bDirty )
         GetVertexCount(0);
 
-    Base::Vector3 minExtends(FLT_MAX);
-    Base::Vector3 maxExtends(-FLT_MAX);
+    Base::Vector3 minExtends(std::numeric_limits<float>::max());
+    Base::Vector3 maxExtends(-std::numeric_limits<float>::max());
 
     if(m_bRenderHeatParticles)
     {
@@ -1972,12 +1958,12 @@ FireObject::BuildVertexBuffer( void* pVertices )
             }
         }
     }
-    if((minExtends.x == FLT_MAX) ||
-        (minExtends.y == FLT_MAX) ||
-        (minExtends.z == FLT_MAX) ||
-        (maxExtends.x == FLT_MIN) ||
-        (maxExtends.y == FLT_MIN) ||
-        (maxExtends.z == FLT_MIN)){
+    if((minExtends.x == std::numeric_limits<float>::max()) ||
+        (minExtends.y == std::numeric_limits<float>::max()) ||
+        (minExtends.z == std::numeric_limits<float>::max()) ||
+        (maxExtends.x == std::numeric_limits<float>::min()) ||
+        (maxExtends.y == std::numeric_limits<float>::min()) ||
+        (maxExtends.z == std::numeric_limits<float>::min())){
     }else {
         m_minExtends = minExtends; 
         m_maxExtends = maxExtends;
@@ -2059,4 +2045,4 @@ FireObject::fireIsActive()
  return m_fireIsActive;
 }
 
-#pragma warning( pop )
+

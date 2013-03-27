@@ -900,7 +900,8 @@ namespace Base
         float m[ 16 ];
         
         
-        const Matrix4x4& MatrixRotationAxis(Matrix4x4& pout, const Vector3& pv, float angle);        
+        const Matrix4x4& MatrixRotationAxis(Matrix4x4& pout, const Vector3& pv, float angle);
+        const Matrix4x4& MatrixRotationYawPitchRoll(Matrix4x4& pout, float roll, float pitch, float yaw );
     };
 
 

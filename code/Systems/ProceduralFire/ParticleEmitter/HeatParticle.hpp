@@ -26,23 +26,16 @@
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  Intel does not
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
+#pragma once
 
-#ifndef HEAT_H
-#define HEAT_H
-#include <list>
-#include <vector>
-#include "PSystem.h"
-#include "..\BaseTypes\BaseTypes.h"
-#include "..\Interfaces\Interface.h"
-#include "aabb.h"
-
+#include "Systems/ProceduralFire/ParticleEmitter/ParticleSystem.hpp"
 
 namespace ParticleEmitter{
 
 struct HeatParticle : public ParticleBase
 {
-	V3 currentPos;
-    V3 prevPos;
+    Base::Vector3 currentPos;
+    Base::Vector3 prevPos;
 
     void update ( float dt )
     {
@@ -66,20 +59,20 @@ public:
     };
 
     Emitter_Type m_EmitterType;
-	V3 mInitPos;
+    Base::Vector3 mInitPos;
 
     HeatEmitter( Emitter_Type eType )
         : m_EmitterType( eType )
     {
         setInactive();
     };
-	
+    
     void Activate( 
-		const V3 pos,
-		const V3 impulse,
-        const V3 shift,
-		int maxNumParticles,
-		float timePerParticle,
+        const Base::Vector3 pos,
+        const Base::Vector3 impulse,
+        const Base::Vector3 shift,
+        int maxNumParticles,
+        float timePerParticle,
         float minLifeTime = 1.0f,
         float maxLifeTime = 50.0f,
         float minSize = 1.0f,
@@ -87,25 +80,27 @@ public:
         float minAmplitude = 1.0f,
         float maxAmplitude = 2.0f);
 
-    void setPos(const V3& pos)
+    void setPos(const Base::Vector3& pos)
     {
         mInitPos = pos;
     }
-    Bool getPositions( std::vector<V3>  &curPos, 
-                       std::vector<V3>  &prevPos) const;
+    Bool getPositions( std::vector<Base::Vector3>  &curPos, 
+                       std::vector<Base::Vector3>  &prevPos) const;
 
-	virtual void update(float dt);
+    virtual void update(float dt);
     virtual void initParticle(HeatParticle& out);
 
-	void addParticle();
+    void addParticle();
 
     // Returns an unnormalized random Vector.
-    void GetRandomVec(V3& out)
+    void GetRandomVec(Base::Vector3& out)
     {
-	    out.x = GetRandomFloat(-1.0f, 1.0f);
-	    out.y = GetRandomFloat(-1.0f, 1.0f);
-	    out.z = GetRandomFloat(-1.0f, 1.0f);
+        out.x = Base::Random::GetRandomFloat(-1.0f, 1.0f);
+        out.y = Base::Random::GetRandomFloat(-1.0f, 1.0f);
+        out.z = Base::Random::GetRandomFloat(-1.0f, 1.0f);
     }
+    
+    virtual ~HeatEmitter(){}
 };
 
 
@@ -117,17 +112,17 @@ public:
 class ParticleSystemWithEmitter : public ParticleSystem
 {
 public:
-	V3 mInitPos;
+    Base::Vector3 mInitPos;
     HeatEmitter *m_pHeatParticles;
 
-	ParticleSystemWithEmitter(
+    ParticleSystemWithEmitter(
         HeatEmitter::Emitter_Type type,
-		const V3& accelbias, 
-		const V3& accelshift, 
-		const V3 pos,
-        const aabb& box,
-		int maxNumParticles,
-		float timePerParticle,
+        const Base::Vector3& accelbias, 
+        const Base::Vector3& accelshift, 
+        const Base::Vector3 pos,
+        const AABB& box,
+        int maxNumParticles,
+        float timePerParticle,
         float minLifeTime = 1.0f,
         float maxLifeTime = 2.0f,
         float minSize = 10.0f,
@@ -135,14 +130,14 @@ public:
         float minAmplitude = 1.0f,
         float maxAmplitude = 2.0f
         )
-		: ParticleSystem(accelbias, accelshift, box, 
-			maxNumParticles, timePerParticle,
+        : ParticleSystem(accelbias, accelshift, box, 
+            maxNumParticles, timePerParticle,
             minLifeTime, maxLifeTime, 
             minSize, maxSize,
             minAmplitude, maxAmplitude)
-		, mInitPos(pos)
+        , mInitPos(pos)
         , m_pHeatParticles(NULL)
-	{
+    {
         m_pHeatParticles = new HeatEmitter(type);
     }
 
@@ -166,4 +161,3 @@ public:
     }
 };
 } //end namespace
-#endif // HEAT

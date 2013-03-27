@@ -27,69 +27,76 @@
 // responsibility to update it.
 
 
-#include "PSystem.h"
+#include "Base/Compat.hpp"
+#include "Base/Platform.hpp"
+#include "Base/Math.hpp"
+#include "Interfaces/Interface.hpp"
+#include "Systems/Common/AABB.hpp"
+#include "Systems/Common/Vertex.hpp"
+#include "Systems/ProceduralFire/ParticleEmitter/ParticleSystem.hpp"
+
 
 namespace ParticleEmitter{
 
 void ParticleSystem::reinitialize()
 {
     for(int i = 0; i < mMaxNumParticles; ++i)
-	{
-// 		mParticles[i].age = 0.0f;
-// 		mParticles[i].lifeTime = 0.0f;
+    {
+//      mParticles[i].age = 0.0f;
+//      mParticles[i].lifeTime = 0.0f;
         mParticles[i].initialTime = 0.0f;
-//	    mParticles[i].initialPos = V3(0.0f,0.0f,0.0f);
-//	    mParticles[i].initialVelocity = V3(0.0f,0.0f,0.0f);
-//	    mParticles[i].initialSize = 0.0f; // In pixels.
-	}
+//      mParticles[i].initialPos = V3(0.0f,0.0f,0.0f);
+//      mParticles[i].initialVelocity = V3(0.0f,0.0f,0.0f);
+//      mParticles[i].initialSize = 0.0f; // In pixels.
+    }
 }
 
 void ParticleSystem::addParticle()
 {
-	if( mDeadParticles.size() > 0)
-	{
-		// Reinitialize a particle.
-		Particle* p = mDeadParticles.back();
-		initParticle(*p);
+    if( mDeadParticles.size() > 0)
+    {
+        // Reinitialize a particle.
+        Particle* p = mDeadParticles.back();
+        initParticle(*p);
 
-		// No longer dead.
-		mDeadParticles.pop_back();
-		mAliveParticles.push_back(p);
-	}
+        // No longer dead.
+        mDeadParticles.pop_back();
+        mAliveParticles.push_back(p);
+    }
 }
 
 void ParticleSystem::update(float dt)
 {
     mPrevTime = mTime;
-	mTime += dt;
+    mTime += dt;
 
-	// Rebuild the dead and alive list.  Note that resize(0) does
-	// not deallocate memory (i.e., the capacity of the vector does
-	// not change).
-	mDeadParticles.resize(0);
+    // Rebuild the dead and alive list.  Note that resize(0) does
+    // not deallocate memory (i.e., the capacity of the vector does
+    // not change).
+    mDeadParticles.resize(0);
     mAliveParticles.resize(0);
 
-	// For each particle.
+    // For each particle.
     if(mIsActive)
     {
-	    for(int i = 0; i < mMaxNumParticles; ++i)
-	    {
+        for(int i = 0; i < mMaxNumParticles; ++i)
+        {
             mParticles[i].age = mPrevTime;
-		    // Is the particle dead?
-  		    if( (mTime - mParticles[i].initialTime) > mParticles[i].lifeTime)
-		    {
-			    mDeadParticles.push_back(&mParticles[i]);
-		    }
-		    else
-		    {
-			    mAliveParticles.push_back(&mParticles[i]);
-		    }
-	    }
+            // Is the particle dead?
+            if( (mTime - mParticles[i].initialTime) > mParticles[i].lifeTime)
+            {
+                mDeadParticles.push_back(&mParticles[i]);
+            }
+            else
+            {
+                mAliveParticles.push_back(&mParticles[i]);
+            }
+        }
     }
     else
     {
-	    for(int i = 0; i < mMaxNumParticles; ++i)
-	    {
+        for(int i = 0; i < mMaxNumParticles; ++i)
+        {
             mParticles[i].age = mPrevTime;
             mParticles[i].lifeTime = 0;
             mDeadParticles.push_back(&mParticles[i]);
@@ -97,19 +104,19 @@ void ParticleSystem::update(float dt)
     }
 
 
-	// A negative or zero mTimePerParticle value denotes
-	// not to emit any particles.
-	if( mTimePerParticle > 0.0f )
-	{
-		// Emit particles.
-		static float timeAccum = 0.0f;
-		timeAccum += dt;
-		while( timeAccum >= mTimePerParticle )
-		{
-			addParticle();
-			timeAccum -= mTimePerParticle;
-		}
-	}
+    // A negative or zero mTimePerParticle value denotes
+    // not to emit any particles.
+    if( mTimePerParticle > 0.0f )
+    {
+        // Emit particles.
+        static float timeAccum = 0.0f;
+        timeAccum += dt;
+        while( timeAccum >= mTimePerParticle )
+        {
+            addParticle();
+            timeAccum -= mTimePerParticle;
+        }
+    }
 }
 
 }

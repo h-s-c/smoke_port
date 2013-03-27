@@ -17,19 +17,10 @@
 
 #pragma once
 
-#include "..\BaseTypes\TbbSpinMutex.h"
-
 class FireSystem;
 class FireScene;
 class FireTask;
 
-class Tree;
-class TreeScene;
-class TreeObject;
-struct LevelDetail;
-#include "Fire.h"
-#include "aabb.h"
-#include "FireScene.h"
 
 // CAUTION 
 // Combination FIREOBJ_PREBUILD_VERTICES==0 && FIREOBJ_PARALLEL_BUILD_VERTICES==1 will deadlock!
@@ -42,11 +33,11 @@ struct LevelDetail;
 //    execution stage has a long serial rendering task, this extra work allows
 //    to decrease the number of frames where rendering would have otherwise become
 //    the limiting (longest) operation.
-#define FIREOBJ_PREBUILD_VERTICES 1
+#define FIREOBJ_PREBUILD_VERTICES 0
 
 // Use the constant BuildVerticesGrainSize defined in FireObject.cpp for fine 
 // tuning load balance vs. overhead.
-#define FIREOBJ_PARALLEL_BUILD_VERTICES 1
+#define FIREOBJ_PARALLEL_BUILD_VERTICES 0
 
 ///////////////////////////////////////////////////////////////////////////////
 /// <summary>
@@ -217,7 +208,7 @@ protected:
     ///   Implementation of the checkCollision function.
     ///   fine grained collision check between a particle or ray and a bounding box
     /// </summary>
-    Bool checkCollision(V3 pos,V3 prePos,aabb AABB);
+    Bool checkCollision(Base::Vector3 pos,Base::Vector3 prePos,AABB aabb);
 
     /// <summary cref="FireObject::EmitterCollisionCheck">
     ///   Implementation of the EmmitterCollisionCheck function.
@@ -226,8 +217,8 @@ protected:
     /// </summary>
     void EmitterCollisionCheck( const FireObjectList& fireObjectList, 
                                 ParticleEmitter::HeatEmitter * heatEm );
-    virtual void Vector4_2_V3(Base::Vector4 &v4, V3 &v3); 
-    virtual void V3_2_Vector4(V3 &v3, Base::Vector4 &v4); 
+    virtual void Vector4_2_V3(Base::Vector4 &v4, Base::Vector3 &v3); 
+    virtual void V3_2_Vector4(Base::Vector3 &v3, Base::Vector4 &v4); 
 
 private:
     /// <summary cref="FireObject::SetTransformsAsZeroBasedLS">
@@ -315,10 +306,10 @@ protected:
     //Structures
     // point pair used to establish the extends for a fire particle system
     struct PointPair {
-        V3 basePoint;
-        V3 extendPoint;
+        Base::Vector3 basePoint;
+        Base::Vector3 extendPoint;
         B3 basis;
-        aabb AABB;
+        AABB aabb;
         Bool burning;
    };
 
@@ -443,8 +434,8 @@ public:
         {}
 
         FireObject::Emitter_Type    m_EmitterType;
-        std::vector<V3>             m_vPositions;
-        std::vector<V3>             m_vPrevPositions;
+        std::vector<Base::Vector3>             m_vPositions;
+        std::vector<Base::Vector3>             m_vPrevPositions;
     };
 
 protected:
@@ -462,10 +453,10 @@ protected:
     };
 
     std::vector<BurnState>                       m_BurningList;
-    std::vector<aabb>                       m_BoundingBoxList;
+    std::vector<AABB>                       m_BoundingBoxList;
     
-    aabb                                    m_ObjectWSBBox; // world space bb
-    aabb                                    m_ObjectOSBBox; // local "object" space bb
+    AABB                                    m_ObjectWSBBox; // world space bb
+    AABB                                    m_ObjectOSBBox; // local "object" space bb
     pPostedData                             m_pPostedData;
     pRetrievedPostedData                    m_pRetrievedPostedData;
     ParticleEmitter::ParticleSystem *       m_Fire;
@@ -505,8 +496,8 @@ protected:
     u32     m_nVertexSize;
 #endif /* FIREOBJ_PREBUILD_VERTICES */
 
-#if FIREOBJ_PARALLEL_BUILD_VERTICES
     void*   m_pVertices;
+#if FIREOBJ_PARALLEL_BUILD_VERTICES
     DEFINE_SPIN_MUTEX(m_mutex);
 
     /// <summary cref="FireTask::UpdateCallback">

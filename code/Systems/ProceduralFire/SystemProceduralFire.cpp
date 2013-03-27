@@ -15,23 +15,14 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
 
+#include "Base/Compat.hpp"
+#include "Base/Platform.hpp"
+#include "Interfaces/Interface.hpp"
+#include "Systems/ProceduralFire/System.hpp"
+
+
+#if defined(COMPILER_MSVC)
 #include <windows.h>
-
-//
-// extern includes
-//
-
-
-//
-// core includes
-//
-#include "..\BaseTypes\BaseTypes.h"
-#include "..\Interfaces\Interface.h"
-
-#include "FireSystem.h"
-
-
-ManagerInterfaces	g_Managers;
 
 BOOL APIENTRY
 DllMain(
@@ -40,10 +31,6 @@ DllMain(
     LPVOID pReserved
     )
 {
-    UNREFERENCED_PARAM( hModule );
-    UNREFERENCED_PARAM( Reason );
-    UNREFERENCED_PARAM( pReserved );
-
     switch ( Reason )
     {
     case DLL_PROCESS_ATTACH:
@@ -55,29 +42,35 @@ DllMain(
 
     return TRUE;
 }
+#endif
 
+ManagerInterfaces   g_Managers;
 
-///////////////////////////////////////////////////////////////////////////////
-// InitializeProceduralFireSystem - Initialize the ProceduralFire system
-extern "C" void __stdcall InitializeProceduralFireSystem( ManagerInterfaces* pManagers )
+void STDCALL
+InitSystem( ManagerInterfaces* pManagers)
 {
     g_Managers = *pManagers;
 }
 
-extern "C" ISystem* __stdcall
-CreateProceduralFireSystem(
-    Debug::Debugger* p_Debugger
-    )
+
+ISystem* STDCALL
+CreateSystem()
 {
-	Debug::Init( p_Debugger );
     return new FireSystem();
 }
 
 
-extern "C" void __stdcall
-DestroyProceduralFireSystem(
-    ISystem* pSystem
-    )
+void STDCALL
+DestroySystem( ISystem* pSystem)
 {
-	delete reinterpret_cast<FireSystem*>( pSystem );
+    delete reinterpret_cast<FireSystem*>( pSystem );
+}
+
+extern "C" 
+{
+    struct SystemFuncs SystemProceduralFire = {
+        &InitSystem,
+        &CreateSystem,
+        &DestroySystem
+    };
 }

@@ -15,16 +15,10 @@
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  Intel does not
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
+#pragma once
 
-#ifndef FIRE_H
-#define FIRE_H
-#include <list>
-#include <vector>
-#include "PSystem.h"
-#include "..\BaseTypes\BaseTypes.h"
-#include "..\Interfaces\Interface.h"
-#include "aabb.h"
-#include "HeatParticle.h"
+#include "Systems/ProceduralFire/ParticleEmitter/HeatParticle.hpp"
+
 namespace ParticleEmitter{
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -36,16 +30,16 @@ namespace ParticleEmitter{
 class Fire : public ParticleSystemWithEmitter
 {
 public:
-	V3 mParticleLine;
+    Base::Vector3 mParticleLine;
 
     Fire(
-		const V3& accelbias, 
-		const V3& accelshift, 
-		const V3 line,
-		const V3 pos,
-        const aabb& box,
-		int maxNumParticles,
-		float timePerParticle,
+        const Base::Vector3& accelbias, 
+        const Base::Vector3& accelshift, 
+        const Base::Vector3 line,
+        const Base::Vector3 pos,
+        const AABB& box,
+        int maxNumParticles,
+        float timePerParticle,
         float minLifeTime = 1.0f,
         float maxLifeTime = 2.0f,
         float minSize = 10.0f,
@@ -56,16 +50,15 @@ public:
         : ParticleSystemWithEmitter(
             HeatEmitter::Type_Fire,
             accelbias, accelshift, pos, box, 
-			maxNumParticles, timePerParticle,
+            maxNumParticles, timePerParticle,
             minLifeTime, maxLifeTime, 
             minSize, maxSize,
             minAmplitude, maxAmplitude)
-		, mParticleLine(line)
-	{}
+        , mParticleLine(line)
+    {}
 
     virtual void reinitialize();
-	void initParticle(Particle& out);
+    void initParticle(Particle& out);
 };
 
 } //end namespace
-#endif // FIRE_H

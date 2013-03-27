@@ -38,20 +38,18 @@ class BranchBase;
 *  class and its functions.
 *******************************************************************************/
 
-class TreeObject : public ISystemObject, public IGraphicsObject
+class TreeObject : public ISystemObject, public IGraphicsObject, public ITreeObject
 {
     friend TreeSystem;
     friend TreeScene;
     friend TreeTask;
 
-public:
+protected:
     /// <summary cref="TreeObject::GetObjectPostedVariables">
     ///   allows a mechanism to get fullfill requests for data
     ///   this object has posted
     /// </summary>
     virtual void* GetObjectPostedVariables(void *Params);
-
-protected:
 
     TreeObject( ISystemScene* pSystemScene, pcstr pszType );
     ~TreeObject( void );

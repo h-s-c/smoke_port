@@ -15,15 +15,12 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
 
-//
-// core includes
-//
-#include "..\BaseTypes\BaseTypes.h"
-#include "..\Interfaces\Interface.h"
-
-#include "FireSystem.h"
-#include "FireScene.h"
-
+#include "Base/Compat.hpp"
+#include "Base/Platform.hpp"
+#include "Base/Math.hpp"
+#include "Interfaces/Interface.hpp"
+#include "Systems/ProceduralFire/System.hpp"
+#include "Systems/ProceduralFire/Scene.hpp"
 
 
 
@@ -66,7 +63,7 @@ FireSystem::Initialize(
     Properties::Array Properties
     )
 {
-	m_bInitialized = True;
+    m_bInitialized = True;
 
     return Errors::Success;
 }
