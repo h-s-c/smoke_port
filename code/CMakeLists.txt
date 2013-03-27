@@ -65,16 +65,6 @@ project (Smoke)
     list(APPEND SMOKE_LIBRARIES Framework)
     
     add_subdirectory(Systems)
-    list(APPEND SMOKE_DEPEDENCIES SystemAi)
-    list(APPEND SMOKE_DEPEDENCIES SystemAudioFMOD)
-    list(APPEND SMOKE_DEPEDENCIES SystemExplosion)
-    list(APPEND SMOKE_DEPEDENCIES SystemGeometry)
-    list(APPEND SMOKE_DEPEDENCIES SystemGraphicsOGRE)
-    list(APPEND SMOKE_DEPEDENCIES SystemInputOIS)
-    find_package(HAVOK)
-    if (HAVOK_FOUND)
-        list(APPEND SMOKE_DEPEDENCIES SystemPhysicsHAVOK)
-    endif ()
    
     find_package(LibBfd)
     if (LIBBFD_FOUND)
@@ -90,7 +80,6 @@ project (Smoke)
 
     include_directories(${SMOKE_INCLUDE_DIRS} )
     add_executable(Smoke ${SMOKE_SOURCE})
-    add_dependencies(Smoke ${SMOKE_DEPEDENCIES} )
     target_link_libraries(Smoke ${SMOKE_LIBRARIES})
     
     install (TARGETS Smoke 
