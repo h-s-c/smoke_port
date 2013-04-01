@@ -26,14 +26,11 @@
 #include "Framework/TaskManager.hpp"
 #include "Framework/Scheduler.hpp"
 
-Scheduler::Scheduler( 
-    TaskManager* pTaskManager )
-    : m_pTaskManager( pTaskManager )
-    , m_bThreadingEnabled( True )
+Scheduler::Scheduler()
 {
 
-    m_bBenchmarkingEnabled =
-        EnvironmentManager::getInstance().Variables().GetAsBool( "Scheduler::Benchmarking", False );
+    m_bBenchmarkingEnabled = EnvironmentManager::getInstance().Variables().GetAsBool( "Scheduler::Benchmarking", False );
+    m_bThreadingEnabled = EnvironmentManager::getInstance().Variables().GetAsBool( "Scheduler::Parallel", False );
 }
 
 void
@@ -41,8 +38,6 @@ Scheduler::SetScene(
     const UScene* pScene
     )
 {
-    // If we have a TaskManager, then we can thread things.
-    m_bThreadingEnabled = ( m_pTaskManager != nullptr );
 
 #if 0
     // Wait for any executing scenes to finish and clear out the list.
@@ -56,7 +51,7 @@ Scheduler::SetScene(
 
     if ( aScenesToWaitFor.size() > 0 )
     {
-        m_pTaskManager->WaitForSystemTasks( aScenesToWaitFor );
+        TaskManager::getInstance().WaitForSystemTasks( aScenesToWaitFor );
     }
 #endif /* 0 */
 
@@ -123,7 +118,7 @@ Scheduler::Execute(
             aScenesToExecute.push_back(pSystemTask);
         }
 
-        m_pTaskManager->IssueJobsForSystemTasks( aScenesToExecute, DeltaTime );
+        TaskManager::getInstance().IssueJobsForSystemTasks( aScenesToExecute, DeltaTime );
 
 #if 0
         // Wait for the scenes that will be completing execution in this frame.
@@ -134,9 +129,9 @@ Scheduler::Execute(
             aScenesToWaitFor.push_back(pSystemScene->GetSystemTask());
         }
 
-        m_pTaskManager->WaitForSystemTasks( aScenesToWaitFor );
+        TaskManager::getInstance().WaitForSystemTasks( aScenesToWaitFor );
 #endif /* 0 */
-        m_pTaskManager->WaitForSystemTasks( aScenesToExecute );
+        TaskManager::getInstance().WaitForSystemTasks( aScenesToExecute );
     }
     else
     {

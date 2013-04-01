@@ -51,10 +51,9 @@ public:
     // Must be called before any parallel execution starts (that is 
     // before changes start being accumulated in thread local lists), 
     // but after the task manager has been initialized
-    Error SetTaskManager ( ITaskManager* );
+    static void InitThreadLocalData( void* mgr );
 
-    // Must be called before the previously set task manager has been shut down
-    void ResetTaskManager ();
+    static void FreeThreadLocalData( void* mgr );
 
 
 protected:
@@ -190,14 +189,9 @@ protected:
     /// </summary>
     IDsList             m_indexList;
 
-    ITaskManager       *m_pTaskManager;
-
     std::mutex          m_UpdateMutex;
 
 private:
-    static void InitThreadLocalData( void* mgr );
-    static void FreeThreadLocalData( void* mgr );
-
     Error RemoveSubject ( ISubject* pSubject );
 
     static void DistributionCallback( void *param, u32 begin, u32 end );

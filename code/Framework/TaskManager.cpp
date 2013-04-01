@@ -19,15 +19,15 @@
 #include "Interfaces/Interface.hpp"
 //stdlib
 #include <iostream>
-//workarround for gcc4.7
-#define _GLIBCXX_USE_SCHED_YIELD
-#include <thread>
 //framework
 #include "Framework/EnvironmentManager.hpp"
 #include "Framework/ServiceManager.hpp"
 #include "Framework/TaskManager.hpp"
-#include "Framework/TaskManagerTP.hpp"
 
+std::once_flag                   
+TaskManager::only_one;
+std::shared_ptr<TaskManager> 
+TaskManager::instance_ = nullptr;
 
 void Worker::operator()()
 {
@@ -36,24 +36,25 @@ void Worker::operator()()
     {       
         {   // acquire lock
             std::unique_lock<std::mutex> lock(this->pool.queue_mutex);
-            
+                       
+            auto thisThreadId = std::this_thread::get_id();
             // check if we already executed the callback on this thread
             bool callbackExecuted = false;
             for(const auto &threadid : this->pool.callbackDone)
             {
-                if (threadid == std::this_thread::get_id())
+                if (threadid == thisThreadId)
                 {
                     callbackExecuted = true;
                 }
                 
             }
+            
             if (callbackExecuted == false && this->pool.callback)
             {
                 // excute callback
                 this->pool.callback();
-                std::clog << "TaskManagerTP - Callback called on thread " << std::this_thread::get_id() << std::endl;
                 // add this thread to called back list
-                this->pool.callbackDone.push_back(std::this_thread::get_id());
+                this->pool.callbackDone.push_back(thisThreadId);
             }
             
             // look for a work item
@@ -61,21 +62,18 @@ void Worker::operator()()
             { 
                 // if there are none wait for notification
                 std::this_thread::yield();
-                this->pool.condition.wait(lock);
+                this->pool.condition.wait_for(lock, std::chrono::duration<int, std::milli>(5));
             }
- 
-            if(this->pool.stop) // exit if the pool is stopped
+            
+            // exit if the pool is stopped
+            if(this->pool.stop) 
                 return;
 
             // get the task from the queue
             if (!this->pool.tasks.empty())
             {
-                task = this->pool.tasks.front();
+                task = std::move(this->pool.tasks.front());
                 this->pool.tasks.pop_front();
-            }
-            else
-            {
-                task = nullptr;
             }
         }   // release lock
  
@@ -87,23 +85,31 @@ void Worker::operator()()
     }
 }
 
-void TaskManagerTP::Init( void)
+void TaskManager::TaskManager()
 {
-    auto uNumberOfThreads = EnvironmentManager::getInstance().Variables().GetAsInt( "TaskManager::Threads", 0 );
-    if( uNumberOfThreads <= 0 ) 
+    auto numThreads = EnvironmentManager::getInstance().Variables().GetAsInt( "TaskManager::Threads", 0 );
+    if( numThreads <= 0 ) 
     {
-        this->uNumberOfThreads = std::thread::hardware_concurrency();
+        this->numThreads = std::thread::hardware_concurrency();
     } 
     else
     {
-        this->uNumberOfThreads = uNumberOfThreads;
+        this->numThreads = numThreads;
     }
-    Start();
+    
+    // start worker threads
+    this->stop = false;
+    this->workers.clear();    
+    for(size_t i = 0;i<this->numThreads;++i)
+        this->workers.push_back(std::move(std::thread(Worker(*this))));
 }
 
-void TaskManagerTP::Shutdown( void)
+void TaskManager::~TaskManager()
 {
-    Stop();
+    // stop all threads
+    this->stop = true;
+    this->condition.notify_all();
+    WaitForAllSystemTasks();
  
     // join them
     for(size_t i = 0;i<this->workers.size();++i)
@@ -112,50 +118,37 @@ void TaskManagerTP::Shutdown( void)
     }
 }
 
-void TaskManagerTP::IssueJobsForSystemTasks( std::vector<ISystemTask*> pTasks, float DeltaTime)
+void TaskManager::EnqueueTasks( std::vector<ISystemTask*> systemTasks, float DeltaTime)
 {
     std::vector<ISystemTask*> notThreadSafeTasks;
-    // sort tasks for thread-safety
-    for (const auto &task : pTasks)
+    for (const auto &task : systemTasks)
     {
-        if(task->IsThreadSafe())
+        if(task->IsThreadSafe)
         {
-            // enqueue thread-safe tasks in general tasklist
-            this->Enqueue([task, DeltaTime]
-                {
-                    task->Update(DeltaTime);
-                });
+            this->AddTask([task, DeltaTime] () { task->Update(DeltaTime); });
         }
         else
         {
             notThreadSafeTasks.push_back(task);
-        }
+        }        
     }    
-    // execute non-thread-safe tasks
     for (const auto &task : notThreadSafeTasks)
     {
-        task->Update(DeltaTime);
+        task->Update(DeltaTime);  
     }
 }
 
-void TaskManagerTP::WaitForAllSystemTasks( void )
+void TaskManager::WaitForAllTasks()
 {
     auto empty = false;
     while(!empty)
     {
-        std::unique_lock<std::mutex> lock(this->queue_mutex);
+        //std::unique_lock<std::mutex> lock(this->queue_mutex);
         empty = this->tasks.empty();
     }
 }
 
-void TaskManagerTP::WaitForSystemTasks( std::vector<ISystemTask*> pTasks )
-{
-    // NOTE: not properly implemented
-    // currently waits for all tasks
-    WaitForAllSystemTasks();
-}
-
-void TaskManagerTP::NonStandardPerThreadCallback( JobFunction pfnCallback, void* pData)
+void TaskManager::PerThreadCallback( JobFunction pfnCallback, void* pData)
 {
     WaitForAllSystemTasks();
     
@@ -167,7 +160,6 @@ void TaskManagerTP::NonStandardPerThreadCallback( JobFunction pfnCallback, void*
         
         // add the callback
         this->callback = std::bind(pfnCallback, pData);
-        std::clog << "TaskManagerTP - Callback added" << std::endl;
     } // release lock
      
     // wait for workers to execute callback
@@ -189,25 +181,9 @@ void TaskManagerTP::NonStandardPerThreadCallback( JobFunction pfnCallback, void*
     }
     // call it for ourself, too
     pfnCallback( pData );
-    std::clog << "TaskManagerTP - Callback called on thread " << std::this_thread::get_id() << " (Primary)" << std::endl;
-    
-    std::clog << "TaskManagerTP - All Callbacks executed" << std::endl;
 }
 
-uint32_t TaskManagerTP::GetRecommendedJobCount( ITaskManager::JobCountInstructionHints Hints)
-{
-    //
-    // Ignoring hints for now and just returning the number of available threads.
-    //
-    return this->uNumberOfThreads;
-}
-
-uint32_t TaskManagerTP::GetNumberOfThreads( void)
-{
-    return this->uNumberOfThreads;
-}
-
-void TaskManagerTP::ParallelFor(
+void TaskManager::ParallelFor(
     ISystemTask* pSystemTask,
     ParallelForFunction pfnJobFunction, 
     void* pParam, 
@@ -216,7 +192,7 @@ void TaskManagerTP::ParallelFor(
     u32 minGrainSize
     )
 {
-    u32 uThreads = ( this->uNumberOfThreads + 1 );
+    u32 uThreads = ( this->numThreads + 1 );
     u32 uCount = ( end - begin );
 
     if ( uThreads <= 0 )
@@ -250,10 +226,7 @@ void TaskManagerTP::ParallelFor(
         for( u32 t = 1; t < uThreads; t++ )
         {
             uEnd = ( uStart + uGrainSize );
-            this->Enqueue([pfnJobFunction, pParam, uStart, uEnd]
-                {
-                    pfnJobFunction( pParam, uStart, uEnd);
-                });
+            this->AddTask([pfnJobFunction, pParam, uStart, uEnd] () { pfnJobFunction( pParam, uStart, uEnd); });
             uStart = uEnd;
         }
 
@@ -266,20 +239,4 @@ void TaskManagerTP::ParallelFor(
         // just do it ourselves
         pfnJobFunction( pParam, begin, end );
     }
-}
-
-void TaskManagerTP::Stop( void)
-{
-    // stop all threads
-    this->stop = true;
-    this->condition.notify_all();
-    WaitForAllSystemTasks();
-}
-
-void TaskManagerTP::Start( void)
-{
-    this->stop = false;
-    this->workers.clear();    
-    for(size_t i = 0;i<this->uNumberOfThreads;++i)
-        this->workers.push_back(std::thread(Worker(*this)));
 }

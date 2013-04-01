@@ -33,11 +33,8 @@
 #include "Framework/ServiceManager.hpp"
 #include "Framework/Scheduler.hpp"
 #include "Framework/TaskManager.hpp"
-#include "Framework/TaskManagerTP.hpp"
 #include "Framework/Framework.hpp"
 
-
-TaskManager*    g_pTaskManager = nullptr;
 
 void
 EngineExecuteGDF( pcstr pszGDF)
@@ -58,7 +55,7 @@ Framework::Framework( void)
     , m_pObjectCCM( nullptr )
     , m_bExecuteLoop( True )
 {
-    // g_pTaskManager and m_pScheduler are instantiated after the environment variables
+    // m_pScheduler is instantiated after the environment variables
     // in the config file are parsed
     
     m_pObjectCCM = new ChangeManager();
@@ -77,7 +74,6 @@ Framework::Framework( void)
 Framework::~Framework( void)
 {
     SAFE_DELETE( m_pScheduler );
-    //SAFE_DELETE( g_pTaskManager );
     SAFE_DELETE( m_pSceneCCM );
     SAFE_DELETE( m_pObjectCCM );
 }
@@ -115,32 +111,10 @@ Framework::Initialize( pcstr pszGDF)
     ServiceManager::getInstance().RegisterSystemAccessProvider( this );
 
     // Instantiate the task manager.
-    std::string sTaskManager = EnvironmentManager::getInstance().Variables().GetAsString( "TaskManager" );
-
-    /*if ( sTaskManager == "TBB" || sTaskManager == "" )
-    {
-        g_pTaskManager = new TaskManagerTBB();
-    }
-    else */if ( sTaskManager == "TP" )
-    {
-        g_pTaskManager = new TaskManagerTP();
-    }
-    else if ( sTaskManager == "None" )
-    {
-        g_pTaskManager = nullptr;
-    }
-    else
-    {
-        std::cerr << "Unknown TaskManager: " << sTaskManager.c_str() << std::endl;
-    }
-
-    if ( g_pTaskManager !=nullptr )
-    {
-        g_pTaskManager->Init();
-    }
+    TaskManager::getInstance().Init();
 
     // Instantiate the scheduler.
-    m_pScheduler = new Scheduler( g_pTaskManager );
+    m_pScheduler = new Scheduler();
     if ( m_pScheduler == nullptr )
     {
         std::cerr << "m_pScheduler == NULL" << std::endl;
@@ -169,16 +143,11 @@ Framework::Shutdown( void)
     ServiceManager::getInstance().UnregisterSystemAccessProvider( this );
 
     // Free resources used for parallel execution by the change manager.
-    m_pObjectCCM->ResetTaskManager();
-    m_pSceneCCM->ResetTaskManager();
+    TaskManager::getInstance().NonStandardPerThreadCallback( m_pObjectCCM->FreeThreadLocalData, m_pObjectCCM );    
+    TaskManager::getInstance().NonStandardPerThreadCallback( m_pSceneCCM->FreeThreadLocalData, m_pSceneCCM ); 	
 
     // Free the task manager.
-    if ( g_pTaskManager != NULL )
-    {
-        g_pTaskManager->Shutdown();
-        //delete g_pTaskManager;
-        g_pTaskManager = NULL;
-    }
+    TaskManager::getInstance().Shutdown();
 }
 
 
@@ -207,8 +176,10 @@ Framework::Execute( void)
     u32 FrameCount = 0;
 
     // Initialize resources necessary for parallel change distribution.
-    m_pObjectCCM->SetTaskManager(g_pTaskManager);
-    m_pSceneCCM->SetTaskManager(g_pTaskManager);
+    m_pObjectCCM->SetTaskManager();
+    m_pSceneCCM->SetTaskManager();
+    TaskManager::getInstance().NonStandardPerThreadCallback( m_pObjectCCM->InitThreadLocalData, m_pObjectCCM );    
+    TaskManager::getInstance().NonStandardPerThreadCallback( m_pSceneCCM->InitThreadLocalData, m_pSceneCCM ); 
 
     while ( m_bExecuteLoop )
     {
@@ -1522,10 +1493,7 @@ Framework::GDFParser::ReadAttributes(
                 //
                 // Load the system library.
                 //
-                //g_pTaskManager->Enqueue([pXmlAttrib, m_sOldpath, m_pSystem]
-                    //{
-                        PlatformManager::getInstance().SystemLibrary().LoadSystemLibrary(std::string(pXmlAttrib->Value()), m_sOldpath, &m_pSystem);
-                    //});
+                PlatformManager::getInstance().SystemLibrary().LoadSystemLibrary(std::string(pXmlAttrib->Value()), m_sOldpath, &m_pSystem);
                     
                 if (m_pSystem == NULL)
                 {

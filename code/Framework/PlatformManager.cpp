@@ -33,7 +33,6 @@ PlatformManager::only_one;
 std::shared_ptr<PlatformManager> 
 PlatformManager::instance_ = nullptr;
 
-extern TaskManager*     g_pTaskManager;
 
 PlatformManager::SystemLibrary::~SystemLibrary( void)
 {
@@ -42,10 +41,7 @@ PlatformManager::SystemLibrary::~SystemLibrary( void)
     {
         struct SystemFuncs *pSystemFuncs = reinterpret_cast<SystemFuncs*>(dlsym(it.hLib, it.strSysLib.c_str() ));
         // System creation/destruction need to happen on the same thread
-        //g_pTaskManager->Enqueue([pSystemFuncs, it]
-            //{
-                pSystemFuncs->DestroySystem(it.pSystem);
-            //});
+        pSystemFuncs->DestroySystem(it.pSystem);
         dlclose( it.hLib );
     }
 
@@ -79,7 +75,7 @@ PlatformManager::SystemLibrary::LoadSystemLibrary(
             ManagerInterfaces Managers;
             Managers.pEnvironment = &EnvironmentManager::getInstance();
             Managers.pService     = &ServiceManager::getInstance();
-            Managers.pTask        = g_pTaskManager;
+            Managers.pTask        = &TaskManager::getInstance();
             Managers.pPlatform    = &PlatformManager::getInstance();
 
             // Initialize the system.

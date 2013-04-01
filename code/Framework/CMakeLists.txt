@@ -11,7 +11,7 @@ project (Framework)
         ${CMAKE_SOURCE_DIR}/Framework/Scheduler.cpp
         ${CMAKE_SOURCE_DIR}/Framework/ServiceManager.cpp
         ${CMAKE_SOURCE_DIR}/Framework/SystemManager.cpp
-        ${CMAKE_SOURCE_DIR}/Framework/TaskManagerTP.cpp
+        ${CMAKE_SOURCE_DIR}/Framework/TaskManager.cpp
         ${CMAKE_SOURCE_DIR}/Framework/Universal.cpp
     )
     list(APPEND FRAMEWORK_SOURCE ${FRAMEWORK_SOURCE})

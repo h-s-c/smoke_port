@@ -14,32 +14,127 @@
 
 #pragma once
 
-/// <summary>
-/// This abstract class provides a ways for Systems to supply work to run asynchronously.
-/// Specifically, each <c>ISystemTask</c> uses a <c>TaskManager</c> to execute its <c>Update</c> method.
-/// Only one <c>TaskManager</c> should be created for a process.
-/// </summary>
-/// <seealso cref="TaskManagerTP"/>
-/// <seealso cref="TaskManagerTBB"/>
+//workarround for gcc4.7
+#define _GLIBCXX_USE_SCHED_YIELD
+#include <future>
+#include <thread>
+#include <deque>
+#include <vector>
+#include <utility>
+#include <chrono>
+#include <functional>
+#include <type_traits>
+
+class TaskManager;
+ 
+// our worker thread objects
+class Worker {
+public:
+    Worker(TaskManager &s) : pool(s) { }
+    void operator()();
+private:
+    TaskManager &pool;    
+};
 class TaskManager: public ITaskManager
 {
+private:
+    // Singleton
+    static std::shared_ptr<TaskManager> instance_;
+    static std::once_flag                   only_one;
+     
+    TaskManager(const TaskManager& rs) {
+        instance_  = rs.instance_;
+    }
+ 
+    TaskManager& operator = (const TaskManager& rs) 
+    {
+        if (this != &rs) 
+        {
+            instance_  = rs.instance_;
+        }
+ 
+        return *this;
+    }
+
+    TaskManager();
 
 public:
-    /// <summary cref="TaskManager::Init">
-    /// Call this from the primary thread before calling any other <c>TaskManager</c> methods.
-    /// </summary>
-    virtual void Init( void ) = 0;
+    static TaskManager& getInstance() 
+    {
+        std::call_once( TaskManager::only_one, [] () 
+        { 
+            TaskManager::instance_.reset( new TaskManager()); 
+        });
+ 
+        return *TaskManager::instance_;
+    }
     
-    /// <summary cref="TaskManager::Shutdown">
-    /// Call this from the primary thread as the last <c>TaskManager</c> call.
-    /// </summary>
-    virtual void Shutdown( void )=0;
-
+    ~TaskManager();
 
     /* Call this from the primary thread to schedule system work.*/
-    virtual void IssueJobsForSystemTasks( std::vector<ISystemTask*> pTasks, float fDeltaTime )=0;
+    void EnqueueTasks( std::vector<ISystemTask*> pTasks, float fDeltaTime );
     
-    /* Call this from the primary thread to wait until all tasks spawned with IssueJobsForSystemTasks
-     * and all of their subtasks are complete.*/
-    virtual void WaitForSystemTasks( std::vector<ISystemTask*> pTasks )=0;
+    /* Adds a task and returns a std::future*/
+    template<class F>
+    auto AddTask(std::packaged_task<F()>& task) -> std::future<F> 
+    {
+        std::unique_lock<std::mutex> lock(this->queue_mutex);
+
+        auto ret = task.get_future();
+        tasks.push_back([&task]{task();});
+
+        cond.notify_one();
+
+        return ret;
+    }
+    
+    /* Adds a task.*/    
+    template<class F>
+    void AddTask(F f)
+    {
+        std::unique_lock<std::mutex> lock(this->queue_mutex);
+        
+        this->tasks.push_back(std::function<void()>(f));
+        
+        cond.notify_one();
+    } 
+
+    /* Call this from the primary thread to wait until all tasks and all of their subtasks are complete.*/
+    void WaitForAllTasks();
+
+    /* Call this method to get the number of threads in the thread pool which are active for running work.*/
+    std::uint32_t GetNumberOfThreads(); {return this->numThreads;}
+                            
+    //----------------------------------------------------------------------------------------------
+    /* This method triggers a synchronized callback to be called once by each thread used by the TaskManager. 
+     * This method which should only be called during initialization and shutdown of the TaskManager.  
+     * This method waits until all callbacks have executed.*/
+    virtual void PerThreadCallback( JobFunction pfnCallback, void* pData );
+
+    /* Call this method to determine the ideal number of tasks to submit to the TaskManager 
+     * for maximum performance.*/
+    virtual std::uint32_t GetRecommendedJobCount( ITaskManager::JobCountInstructionHints Hints ) {return this->numThreads;}
+    
+    virtual void ParallelFor( ISystemTask* pSystemTask, ParallelForFunction pfnJobFunction, void* pParam, std::uint32_t begin, std::uint32_t end, std::uint32_t minGrainSize = 1 );
+
+private:
+    friend class Worker;
+
+    // number of active threads
+    std::uint32_t numThreads;
+
+    // need to keep track of threads so we can join them
+    std::vector< std::thread > workers;
+ 
+    // the task queue
+    std::deque<std::function<void()> tasks;
+ 
+    // synchronization
+    std::mutex queue_mutex;
+    std::condition_variable condition;
+    bool stop;
+    
+    // per thread callback
+    std::function<void()> callback;
+    std::vector<std::thread::id> callbackDone;    
 };

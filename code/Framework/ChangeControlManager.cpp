@@ -24,6 +24,7 @@
 #include <thread>
 // Framework
 #include "Framework/ChangeControlManager.hpp"
+#include "Framework/TaskManager.hpp"
 #include "Framework/PlatformManager.hpp"
 
 __thread ChangeManager::NotifyList* ChangeManager::m_tlsNotifyList = nullptr;
@@ -34,7 +35,6 @@ ChangeManager::ChangeManager(
     void
     )
     : m_lastID(0)
-    , m_pTaskManager(nullptr)
 {
     // Get ready to process changes in the main (this) thread
     InitThreadLocalData(this);
@@ -427,52 +427,6 @@ ChangeManager::DistributeRange(
         }
     }
 }
-
-
-///////////////////////////////////////////////////////////////////////////////
-// SetTaskManager - Set TaskManager and init associated data
-Error 
-ChangeManager::SetTaskManager( 
-    ITaskManager* pTaskManager 
-    )
-{
-    if ( !pTaskManager )
-    {
-        std::cerr << "ChangeManager::SetTaskManager - !pTaskManager" << std::endl;
-        return Errors::Undefined;
-    }
-
-    if( m_pTaskManager )
-    {
-        std::cerr << "ChangeManager::SetTaskManager - Call ResetTaskManager before using SetTaskManager to set the new task manager" << std::endl;
-    }
-
-    // Store TaskManager
-    m_pTaskManager = pTaskManager;
-
-    // Make each thread call InitThreadLocalData
-    m_pTaskManager->NonStandardPerThreadCallback( InitThreadLocalData, this );
-    return Errors::Success;
-}
-
-
-///////////////////////////////////////////////////////////////////////////////
-// ResetTaskManager - Init thread specific data
-// (Must be called before the previously set task manager has been shut down)
-void ChangeManager::ResetTaskManager(
-    void
-    )
-{
-    // Free all data associated with m_pTaskManager
-    if ( m_pTaskManager )
-    {
-        // Make each thread call FreeThreadLocalData
-        m_pTaskManager->NonStandardPerThreadCallback( FreeThreadLocalData, this );
-        m_NotifyLists.clear();
-        m_pTaskManager = nullptr;
-    }
-}
-
 
 ///////////////////////////////////////////////////////////////////////////////
 // InitThreadLocalData - Init thread specific data

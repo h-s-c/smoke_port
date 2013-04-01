@@ -16,8 +16,6 @@
 
 #include <chrono>
 
-class TaskManager;
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// <summary>
 ///   Handles scheduling of all task execution.
@@ -32,9 +30,7 @@ public:
     ///   Constructor.
     /// </summary>
     /// <param name="pTaskManager">A pointer to the task manager.</param>
-    Scheduler( 
-        TaskManager* pTaskManager
-     );
+    Scheduler();
 
     /// <summary>
     ///   Destructor.
@@ -62,8 +58,6 @@ public:
 
 
 protected:
-
-    TaskManager*                    m_pTaskManager;
 
     std::chrono::high_resolution_clock::time_point m_OldTime;
     std::chrono::high_resolution_clock::time_point m_NewTime;
