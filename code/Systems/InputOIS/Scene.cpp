@@ -534,23 +534,23 @@ InputScene::keyReleased( const OIS::KeyEvent &arg )
     }  
     if( arg.key == OIS::KC_F1)
     {
-        nToggleOverlay == 1;
+        nToggleOverlay = 1;
     }  
     if( arg.key == OIS::KC_F2)
     {
-        nToggleOverlay == 2;
+        nToggleOverlay = 2;
     }  
     if( arg.key == OIS::KC_F3)
     {
-        nToggleOverlay == 3;
+        nToggleOverlay = 3;
     }  
     if( arg.key == OIS::KC_F4)
     {
-        nToggleOverlay == 4;
+        nToggleOverlay = 4;
     }  
     if( arg.key == OIS::KC_F5)
     {
-        nToggleOverlay == 5;
+        nToggleOverlay = 5;
     }  
 
     std::cout << " KeyReleased {" << arg.key
