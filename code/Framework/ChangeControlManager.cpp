@@ -300,7 +300,9 @@ ChangeManager::DistributeQueuedChanges(
                 auto uID = notif.m_pSubject->GetID(this);
                 if( uID == CSubject::InvalidID )
                 {
-                   std::cerr << "ChangeManager::DistributeQueuedChanges - uID == CSubject::InvalidID" << std::endl;
+#if 0	
+					std::cerr << "ChangeManager::DistributeQueuedChanges - uID == CSubject::InvalidID" << std::endl;
+#endif
                 }
                 else
                 {

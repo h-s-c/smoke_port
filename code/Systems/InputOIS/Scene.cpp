@@ -345,8 +345,10 @@ void InputScene::handleNonBufferedMouse()
 {
     //Just dump the current mouse state
     const OIS::MouseState &ms = m_Mouse->getMouseState();
+#if 0
     std::cout << "\nUnbuffered Mouse: Abs(" << ms.X.abs << " " << ms.Y.abs << " " << ms.Z.abs
         << ") B: " << ms.buttons << " Rel(" << ms.X.rel << " " << ms.Y.rel << " " << ms.Z.rel << ")";
+#endif
 }
 
 bool 
@@ -475,10 +477,11 @@ InputScene::keyPressed( const OIS::KeyEvent &arg )
         m_nOldDown     = -fMovementSpeed;
         m_nMoveUpDown += m_nOldDown;
     }
-
+#if 0
     std::cout << " KeyPressed {" << arg.key
         << ", " << ((OIS::Keyboard*)(arg.device))->getAsString(arg.key)
         << "} || Character (" << (char)arg.text << ")" << std::endl;
+#endif
     return true;
 }
 bool 
@@ -552,19 +555,22 @@ InputScene::keyReleased( const OIS::KeyEvent &arg )
     {
         nToggleOverlay = 5;
     }  
-
+#if 0
     std::cout << " KeyReleased {" << arg.key
         << ", " << ((OIS::Keyboard*)(arg.device))->getAsString(arg.key)
         << "} || Character (" << (char)arg.text << ")" << std::endl;
+#endif
     return true;
 }
 bool 
 InputScene::mouseMoved( const OIS::MouseEvent &arg ) 
 {
-    const OIS::MouseState& s = arg.state;    
+    const OIS::MouseState& s = arg.state;  
+#if 0
     std::cout << "\nMouseMoved: Abs("
               << s.X.abs << ", " << s.Y.abs << ", " << s.Z.abs << ") Rel("
               << s.X.rel << ", " << s.Y.rel << ", " << s.Z.rel << ")";
+#endif
     return true;
 }
 bool 
@@ -578,10 +584,11 @@ InputScene::mousePressed( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
         m_nRotateLeftRight = s.Y.rel;
         m_nRotateUpDown = s.X.rel;
     }
-    
+#if 0    
     std::cout << "\nMouse button #" << id << " pressed. Abs("
               << s.X.abs << ", " << s.Y.abs << ", " << s.Z.abs << ") Rel("
               << s.X.rel << ", " << s.Y.rel << ", " << s.Z.rel << ")";
+#endif
     return true;
 }
 bool 
@@ -592,9 +599,10 @@ InputScene::mouseReleased( const OIS::MouseEvent &arg, OIS::MouseButtonID id )
     {
         m_MouseMoveEnabled = False;
     }
-    
+#if 0    
     std::cout << "\nMouse button #" << id << " released. Abs("
               << s.X.abs << ", " << s.Y.abs << ", " << s.Z.abs << ") Rel("
               << s.X.rel << ", " << s.Y.rel << ", " << s.Z.rel << ")";
+#endif
     return true;
 }
