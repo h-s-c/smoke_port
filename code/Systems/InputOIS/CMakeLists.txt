@@ -32,11 +32,11 @@ project (SystemInputOIS)
 
 if(WIN32)    
     install(FILES ${OGRE_PLUGIN_DIR_REL}/OIS.dll
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/release
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/release
         CONFIGURATIONS Release RelWithDebInfo
     )
     install(FILES ${OGRE_PLUGIN_DIR_DBG}/OIS_d.dll
-        DESTINATION ${CMAKE_INSTALL_PREFIX}/bin/debug
+        DESTINATION ${CMAKE_INSTALL_PREFIX}/debug
         CONFIGURATIONS Debug
     )
 endif()

@@ -69,14 +69,14 @@ project (SystemGraphicsOGRE)
         CONFIGURATIONS Debug)  
         
 if(WIN32)    
-    install(FILES ${PG_LIBRARIES}
+    install(FILES
         ${OGRE_PLUGIN_DIR_REL}/OgreMain.dll
         ${OGRE_PLUGIN_DIR_REL}/RenderSystem_GL.dll
         ${OGRE_PLUGIN_DIR_REL}/Plugin_ParticleFX.dll
         DESTINATION ${CMAKE_INSTALL_PREFIX}/release
         CONFIGURATIONS Release RelWithDebInfo
     )
-    install(FILES ${PG_LIBRARIES}
+    install(FILES
         ${OGRE_PLUGIN_DIR_DBG}/OgreMain_d.dll
         ${OGRE_PLUGIN_DIR_DBG}/RenderSystem_GL_d.dll
         ${OGRE_PLUGIN_DIR_DBG}/Plugin_ParticleFX_d.dll

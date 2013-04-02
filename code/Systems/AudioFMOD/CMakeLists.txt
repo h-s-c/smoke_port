@@ -33,10 +33,12 @@ project (SystemAudioFMOD)
     install (TARGETS SystemAudioFMOD 
         DESTINATION ${CMAKE_INSTALL_PREFIX}/debug
         CONFIGURATIONS Debug)
-        
+		
+if(UNIX)
     install (FILES ${FMOD_LIBRARY} 
         DESTINATION ${CMAKE_INSTALL_PREFIX}/release
         CONFIGURATIONS Release RelWithDebInfo)
     install (FILES ${FMOD_LIBRARY} 
         DESTINATION ${CMAKE_INSTALL_PREFIX}/debug
         CONFIGURATIONS Debug)
+endif()
