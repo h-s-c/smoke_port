@@ -38,14 +38,14 @@ public:
 
     typedef void ( *ParallelForFunction )( void* param, u32 begin, u32 end );
 
-    /// <summary cref="ITaskManager::NonStandardPerThreadCallback">
+    /// <summary cref="ITaskManager::PerThreadCallback">
     /// This method triggers a synchronized callback to be called once by each thread used by the <c>ITaskManager</c>.
     /// This method which should only be called during initialization and shutdown of 
     /// the <c>ITaskManager</c>.  This method waits until all callbacks have executed.
     /// </summary>
     /// <param name="pfnCallback">the function callback to execute</param>
     /// <param name="pData">a pointer to data that is passed to the callback</param>
-    virtual void NonStandardPerThreadCallback( JobFunction pfnCallback, void* pData ) = 0;
+    virtual void PerThreadCallback( JobFunction pfnCallback, void* pData ) = 0;
 
     /// <summary cref="ITaskManager::JobCountInstructionHints">
     /// This type provides hints to the <c>GetRecommendedJobCount</c> method on the type of work

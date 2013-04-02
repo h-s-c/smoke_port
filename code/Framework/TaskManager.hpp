@@ -14,7 +14,7 @@
 
 #pragma once
 
-//workarround for gcc4.7
+// workaround for gcc4.7
 #define _GLIBCXX_USE_SCHED_YIELD
 #include <future>
 #include <thread>
@@ -25,20 +25,21 @@
 #include <functional>
 #include <type_traits>
 
+/* Thanks to https://github.com/greyfade/workqueue.*/
 class TaskManager;
- 
-// our worker thread objects
-class Worker {
+class Worker 
+{
 public:
     Worker(TaskManager &s) : pool(s) { }
     void operator()();
 private:
     TaskManager &pool;    
 };
+
 class TaskManager: public ITaskManager
 {
 private:
-    // Singleton
+    // singleton
     static std::shared_ptr<TaskManager> instance_;
     static std::once_flag                   only_one;
      
@@ -72,7 +73,7 @@ public:
     ~TaskManager();
 
     /* Call this from the primary thread to schedule system work.*/
-    void EnqueueTasks( std::vector<ISystemTask*> pTasks, float fDeltaTime );
+    void EnqueueTasks( std::vector<ISystemTask*> systemTasks, float deltaTime );
     
     /* Adds a task and returns a std::future*/
     template<class F>
@@ -81,9 +82,9 @@ public:
         std::unique_lock<std::mutex> lock(this->queue_mutex);
 
         auto ret = task.get_future();
-        tasks.push_back([&task]{task();});
+        this->tasks.push_back([&task]{task();});
 
-        cond.notify_one();
+        this->condition.notify_one();
 
         return ret;
     }
@@ -96,19 +97,16 @@ public:
         
         this->tasks.push_back(std::function<void()>(f));
         
-        cond.notify_one();
+        this->condition.notify_one();
     } 
 
     /* Call this from the primary thread to wait until all tasks and all of their subtasks are complete.*/
     void WaitForAllTasks();
 
     /* Call this method to get the number of threads in the thread pool which are active for running work.*/
-    std::uint32_t GetNumberOfThreads(); {return this->numThreads;}
+    std::uint32_t GetNumberOfThreads() {return this->numThreads;}
                             
-    //----------------------------------------------------------------------------------------------
-    /* This method triggers a synchronized callback to be called once by each thread used by the TaskManager. 
-     * This method which should only be called during initialization and shutdown of the TaskManager.  
-     * This method waits until all callbacks have executed.*/
+    /* This method triggers a synchronized callback to be called once by each thread used by the TaskManager. */
     virtual void PerThreadCallback( JobFunction pfnCallback, void* pData );
 
     /* Call this method to determine the ideal number of tasks to submit to the TaskManager 
@@ -127,7 +125,7 @@ private:
     std::vector< std::thread > workers;
  
     // the task queue
-    std::deque<std::function<void()> tasks;
+    std::deque<std::function<void()>> tasks;
  
     // synchronization
     std::mutex queue_mutex;

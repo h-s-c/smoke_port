@@ -186,7 +186,7 @@ HavokPhysicsSystem::DestroyScene(
     //
     if( g_Managers.pTask != NULL )
     {
-        g_Managers.pTask->NonStandardPerThreadCallback(
+        g_Managers.pTask->PerThreadCallback(
             reinterpret_cast<ITaskManager::JobFunction>(FreeThreadResources), this
             );
     }

@@ -118,7 +118,7 @@ Scheduler::Execute(
             aScenesToExecute.push_back(pSystemTask);
         }
 
-        TaskManager::getInstance().IssueJobsForSystemTasks( aScenesToExecute, DeltaTime );
+        TaskManager::getInstance().EnqueueTasks( aScenesToExecute, DeltaTime );
 
 #if 0
         // Wait for the scenes that will be completing execution in this frame.
@@ -129,9 +129,9 @@ Scheduler::Execute(
             aScenesToWaitFor.push_back(pSystemScene->GetSystemTask());
         }
 
-        TaskManager::getInstance().WaitForSystemTasks( aScenesToWaitFor );
+        TaskManager::getInstance().WaitForTasks( aScenesToWaitFor );
 #endif /* 0 */
-        TaskManager::getInstance().WaitForSystemTasks( aScenesToExecute );
+        TaskManager::getInstance().WaitForAllTasks();
     }
     else
     {

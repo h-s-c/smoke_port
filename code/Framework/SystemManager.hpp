@@ -57,7 +57,12 @@ public:
         return *SystemManager::instance_;
     }
     
-    ~SystemManager() {}
+    ~SystemManager();
+    
+    // Loads a system library and returns pointers to the system.
+    Error LoadSystemLibrary( const std::string strSysLib,
+                                const std::string strSysLibPath,
+                                ISystem** ppSystem);
 
     // Adds a new system to the collection.  
     // Called by the ISystem constructor.
@@ -78,9 +83,16 @@ public:
      * care of this since it will be the primary consumer.*/
     ISystem* GetFirst( void );
     ISystem* GetNext( void );
-
+    
 
 protected:
+    struct SystemLib
+    {
+        void*                       hLib;
+        ISystem*                    pSystem;
+        const std::string           strSysLib;
+    };
+    std::vector<SystemLib>          m_SystemLibs;
 
     std::map<System::Type, ISystem*>              m_Systems;
     std::map<System::Type, ISystem*>::iterator    m_SystemIt;

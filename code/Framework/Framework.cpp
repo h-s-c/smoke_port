@@ -110,9 +110,6 @@ Framework::Initialize( pcstr pszGDF)
     // ability for systems to set the properties in other systems.
     ServiceManager::getInstance().RegisterSystemAccessProvider( this );
 
-    // Instantiate the task manager.
-    TaskManager::getInstance().Init();
-
     // Instantiate the scheduler.
     m_pScheduler = new Scheduler();
     if ( m_pScheduler == nullptr )
@@ -143,11 +140,8 @@ Framework::Shutdown( void)
     ServiceManager::getInstance().UnregisterSystemAccessProvider( this );
 
     // Free resources used for parallel execution by the change manager.
-    TaskManager::getInstance().NonStandardPerThreadCallback( m_pObjectCCM->FreeThreadLocalData, m_pObjectCCM );    
-    TaskManager::getInstance().NonStandardPerThreadCallback( m_pSceneCCM->FreeThreadLocalData, m_pSceneCCM ); 	
-
-    // Free the task manager.
-    TaskManager::getInstance().Shutdown();
+    TaskManager::getInstance().PerThreadCallback( m_pObjectCCM->FreeThreadLocalData, m_pObjectCCM );    
+    TaskManager::getInstance().PerThreadCallback( m_pSceneCCM->FreeThreadLocalData, m_pSceneCCM );  
 }
 
 
@@ -176,10 +170,8 @@ Framework::Execute( void)
     u32 FrameCount = 0;
 
     // Initialize resources necessary for parallel change distribution.
-    m_pObjectCCM->SetTaskManager();
-    m_pSceneCCM->SetTaskManager();
-    TaskManager::getInstance().NonStandardPerThreadCallback( m_pObjectCCM->InitThreadLocalData, m_pObjectCCM );    
-    TaskManager::getInstance().NonStandardPerThreadCallback( m_pSceneCCM->InitThreadLocalData, m_pSceneCCM ); 
+    TaskManager::getInstance().PerThreadCallback( m_pObjectCCM->InitThreadLocalData, m_pObjectCCM );    
+    TaskManager::getInstance().PerThreadCallback( m_pSceneCCM->InitThreadLocalData, m_pSceneCCM ); 
 
     while ( m_bExecuteLoop )
     {
@@ -1493,7 +1485,7 @@ Framework::GDFParser::ReadAttributes(
                 //
                 // Load the system library.
                 //
-                PlatformManager::getInstance().SystemLibrary().LoadSystemLibrary(std::string(pXmlAttrib->Value()), m_sOldpath, &m_pSystem);
+                SystemManager::getInstance().LoadSystemLibrary(std::string(pXmlAttrib->Value()), m_sOldpath, &m_pSystem);
                     
                 if (m_pSystem == NULL)
                 {

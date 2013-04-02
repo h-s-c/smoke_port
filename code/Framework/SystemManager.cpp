@@ -12,15 +12,17 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
 
-//core
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
-//interface
 #include "Interfaces/Interface.hpp"
-//stdlib
-#include <iostream>
-//framework
+#include "Framework/PlatformManager.hpp"
 #include "Framework/SystemManager.hpp"
+#include "Framework/EnvironmentManager.hpp"
+#include "Framework/ServiceManager.hpp"
+#include "Framework/TaskManager.hpp"
+
+#include <iostream>
+#include <dlfcn.h>
 
 
 std::once_flag                   
@@ -30,6 +32,90 @@ SystemManager::instance_ = nullptr;
 
 typedef std::map<Id, ISystem*>::iterator SystemMapIter;
 typedef std::map<Id, ISystem*>::const_iterator SystemMapConstIter;
+
+SystemManager::~SystemManager()
+{
+    // Iterate through all the loaded libraries.
+    for ( auto it : m_SystemLibs)
+    {
+        struct SystemFuncs *pSystemFuncs = reinterpret_cast<SystemFuncs*>(dlsym(it.hLib, it.strSysLib.c_str() ));
+        // System creation/destruction need to happen on the same thread
+        pSystemFuncs->DestroySystem(it.pSystem);
+        dlclose( it.hLib );
+    }
+
+    m_SystemLibs.clear();
+}
+
+Error
+SystemManager::LoadSystemLibrary(
+    const std::string strSysLib,
+    const std::string strSysLibPath,
+    ISystem** ppSystem
+    )
+{
+    Error   Err = Errors::Failure;
+    
+    #if defined(__GNUC__) || defined(__clang__)
+    // Load the .so
+    void* hLib = dlopen( std::string(strSysLibPath + "/" + strSysLib + ".so").c_str(), RTLD_NOW);
+    #elif defined(_MSC_VER)
+    // Load the .dll
+    void* hLib = dlopen( std::string(strSysLibPath + "/" + strSysLib + ".dll").c_str(), RTLD_NOW);
+    #endif
+    
+    if ( hLib != NULL )
+    {
+        // Get the system functions struct.
+        struct SystemFuncs *pSystemFuncs = reinterpret_cast<SystemFuncs*>(dlsym(hLib, strSysLib.c_str() ));
+        if ( pSystemFuncs != NULL )
+        {
+            ManagerInterfaces Managers;
+            Managers.pEnvironment = &EnvironmentManager::getInstance();
+            Managers.pService     = &ServiceManager::getInstance();
+            Managers.pTask        = &TaskManager::getInstance();
+            Managers.pPlatform    = &PlatformManager::getInstance();
+
+            // Initialize the system.
+            pSystemFuncs->InitSystem( &Managers );
+
+            // Create the system.
+            ISystem* pSystem = pSystemFuncs->CreateSystem();
+
+            if ( pSystem != NULL )
+            {
+                // Verify that there's no duplicate system type.
+                System::Type SystemType = pSystem->GetSystemType();
+
+                ISystem* pCurrSystem =
+                    SystemManager::getInstance().Get( SystemType );
+
+                if ( pCurrSystem == NULL )
+                {
+                    // Add the system to the collection.
+                    SystemManager::getInstance().Add( pSystem );
+
+                    SystemLib sl = { hLib, pSystem, strSysLib};
+                    m_SystemLibs.push_back( sl );
+
+                    *ppSystem = pSystem;
+                }
+            }
+        }
+        else
+        {
+            std::cerr << dlerror() << std::endl;
+        }
+    }
+    else
+    {
+        std::cerr << dlerror() << std::endl;
+    }
+
+    return Err;
+}
+
+
 
 Error
 SystemManager::Add(

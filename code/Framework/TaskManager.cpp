@@ -12,17 +12,13 @@
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
 
-//core
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
-//interface
 #include "Interfaces/Interface.hpp"
-//stdlib
-#include <iostream>
-//framework
 #include "Framework/EnvironmentManager.hpp"
 #include "Framework/ServiceManager.hpp"
 #include "Framework/TaskManager.hpp"
+#include <iostream>
 
 std::once_flag                   
 TaskManager::only_one;
@@ -46,7 +42,6 @@ void Worker::operator()()
                 {
                     callbackExecuted = true;
                 }
-                
             }
             
             if (callbackExecuted == false && this->pool.callback)
@@ -85,7 +80,7 @@ void Worker::operator()()
     }
 }
 
-void TaskManager::TaskManager()
+TaskManager::TaskManager()
 {
     auto numThreads = EnvironmentManager::getInstance().Variables().GetAsInt( "TaskManager::Threads", 0 );
     if( numThreads <= 0 ) 
@@ -104,12 +99,12 @@ void TaskManager::TaskManager()
         this->workers.push_back(std::move(std::thread(Worker(*this))));
 }
 
-void TaskManager::~TaskManager()
+TaskManager::~TaskManager()
 {
     // stop all threads
     this->stop = true;
     this->condition.notify_all();
-    WaitForAllSystemTasks();
+    WaitForAllTasks();
  
     // join them
     for(size_t i = 0;i<this->workers.size();++i)
@@ -118,14 +113,14 @@ void TaskManager::~TaskManager()
     }
 }
 
-void TaskManager::EnqueueTasks( std::vector<ISystemTask*> systemTasks, float DeltaTime)
+void TaskManager::EnqueueTasks( std::vector<ISystemTask*> systemTasks, float deltaTime)
 {
     std::vector<ISystemTask*> notThreadSafeTasks;
     for (const auto &task : systemTasks)
     {
-        if(task->IsThreadSafe)
+        if(task->IsThreadSafe())
         {
-            this->AddTask([task, DeltaTime] () { task->Update(DeltaTime); });
+            this->AddTask([task, deltaTime] () { task->Update(deltaTime); });
         }
         else
         {
@@ -134,7 +129,7 @@ void TaskManager::EnqueueTasks( std::vector<ISystemTask*> systemTasks, float Del
     }    
     for (const auto &task : notThreadSafeTasks)
     {
-        task->Update(DeltaTime);  
+        task->Update(deltaTime);  
     }
 }
 
@@ -143,14 +138,14 @@ void TaskManager::WaitForAllTasks()
     auto empty = false;
     while(!empty)
     {
-        //std::unique_lock<std::mutex> lock(this->queue_mutex);
+        std::unique_lock<std::mutex> lock(this->queue_mutex);
         empty = this->tasks.empty();
     }
 }
 
 void TaskManager::PerThreadCallback( JobFunction pfnCallback, void* pData)
 {
-    WaitForAllSystemTasks();
+    WaitForAllTasks();
     
     { // acquire lock
         std::unique_lock<std::mutex> lock(this->queue_mutex);

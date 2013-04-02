@@ -17,5 +17,5 @@
 class ITreeObject
 {
   public:
-    virtual void* GetObjectPostedVariables(void *Params);
+    virtual void* GetObjectPostedVariables(void *Params) = 0;
 };

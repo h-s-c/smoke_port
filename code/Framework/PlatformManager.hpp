@@ -52,37 +52,6 @@ public:
     }
     
     ~PlatformManager() {}
-    
-
-    ////////////////////////////////////////////////////////////////////
-    ///   Provides OS shared library loading functionality.
-    ////////////////////////////////////////////////////////////////////
-    class SystemLibrary
-    {
-    private:
-        friend class PlatformManager;
-
-    protected:
-        // Only accessible via the PlatformMananger.
-        SystemLibrary() {}
-        ~SystemLibrary();
-        
-    public:
-        // Loads a system library and returns pointers to the system.
-        Error LoadSystemLibrary( const std::string strSysLib,
-                                    const std::string strSysLibPath,
-                                    ISystem** ppSystem);
-
-    protected:
-        struct SystemLib
-        {
-            void*                     hLib;
-            ISystem*                  pSystem;
-            const std::string         strSysLib;
-        };
-        std::vector<SystemLib>  m_SystemLibs;
-    private:
-    };
 
 
     ////////////////////////////////////////////////////////////////////
@@ -111,22 +80,16 @@ public:
         // Set window width.
         virtual void SetWindowWidth(uint32_t width);
     private:
-        size_t window;
-        uint32_t height;
-        uint32_t width;
+        size_t      window;
+        uint32_t    height;
+        uint32_t    width;
+        std::mutex  windowMutex;
     };
 
 protected:
-    SystemLibrary                   m_SystemLibrary;
     Window                          m_Window;
 
 public:
-    // Gets a reference to the SystemLibrary class.
-     SystemLibrary& SystemLibrary( void )
-    {
-        return m_SystemLibrary;
-    }
-
     // Gets a reference to the Window class.
     virtual Window& Window( void )
     {
