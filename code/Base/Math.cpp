@@ -26,8 +26,8 @@ using namespace Base;
 
 const float Angle::Pi = 3.1415926535897932384626433832795f;
 
-const Vector2 Vector2::Zero = { 0.0f, 0.0f };
-const Vector2 Vector2::One  = { 1.0f, 1.0f };
+const Vector2 Vector2::Zero(0.0f, 0.0f);
+const Vector2 Vector2::One(1.0f, 1.0f );
 
 const Vector3 Vector3::Zero(0.0f);
 const Vector3 Vector3::One(1.0f);

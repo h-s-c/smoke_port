@@ -2,8 +2,8 @@ bin
 build/
 docs/
 media/
+code/External/backward-cpp/
 code/External/hk550/
-code/External/PagedGeometry/
-code/External/dlfcn-win32/
-code/External/backward-cpp
+code/External/ogre-paged/
+code/External/tinyxml/
 tools/OgreMeshUpgrade.log

@@ -19,7 +19,6 @@
 #include "Systems/ProceduralTrees/Trees/SpeciesGrammar.hpp"
 
 #include <tinyxml.h>
-#include <unistd.h>
 
 void Grammar::loadLevel(std::string filename)
 {

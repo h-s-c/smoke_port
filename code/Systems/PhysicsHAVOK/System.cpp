@@ -156,7 +156,7 @@ HavokPhysicsSystem::CreateScene(
         m_tlsHavocMemory = ::TlsAlloc();
         ASSERT (m_tlsHavocMemory != TLS_OUT_OF_INDEXES && "HavokPhysicsSystem: Not enough space in TLS");
 
-        g_Managers.pTask->NonStandardPerThreadCallback(
+        g_Managers.pTask->PerThreadCallback(
             reinterpret_cast<ITaskManager::JobFunction>(AllocateThreadResources), this
             );
     }

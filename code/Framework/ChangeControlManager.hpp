@@ -19,6 +19,14 @@
 #include <vector>
 #include <mutex>
 
+#if !defined(thread_local)
+#if defined(__GNUC__) || defined(__clang__) 
+#define thread_local __thread
+#elif defined(_MSC_VER) 
+#define thread_local __declspec(thread)
+#endif
+#endif
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// <summary>
 ///   Responsible for queuing up changes requests and then issuing them to the system for modifying
@@ -163,7 +171,7 @@ protected:
     ///   TLS slot that store pointers to NotifyListInfo values, containing pointer 
     ///   to thread local notification lists with fast search ability and .
     /// </summary>
-    static __thread NotifyList*  m_tlsNotifyList;
+    static thread_local NotifyList*  m_tlsNotifyList;
 
     struct MappedNotification
     {

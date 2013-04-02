@@ -24,6 +24,7 @@ getenv_path(OGRE_HOME)
 
 # construct search paths
 set(Cg_PREFIX_PATH ${Cg_HOME} ${ENV_Cg_HOME}
+  "$ENV{PROGRAMFILES}/NVIDIA Corporation/Cg"
   ${OGRE_SOURCE}/Dependencies
   ${ENV_OGRE_SOURCE}/Dependencies
   ${OGRE_HOME} ${ENV_OGRE_HOME}

@@ -15,28 +15,31 @@ project (Framework)
         ${CMAKE_SOURCE_DIR}/Framework/Universal.cpp
     )
     list(APPEND FRAMEWORK_SOURCE ${FRAMEWORK_SOURCE})
-
-    ##tinyxml
-    find_package( TinyXML REQUIRED)
-    list(APPEND FRAMEWORK_LIBRARIES ${TINYXML_LIBRARIES})
-    list(APPEND FRAMEWORK_INCLUDE_DIRS ${TINYXML_INCLUDE_DIRS})
-
-    ##boost
-    find_package( Boost COMPONENTS filesystem system REQUIRED)
-    list(APPEND FRAMEWORK_LIBRARIES ${Boost_LIBRARIES})
-    list(APPEND FRAMEWORK_INCLUDE_DIRS ${Boost_INCLUDE_DIR})
-    list(APPEND FRAMEWORK_LIBRARY_DIRS ${Boost_LIBRARY_DIR})
    
     if (UNIX) 
+		##tinyxml
+		find_package( TinyXML REQUIRED)
+		list(APPEND FRAMEWORK_LIBRARIES ${TINYXML_LIBRARIES})
+		list(APPEND FRAMEWORK_INCLUDE_DIRS ${TINYXML_INCLUDE_DIRS})
+		##boost
+		find_package( Boost COMPONENTS filesystem system REQUIRED)
+		list(APPEND FRAMEWORK_LIBRARIES ${Boost_LIBRARIES})
+		list(APPEND FRAMEWORK_INCLUDE_DIRS ${Boost_INCLUDE_DIR})
+		list(APPEND FRAMEWORK_LIBRARY_DIRS ${Boost_LIBRARY_DIR})
         ##pthreads
         find_package(Threads)
         list(APPEND FRAMEWORK_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
         ##dlfcn
         list(APPEND FRAMEWORK_LIBRARIES ${CMAKE_DL_LIBS})
-    else ()
-        list(APPEND FRAMEWORK_SOURCE
-            ${CMAKE_SOURCE_DIR}/External/dlfcn-win32/dlfcn.c
-        )
+    else (MSVC)
+		##tinyxml
+        list(APPEND FRAMEWORK_SOURCE ${CMAKE_SOURCE_DIR}/External/tinyxml/tinystr.cpp)
+        list(APPEND FRAMEWORK_SOURCE ${CMAKE_SOURCE_DIR}/External/tinyxml/tinyxml.cpp)
+        list(APPEND FRAMEWORK_SOURCE ${CMAKE_SOURCE_DIR}/External/tinyxml/tinyxmlerror.cpp)
+        list(APPEND FRAMEWORK_SOURCE ${CMAKE_SOURCE_DIR}/External/tinyxml/tinyxmlparser.cpp)
+        list(APPEND FRAMEWORK_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/External/tinyxml)		
+		##dlfcn-win32
+        list(APPEND FRAMEWORK_SOURCE ${CMAKE_SOURCE_DIR}/External/dlfcn-win32/dlfcn.c)
         list(APPEND FRAMEWORK_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/External/dlfcn-win32)
     endif () 
    

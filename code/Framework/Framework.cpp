@@ -22,7 +22,11 @@
 #include <stdexcept>
 #include <string>
 // external
+#if defined(_MSC_VER)
+#include <filesystem>
+#else
 #include <boost/filesystem.hpp>
+#endif
 #include <tinyxml.h>
 // framework
 #include "Framework/Universal.hpp"
@@ -82,12 +86,21 @@ Error
 Framework::Initialize( pcstr pszGDF)
 {
     std::clog << "Initializing Framework" << std::endl;
+#if defined(_MSC_VER)
+    // Backup directory
+    auto oldpath = std::tr2::sys::current_path<std::tr2::sys::path>();
+    // Go up one directory
+    std::tr2::sys::current_path( std::tr2::sys::current_path<std::tr2::sys::path>().branch_path());
+    // Check for GDF file
+    if ( !std::tr2::sys::exists( std::tr2::sys::path(pszGDF)) )
+#else
     // Backup directory
     auto oldpath = boost::filesystem::current_path();
     // Go up one directory
     boost::filesystem::current_path( boost::filesystem::current_path().parent_path());
     // Check for GDF file
     if ( !boost::filesystem::exists( boost::filesystem::path(pszGDF)))
+#endif
     {
         std::cerr << "Framework could not locate the GDF file " << std::string(pszGDF) << "." << std::endl;
         return Errors::File::NotFound;

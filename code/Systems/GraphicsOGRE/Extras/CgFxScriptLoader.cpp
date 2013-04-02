@@ -2643,6 +2643,7 @@ namespace Ogre {
     //---------------------------------------------------------------------
     //---------------------------------------------------------------------
     //---------------------------------------------------------------------
+#if OGRE_VERSION_MAJOR == 1 && OGRE_VERSION_MINOR <= 7
     template<> CgFxScriptLoader *Singleton<CgFxScriptLoader>::ms_Singleton = 0;
     CgFxScriptLoader* CgFxScriptLoader::getSingletonPtr(void)
     {
@@ -2652,6 +2653,17 @@ namespace Ogre {
     {
         assert( ms_Singleton );  return ( *ms_Singleton );
     }
+#else
+    template<> CgFxScriptLoader *Singleton<CgFxScriptLoader>::msSingleton = 0;
+    CgFxScriptLoader* CgFxScriptLoader::getSingletonPtr(void)
+    {
+        return msSingleton;
+    }
+    CgFxScriptLoader& CgFxScriptLoader::getSingleton(void)
+    {
+        assert( msSingleton );  return ( *msSingleton );
+    }
+#endif
     //---------------------------------------------------------------------
     CgFxScriptLoader::CgFxScriptLoader()
     {
