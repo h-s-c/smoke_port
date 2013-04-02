@@ -405,8 +405,8 @@ extern "C"
 
     struct SystemFuncs 
     {
-        std::function<void STDCALL(ManagerInterfaces* pManagers)> InitSystem;
-        std::function<ISystem* STDCALL()> CreateSystem;
-        std::function<void STDCALL(ISystem* pSystem)> DestroySystem;
+        std::function<void STDCALL (ManagerInterfaces* pManagers)> InitSystem;
+        std::function<ISystem* STDCALL ()> CreateSystem;
+        std::function<void STDCALL (ISystem* pSystem)> DestroySystem;
     };
 }

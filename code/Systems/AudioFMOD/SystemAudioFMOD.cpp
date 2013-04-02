@@ -68,7 +68,7 @@ DestroyFMODAudioSystem( ISystem* pSystem)
 
 extern "C" 
 {
-    struct SystemFuncs SystemAudioFMOD = {
+    DLLEXPORT struct SystemFuncs SystemAudioFMOD = {
         &InitFMODAudioSystem,
         &CreateFMODAudioSystem,
         &DestroyFMODAudioSystem

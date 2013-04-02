@@ -83,11 +83,13 @@
 #define INLINE              __forceinline
 #define ALIGN(...)          __declspec(align(__VA_ARGS__))
 #define STDCALL             __stdcall
+#define DLLEXPORT           __declspec(dllexport)
 #else
 #define NOINLINE            __attribute__((noinline))
 #define INLINE              inline __attribute__((always_inline))
 #define ALIGN(...)          __attribute__((aligned(__VA_ARGS__)))
-#define STDCALL             
+#define STDCALL   
+#define DLLEXPORT            
 #endif
 
 #define SAFE_DELETE( p )                    if ((p)!=nullptr){delete (p); (p)=nullptr;}

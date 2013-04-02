@@ -53,7 +53,7 @@ DestroyHavokPhysicsSystem( ISystem* pSystem)
 
 extern "C" 
 {
-    struct SystemFuncs SystemPhysicsHAVOK = {
+    DLLEXPORT struct SystemFuncs SystemPhysicsHAVOK = {
         &InitHavokPhysicsSystem,
         &CreateHavokPhysicsSystem,
         &DestroyHavokPhysicsSystem

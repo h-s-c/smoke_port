@@ -69,7 +69,7 @@ DestroyWaterSystem( ISystem* pSystem)
 
 extern "C" 
 {
-    struct SystemFuncs SystemWater = {
+    DLLEXPORT struct SystemFuncs SystemWater = {
         &InitWaterSystem,
         &CreateWaterSystem,
         &DestroyWaterSystem

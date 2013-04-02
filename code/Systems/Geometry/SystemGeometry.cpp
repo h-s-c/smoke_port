@@ -20,8 +20,7 @@
 //system
 #include "Systems/Geometry/System.hpp"
 
-
-#if defined(COMPILER_MSVC)
+#if defined(_MSC_VER)
 #include <windows.h>
 
 BOOL APIENTRY
@@ -68,7 +67,8 @@ DestroyGeometrySystem( ISystem* pSystem)
 
 extern "C" 
 {
-    struct SystemFuncs SystemGeometry = {
+    DLLEXPORT struct SystemFuncs SystemGeometry = 
+    {
         &InitGeometrySystem,
         &CreateGeometrySystem,
         &DestroyGeometrySystem

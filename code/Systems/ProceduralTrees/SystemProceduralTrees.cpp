@@ -51,7 +51,7 @@ DestroyProceduralTreesSystem( ISystem* pSystem)
 
 extern "C" 
 {
-    struct SystemFuncs SystemProceduralTrees = {
+    DLLEXPORT struct SystemFuncs SystemProceduralTrees = {
         &InitProceduralTreesSystem,
         &CreateProceduralTreesSystem,
         &DestroyProceduralTreesSystem

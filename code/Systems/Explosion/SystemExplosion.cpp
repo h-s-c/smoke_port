@@ -68,7 +68,7 @@ DestroyExplosionSystem( ISystem* pSystem)
 
 extern "C" 
 {
-    struct SystemFuncs SystemExplosion = {
+    DLLEXPORT struct SystemFuncs SystemExplosion = {
         &InitExplosionSystem,
         &CreateExplosionSystem,
         &DestroyExplosionSystem
