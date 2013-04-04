@@ -43,14 +43,21 @@
 void
 EngineExecuteGDF( pcstr pszGDF)
 {
-    Framework   Framework;
+	try
+	{
+		Framework   Framework;
 
-    pcstr GDF = (pszGDF != nullptr) ? pszGDF : "engine.gdf";
-    if ( Framework.Initialize( GDF ) == Errors::Success )
-    {
-        Framework.Execute();
-        Framework.Shutdown();
-    }
+		pcstr GDF = (pszGDF != nullptr) ? pszGDF : "engine.gdf";
+		if ( Framework.Initialize( GDF ) == Errors::Success )
+		{
+			Framework.Execute();
+			Framework.Shutdown();
+		}
+	}
+	catch(...) {  // Handle all exceptions
+	   // Respond (perhaps only partially) to exception
+	   throw;       // Pass exception to some other handler
+	}
 }
 
 Framework::Framework( void) 
