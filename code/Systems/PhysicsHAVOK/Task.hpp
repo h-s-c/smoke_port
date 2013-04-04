@@ -60,25 +60,6 @@ protected:
     /// <seealso cref="ISystemTask::Update"/>
     virtual void Update( f32 DeltaTime );
 
-    /// <summary cref="HavokPhysicsTask::StepUpdate">
-    ///   Advance the world owned by this thread.
-    /// </summary>
-    /// <param name="ThreadId">The unique ID for this thread.</param>
-    void StepUpdate( u32 ThreadId );
-
-    /// <summary cref="HavokPhysicsTask::UpdateCompletion">
-    ///   Callback function called when all threads have finished.
-    /// </summary>
-    void UpdateCompletion( void );
-
-    /// <summary cref="HavokPhysicsTask::StepUpdateS">
-    ///   Advance the world owned by this thread (static version).
-    /// </summary>
-    /// <param name="pTask">Pointer to Task that generated this call.</param>
-    /// <param name="uStart">Start time (currently unused)</param>
-    /// <param name="uEnd">End time (currently unused)</param>
-    static void StepUpdateS( HavokPhysicsTask* pTask, u32 uStart, u32 uEnd );
-
     /* tells the taskmanager to always run tasks from this 
      * system on the same thread if they are not thread-safe*/
     virtual bool IsThreadSafe( void ) { return false; } 
@@ -127,11 +108,6 @@ private:
     hkpWorld*                               m_pWorld;
 
     std::list<HavokPhysicsObject*>          m_ActiveObjects;
-
-    u32                                     m_cJobs;
-
-    u32                                     m_PrimaryThreadId;
-    hkpThreadToken                          m_PrimaryThreadToken;
 
     f32                                     m_DeltaTime;
 };

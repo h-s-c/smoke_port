@@ -11,7 +11,7 @@ FIND_PATH(HAVOK_INCLUDE_DIR Common/Base/hkBase.h
     $ENV{HAVOK_PATH}
     ${ADDITIONAL_SEARCH_PATHS}
     PATHS
-        ${CMAKE_SOURCE_DIR}/External/hk550/Source
+        ${CMAKE_SOURCE_DIR}/External/hk2012_2_0_r1/Source
 )
 mark_as_advanced(HAVOK_INCLUDE_DIR)
 
@@ -26,9 +26,9 @@ FOREACH(CUR_LIB ${HAVOK_LIBS})
             $ENV{HAVOK_DIR}
             $ENV{HAVOK_PATH}
             ${ADDITIONAL_SEARCH_PATHS}
-        PATH_SUFFIXES lib Lib lib64 "Lib/win32_net_8-0/release_multithreaded_dll"
+        PATH_SUFFIXES lib Lib lib64 "Lib/win32_vs2010/release_dll"
         PATHS
-            ${CMAKE_SOURCE_DIR}/External/hk550
+            ${CMAKE_SOURCE_DIR}/External/hk2012_2_0_r1
     )
     mark_as_advanced(HAVOK_LIBRARY_${CUR_LIB})
 
@@ -38,9 +38,9 @@ FOREACH(CUR_LIB ${HAVOK_LIBS})
             $ENV{HAVOK_DIR}
             $ENV{HAVOK_PATH}
             ${ADDITIONAL_SEARCH_PATHS}
-        PATH_SUFFIXES lib Lib lib64 "Lib/win32_net_8-0/debug_multithreaded_dll"
+        PATH_SUFFIXES lib Lib lib64 "Lib/win32_vs2010/debug_dll"
         PATHS
-            ${CMAKE_SOURCE_DIR}/External/hk550
+            ${CMAKE_SOURCE_DIR}/External/hk2012_2_0_r1
     )
     mark_as_advanced(HAVOK_LIBRARY_${CUR_LIB}_DEBUG)
 

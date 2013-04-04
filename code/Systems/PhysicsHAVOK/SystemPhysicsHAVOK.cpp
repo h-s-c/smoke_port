@@ -1,13 +1,21 @@
-// Base
 #include "Base/Platform.hpp"
-// Interface
 #include "Interfaces/Interface.hpp"
-// System
 #include "Systems/PhysicsHAVOK/System.hpp"
+
 
 
 #if defined(COMPILER_MSVC)
 #include <windows.h>
+
+//http://software.intel.com/en-us/forums/topic/290061
+#include <Common/Base/Types/hkBaseTypes.h>
+struct hkTestEntry* hkUnitTestDatabase = HK_NULL;
+hkBool HK_CALL hkTestReport(hkBool32 cond, const char* desc, const char* file, int line)
+{
+    return false;
+}
+
+
 
 BOOL APIENTRY
 DllMain(

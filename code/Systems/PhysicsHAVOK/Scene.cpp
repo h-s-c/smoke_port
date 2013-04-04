@@ -7,7 +7,6 @@
 #define HK_COMPAT_FILE  <Common\Compat\hkCompatVersions.h>
 #define HK_CLASSES_FILE <Common\Serialize\ClassList\hkPhysicsClasses.h>
 #include <Common\Base\hkBase.h>
-#include <Common\Compat\hkCompat_All.cxx>
 #include <Common\SceneData\Graph\hkxNode.h>
 #include <Common\SceneData\Scene\hkxScene.h>
 #include <Common\Serialize\Util\hkLoader.h>
@@ -30,7 +29,7 @@
 #include <Physics\Utilities\CharacterControl\CharacterProxy\hkpCharacterProxy.h>
 #include <Physics\Utilities\Dynamics\Inertia\hkpInertiaTensorComputer.h>
 #include <Physics\Utilities\Serialize\hkpPhysicsData.h>
-#include <Physics\Dynamics\Collide\hkpCollisionListener.h>
+#include <Physics/Collide/Shape/hkpLegacyShapeType.h>
 #ifdef __HAVOK_VDB__
 #include <Common/Visualize/hkVisualDebugger.h>
 #include <Physics/Utilities/VisualDebugger/hkpPhysicsContext.h>
@@ -43,69 +42,6 @@
 #include "Systems/PhysicsHAVOK/Object.hpp"
 #include "Systems/PhysicsHAVOK/ObjectPhysics.hpp"
 #include "Systems/PhysicsHAVOK/ObjectCharacter.hpp"
-
-///////////////////////////////////////////////////////////////////////////////
-// CollisionListener - Local helper classes
-class CollisionListener : public hkpCollisionListener
-{
-    virtual void  contactPointAddedCallback (hkpContactPointAddedEvent &event){}
-    virtual void  contactPointConfirmedCallback (hkpContactPointConfirmedEvent &event);
-    virtual void  contactPointRemovedCallback (hkpContactPointRemovedEvent &event){}
-};
-
-
-///////////////////////////////////////////////////////////////////////////////
-// contactPointConfirmedCallback - Callback that handles when an object collide
-void CollisionListener::contactPointConfirmedCallback(hkpContactPointConfirmedEvent &event)
-{
-    f32 Impact = -event.m_projectedVelocity;
-
-    static const f32 skfMaxImpact = 100.0f;
-
-    // Filter out collisions with low impact 
-    // (prevent collision messages spamming)
-    if( Impact > skfMaxImpact )
-    {
-        // Get physics object for bodyA
-        hkpEntity* pEntityA = (hkpEntity*)event.m_collidableA->getRootCollidable()->getOwner();
-        HavokPhysicsObject* pObjectA = (HavokPhysicsObject*)pEntityA->getUserData();
-
-        // Get physics object for bodyB
-        hkpEntity* pEntityB = (hkpEntity*)event.m_collidableB->getRootCollidable()->getOwner();
-        HavokPhysicsObject* pObjectB = (HavokPhysicsObject*)pEntityB->getUserData();
-
-        // Fill out physics object
-        IContactObject::Info ContactInfo;
-
-        const hkVector4& Position = event.m_contactPoint->getPosition();
-        Position.store3( ContactInfo.m_Position );
-
-        const hkVector4& Normal = event.m_contactPoint->getNormal();
-        Normal.store3( ContactInfo.m_Normal );
-
-        ContactInfo.m_Impact = Impact;
-        ContactInfo.m_Static = ( pEntityA->getMotion()->m_type == hkpMotion::MOTION_FIXED || pEntityB->getMotion()->m_type == hkpMotion::MOTION_FIXED );
-
-        ContactInfo.m_VelocityObjectA = Base::Vector3::Zero;
-        ContactInfo.m_VelocityObjectB = Base::Vector3::Zero;
-
-        // Tell the objects about the contact
-        if( pObjectA )
-        {
-            const hkVector4& linA = pObjectA->GetRigidBody()->getLinearVelocity();
-            linA.store3( ContactInfo.m_VelocityObjectA );
-            pObjectA->AddContact( ContactInfo );
-        }
-
-        if( pObjectB )
-        {
-            const hkVector4& linB = pObjectB->GetRigidBody()->getLinearVelocity();
-            linB.store3( ContactInfo.m_VelocityObjectB );
-            pObjectB->AddContact( ContactInfo );
-        }
-    }
-}
-
 
 //
 // global variables
@@ -305,7 +241,7 @@ HavokPhysicsScene::GlobalSceneStatusChanged(
                 // Create a break of parts utility and save it.
                 //
                 m_pWorld->markForWrite();
-                pBreakOffPartsUtil = new hkpBreakOffPartsUtil( m_pWorld, this );
+                pBreakOffPartsUtil = new hkpBreakOffPartsUtil( this );
                 m_pWorld->unmarkForWrite();
                 ASSERT( pBreakOffPartsUtil != NULL );
 
@@ -388,7 +324,7 @@ HavokPhysicsScene::GlobalSceneStatusChanged(
 
                         if ( pShapeContainer != NULL )
                         {
-                            hkpShapeContainer::ShapeBuffer ShapeBuffer;
+                           hkpShapeBuffer ShapeBuffer;
 
                             //
                             // Convert all the child shapes into an extended mesh shape.
@@ -430,7 +366,7 @@ HavokPhysicsScene::GlobalSceneStatusChanged(
                                 //
                                 // ... and get the name of the name shape.
                                 //
-                                if ( ShapeKey < pRigidBodyNode->m_numChildren )
+                                if ( ShapeKey < pRigidBodyNode->getNumDescendants() )
                                 {
                                     pszShapeName = pRigidBodyNode->m_children[ ShapeKey ]->m_name;
                                 }
@@ -443,7 +379,6 @@ HavokPhysicsScene::GlobalSceneStatusChanged(
                                 case HK_SHAPE_CONVEX_PIECE:
                                 case HK_SHAPE_CONVEX_LIST:
                                 case HK_SHAPE_CONVEX_VERTICES:
-                                case HK_SHAPE_PACKED_CONVEX_VERTICES:
                                     ConvexShapes.pushBack( (hkpConvexShape*)pChildShape );
                                     break;
 
@@ -488,7 +423,6 @@ HavokPhysicsScene::GlobalSceneStatusChanged(
                                 ConvexShapes.begin(), ConvexShapes.getSize(),
                                 hkTransform::getIdentity()
                                 );
-                            ShapesSubpart.m_rotationSet = ShapesSubpart.m_offsetSet = false;
 
                             pExtendedMeshShape->addShapesSubpart( ShapesSubpart );
 
@@ -512,7 +446,7 @@ HavokPhysicsScene::GlobalSceneStatusChanged(
                             hkpRigidBodyCinfo ci;
                             ci.m_shape = pBvTreeShape;
                             ci.m_motionType = hkpMotion::MOTION_FIXED;
-                            ci.m_numUserDatasInContactPointProperties = 1;
+                            ci.m_numShapeKeysInContactPointProperties = 1;
                             ci.m_maxAngularVelocity *= 100.0f;
                             ci.m_maxLinearVelocity *= 100.0f;
                             ci.m_position = pBody->getPosition();
@@ -619,16 +553,11 @@ HavokPhysicsScene::Initialize(
     // Create the world with default values.
     //
     hkpWorldCinfo WorldCInfo;
-    WorldCInfo.m_simulationType = hkpWorldCinfo::SIMULATION_TYPE_MULTITHREADED;
     WorldCInfo.m_gravity.set( 0, -9.8f, 0 );
     WorldCInfo.m_collisionTolerance = 0.1f; 
     WorldCInfo.setBroadPhaseWorldSize( 100000.0f );
     WorldCInfo.setupSolverInfo( hkpWorldCinfo::SOLVER_TYPE_4ITERS_MEDIUM );
     WorldCInfo.m_expectedMaxLinearVelocity *= 1.0f / g_Managers.pEnvironment->Variables().GetAsFloat( "Units", 1.0f );
-
-    // havokdaniel's suggestion
-    // this was necessary for version 5.5.0 of Havok to run multithreaded
-    WorldCInfo.m_processToisMultithreaded = false;
 
     m_pWorld = new hkpWorld( WorldCInfo );
     ASSERT( m_pWorld != NULL );
@@ -644,14 +573,6 @@ HavokPhysicsScene::Initialize(
         hkpGroupFilter* Filter = new hkpGroupFilter();
         m_pWorld->setCollisionFilter( Filter );
         Filter->removeReference();
-    }
-
-    //
-    // Add collision listener
-    //
-    {
-        CollisionListener* pListener = new CollisionListener();
-        m_pWorld->addCollisionListener( pListener );
     }
 
     //
@@ -941,7 +862,7 @@ HavokPhysicsScene::GetCreateObjects(
     )
 {
     UNREFERENCED_PARAM( apszNames );
-    ASSERT( False, "Not implemented." );
+    //ASSERT( False, "Not implemented." );
 }
 
 
@@ -953,7 +874,7 @@ HavokPhysicsScene::GetDestroyObjects(
     )
 {
     UNREFERENCED_PARAM( apszNames );
-    ASSERT( False, "Not implemented." );
+    //ASSERT( False, "Not implemented." );
 }
 
 
@@ -986,7 +907,7 @@ HavokPhysicsScene::GetUnextendObjects(
     )
 {
     UNREFERENCED_PARAM( apszNames );
-    ASSERT( False, "Not implemented." );
+    //ASSERT( False, "Not implemented." );
 }
 
 
@@ -1029,7 +950,7 @@ HavokPhysicsScene::UnextendObject(
     )
 {
     UNREFERENCED_PARAM( pszName );
-    ASSERT( False, "Not implemented." );
+    //ASSERT( False, "Not implemented." );
     return NULL;
 }
 
@@ -1096,7 +1017,7 @@ HavokPhysicsScene::breakOffSubPart(
 
         case HK_SHAPE_MOPP:
             {
-                hkpShapeContainer::ShapeBuffer ShapeBuffer;
+                hkpShapeBuffer ShapeBuffer;
                 hkpMoppBvTreeShape* pMoppShape = reinterpret_cast<hkpMoppBvTreeShape*>( pShape );
                 pBrokenOffShape = pMoppShape->getShapeCollection()->getChildShape(
                     BrokenPieceKey, ShapeBuffer

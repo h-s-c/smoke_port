@@ -18,8 +18,6 @@
 class HavokPhysicsTask;
 class HavokCollisionService;
 
-#define MAIN_THREAD_IS_PART_OF_POOL 1
-
 ///////////////////////////////////////////////////////////////////////////////
 /// <summary>
 ///   <c>HavokPhysicsSystem</c> Implementation of the ISystem interface for 
@@ -96,18 +94,6 @@ protected:
     /// <seealso cref="ISystem::DestroyScene"/>
     virtual Error DestroyScene( ISystemScene* pSystemScene );
 
-    /// <summary cref="HavokPhysicsSystem::AllocateThreadResources">
-    ///   Allocate resourses need to support multiple threads.
-    /// </summary>
-    /// <param name="pSystem">The system allocating the resources.</param>
-    static void AllocateThreadResources( HavokPhysicsSystem* pSystem );
-
-    /// <summary cref="HavokPhysicsSystem::FreeThreadResources">
-    ///   Free resourses allocated to support multiple threads.
-    /// </summary>
-    /// <param name="pSystem">The system allocating the resources.</param>
-    static void FreeThreadResources( HavokPhysicsSystem* pSystem );
-
     /// <summary cref="HavokPhysicsSystem::ErrorReport">
     ///   Callback for Havok to report an error.
     ///   (See Havok documentation for more details)
@@ -118,14 +104,7 @@ protected:
 
 private:
 
-    void*                       m_pThreadMemoryStack;
-    static const u32            m_cThreadMemoryStack = 2 * 1024 * 1024;
-
     HavokCollisionService*       m_Collision;
 
-    static u32 s_idMainThread;
-
-    // No need in tbb::concurrent_hash_map here.
-    u32 m_tlsHavocMemory;
 };
 

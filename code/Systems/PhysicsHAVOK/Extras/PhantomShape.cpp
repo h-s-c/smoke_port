@@ -3,12 +3,7 @@
 #include "Base/Platform.hpp"
 // Interface
 #include "Interfaces/Interface.hpp"
-// System
-#include "Systems/PhysicsHAVOK/Scene.hpp"
-#include "Systems/PhysicsHAVOK/Object.hpp"
-#include "Systems/PhysicsHAVOK/ObjectPhysics.hpp"
-#include "Systems/PhysicsHAVOK/Extras/PhantomShape.hpp"
-// Extern
+
 #include "Common\Base\hkBase.h"
 #include "Physics\Dynamics\Entity\hkpRigidBody.h"
 #include "Physics\Collide\Shape\hkpShape.h"
@@ -22,6 +17,12 @@
 #include "Physics\Collide\Shape\HeightField\hkpHeightFieldShape.h"
 #include "Physics\Collide\Shape\Misc\Bv\hkpBvShape.h"
 #include "Physics\Utilities\Destruction\BreakOffParts\hkpBreakOffPartsUtil.h"
+
+// System
+#include "Systems/PhysicsHAVOK/Scene.hpp"
+#include "Systems/PhysicsHAVOK/Object.hpp"
+#include "Systems/PhysicsHAVOK/ObjectPhysics.hpp"
+#include "Systems/PhysicsHAVOK/Extras/PhantomShape.hpp"
 
 #define PHAVOKSCENE         reinterpret_cast<HavokPhysicsScene*>(m_pSystemScene)
 

@@ -5,6 +5,7 @@
 #include "Interfaces/Interface.hpp"
 // External
 #include <Common\Base\hkBase.h>
+#include <Common/Base/Types/Geometry/hkStridedVertices.h>
 #include <Physics\Dynamics\Entity\hkpRigidBody.h>
 #include <Physics\Collide\Shape\hkpShape.h>
 #include <Physics\Collide\Shape\Convex\Box\hkpBoxShape.h>
@@ -18,6 +19,7 @@
 #include <Physics\Collide\Shape\Misc\Bv\hkpBvShape.h>
 #include <Physics\Collide\Shape\Misc\PhantomCallback\hkpPhantomCallbackShape.h>
 #include <Physics\Utilities\Destruction\BreakOffParts\hkpBreakOffPartsUtil.h>
+#include <Physics/Collide/Shape/hkpLegacyShapeType.h>
 // System
 #include "Systems/PhysicsHAVOK/Scene.hpp"
 #include "Systems/PhysicsHAVOK/Object.hpp"
@@ -207,7 +209,6 @@ HavokPhysicsObject::HavokPhysicsObject(
         case HK_SHAPE_CONVEX_PIECE:
         case HK_SHAPE_CONVEX_LIST:
         case HK_SHAPE_CONVEX_VERTICES:
-        case HK_SHAPE_PACKED_CONVEX_VERTICES:
             ((hkpConvexShape*)pShape)->getCentre( Offset );
             break;
         }
