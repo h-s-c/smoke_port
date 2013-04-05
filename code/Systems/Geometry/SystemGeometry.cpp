@@ -11,55 +11,28 @@
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  Intel does not
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
-
-//core
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
-//interface
 #include "Interfaces/Interface.hpp"
-//system
 #include "Systems/Geometry/System.hpp"
-
-#if defined(_MSC_VER)
-#include <windows.h>
-
-BOOL APIENTRY
-DllMain(
-    HMODULE hModule,
-    DWORD Reason,
-    LPVOID pReserved
-    )
-{
-    switch ( Reason )
-    {
-    case DLL_PROCESS_ATTACH:
-    case DLL_THREAD_ATTACH:
-    case DLL_THREAD_DETACH:
-    case DLL_PROCESS_DETACH:
-        break;
-    }
-
-    return TRUE;
-}
-#endif
 
 ManagerInterfaces   g_Managers;
 
-void STDCALL
+void 
 InitGeometrySystem( ManagerInterfaces* pManagers)
 {
     g_Managers = *pManagers;
 }
 
 
-ISystem* STDCALL
+ISystem* 
 CreateGeometrySystem()
 {
     return new GeometrySystem();
 }
 
 
-void STDCALL
+void 
 DestroyGeometrySystem( ISystem* pSystem)
 {
     delete reinterpret_cast<GeometrySystem*>( pSystem );

@@ -26,7 +26,7 @@
 #include <string>
 #include <vector>
 #include <cstddef> 
-
+#include <functional>
 // VS2010 support
 #if (_MSC_VER < 1700)
 #include "External/tinythread/tinythread.h"

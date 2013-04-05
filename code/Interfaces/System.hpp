@@ -14,11 +14,6 @@
 
 #pragma once
 
-// VS2010 support
-#if !(_MSC_VER < 1700)
-#include <functional>
-#endif
-
 // Forward declarations
 class ISystem;
 class ISystemScene;
@@ -405,23 +400,10 @@ extern "C"
         IPlatform*          pPlatform;
     };
     
-// VS2010 support
-#if (_MSC_VER < 1700)
-    typedef void (STDCALL* InitSystemFunction)(ManagerInterfaces* pManagers);
-	typedef ISystem* (STDCALL* CreateSystemFunction)();
-    typedef void (STDCALL* DestroySystemFunction)( ISystem* pSystem );
     struct SystemFuncs 
     {
-        InitSystemFunction InitSystem;
-        CreateSystemFunction CreateSystem;
-        DestroySystemFunction DestroySystem;
-    };   
-#else 
-    struct SystemFuncs 
-    {
-        std::function<void STDCALL (ManagerInterfaces* pManagers)> InitSystem;
-        std::function<ISystem* STDCALL ()> CreateSystem;
-        std::function<void STDCALL (ISystem* pSystem)> DestroySystem;
+        std::function<void (ManagerInterfaces* pManagers)> InitSystem;
+        std::function<ISystem* ()> CreateSystem;
+        std::function<void (ISystem* pSystem)> DestroySystem;
     };
-#endif
 }
