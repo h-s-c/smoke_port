@@ -26,41 +26,41 @@ PlatformManager::instance_ = nullptr;
 size_t
 PlatformManager::Window::GetWindowHandle( void )
 {
-    std::unique_lock<std::mutex> lock(this->windowMutex);
+    std::lock_guard<std::mutex> lock(this->windowMutex);
     return this->window;
 }
 
 void 
 PlatformManager::Window::SetWindowHandle(size_t window)
 {
-    std::unique_lock<std::mutex> lock(this->windowMutex);
+    std::lock_guard<std::mutex> lock(this->windowMutex);
     this->window = window;
 }
 
 uint32_t
 PlatformManager::Window::GetWindowHeight( void )
 {
-    std::unique_lock<std::mutex> lock(this->windowMutex);
+    std::lock_guard<std::mutex> lock(this->windowMutex);
     return this->height;
 }
 
 void 
 PlatformManager::Window::SetWindowHeight(uint32_t height)
 {
-    std::unique_lock<std::mutex> lock(this->windowMutex);
+    std::lock_guard<std::mutex> lock(this->windowMutex);
     this->height = height;
 }
 
 uint32_t
 PlatformManager::Window::GetWindowWidth( void )
 {
-    std::unique_lock<std::mutex> lock(this->windowMutex);
+    std::lock_guard<std::mutex> lock(this->windowMutex);
     return this->width;
 }
 
 void 
 PlatformManager::Window::SetWindowWidth(uint32_t width)
 {
-    std::unique_lock<std::mutex> lock(this->windowMutex);
+    std::lock_guard<std::mutex> lock(this->windowMutex);
     this->width = width;
 }

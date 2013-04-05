@@ -40,13 +40,13 @@ namespace Base
     uint32_t INLINE BitScanReverse( uint32_t x )
     {
         unsigned long r = 0;
-        _BitScanReverse(&r, x);
+        ::_BitScanReverse(&r, x);
         return r;
     }
     uint32_t INLINE BitScanForward( uint32_t x )
     {
         unsigned long r = 0;
-        _BitScanForward(&r, x);
+        ::_BitScanForward(&r, x);
         return r;
     }
 
