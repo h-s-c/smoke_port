@@ -11,9 +11,7 @@
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  Intel does not
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
-
 #pragma once
-
 #include "Base/Compat.hpp"
 #include "Base/Errors.hpp"
 #include "Base/Intrinsics.hpp"

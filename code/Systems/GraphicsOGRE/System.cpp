@@ -10,6 +10,7 @@
 #include <OgreParticleFXPlugin.h>
 #include <OgreWindowEventUtilities.h>
 //system
+#include "Systems/Common/System.hpp"
 #if defined(PLATFORM_LINUX)
 #include "Systems/GraphicsOGRE/Extras/CgPlugin.hpp"
 #endif

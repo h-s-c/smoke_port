@@ -21,6 +21,7 @@
 #include <mutex>
 // System
 #include "Systems/Common/POI.hpp"
+#include "Systems/Common/System.hpp"
 #include "Systems/Ai/Bots/Animal.hpp"
 #include "Systems/Ai/Bots/Bot.hpp"
 #include "Systems/Ai/Bots/Chicken.hpp"

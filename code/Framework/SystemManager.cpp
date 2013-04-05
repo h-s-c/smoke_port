@@ -11,7 +11,6 @@
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  Intel does not
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
-
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
 #include "Interfaces/Interface.hpp"
@@ -24,7 +23,6 @@
 #include <iostream>
 #include <dlfcn.h>
 
-
 std::once_flag                   
 SystemManager::only_one;
 std::shared_ptr<SystemManager> 
@@ -32,6 +30,21 @@ SystemManager::instance_ = nullptr;
 
 typedef std::map<Id, ISystem*>::iterator SystemMapIter;
 typedef std::map<Id, ISystem*>::const_iterator SystemMapConstIter;
+
+struct ManagerInterfaces
+{
+	IEnvironment*       pEnvironment;
+	IService*           pService;
+	ITaskManager*       pTask;
+	IPlatform*          pPlatform;
+};
+
+struct SystemFuncs 
+{
+	std::function<void STDCALL (ManagerInterfaces* pManagers)> InitSystem;
+	std::function<ISystem* STDCALL ()> CreateSystem;
+	std::function<void STDCALL (ISystem* pSystem)> DestroySystem;
+};
 
 SystemManager::~SystemManager()
 {

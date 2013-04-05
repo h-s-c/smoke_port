@@ -13,6 +13,7 @@
 #include <Physics\Collide\Query\Collector\RayCollector\hkpClosestRayHitCollector.h>
 #include <Physics\Utilities\Destruction\BreakOffParts\hkpBreakOffPartsUtil.h>
 // System
+#include "Systems/Common/System.hpp"
 #include "Systems/PhysicsHAVOK/ServiceCollision.hpp"
 #include "Systems/PhysicsHAVOK/Scene.hpp"
 #include "Systems/PhysicsHAVOK/Object.hpp"

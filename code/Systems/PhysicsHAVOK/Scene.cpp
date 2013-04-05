@@ -35,6 +35,7 @@
 #include <Physics/Utilities/VisualDebugger/hkpPhysicsContext.h>
 #endif
 // System
+#include "Systems/Common/System.hpp"
 #include "Systems/PhysicsHAVOK/ServiceCollision.hpp"
 #include "Systems/PhysicsHAVOK/System.hpp"
 #include "Systems/PhysicsHAVOK/Scene.hpp"

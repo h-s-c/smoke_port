@@ -1,11 +1,8 @@
-//core
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
-//interface
 #include "Interfaces/Interface.hpp"
-//system
+#include "Systems/Common/System.hpp"
 #include "Systems/PhysicsBULLET/System.hpp"
-
 
 #if defined(COMPILER_MSVC)
 #include <windows.h>

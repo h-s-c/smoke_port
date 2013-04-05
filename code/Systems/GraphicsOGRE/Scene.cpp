@@ -10,6 +10,7 @@
 #include <cfloat>
 #include <stdio.h>
 //system
+#include "Systems/Common/System.hpp"
 #include "Systems/GraphicsOGRE/Extras/MovableText.hpp"
 #include "Systems/GraphicsOGRE/System.hpp"
 #include "Systems/GraphicsOGRE/Scene.hpp"

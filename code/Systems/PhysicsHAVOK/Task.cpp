@@ -17,6 +17,7 @@
 #include <Physics/Utilities/VisualDebugger/hkpPhysicsContext.h>
 #endif
 // System
+#include "Systems/Common/System.hpp"
 #include "Systems/PhysicsHAVOK/Scene.hpp"
 #include "Systems/PhysicsHAVOK/Object.hpp"
 #include "Systems/PhysicsHAVOK/ObjectPhysics.hpp"

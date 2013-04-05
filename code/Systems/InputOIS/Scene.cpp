@@ -7,6 +7,7 @@
 #include <iostream>
 #include <sstream>
 // System
+#include "Systems/Common/System.hpp"
 #include "Systems/InputOIS/System.hpp"
 #include "Systems/InputOIS/Scene.hpp"
 #include "Systems/InputOIS/Object.hpp"

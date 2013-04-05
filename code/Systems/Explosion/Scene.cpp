@@ -21,6 +21,7 @@
 #include <mutex>
 // System
 #include "Systems/Common/POI.hpp"
+#include "Systems/Common/System.hpp"
 #include "Systems/Explosion/Object.hpp"
 #include "Systems/Explosion/ObjectMeteorImpact.hpp"
 #include "Systems/Explosion/Scene.hpp"
