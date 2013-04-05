@@ -66,8 +66,8 @@ endif()
     list(APPEND SYSTEM_LIBRARIES ${OGRE_RenderSystem_GL_LIBRARIES})
     list(APPEND SYSTEM_LIBRARIES ${OGRE_Plugin_ParticleFX_LIBRARIES})
 if(WIN32)  
-    list(APPEND SYSTEM_INCLUDE_DIRS ${OGRE_RenderSystem_Direct3D9_INCLUDE_DIRS})
-    list(APPEND SYSTEM_LIBRARIES ${OGRE_RenderSystem_Direct3D9_LIBRARIES})
+    ##list(APPEND SYSTEM_INCLUDE_DIRS ${OGRE_RenderSystem_Direct3D9_INCLUDE_DIRS})
+    ##list(APPEND SYSTEM_LIBRARIES ${OGRE_RenderSystem_Direct3D9_LIBRARIES})
     list(APPEND SYSTEM_INCLUDE_DIRS ${OGRE_Plugin_CgProgramManager_INCLUDE_DIRS})
     list(APPEND SYSTEM_LIBRARIES ${OGRE_Plugin_CgProgramManager_LIBRARIES})
 endif()
@@ -104,7 +104,7 @@ if(WIN32)
     install(FILES
         ${OGRE_PLUGIN_DIR_REL}/OgreMain.dll
         ${OGRE_PLUGIN_DIR_REL}/RenderSystem_GL.dll
-        ${OGRE_PLUGIN_DIR_REL}/RenderSystem_Direct3D9.dll
+        ##${OGRE_PLUGIN_DIR_REL}/RenderSystem_Direct3D9.dll
         ${OGRE_PLUGIN_DIR_REL}/Plugin_CgProgramManager.dll
         ${OGRE_PLUGIN_DIR_REL}/Plugin_ParticleFX.dll
         DESTINATION ${CMAKE_INSTALL_PREFIX}/release
@@ -113,7 +113,7 @@ if(WIN32)
     install(FILES
         ${OGRE_PLUGIN_DIR_DBG}/OgreMain_d.dll
         ${OGRE_PLUGIN_DIR_DBG}/RenderSystem_GL_d.dll
-        ${OGRE_PLUGIN_DIR_DBG}/RenderSystem_Direct3D9_d.dll
+        ##${OGRE_PLUGIN_DIR_DBG}/RenderSystem_Direct3D9_d.dll
         ${OGRE_PLUGIN_DIR_DBG}/Plugin_CgProgramManager_d.dll
         ${OGRE_PLUGIN_DIR_DBG}/Plugin_ParticleFX_d.dll
         DESTINATION ${CMAKE_INSTALL_PREFIX}/debug
