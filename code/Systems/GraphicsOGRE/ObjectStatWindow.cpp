@@ -6,7 +6,6 @@
 //external
 #include <Ogre.h>
 //system
-#include "Systems/Common/System.hpp"
 #include "Systems/GraphicsOGRE/Object.hpp"
 #include "Systems/GraphicsOGRE/ObjectWindow.hpp"
 #include "Systems/GraphicsOGRE/ObjectStatWindow.hpp"

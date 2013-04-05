@@ -21,7 +21,6 @@
 #include "Interfaces/Interface.hpp"
 #include "Systems/Common/AABB.hpp"
 #include "Systems/Common/Vertex.hpp"
-#include "Systems/Common/System.hpp"
 #include "Systems/ProceduralFire/ParticleEmitter/Fire.hpp"
 #include "Systems/ProceduralFire/ParticleEmitter/FireBall.hpp"
 #include "Systems/ProceduralFire/ParticleEmitter/FirePatch.hpp"

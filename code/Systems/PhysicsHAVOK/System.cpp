@@ -17,7 +17,6 @@
 // Platform initialization
 #include <Common/Base/System/Init/PlatformInit.cxx>
 // System
-#include "Systems/Common/System.hpp"
 #include "Systems/PhysicsHAVOK/ServiceCollision.hpp"
 #include "Systems/PhysicsHAVOK/System.hpp"
 #include "Systems/PhysicsHAVOK/Scene.hpp"

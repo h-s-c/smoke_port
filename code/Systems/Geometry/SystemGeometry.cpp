@@ -11,13 +11,16 @@
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  Intel does not
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
+
+//core
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
+//interface
 #include "Interfaces/Interface.hpp"
-#include "Systems/Common/System.hpp"
+//system
 #include "Systems/Geometry/System.hpp"
 
-#if defined(COMPILER_MSVC)
+#if defined(_MSC_VER)
 #include <windows.h>
 
 BOOL APIENTRY

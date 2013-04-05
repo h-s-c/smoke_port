@@ -7,7 +7,6 @@
 #include <Ogre.h>
 #include <OgreGLPlugin.h>
 //system
-#include "Systems/Common/System.hpp"
 #include "Systems/GraphicsOGRE/Extras/MovableText.hpp"
 #include "Systems/GraphicsOGRE/Scene.hpp"
 #include "Systems/GraphicsOGRE/Task.hpp"

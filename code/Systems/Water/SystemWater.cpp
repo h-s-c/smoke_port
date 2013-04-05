@@ -11,11 +11,15 @@
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  Intel does not
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
+
+//core
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
+//interface
 #include "Interfaces/Interface.hpp"
-#include "Systems/Common/System.hpp"
+//system
 #include "Systems/Water/System.hpp"
+
 
 #if defined(COMPILER_MSVC)
 #include <windows.h>

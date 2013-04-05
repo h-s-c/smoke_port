@@ -16,7 +16,6 @@
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
 #include "Interfaces/Interface.hpp"
-#include "Systems/Common/System.hpp"
 #include "Systems/AudioFMOD/Object.hpp"
 #include "Systems/AudioFMOD/Scene.hpp"
 #include "Systems/AudioFMOD/System.hpp"

@@ -8,7 +8,6 @@
 #include <OgreBorderPanelOverlayElement.h>
 #include <OgreHardwarePixelBuffer.h>
 //system
-#include "Systems/Common/System.hpp"
 #include "Systems/GraphicsOGRE/Object.hpp"
 #include "Systems/GraphicsOGRE/ObjectWindow.hpp"
 #include "Systems/GraphicsOGRE/ObjectWorkloadWindow.hpp"

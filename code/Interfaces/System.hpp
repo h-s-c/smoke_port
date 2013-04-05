@@ -11,7 +11,11 @@
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  Intel does not
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
+
 #pragma once
+
+//stdlib
+#include <functional>
 
 // Forward declarations
 class ISystem;
@@ -384,3 +388,25 @@ protected:
 
     ISystemScene*               m_pSystemScene;
 };
+
+
+//
+// Function type definitions for communicating with the system DLL.
+//
+extern "C"
+{
+    struct ManagerInterfaces
+    {
+        IEnvironment*       pEnvironment;
+        IService*           pService;
+        ITaskManager*       pTask;
+        IPlatform*          pPlatform;
+    };
+
+    struct SystemFuncs 
+    {
+        std::function<void STDCALL (ManagerInterfaces* pManagers)> InitSystem;
+        std::function<ISystem* STDCALL ()> CreateSystem;
+        std::function<void STDCALL (ISystem* pSystem)> DestroySystem;
+    };
+}

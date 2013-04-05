@@ -21,7 +21,6 @@
 #include <Physics\Utilities\Destruction\BreakOffParts\hkpBreakOffPartsUtil.h>
 #include <Physics/Collide/Shape/hkpLegacyShapeType.h>
 // System
-#include "Systems/Common/System.hpp"
 #include "Systems/PhysicsHAVOK/Scene.hpp"
 #include "Systems/PhysicsHAVOK/Object.hpp"
 #include "Systems/PhysicsHAVOK/ObjectPhysics.hpp"
