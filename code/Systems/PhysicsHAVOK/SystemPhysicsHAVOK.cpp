@@ -2,18 +2,22 @@
 #include "Interfaces/Interface.hpp"
 #include "Systems/PhysicsHAVOK/System.hpp"
 
-
+#include <Common/Base/keycode.cxx>
+#if !defined HK_FEATURE_PRODUCT_PHYSICS
+#error Havok physics is needed to build this system. It is included in the common havok package for reference only.
+#endif
+#include <Common/Base/Config/hkProductFeatures.cxx>
 
 #if defined(COMPILER_MSVC)
 #include <windows.h>
 
 //http://software.intel.com/en-us/forums/topic/290061
-#include <Common/Base/Types/hkBaseTypes.h>
+/*#include <Common/Base/Types/hkBaseTypes.h>
 struct hkTestEntry* hkUnitTestDatabase = HK_NULL;
 hkBool HK_CALL hkTestReport(hkBool32 cond, const char* desc, const char* file, int line)
 {
     return false;
-}
+}*/
 
 
 

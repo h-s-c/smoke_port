@@ -11,9 +11,7 @@
 // WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.  Intel does not
 // assume any responsibility for any errors which may appear in this software nor any
 // responsibility to update it.
-
 #pragma once
-
 #include "Base/Compat.hpp"
 #include "Base/Errors.hpp"
 #include "Base/Intrinsics.hpp"
@@ -23,14 +21,20 @@
 #include <algorithm>
 #include <cstring>
 #include <list>
-#include <mutex>
-#include <stdarg.h>
-#include <stdint.h>
+#include <cstdarg>
+#include <cstdint>
 #include <string>
 #include <vector>
-#include <stddef.h> 
-#include <atomic>
+#include <cstddef> 
 
+// VS2010 support
+#if (_MSC_VER < 1700)
+#include "External/tinythread/tinythread.h"
+namespace std { using namespace tthread;}
+#else
+#include <mutex>
+#include <atomic>
+#endif
 
 namespace Interface
 {

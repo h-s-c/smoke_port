@@ -15,7 +15,39 @@ FIND_PATH(HAVOK_INCLUDE_DIR Common/Base/hkBase.h
 )
 mark_as_advanced(HAVOK_INCLUDE_DIR)
 
-SET(HAVOK_LIBS hkBase hkSerialize hkSceneData hkVisualize hkCompat hkpCollide hkpConstraintSolver hkpDynamics hkpInternal hkpUtilities hkpVehicle)
+SET(HAVOK_LIBS 
+	hctCommon 
+	hctSceneExport 
+	hctSdkUtils 
+	hkaAnimation 
+	hkaInternal 
+	hkaRagdoll 
+	hkBase
+	hkcdCollide
+	hkcdInternal
+	hkCompat
+	hkgBridge
+	hkgCommon
+	hkgDx9s
+	hkgDx11
+	hkGeometryUtilities
+	hkgOglES
+	hkgOglES2
+	hkgOgls
+	hkgSoundCommon
+	hkgSoundXAudio2
+	hkInternal
+	hkpCollide
+	hkpConstraint
+	hkpConstraintSolver
+	hkpDynamics
+	hkpInternal
+	hkpUtilities
+	hkpVehicle
+	hkSceneData
+	hkSerialize
+	hkVisualize
+	)
 SET(HAVOK_LIBRARIES)
 
 FOREACH(CUR_LIB ${HAVOK_LIBS})

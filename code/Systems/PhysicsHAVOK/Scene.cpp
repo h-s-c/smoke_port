@@ -4,14 +4,11 @@
 // Interface
 #include "Interfaces/Interface.hpp"
 // External
-#define HK_COMPAT_FILE  <Common\Compat\hkCompatVersions.h>
-#define HK_CLASSES_FILE <Common\Serialize\ClassList\hkPhysicsClasses.h>
 #include <Common\Base\hkBase.h>
 #include <Common\SceneData\Graph\hkxNode.h>
 #include <Common\SceneData\Scene\hkxScene.h>
 #include <Common\Serialize\Util\hkLoader.h>
 #include <Common\Serialize\Util\hkRootLevelContainer.h>
-#include <Common\Serialize\Util\hkBuiltinTypeRegistry.cxx>
 #include <Physics\Dynamics\Entity\hkpRigidBody.h>
 #include <Physics\Dynamics\Entity\hkpEntityListener.h>
 #include <Physics\Dynamics\Entity\hkpEntityActivationListener.h>

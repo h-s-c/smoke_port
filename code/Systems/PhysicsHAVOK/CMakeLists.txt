@@ -17,8 +17,14 @@ project (SystemPhysicsHAVOK)
     list(APPEND SYSTEM_INCLUDE_DIRS ${HAVOK_INCLUDE_DIRS})
     list(APPEND SYSTEM_LIBRARIES ${HAVOK_LIBRARIES}) 
     
-     ##base
-    list(APPEND SYSTEM_LIBRARIES Base)
+    ##base
+    ##list(APPEND SYSTEM_LIBRARIES Base)
+    set( BASE_SOURCE ${CMAKE_SOURCE_DIR}/Base/Math.cpp )
+    list(APPEND SYSTEM_SOURCE ${BASE_SOURCE})
+    
+    ##tthread
+    set( TTHREAD_SOURCE ${CMAKE_SOURCE_DIR}/External/tinythread/tinythread.cpp )
+    list(APPEND SYSTEM_SOURCE ${TTHREAD_SOURCE})   
     
     list(APPEND SYSTEM_INCLUDE_DIRS ${CMAKE_SOURCE_DIR})
     
@@ -26,6 +32,7 @@ project (SystemPhysicsHAVOK)
     add_library (SystemPhysicsHAVOK SHARED ${SYSTEM_SOURCE})
     target_link_libraries(SystemPhysicsHAVOK ${SYSTEM_LIBRARIES})
     set_target_properties(SystemPhysicsHAVOK PROPERTIES PREFIX "")
+    add_definitions(-DHK_CONFIG_SIMD=HK_CONFIG_SIMD_ENABLED )
 
     install (TARGETS SystemPhysicsHAVOK
         DESTINATION ${CMAKE_INSTALL_PREFIX}/release 

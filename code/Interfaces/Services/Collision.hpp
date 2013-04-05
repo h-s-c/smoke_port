@@ -14,14 +14,6 @@
 
 #pragma once
 
-// Base
-#include "Base/Platform.hpp"
-#include "Base/Math.hpp"
-// Standard Library
-#include <cstdint>
-#include <cstring> // memset
-#include <string>
-
 // Collision Data Types
 namespace Collision
 {

@@ -116,7 +116,7 @@ namespace System
         //////////////////////////////////////////////////////////////////////////
         INLINE u32 GetIndex( u32 SystemType )
         {
-            return Base::BitScanForward(SystemType);
+            return 0/*Base::BitScanForward(SystemType)*/;
         }
 
         typedef u32 BitMask;
