@@ -10,7 +10,9 @@
 #include <OgreParticleFXPlugin.h>
 #include <OgreWindowEventUtilities.h>
 //system
+#if defined(PLATFORM_LINUX)
 #include "Systems/GraphicsOGRE/Extras/CgPlugin.hpp"
+#endif
 #include "Systems/GraphicsOGRE/System.hpp"
 #include "Systems/GraphicsOGRE/Scene.hpp"
 
@@ -176,10 +178,17 @@ OGREGraphicsSystem::Initialize(
     m_pRoot->loadPlugin("Plugin_ParticleFX");
 #endif
 
+    // Install the cg plugin (only on win32)
+#if defined(_DEBUG) && !defined(PLATFORM_LINUX)
+    m_pRoot->loadPlugin("Plugin_CgProgramManager_d");
+#elif !defined(PLATFORM_LINUX)
+    m_pRoot->loadPlugin("Plugin_CgProgramManager");
+#else
     // Create new plugin
     m_pCgPlugin = new Ogre::CgPlugin();
     // Register
     m_pRoot->installPlugin(m_pCgPlugin);
+#endif
 
     //
     // Read in the properties required to initialize Ogre.

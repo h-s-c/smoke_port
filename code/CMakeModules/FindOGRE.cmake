@@ -78,6 +78,7 @@ if (WIN32)
   set(OGRE_PREFIX_GUESSES
     "$ENV{PROGRAMFILES}/OGRE"
     C:/OgreSDK
+    ${CMAKE_SOURCE_DIR}/External/OgreSDK
   )
 elseif (UNIX)
   set(OGRE_PREFIX_GUESSES

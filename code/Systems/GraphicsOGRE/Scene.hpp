@@ -1,10 +1,9 @@
 #pragma once
 
-//standard
 #include <mutex>
-//external
-#include <PagedGeometry.h>
-#include <GrassLoader.h>
+
+#include "Systems/GraphicsOGRE/Extras/PagedGeometry.hpp"
+#include "Systems/GraphicsOGRE/Extras/GrassLoader.hpp"
 
 
 class OGREGraphicsSystem;

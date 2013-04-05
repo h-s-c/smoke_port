@@ -1,13 +1,11 @@
-//core
 #include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
-//interface
 #include "Interfaces/Interface.hpp"
-//external
+
 #include <Ogre.h>
-#include <PagedGeometry.h>
-#include <GrassLoader.h>
-//system
+
+#include "Systems/GraphicsOGRE/Extras/PagedGeometry.hpp"
+#include "Systems/GraphicsOGRE/Extras/GrassLoader.hpp"
 #include "Systems/GraphicsOGRE/Object.hpp"
 #include "Systems/GraphicsOGRE/Task.hpp"
 #include "Systems/GraphicsOGRE/ObjectCamera.hpp"

@@ -2,11 +2,6 @@
 
 project (SystemGraphicsOGRE)
     set( SYSTEM_SOURCE
-        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/CgFxScriptLoader.cpp
-        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/CgPlugin.cpp
-        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/CgProgram.cpp
-        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/CgProgramError.cpp
-        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/CgProgramFactory.cpp
         ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/DynamicBuffer.cpp
         ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/DynamicLines.cpp
         ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/DynamicRenderable.cpp
@@ -32,6 +27,35 @@ project (SystemGraphicsOGRE)
         ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Task.cpp
     )
     list(APPEND SYSTEM_SOURCE ${SYSTEM_SOURCE})
+
+if(UNIX)  
+	## cg plugin is often not part of linux packages
+    set( CG_SOURCE
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/CgFxScriptLoader.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/CgPlugin.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/CgProgram.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/CgProgramError.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/CgProgramFactory.cpp
+    )
+    list(APPEND SYSTEM_SOURCE ${CG_SOURCE})
+endif()
+if(WIN32)  
+	## paged-geometry is not part of ogre win32 sdk packages
+    set( PG_SOURCE
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/BatchedGeometry.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/BatchPage.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/GrassLoader.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/ImpostorPage.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/PagedGeometry.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/PropertyMaps.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/StaticBillboardSet.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/TreeLoader2D.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/TreeLoader3D.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/WindBatchedGeometry.cpp
+        ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/WindBatchPage.cpp
+    )
+    list(APPEND SYSTEM_SOURCE ${PG_SOURCE})
+endif()
     
     ##ogre
     find_package(OGRE REQUIRED)
@@ -41,14 +65,22 @@ project (SystemGraphicsOGRE)
     list(APPEND SYSTEM_LIBRARIES ${OGRE_LIBRARIES}) 
     list(APPEND SYSTEM_LIBRARIES ${OGRE_RenderSystem_GL_LIBRARIES})
     list(APPEND SYSTEM_LIBRARIES ${OGRE_Plugin_ParticleFX_LIBRARIES})
-    find_package(PagedGeometry REQUIRED)
-    list(APPEND SYSTEM_INCLUDE_DIRS ${PG_INCLUDE_DIR})
-    list(APPEND SYSTEM_LIBRARIES ${PG_LIBRARIES}) 
-    
-    ##cg
+if(WIN32)  
+    list(APPEND SYSTEM_INCLUDE_DIRS ${OGRE_RenderSystem_Direct3D9_INCLUDE_DIRS})
+    list(APPEND SYSTEM_LIBRARIES ${OGRE_RenderSystem_Direct3D9_LIBRARIES})
+    list(APPEND SYSTEM_INCLUDE_DIRS ${OGRE_Plugin_CgProgramManager_INCLUDE_DIRS})
+    list(APPEND SYSTEM_LIBRARIES ${OGRE_Plugin_CgProgramManager_LIBRARIES})
+endif()
+if(UNIX)  
+	## cg
     find_package(Cg REQUIRED)
     list(APPEND SYSTEM_INCLUDE_DIRS ${Cg_INCLUDE_DIRS})
     list(APPEND SYSTEM_LIBRARIES ${Cg_LIBRARIES}) 
+	## paged-geometry
+    find_package(PagedGeometry REQUIRED)
+    list(APPEND SYSTEM_INCLUDE_DIRS ${PG_INCLUDE_DIR})
+    list(APPEND SYSTEM_LIBRARIES ${PG_LIBRARIES}) 
+endif()
     
      ##base
     list(APPEND SYSTEM_LIBRARIES Base)
@@ -72,6 +104,8 @@ if(WIN32)
     install(FILES
         ${OGRE_PLUGIN_DIR_REL}/OgreMain.dll
         ${OGRE_PLUGIN_DIR_REL}/RenderSystem_GL.dll
+        ${OGRE_PLUGIN_DIR_REL}/RenderSystem_Direct3D9.dll
+        ${OGRE_PLUGIN_DIR_REL}/Plugin_CgProgramManager.dll
         ${OGRE_PLUGIN_DIR_REL}/Plugin_ParticleFX.dll
         DESTINATION ${CMAKE_INSTALL_PREFIX}/release
         CONFIGURATIONS Release RelWithDebInfo
@@ -79,6 +113,8 @@ if(WIN32)
     install(FILES
         ${OGRE_PLUGIN_DIR_DBG}/OgreMain_d.dll
         ${OGRE_PLUGIN_DIR_DBG}/RenderSystem_GL_d.dll
+        ${OGRE_PLUGIN_DIR_DBG}/RenderSystem_Direct3D9_d.dll
+        ${OGRE_PLUGIN_DIR_DBG}/Plugin_CgProgramManager_d.dll
         ${OGRE_PLUGIN_DIR_DBG}/Plugin_ParticleFX_d.dll
         DESTINATION ${CMAKE_INSTALL_PREFIX}/debug
         CONFIGURATIONS Debug
