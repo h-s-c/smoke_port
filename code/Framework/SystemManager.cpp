@@ -64,11 +64,11 @@ SystemManager::LoadSystemLibrary(
     void* hLib = dlopen( std::string(strSysLibPath + "/" + strSysLib + ".dll").c_str(), RTLD_NOW);
     #endif
     
-    if ( hLib != NULL )
+    if (hLib)
     {
         // Get the system functions struct.
         struct SystemFuncs *pSystemFuncs = reinterpret_cast<SystemFuncs*>(dlsym(hLib, strSysLib.c_str() ));
-        if ( pSystemFuncs != NULL )
+        if (pSystemFuncs)
         {
             ManagerInterfaces Managers;
             Managers.pEnvironment = &EnvironmentManager::getInstance();
@@ -82,18 +82,17 @@ SystemManager::LoadSystemLibrary(
             // Create the system.
             ISystem* pSystem = pSystemFuncs->CreateSystem();
 
-            if ( pSystem != NULL )
+            if (pSystem)
             {
                 // Verify that there's no duplicate system type.
                 System::Type SystemType = pSystem->GetSystemType();
 
-                ISystem* pCurrSystem =
-                    SystemManager::getInstance().Get( SystemType );
+                ISystem* pCurrSystem = this->Get( SystemType );
 
-                if ( pCurrSystem == NULL )
+                if (!pCurrSystem)
                 {
                     // Add the system to the collection.
-                    SystemManager::getInstance().Add( pSystem );
+                    this->Add( pSystem );
 
                     SystemLib sl = { hLib, pSystem, strSysLib};
                     m_SystemLibs.push_back( sl );
