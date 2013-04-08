@@ -11,15 +11,6 @@ find_path(PG_INCLUDE_DIR PagedGeometry.h HINTS
     /usr/local/include/OGRE/PagedGeometry
     ${CMAKE_SOURCE_DIR}/External/ogre-paged/include/PagedGeometry
     )
-
-find_library(PG_LIBRARY_DEBUG NAMES PagedGeometry_d libPagedGeometry_d HINTS 
-    /usr/lib${LIB_SUFFIX}/ogre
-    /usr/lib${LIB_SUFFIX}/OGRE
-    /usr/lib64/OGRE
-    /usr/local/lib${LIB_SUFFIX}/ogre
-    /usr/local/lib${LIB_SUFFIX}/OGRE
-    ${CMAKE_SOURCE_DIR}/External/ogre-paged/lib
-    )
     
 find_library(PG_LIBRARY_RELEASE NAMES PagedGeometry libPagedGeometry HINTS 
     /usr/lib${LIB_SUFFIX}/ogre
@@ -29,11 +20,29 @@ find_library(PG_LIBRARY_RELEASE NAMES PagedGeometry libPagedGeometry HINTS
     /usr/local/lib${LIB_SUFFIX}/OGRE
     ${CMAKE_SOURCE_DIR}/External/ogre-paged/lib
     )
+    
+if(WIN32)     
+find_library(PG_LIBRARY_DEBUG NAMES PagedGeometry_d libPagedGeometry_d HINTS 
+    /usr/lib${LIB_SUFFIX}/ogre
+    /usr/lib${LIB_SUFFIX}/OGRE
+    /usr/lib64/OGRE
+    /usr/local/lib${LIB_SUFFIX}/ogre
+    /usr/local/lib${LIB_SUFFIX}/OGRE
+    ${CMAKE_SOURCE_DIR}/External/ogre-paged/lib
+    )
 
 set(PG_LIBRARIES 
-	debug ${PG_LIBRARY_DEBUG}
-	optimized ${PG_LIBRARY_RELEASE}
-	)
+    debug ${PG_LIBRARY_DEBUG}
+    optimized ${PG_LIBRARY_RELEASE}
+    )
+endif()
+
+if(UNIX) 
+set(PG_LIBRARIES 
+    optimized ${PG_LIBRARY_RELEASE}
+    )
+endif()
+
 set(PG_INCLUDE_DIRS ${PG_INCLUDE_DIR} )
 
 include(FindPackageHandleStandardArgs)

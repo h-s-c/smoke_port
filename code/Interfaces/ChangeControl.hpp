@@ -361,13 +361,13 @@ public :
     #if SUPPORT_CONCURRENT_ATTACH_DETACH_TO_SUBJECTS 
             // We are under the lock in this case
             it->m_interestBits |= uInIntrestBits;
-    #elif (_MSC_VER < 1700)
-			 // No lock is used, but updates can happen concurrently. So use interlocked operation
-			long prevBits;
-			long newBits = long(it->m_interestBits | uInIntrestBits);
-			do {
-				prevBits = it->m_interestBits;
-			} while ( ::_InterlockedCompareExchange((long*)&it->m_interestBits, newBits, prevBits) != prevBits );   
+    #elif COMPILER_MSVC && (_MSC_VER < 1700)
+             // No lock is used, but updates can happen concurrently. So use interlocked operation
+            long prevBits;
+            long newBits = long(it->m_interestBits | uInIntrestBits);
+            do {
+                prevBits = it->m_interestBits;
+            } while ( ::_InterlockedCompareExchange((long*)&it->m_interestBits, newBits, prevBits) != prevBits );   
     #else
             // No lock is used, but updates can happen concurrently. So use interlocked operation
             auto prevBits = it->m_interestBits.load();
@@ -383,15 +383,15 @@ public :
     // GetID - Get the ID for the given observer within this subject
     virtual u32 GetID ( IObserver* pObserver ) const
     {
-		ObserverList::const_iterator it = m_observerList.begin();
-		for ( ; it != m_observerList.end(); ++it )
-		{
-			if ( it->m_pObserver == pObserver)
-			{
-				return it->m_myID;
-			}
-		}
-		return InvalidID;
+        ObserverList::const_iterator it = m_observerList.begin();
+        for ( ; it != m_observerList.end(); ++it )
+        {
+            if ( it->m_pObserver == pObserver)
+            {
+                return it->m_myID;
+            }
+        }
+        return InvalidID;
     }
 
     // The following implementation could be used in case of concurrent initial attach
@@ -439,15 +439,15 @@ public :
     #if SUPPORT_CONCURRENT_ATTACH_DETACH_TO_SUBJECTS
         std::lock_guard<std::mutex> lock(m_observerListMutex);
     #endif
-		ObserverList::iterator it = m_observerList.begin();
-		for ( ; it != m_observerList.end(); ++it )
-		{
-			std::uint32_t changedBitsOfInterest = GetBitsToPost( *it, changedBits );
-			if ( changedBitsOfInterest )
-			{
-				it->m_pObserver->ChangeOccurred( this, changedBitsOfInterest );
-			}
-		}
+        ObserverList::iterator it = m_observerList.begin();
+        for ( ; it != m_observerList.end(); ++it )
+        {
+            std::uint32_t changedBitsOfInterest = GetBitsToPost( *it, changedBits );
+            if ( changedBitsOfInterest )
+            {
+                it->m_pObserver->ChangeOccurred( this, changedBitsOfInterest );
+            }
+        }
     }
 
     // PreDestruct - Called prior to destruction of the subject
@@ -459,12 +459,12 @@ public :
         // the future it is called concurrently, then locking similar to that
         // in the CSubject::Detach method will have to be added.
 
-		ObserverList::iterator it = m_observerList.begin();
-		for ( ; it != m_observerList.end(); ++it )
-		{
-			it->m_pObserver->ChangeOccurred( this, 0 );
-		}
-		m_observerList.clear();
+        ObserverList::iterator it = m_observerList.begin();
+        for ( ; it != m_observerList.end(); ++it )
+        {
+            it->m_pObserver->ChangeOccurred( this, 0 );
+        }
+        m_observerList.clear();
     }
 
 protected:
@@ -486,7 +486,7 @@ protected:
         {}
 
         IObserver*                  m_pObserver;
-        #if SUPPORT_CONCURRENT_ATTACH_DETACH_TO_SUBJECTS || (_MSC_VER < 1700)
+        #if SUPPORT_CONCURRENT_ATTACH_DETACH_TO_SUBJECTS || (COMPILER_MSVC && (_MSC_VER < 1700))
         std::uint32_t               m_interestBits;
         #else
         std::atomic<std::uint32_t>  m_interestBits; 
@@ -526,7 +526,7 @@ private:
 
     friend INLINE u32 GetBitsToPost( CSubject::ObserverRequest& req, System::Changes::BitMask changedBits )
     {
-#if SUPPORT_CONCURRENT_ATTACH_DETACH_TO_SUBJECTS || (_MSC_VER < 1700)
+#if SUPPORT_CONCURRENT_ATTACH_DETACH_TO_SUBJECTS || (COMPILER_MSVC && (_MSC_VER < 1700))
         u32 changedBitsOfInterest = req.m_interestBits & changedBits;
 #else
         u32 changedBitsOfInterest = req.m_interestBits.load() & changedBits;
