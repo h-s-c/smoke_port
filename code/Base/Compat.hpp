@@ -16,7 +16,7 @@
 #include "Base/Platform.hpp"
 
 
-#if defined(COMPILER_MSVC)
+#if defined(COMPILER_MSVC) || (defined(COMPILER_ICC) && defined(COMPILER_HOST_MSVC))
 //#define __forceinline
 //#define strcpy_s
 //#define strcat_s
@@ -81,8 +81,8 @@ typedef void (*Callback)( void* pUserData );
 #define DBG_UNREFERENCED_PARAM(P)           
 #define DBG_UNREFERENCED_LOCAL_VAR(V)       
 
-#if defined(COMPILER_MSVC)
-    #if defined(PLATFORM_X86_64)
+#if defined(COMPILER_MSVC) || (defined(COMPILER_ICC) && defined(COMPILER_HOST_MSVC))
+    #if defined(PLATFORM_ARCH_X86_64)
     #define W64SAFE
     #else
     #define W64SAFE __w64
@@ -91,8 +91,26 @@ typedef void (*Callback)( void* pUserData );
     #define W64SAFE
 #endif
 
-#if defined(PLATFORM_X86_64)
+#if defined(PLATFORM_ARCH_X86_64)
 typedef u64 uptr;
 #else
 typedef W64SAFE u32 uptr;
+#endif
+
+#define SAFE_DELETE( p )                    if ((p)!=nullptr){delete (p); (p)=nullptr;}
+#define SAFE_DELETE_ARRAY( p )              if ((p)!=nullptr){delete [] (p); (p)=nullptr;}
+
+#if defined(COMPILER_MSVC) || (defined(COMPILER_ICC) && defined(COMPILER_HOST_MSVC))
+#define In                                  __in const
+#define Out                                 __out
+#define InOut                               __inout
+#else
+#define In                                  const
+#define Out
+#define InOut
+#endif
+
+#if defined(COMPILER_GCC) || defined(COMPILER_CLANG) || (defined(COMPILER_ICC) && defined(COMPILER_HOST_GCC))
+#define _stricmp strcasecmp
+#define _strnicmp strncasecmp
 #endif

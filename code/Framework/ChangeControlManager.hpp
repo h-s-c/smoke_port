@@ -19,14 +19,6 @@
 #include <vector>
 #include <mutex>
 
-#if !defined(thread_local)
-#if defined(__GNUC__) || defined(__clang__) 
-#define thread_local __thread
-#elif defined(_MSC_VER) 
-#define thread_local __declspec(thread)
-#endif
-#endif
-
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 /// <summary>
 ///   Responsible for queuing up changes requests and then issuing them to the system for modifying

@@ -92,12 +92,12 @@ InputScene::Initialize(
     windowHndStr << windowHnd;
     pl.insert(std::make_pair(std::string("WINDOW"), windowHndStr.str()));
 
-    #if defined PLATFORM_WINDOWS
+    #if defined PLATFORM_OS_WINDOWS
        pl.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_FOREGROUND" )));
        pl.insert(std::make_pair(std::string("w32_mouse"), std::string("DISCL_NONEXCLUSIVE")));
        pl.insert(std::make_pair(std::string("w32_keyboard"), std::string("DISCL_FOREGROUND")));
        pl.insert(std::make_pair(std::string("w32_keyboard"), std::string("DISCL_NONEXCLUSIVE")));
-    #elif defined PLATFORM_LINUX
+    #elif defined(PLATFORM_OS_LINUX) || defined(PLATFORM_OS_FREEBSD) || defined(PLATFORM_OS_MACOSX)
        pl.insert(std::make_pair(std::string("x11_mouse_grab"), std::string("false")));
        pl.insert(std::make_pair(std::string("x11_keyboard_grab"), std::string("false")));
     #endif

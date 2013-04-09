@@ -13,7 +13,7 @@
 #include <vector>
 
 // VS2010 support
-#if (_MSC_VER < 1700)
+#if (COMPILER == "MSVC") && (COMPILER_VERSION == "10.0")
 #include "External/tinythread/tinythread.h"
 namespace std { using namespace tthread;}
 #else

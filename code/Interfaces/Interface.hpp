@@ -28,7 +28,7 @@
 #include <cstddef> 
 #include <functional>
 // VS2010 support
-#if COMPILER_MSVC && (_MSC_VER < 1700)
+#if defined(COMPILER_MSVC) && (COMPILER_VERSION_MAJOR == 10 )
 #include "External/tinythread/tinythread.h"
 namespace std { using namespace tthread;}
 #else

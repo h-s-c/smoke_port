@@ -361,7 +361,7 @@ public :
     #if SUPPORT_CONCURRENT_ATTACH_DETACH_TO_SUBJECTS 
             // We are under the lock in this case
             it->m_interestBits |= uInIntrestBits;
-    #elif COMPILER_MSVC && (_MSC_VER < 1700)
+    #elif defined(COMPILER_MSVC) && (COMPILER_VERSION_MAJOR == 10 )
              // No lock is used, but updates can happen concurrently. So use interlocked operation
             long prevBits;
             long newBits = long(it->m_interestBits | uInIntrestBits);
@@ -486,7 +486,7 @@ protected:
         {}
 
         IObserver*                  m_pObserver;
-        #if SUPPORT_CONCURRENT_ATTACH_DETACH_TO_SUBJECTS || (COMPILER_MSVC && (_MSC_VER < 1700))
+        #if SUPPORT_CONCURRENT_ATTACH_DETACH_TO_SUBJECTS || (defined(COMPILER_MSVC) && (COMPILER_VERSION_MAJOR == 10 ))
         std::uint32_t               m_interestBits;
         #else
         std::atomic<std::uint32_t>  m_interestBits; 
@@ -526,7 +526,7 @@ private:
 
     friend INLINE u32 GetBitsToPost( CSubject::ObserverRequest& req, System::Changes::BitMask changedBits )
     {
-#if SUPPORT_CONCURRENT_ATTACH_DETACH_TO_SUBJECTS || (COMPILER_MSVC && (_MSC_VER < 1700))
+#if SUPPORT_CONCURRENT_ATTACH_DETACH_TO_SUBJECTS || (defined(COMPILER_MSVC) && (COMPILER_VERSION_MAJOR == 10 ))
         u32 changedBitsOfInterest = req.m_interestBits & changedBits;
 #else
         u32 changedBitsOfInterest = req.m_interestBits.load() & changedBits;

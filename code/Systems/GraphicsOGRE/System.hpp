@@ -1,6 +1,6 @@
 #pragma once
 
-#if defined(PLATFORM_LINUX)
+#if defined(PLATFORM_OS_LINUX)
 #include "Systems/GraphicsOGRE/Extras/CgPlugin.hpp"
 #endif
 
@@ -135,7 +135,7 @@ protected:
 
     Ogre::RenderSystem*                 m_pRenderSystem;
     Ogre::RenderWindow*                 m_pRenderWindow;
-#if defined(PLATFORM_LINUX)    
+#if defined(PLATFORM_OS_LINUX)    
     Ogre::CgPlugin*                     m_pCgPlugin;
 #endif    
     u16                                 m_uShadowTextureCount;

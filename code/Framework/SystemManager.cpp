@@ -56,12 +56,15 @@ SystemManager::LoadSystemLibrary(
 {
     Error   Err = Errors::Failure;
     
-    #if defined(__GNUC__) || defined(__clang__)
+    #if defined(PLATFORM_OS_LINUX) || defined(PLATFORM_OS_FREEBSD)
     // Load the .so
     void* hLib = dlopen( std::string(strSysLibPath + "/" + strSysLib + ".so").c_str(), RTLD_NOW);
-    #elif defined(_MSC_VER)
+    #elif defined(PLATFORM_OS_WINDOWS)
     // Load the .dll
     void* hLib = dlopen( std::string(strSysLibPath + "/" + strSysLib + ".dll").c_str(), RTLD_NOW);
+    #elif defined(PLATFORM_OS_MACOSX)
+    // Load the .dylib
+    void* hLib = dlopen( std::string(strSysLibPath + "/" + strSysLib + ".dylib").c_str(), RTLD_NOW);
     #endif
     
     if (hLib)

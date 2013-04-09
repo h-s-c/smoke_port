@@ -14,9 +14,9 @@
 
 #pragma once
 
-// Base
+#include "Base/Compat.hpp"
 #include "Base/Platform.hpp"
-// Standard Library
+
 #include <cmath>
 
 #define MIN(x,y) ( ( (x) < (y) ) ? (x) : (y) )

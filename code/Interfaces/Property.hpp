@@ -200,7 +200,7 @@ namespace Properties
                  * the last fixed argument (the one whose name is passed as the second argument to the va_start() macro) 
                  * should not be of type char, short int, or float, either.*/
                  
-#ifdef COMPILER_MSVC
+#if defined(COMPILER_MSVC)
 #pragma warning( disable : 4244 )
 #endif
                 case Values::Float32:
@@ -231,7 +231,7 @@ namespace Properties
                     i = Values::Count;
                     break;
                 }
-#ifdef COMPILER_MSVC
+#if defined(COMPILER_MSVC)
 #pragma warning( default : 4244 )
 #endif
                 case Values::String:

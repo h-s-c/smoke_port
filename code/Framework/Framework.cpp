@@ -22,10 +22,10 @@
 #include <stdexcept>
 #include <string>
 // external
-#if defined(_MSC_VER)
-#include <filesystem>
+#if defined(COMPILER_MSVC) && (COMPILER_VERSION_MAJOR == 11)
+    #include <filesystem>
 #else
-#include <boost/filesystem.hpp>
+    #include <boost/filesystem.hpp>
 #endif
 #include <tinyxml.h>
 // framework
@@ -43,21 +43,21 @@
 void
 EngineExecuteGDF( pcstr pszGDF)
 {
-	try
-	{
-		Framework   Framework;
+    try
+    {
+        Framework   Framework;
 
-		pcstr GDF = (pszGDF != nullptr) ? pszGDF : "engine.gdf";
-		if ( Framework.Initialize( GDF ) == Errors::Success )
-		{
-			Framework.Execute();
-			Framework.Shutdown();
-		}
-	}
-	catch(...) {  // Handle all exceptions
-	   // Respond (perhaps only partially) to exception
-	   throw;       // Pass exception to some other handler
-	}
+        pcstr GDF = (pszGDF != nullptr) ? pszGDF : "engine.gdf";
+        if ( Framework.Initialize( GDF ) == Errors::Success )
+        {
+            Framework.Execute();
+            Framework.Shutdown();
+        }
+    }
+    catch(...) {  // Handle all exceptions
+       // Respond (perhaps only partially) to exception
+       throw;       // Pass exception to some other handler
+    }
 }
 
 Framework::Framework( void) 
@@ -93,7 +93,7 @@ Error
 Framework::Initialize( pcstr pszGDF)
 {
     std::clog << "Initializing Framework" << std::endl;
-#if defined(_MSC_VER)
+#if defined(COMPILER_MSVC) && (COMPILER_VERSION_MAJOR == 11)
     // Backup directory
     auto oldpath = std::tr2::sys::current_path<std::tr2::sys::path>();
     // Go up one directory
