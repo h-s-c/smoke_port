@@ -1,4 +1,20 @@
-# public domain
+## The MIT License (MIT)
+## Copyright (c) 2013 Kevin Schmidt
+##  
+## Permission is hereby granted, free of charge, to any person obtaining a copy of this software and 
+## associated documentation files (the "Software"), to deal in the Software without restriction, 
+## including without limitation the rights to use, copy, modify, merge, publish, distribute, 
+## sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is 
+## furnished to do so, subject to the following conditions:
+##  
+## The above copyright notice and this permission notice shall be included in all copies or 
+## substantial portions of the Software.
+##  
+## THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT 
+## NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND 
+## NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
+## DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+## OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 project (SystemGraphicsOGRE)
     set( SYSTEM_SOURCE
@@ -29,7 +45,7 @@ project (SystemGraphicsOGRE)
     list(APPEND SYSTEM_SOURCE ${SYSTEM_SOURCE})
 
 if(UNIX)  
-	## cg plugin is often not part of linux packages
+    ## cg plugin is often not part of linux packages
     set( CG_SOURCE
         ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/CgFxScriptLoader.cpp
         ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/CgPlugin.cpp
@@ -40,7 +56,7 @@ if(UNIX)
     list(APPEND SYSTEM_SOURCE ${CG_SOURCE})
 endif()
 if(WIN32)  
-	## paged-geometry is not part of ogre win32 sdk packages
+    ## paged-geometry is not part of ogre win32 sdk packages
     set( PG_SOURCE
         ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/BatchedGeometry.cpp
         ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/BatchPage.cpp
@@ -72,11 +88,11 @@ if(WIN32)
     list(APPEND SYSTEM_LIBRARIES ${OGRE_Plugin_CgProgramManager_LIBRARIES})
 endif()
 if(UNIX)  
-	## cg
+    ## cg
     find_package(Cg REQUIRED)
     list(APPEND SYSTEM_INCLUDE_DIRS ${Cg_INCLUDE_DIRS})
     list(APPEND SYSTEM_LIBRARIES ${Cg_LIBRARIES}) 
-	## paged-geometry
+    ## paged-geometry
     find_package(PagedGeometry REQUIRED)
     list(APPEND SYSTEM_INCLUDE_DIRS ${PG_INCLUDE_DIR})
     list(APPEND SYSTEM_LIBRARIES ${PG_LIBRARIES}) 

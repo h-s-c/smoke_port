@@ -1,4 +1,22 @@
-# public domain
+# Copyright (c) 2004-2008, Adrian Boeing.
+# All rights reserved.
+# 
+# Redistribution and use in source and binary forms, with or without modification, are permitted 
+# provided that the following conditions are met: Redistributions of source code must retain the 
+# above copyright notice, this list of conditions and the following disclaimer. Redistributions in 
+# binary form must reproduce the above copyright notice, this list of conditions and the following 
+# disclaimer in the documentation and/or other materials provided with the distribution.
+# Neither the name of the Physics Abstraction Layer nor the names of its contributors may be used to 
+# endorse or promote products derived from this software without specific prior written permission.
+# 
+# THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR 
+# IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND 
+# FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR 
+# CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+# DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, 
+# DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER 
+# IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT 
+# OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 # Locate Havok
 # This module defines XXX_FOUND, XXX_INCLUDE_DIRS and XXX_LIBRARIES standard variables
@@ -16,38 +34,38 @@ FIND_PATH(HAVOK_INCLUDE_DIR Common/Base/hkBase.h
 mark_as_advanced(HAVOK_INCLUDE_DIR)
 
 SET(HAVOK_LIBS 
-	hctCommon 
-	hctSceneExport 
-	hctSdkUtils 
-	hkaAnimation 
-	hkaInternal 
-	hkaRagdoll 
-	hkBase
-	hkcdCollide
-	hkcdInternal
-	hkCompat
-	hkgBridge
-	hkgCommon
-	hkgDx9s
-	hkgDx11
-	hkGeometryUtilities
-	hkgOglES
-	hkgOglES2
-	hkgOgls
-	hkgSoundCommon
-	hkgSoundXAudio2
-	hkInternal
-	hkpCollide
-	hkpConstraint
-	hkpConstraintSolver
-	hkpDynamics
-	hkpInternal
-	hkpUtilities
-	hkpVehicle
-	hkSceneData
-	hkSerialize
-	hkVisualize
-	)
+    hctCommon 
+    hctSceneExport 
+    hctSdkUtils 
+    hkaAnimation 
+    hkaInternal 
+    hkaRagdoll 
+    hkBase
+    hkcdCollide
+    hkcdInternal
+    hkCompat
+    hkgBridge
+    hkgCommon
+    hkgDx9s
+    hkgDx11
+    hkGeometryUtilities
+    hkgOglES
+    hkgOglES2
+    hkgOgls
+    hkgSoundCommon
+    hkgSoundXAudio2
+    hkInternal
+    hkpCollide
+    hkpConstraint
+    hkpConstraintSolver
+    hkpDynamics
+    hkpInternal
+    hkpUtilities
+    hkpVehicle
+    hkSceneData
+    hkSerialize
+    hkVisualize
+    )
 SET(HAVOK_LIBRARIES)
 
 FOREACH(CUR_LIB ${HAVOK_LIBS})
