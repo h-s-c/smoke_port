@@ -13,6 +13,7 @@
 // responsibility to update it.
 
 #include "Base/Compat.hpp"
+#include "Base/Library.hpp"
 #include "Base/Platform.hpp"
 #include "Interfaces/Interface.hpp"
 #include "Framework/PlatformManager.hpp"
@@ -22,7 +23,6 @@
 #include "Framework/TaskManager.hpp"
 
 #include <iostream>
-#include <dlfcn.h>
 
 
 std::once_flag                   
@@ -38,10 +38,10 @@ SystemManager::~SystemManager()
     // Iterate through all the loaded libraries.
     for ( auto it : m_SystemLibs)
     {
-        struct SystemFuncs *pSystemFuncs = reinterpret_cast<SystemFuncs*>(dlsym(it.hLib, it.strSysLib.c_str() ));
+        struct SystemFuncs *pSystemFuncs = reinterpret_cast<SystemFuncs*>(Base::GetSymbol(it.hLib, it.strSysLib.c_str() ));
         // System creation/destruction need to happen on the same thread
         pSystemFuncs->DestroySystem(it.pSystem);
-        dlclose( it.hLib );
+        Base::CloseLibrary( it.hLib );
     }
 
     m_SystemLibs.clear();
@@ -56,64 +56,42 @@ SystemManager::LoadSystemLibrary(
 {
     Error   Err = Errors::Failure;
     
-    #if defined(PLATFORM_OS_LINUX) || defined(PLATFORM_OS_FREEBSD)
-    // Load the .so
-    void* hLib = dlopen( std::string(strSysLibPath + "/" + strSysLib + ".so").c_str(), RTLD_NOW);
-    #elif defined(PLATFORM_OS_WINDOWS)
-    // Load the .dll
-    void* hLib = dlopen( std::string(strSysLibPath + "/" + strSysLib + ".dll").c_str(), RTLD_NOW);
-    #elif defined(PLATFORM_OS_MACOSX)
-    // Load the .dylib
-    void* hLib = dlopen( std::string(strSysLibPath + "/" + strSysLib + ".dylib").c_str(), RTLD_NOW);
-    #endif
-    
-    if (hLib)
+    void* hLib = Base::OpenLibrary(strSysLib, strSysLibPath);
+    // Get the system functions struct.
+    struct SystemFuncs *pSystemFuncs = reinterpret_cast<SystemFuncs*>(Base::GetSymbol(hLib, strSysLib.c_str() ));
+    if (pSystemFuncs)
     {
-        // Get the system functions struct.
-        struct SystemFuncs *pSystemFuncs = reinterpret_cast<SystemFuncs*>(dlsym(hLib, strSysLib.c_str() ));
-        if (pSystemFuncs)
+        ManagerInterfaces Managers;
+        Managers.pEnvironment = &EnvironmentManager::getInstance();
+        Managers.pService     = &ServiceManager::getInstance();
+        Managers.pTask        = &TaskManager::getInstance();
+        Managers.pPlatform    = &PlatformManager::getInstance();
+
+        // Initialize the system.
+        pSystemFuncs->InitSystem( &Managers );
+
+        // Create the system.
+        ISystem* pSystem = pSystemFuncs->CreateSystem();
+
+        if (pSystem)
         {
-            ManagerInterfaces Managers;
-            Managers.pEnvironment = &EnvironmentManager::getInstance();
-            Managers.pService     = &ServiceManager::getInstance();
-            Managers.pTask        = &TaskManager::getInstance();
-            Managers.pPlatform    = &PlatformManager::getInstance();
+            // Verify that there's no duplicate system type.
+            System::Type SystemType = pSystem->GetSystemType();
 
-            // Initialize the system.
-            pSystemFuncs->InitSystem( &Managers );
+            ISystem* pCurrSystem = this->Get( SystemType );
 
-            // Create the system.
-            ISystem* pSystem = pSystemFuncs->CreateSystem();
-
-            if (pSystem)
+            if (!pCurrSystem)
             {
-                // Verify that there's no duplicate system type.
-                System::Type SystemType = pSystem->GetSystemType();
+                // Add the system to the collection.
+                this->Add( pSystem );
 
-                ISystem* pCurrSystem = this->Get( SystemType );
+                SystemLib sl = { hLib, pSystem, strSysLib};
+                m_SystemLibs.push_back( sl );
 
-                if (!pCurrSystem)
-                {
-                    // Add the system to the collection.
-                    this->Add( pSystem );
-
-                    SystemLib sl = { hLib, pSystem, strSysLib};
-                    m_SystemLibs.push_back( sl );
-
-                    *ppSystem = pSystem;
-                }
+                *ppSystem = pSystem;
             }
         }
-        else
-        {
-            std::cerr << dlerror() << std::endl;
-        }
     }
-    else
-    {
-        std::cerr << dlerror() << std::endl;
-    }
-
     return Err;
 }
 

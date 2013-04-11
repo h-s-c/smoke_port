@@ -45,8 +45,6 @@ project (Framework)
         ##pthreads
         find_package(Threads)
         list(APPEND FRAMEWORK_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
-        ##dlfcn
-        list(APPEND FRAMEWORK_LIBRARIES ${CMAKE_DL_LIBS})
     else (MSVC)
         ##tinyxml
         list(APPEND FRAMEWORK_SOURCE ${CMAKE_SOURCE_DIR}/External/tinyxml/tinystr.cpp)
@@ -54,9 +52,6 @@ project (Framework)
         list(APPEND FRAMEWORK_SOURCE ${CMAKE_SOURCE_DIR}/External/tinyxml/tinyxmlerror.cpp)
         list(APPEND FRAMEWORK_SOURCE ${CMAKE_SOURCE_DIR}/External/tinyxml/tinyxmlparser.cpp)
         list(APPEND FRAMEWORK_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/External/tinyxml)        
-        ##dlfcn-win32
-        list(APPEND FRAMEWORK_SOURCE ${CMAKE_SOURCE_DIR}/External/dlfcn-win32/dlfcn.c)
-        list(APPEND FRAMEWORK_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/External/dlfcn-win32)
     endif () 
    
     ##base
