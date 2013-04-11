@@ -55,8 +55,7 @@ if(UNIX)
     )
     list(APPEND SYSTEM_SOURCE ${CG_SOURCE})
 endif()
-if(WIN32)  
-    ## paged-geometry is not part of ogre win32 sdk packages
+
     set( PG_SOURCE
         ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/BatchedGeometry.cpp
         ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/BatchPage.cpp
@@ -71,7 +70,6 @@ if(WIN32)
         ${CMAKE_SOURCE_DIR}/Systems/GraphicsOGRE/Extras/WindBatchPage.cpp
     )
     list(APPEND SYSTEM_SOURCE ${PG_SOURCE})
-endif()
     
     ##ogre
     find_package(OGRE REQUIRED)
@@ -92,10 +90,6 @@ if(UNIX)
     find_package(Cg REQUIRED)
     list(APPEND SYSTEM_INCLUDE_DIRS ${Cg_INCLUDE_DIRS})
     list(APPEND SYSTEM_LIBRARIES ${Cg_LIBRARIES}) 
-    ## paged-geometry
-    find_package(PagedGeometry REQUIRED)
-    list(APPEND SYSTEM_INCLUDE_DIRS ${PG_INCLUDE_DIR})
-    list(APPEND SYSTEM_LIBRARIES ${PG_LIBRARIES}) 
 endif()
     
      ##base
