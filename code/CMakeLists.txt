@@ -73,7 +73,12 @@ project (Smoke)
     if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
     set(CMAKE_INSTALL_PREFIX "${CMAKE_SOURCE_DIR}/../bin" CACHE PATH "install prefix" FORCE)
     endif(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-       
+
+    ##dlfcn-win32
+    if(WIN32)
+        set(USE_DLFCN_WIN32 FALSE CACHE BOOL "Use dlfcn-win32?" FORCE)
+    endif()
+    
     add_subdirectory(Base)
     add_subdirectory(External)
     
@@ -82,13 +87,18 @@ project (Smoke)
     
     add_subdirectory(Systems)
    
-    find_package(LibBfd)
-    if (LIBBFD_FOUND)
-        list(APPEND SMOKE_LIBRARIES ${LIBBFD_LIBRARIES})
-        list(APPEND SMOKE_INCLUDE_DIRS ${LIBBFD_INCLUDE_DIRS})
-        add_definitions(-DBACKWARD_HAS_BFD=1)
-        list(APPEND SMOKE_SOURCE ${CMAKE_SOURCE_DIR}/External/backward-cpp/backward.cpp)
-    endif ()
+    if(UNIX)
+        set(USE_PRETTY_TRACE FALSE CACHE BOOL "Use backward-cpp?" FORCE)
+        if(USE_PRETTY_TRACE)
+            find_package(LibBfd)
+            if (LIBBFD_FOUND)
+                list(APPEND SMOKE_LIBRARIES ${LIBBFD_LIBRARIES})
+                list(APPEND SMOKE_INCLUDE_DIRS ${LIBBFD_INCLUDE_DIRS})
+                add_definitions(-DBACKWARD_HAS_BFD=1)
+                list(APPEND SMOKE_SOURCE ${CMAKE_SOURCE_DIR}/External/backward-cpp/backward.cpp)
+            endif ()
+        endif ()
+    endif()
     
     list(APPEND SMOKE_SOURCE ${CMAKE_SOURCE_DIR}/Main.cpp)
     
