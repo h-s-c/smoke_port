@@ -40,7 +40,7 @@ DestroyGeometrySystem( ISystem* pSystem)
 
 extern "C" 
 {
-    DLLEXPORT struct SystemFuncs SystemGeometry = 
+    COMPILER_DLLEXPORT struct SystemFuncs SystemGeometry = 
     {
         &InitGeometrySystem,
         &CreateGeometrySystem,

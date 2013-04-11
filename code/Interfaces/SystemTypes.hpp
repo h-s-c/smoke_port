@@ -98,7 +98,7 @@ namespace System
         /// <param name="Index">u32 - Index to use for the custom system ID.</param>
         /// <returns>u32 - Type ID for this custom system.</returns>
         //////////////////////////////////////////////////////////////////////////
-        INLINE u32 MakeCustom( u32 Index )
+        COMPILER_INLINE u32 MakeCustom( u32 Index )
         {
             return 1 << (16 + Index);
         }
@@ -114,7 +114,7 @@ namespace System
         /// <param name="SystemType">u32 - The type ID of a system.</param>
         /// <returns>u32 - Index of this system.</returns>
         //////////////////////////////////////////////////////////////////////////
-        INLINE u32 GetIndex( u32 SystemType )
+        COMPILER_INLINE u32 GetIndex( u32 SystemType )
         {
             return 0/*Base::BitScanForward(SystemType)*/;
         }

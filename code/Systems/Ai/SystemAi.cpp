@@ -40,7 +40,7 @@ DestroyAISystem( ISystem* pSystem)
 
 extern "C" 
 {
-    DLLEXPORT struct SystemFuncs SystemAi = {
+    COMPILER_DLLEXPORT struct SystemFuncs SystemAi = {
         &InitAISystem,
         &CreateAISystem,
         &DestroyAISystem

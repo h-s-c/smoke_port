@@ -39,7 +39,7 @@ DestroyOGREGraphicsSystem( ISystem* pSystem)
 
 extern "C" 
 {
-    DLLEXPORT struct SystemFuncs SystemGraphicsOGRE = {
+    COMPILER_DLLEXPORT struct SystemFuncs SystemGraphicsOGRE = {
         &InitOGREGraphicsSystem,
         &CreateOGREGraphicsSystem,
         &DestroyOGREGraphicsSystem

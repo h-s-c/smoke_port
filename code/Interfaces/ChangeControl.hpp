@@ -524,7 +524,7 @@ private:
     std::mutex      m_observerListMutex;
 #endif /* SUPPORT_MULTIPLE_OBSERVERS_IN_POST_CHANGES */
 
-    friend INLINE u32 GetBitsToPost( CSubject::ObserverRequest& req, System::Changes::BitMask changedBits )
+    friend COMPILER_INLINE u32 GetBitsToPost( CSubject::ObserverRequest& req, System::Changes::BitMask changedBits )
     {
 #if SUPPORT_CONCURRENT_ATTACH_DETACH_TO_SUBJECTS || (defined(COMPILER_MSVC) && (COMPILER_VERSION_MAJOR == 10 ))
         u32 changedBitsOfInterest = req.m_interestBits & changedBits;

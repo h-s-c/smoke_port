@@ -49,36 +49,36 @@ namespace Base
         /// Constructors, Assignment, Cast, Copy Operations
         ////////////////////////////////////////////////////////////////////////////////
 
-        FORCEINLINE AffineSpace           ( )                           { }
-        FORCEINLINE AffineSpace           ( const AffineSpace& other ) { l = other.l; p = other.p; }
-        FORCEINLINE AffineSpace& operator=( const AffineSpace& other ) { l = other.l; p = other.p; return *this; }
+        COMPILER_FORCEINLINE AffineSpace           ( )                           { }
+        COMPILER_FORCEINLINE AffineSpace           ( const AffineSpace& other ) { l = other.l; p = other.p; }
+        COMPILER_FORCEINLINE AffineSpace& operator=( const AffineSpace& other ) { l = other.l; p = other.p; return *this; }
 
-        FORCEINLINE AffineSpace( const VectorT& vx, const VectorT& vy, const VectorT& vz, const VectorT& p ) : l(vx,vy,vz), p(p) {}
-        FORCEINLINE AffineSpace( const L& l, const VectorT& p ) : l(l), p(p) {}
+        COMPILER_FORCEINLINE AffineSpace( const VectorT& vx, const VectorT& vy, const VectorT& vz, const VectorT& p ) : l(vx,vy,vz), p(p) {}
+        COMPILER_FORCEINLINE AffineSpace( const L& l, const VectorT& p ) : l(l), p(p) {}
 
-        template<typename L1> FORCEINLINE explicit AffineSpace( const AffineSpace<L1>& s ) : l(s.l), p(s.p) {}
+        template<typename L1> COMPILER_FORCEINLINE explicit AffineSpace( const AffineSpace<L1>& s ) : l(s.l), p(s.p) {}
 
         ////////////////////////////////////////////////////////////////////////////////
         /// Constants
         ////////////////////////////////////////////////////////////////////////////////
 
-        FORCEINLINE AffineSpace( ZeroTy ) : l(zero), p(zero) {}
-        FORCEINLINE AffineSpace( OneTy )  : l(one),  p(zero) {}
+        COMPILER_FORCEINLINE AffineSpace( ZeroTy ) : l(zero), p(zero) {}
+        COMPILER_FORCEINLINE AffineSpace( OneTy )  : l(one),  p(zero) {}
 
         /*! return matrix for scaling */
-        static FORCEINLINE AffineSpace Scale(const VectorT& s) { return AffineSpace(L::scale(s),zero); }
+        static COMPILER_FORCEINLINE AffineSpace Scale(const VectorT& s) { return AffineSpace(L::scale(s),zero); }
 
         /*! return matrix for translation */
-        static FORCEINLINE AffineSpace Translate(const VectorT& p) { return AffineSpace(one,p); }
+        static COMPILER_FORCEINLINE AffineSpace Translate(const VectorT& p) { return AffineSpace(one,p); }
 
         /*! return matrix for rotation around arbitrary axis */
-        static FORCEINLINE AffineSpace Rotate(const VectorT& u, const ScalarT& r) { return AffineSpace(L::rotate(u,r),zero); }
+        static COMPILER_FORCEINLINE AffineSpace Rotate(const VectorT& u, const ScalarT& r) { return AffineSpace(L::rotate(u,r),zero); }
 
         /*! return matrix for rotation around arbitrary axis and point */
-        static FORCEINLINE AffineSpace Rotate(const VectorT& p, const VectorT& u, const ScalarT& r) { return translate(+p) * rotate(u,r) * translate(-p);  }
+        static COMPILER_FORCEINLINE AffineSpace Rotate(const VectorT& p, const VectorT& u, const ScalarT& r) { return translate(+p) * rotate(u,r) * translate(-p);  }
 
         /*! return matrix for looking at given point */
-        static FORCEINLINE AffineSpace LookAtPoint(const VectorT& eye, const VectorT& point, const VectorT& up) 
+        static COMPILER_FORCEINLINE AffineSpace LookAtPoint(const VectorT& eye, const VectorT& point, const VectorT& up) 
         {
             VectorT Z = Normalize(point-eye);
             VectorT U = Normalize(cross(up,Z));
@@ -91,37 +91,37 @@ namespace Base
     /// Unary Operators
     ////////////////////////////////////////////////////////////////////////////////
 
-    template<typename L> FORCEINLINE AffineSpace<L> operator -( const AffineSpace<L>& a ) { return AffineSpace<L>(-a.l,-a.p); }
-    template<typename L> FORCEINLINE AffineSpace<L> operator +( const AffineSpace<L>& a ) { return AffineSpace<L>(+a.l,+a.p); }
-    template<typename L> FORCEINLINE AffineSpace<L>        Rcp( const AffineSpace<L>& a ) { L il = Rcp(a.l); return AffineSpace<L>(il,-il*a.p); }
+    template<typename L> COMPILER_FORCEINLINE AffineSpace<L> operator -( const AffineSpace<L>& a ) { return AffineSpace<L>(-a.l,-a.p); }
+    template<typename L> COMPILER_FORCEINLINE AffineSpace<L> operator +( const AffineSpace<L>& a ) { return AffineSpace<L>(+a.l,+a.p); }
+    template<typename L> COMPILER_FORCEINLINE AffineSpace<L>        Rcp( const AffineSpace<L>& a ) { L il = Rcp(a.l); return AffineSpace<L>(il,-il*a.p); }
 
     ////////////////////////////////////////////////////////////////////////////////
     /// Binary Operators
     ////////////////////////////////////////////////////////////////////////////////
 
-    template<typename L> FORCEINLINE const AffineSpace<L> operator +( const AffineSpace<L>& a, const AffineSpace<L>& b ) { return AffineSpace<L>(a.l+b.l,a.p+b.p); }
-    template<typename L> FORCEINLINE const AffineSpace<L> operator -( const AffineSpace<L>& a, const AffineSpace<L>& b ) { return AffineSpace<L>(a.l-b.l,a.p-b.p); }
+    template<typename L> COMPILER_FORCEINLINE const AffineSpace<L> operator +( const AffineSpace<L>& a, const AffineSpace<L>& b ) { return AffineSpace<L>(a.l+b.l,a.p+b.p); }
+    template<typename L> COMPILER_FORCEINLINE const AffineSpace<L> operator -( const AffineSpace<L>& a, const AffineSpace<L>& b ) { return AffineSpace<L>(a.l-b.l,a.p-b.p); }
 
-    template<typename L> FORCEINLINE const AffineSpace<L> operator *( const ScalarT        & a, const AffineSpace<L>& b ) { return AffineSpace<L>(a*b.l,a*b.p); }
-    template<typename L> FORCEINLINE const AffineSpace<L> operator *( const AffineSpace<L>& a, const AffineSpace<L>& b ) { return AffineSpace<L>(a.l*b.l,a.l*b.p+a.p); }
-    template<typename L> FORCEINLINE const AffineSpace<L> operator /( const AffineSpace<L>& a, const AffineSpace<L>& b ) { return a * Rcp(b); }
-    template<typename L> FORCEINLINE const AffineSpace<L> operator /( const AffineSpace<L>& a, const ScalarT        & b ) { return a * Rcp(b); }
+    template<typename L> COMPILER_FORCEINLINE const AffineSpace<L> operator *( const ScalarT        & a, const AffineSpace<L>& b ) { return AffineSpace<L>(a*b.l,a*b.p); }
+    template<typename L> COMPILER_FORCEINLINE const AffineSpace<L> operator *( const AffineSpace<L>& a, const AffineSpace<L>& b ) { return AffineSpace<L>(a.l*b.l,a.l*b.p+a.p); }
+    template<typename L> COMPILER_FORCEINLINE const AffineSpace<L> operator /( const AffineSpace<L>& a, const AffineSpace<L>& b ) { return a * Rcp(b); }
+    template<typename L> COMPILER_FORCEINLINE const AffineSpace<L> operator /( const AffineSpace<L>& a, const ScalarT        & b ) { return a * Rcp(b); }
 
-    template<typename L> FORCEINLINE AffineSpace<L>& operator *=( AffineSpace<L>& a, const AffineSpace<L>& b ) { return a = a * b; }
-    template<typename L> FORCEINLINE AffineSpace<L>& operator *=( AffineSpace<L>& a, const ScalarT        & b ) { return a = a * b; }
-    template<typename L> FORCEINLINE AffineSpace<L>& operator /=( AffineSpace<L>& a, const AffineSpace<L>& b ) { return a = a / b; }
-    template<typename L> FORCEINLINE AffineSpace<L>& operator /=( AffineSpace<L>& a, const ScalarT        & b ) { return a = a / b; }
+    template<typename L> COMPILER_FORCEINLINE AffineSpace<L>& operator *=( AffineSpace<L>& a, const AffineSpace<L>& b ) { return a = a * b; }
+    template<typename L> COMPILER_FORCEINLINE AffineSpace<L>& operator *=( AffineSpace<L>& a, const ScalarT        & b ) { return a = a * b; }
+    template<typename L> COMPILER_FORCEINLINE AffineSpace<L>& operator /=( AffineSpace<L>& a, const AffineSpace<L>& b ) { return a = a / b; }
+    template<typename L> COMPILER_FORCEINLINE AffineSpace<L>& operator /=( AffineSpace<L>& a, const ScalarT        & b ) { return a = a / b; }
 
-    template<typename L> FORCEINLINE const VectorT XfmPoint (const AffineSpace<L>& m, const VectorT& p) { return XfmPoint(m.l,p) + m.p; }
-    template<typename L> FORCEINLINE const VectorT XfmVector(const AffineSpace<L>& m, const VectorT& v) { return XfmVector(m.l,v); }
-    template<typename L> FORCEINLINE const VectorT XfmNormal(const AffineSpace<L>& m, const VectorT& n) { return XfmNormal(m.l,n); }
+    template<typename L> COMPILER_FORCEINLINE const VectorT XfmPoint (const AffineSpace<L>& m, const VectorT& p) { return XfmPoint(m.l,p) + m.p; }
+    template<typename L> COMPILER_FORCEINLINE const VectorT XfmVector(const AffineSpace<L>& m, const VectorT& v) { return XfmVector(m.l,v); }
+    template<typename L> COMPILER_FORCEINLINE const VectorT XfmNormal(const AffineSpace<L>& m, const VectorT& n) { return XfmNormal(m.l,n); }
 
     ////////////////////////////////////////////////////////////////////////////////
     /// Comparison Operators
     ////////////////////////////////////////////////////////////////////////////////
 
-    template<typename L> FORCEINLINE bool operator ==( const AffineSpace<L>& a, const AffineSpace<L>& b ) { return a.l == b.l && a.p == b.p; }
-    template<typename L> FORCEINLINE bool operator !=( const AffineSpace<L>& a, const AffineSpace<L>& b ) { return a.l != b.l || a.p != b.p; }
+    template<typename L> COMPILER_FORCEINLINE bool operator ==( const AffineSpace<L>& a, const AffineSpace<L>& b ) { return a.l == b.l && a.p == b.p; }
+    template<typename L> COMPILER_FORCEINLINE bool operator !=( const AffineSpace<L>& a, const AffineSpace<L>& b ) { return a.l != b.l || a.p != b.p; }
 
     ////////////////////////////////////////////////////////////////////////////////
     /// Output Operators
@@ -142,7 +142,7 @@ namespace Base
         operator float*() { return(values); }
     };
 
-    FORCEINLINE Array12f CopyToArray(const AffineSpace<LinearSpace3<float>>& xfm)  
+    COMPILER_FORCEINLINE Array12f CopyToArray(const AffineSpace<LinearSpace3<float>>& xfm)  
     {
         Array12f values;
         values[ 0] = xfm.l.vx.x;  values[ 1] = xfm.l.vx.y;  values[ 2] = xfm.l.vx.z;       
@@ -152,7 +152,7 @@ namespace Base
         return values;
     }
 
-    FORCEINLINE AffineSpace<LinearSpace3<float>> CopyFromArray(const float* v) 
+    COMPILER_FORCEINLINE AffineSpace<LinearSpace3<float>> CopyFromArray(const float* v) 
     {
         return AffineSpace<LinearSpace3<float>>(LinearSpace3<float>(   Vector3<float>(v[0],v[1],v[2]),
                                                                         Vector3<float>(v[3],v[4],v[5]),

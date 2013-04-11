@@ -43,94 +43,94 @@ namespace Base
         /// Construction
         ////////////////////////////////////////////////////////////////////////////////
 
-        FORCEINLINE Quaternion          ( void )                     { }
-        FORCEINLINE Quaternion          ( const Quaternion& other ) { r = other.r; i = other.i; j = other.j; k = other.k; }
-        FORCEINLINE Quaternion& operator=( const Quaternion& other ) { r = other.r; i = other.i; j = other.j; k = other.k; return *this; }
+        COMPILER_FORCEINLINE Quaternion          ( void )                     { }
+        COMPILER_FORCEINLINE Quaternion          ( const Quaternion& other ) { r = other.r; i = other.i; j = other.j; k = other.k; }
+        COMPILER_FORCEINLINE Quaternion& operator=( const Quaternion& other ) { r = other.r; i = other.i; j = other.j; k = other.k; return *this; }
 
-        FORCEINLINE          Quaternion( const T& r        ) : r(r), i(zero), j(zero), k(zero) {}
-        FORCEINLINE explicit Quaternion( const Vector3<T>& v ) : r(zero), i(v.x), j(v.y), k(v.z) {}
-        FORCEINLINE          Quaternion( const T& r, const T& i, const T& j , const T& k ) : r(r), i(i), j(j), k(k) {}
-        FORCEINLINE          Quaternion( const T& r, const Vector3<T>& v ) : r(r), i(v.x), j(v.y), k(v.z) {}
+        COMPILER_FORCEINLINE          Quaternion( const T& r        ) : r(r), i(zero), j(zero), k(zero) {}
+        COMPILER_FORCEINLINE explicit Quaternion( const Vector3<T>& v ) : r(zero), i(v.x), j(v.y), k(v.z) {}
+        COMPILER_FORCEINLINE          Quaternion( const T& r, const T& i, const T& j , const T& k ) : r(r), i(i), j(j), k(k) {}
+        COMPILER_FORCEINLINE          Quaternion( const T& r, const Vector3<T>& v ) : r(r), i(v.x), j(v.y), k(v.z) {}
 
-        INLINE Quaternion( const Vector3<T>& vx, const Vector3<T>& vy, const Vector3<T>& vz );
-        INLINE Quaternion( const T& yaw, const T& pitch, const T& roll );
+        COMPILER_INLINE Quaternion( const Vector3<T>& vx, const Vector3<T>& vy, const Vector3<T>& vz );
+        COMPILER_INLINE Quaternion( const T& yaw, const T& pitch, const T& roll );
 
         ////////////////////////////////////////////////////////////////////////////////
         /// Constants
         ////////////////////////////////////////////////////////////////////////////////
 
-        FORCEINLINE Quaternion( ZeroTy ) : r(zero), i(zero), j(zero), k(zero) {}
-        FORCEINLINE Quaternion( OneTy  ) : r( one), i(zero), j(zero), k(zero) {}
+        COMPILER_FORCEINLINE Quaternion( ZeroTy ) : r(zero), i(zero), j(zero), k(zero) {}
+        COMPILER_FORCEINLINE Quaternion( OneTy  ) : r( one), i(zero), j(zero), k(zero) {}
 
         /*! return quaternion for rotation around arbitrary axis */
-        static FORCEINLINE QuaternionRotate(const Vector3<T>& u, const T& r) 
+        static COMPILER_FORCEINLINE QuaternionRotate(const Vector3<T>& u, const T& r) 
         {
             return Quaternion<T>(Cos(T(0.5)*r),Sin(T(0.5)*r)*Normalize(u));
         }
 
         /*! returns the rotation axis of the quaternion as a vector */
-        FORCEINLINE const Vector3<T> v( ) const { return Vector3<T>(i, j, k); }
+        COMPILER_FORCEINLINE const Vector3<T> v( ) const { return Vector3<T>(i, j, k); }
 
       public:
         T r, i, j, k;
     };
 
-    template<typename T> FORCEINLINE Quaternion<T> operator *( const T             & a, const Quaternion<T>& b ) { return Quaternion<T>(a * b.r, a * b.i, a * b.j, a * b.k); }
-    template<typename T> FORCEINLINE Quaternion<T> operator *( const Quaternion<T>& a, const T             & b ) { return Quaternion<T>(a.r * b, a.i * b, a.j * b, a.k * b); }
+    template<typename T> COMPILER_FORCEINLINE Quaternion<T> operator *( const T             & a, const Quaternion<T>& b ) { return Quaternion<T>(a * b.r, a * b.i, a * b.j, a * b.k); }
+    template<typename T> COMPILER_FORCEINLINE Quaternion<T> operator *( const Quaternion<T>& a, const T             & b ) { return Quaternion<T>(a.r * b, a.i * b, a.j * b, a.k * b); }
 
     ////////////////////////////////////////////////////////////////
     // Unary Operators
     ////////////////////////////////////////////////////////////////
 
-    template<typename T> FORCEINLINE Quaternion<T> operator +( const Quaternion<T>& a ) { return Quaternion<T>(+a.r, +a.i, +a.j, +a.k); }
-    template<typename T> FORCEINLINE Quaternion<T> operator -( const Quaternion<T>& a ) { return Quaternion<T>(-a.r, -a.i, -a.j, -a.k); }
-    template<typename T> FORCEINLINE Quaternion<T> Conjoint  ( const Quaternion<T>& a ) { return Quaternion<T>(a.r, -a.i, -a.j, -a.k); }
-    template<typename T> FORCEINLINE T              Abs       ( const Quaternion<T>& a ) { return Sqrt(a.r*a.r + a.i*a.i + a.j*a.j + a.k*a.k); }
-    template<typename T> FORCEINLINE Quaternion<T> Rcp       ( const Quaternion<T>& a ) { return conj(a)*Rcp(a.r*a.r + a.i*a.i + a.j*a.j + a.k*a.k); }
-    template<typename T> FORCEINLINE Quaternion<T> Normalize ( const Quaternion<T>& a ) { return a*Rsqrt(a.r*a.r + a.i*a.i + a.j*a.j + a.k*a.k); }
+    template<typename T> COMPILER_FORCEINLINE Quaternion<T> operator +( const Quaternion<T>& a ) { return Quaternion<T>(+a.r, +a.i, +a.j, +a.k); }
+    template<typename T> COMPILER_FORCEINLINE Quaternion<T> operator -( const Quaternion<T>& a ) { return Quaternion<T>(-a.r, -a.i, -a.j, -a.k); }
+    template<typename T> COMPILER_FORCEINLINE Quaternion<T> Conjoint  ( const Quaternion<T>& a ) { return Quaternion<T>(a.r, -a.i, -a.j, -a.k); }
+    template<typename T> COMPILER_FORCEINLINE T              Abs       ( const Quaternion<T>& a ) { return Sqrt(a.r*a.r + a.i*a.i + a.j*a.j + a.k*a.k); }
+    template<typename T> COMPILER_FORCEINLINE Quaternion<T> Rcp       ( const Quaternion<T>& a ) { return conj(a)*Rcp(a.r*a.r + a.i*a.i + a.j*a.j + a.k*a.k); }
+    template<typename T> COMPILER_FORCEINLINE Quaternion<T> Normalize ( const Quaternion<T>& a ) { return a*Rsqrt(a.r*a.r + a.i*a.i + a.j*a.j + a.k*a.k); }
 
     ////////////////////////////////////////////////////////////////
     // Binary Operators
     ////////////////////////////////////////////////////////////////
 
-    template<typename T> FORCEINLINE Quaternion<T> operator +( const T             & a, const Quaternion<T>& b ) { return Quaternion<T>(a + b.r,  b.i,  b.j,  b.k); }
-    template<typename T> FORCEINLINE Quaternion<T> operator +( const Quaternion<T>& a, const T             & b ) { return Quaternion<T>(a.r + b, a.i, a.j, a.k); }
-    template<typename T> FORCEINLINE Quaternion<T> operator +( const Quaternion<T>& a, const Quaternion<T>& b ) { return Quaternion<T>(a.r + b.r, a.i + b.i, a.j + b.j, a.k + b.k); }
-    template<typename T> FORCEINLINE Quaternion<T> operator -( const T             & a, const Quaternion<T>& b ) { return Quaternion<T>(a - b.r, -b.i, -b.j, -b.k); }
-    template<typename T> FORCEINLINE Quaternion<T> operator -( const Quaternion<T>& a, const T             & b ) { return Quaternion<T>(a.r - b, a.i, a.j, a.k); }
-    template<typename T> FORCEINLINE Quaternion<T> operator -( const Quaternion<T>& a, const Quaternion<T>& b ) { return Quaternion<T>(a.r - b.r, a.i - b.i, a.j - b.j, a.k - b.k); }
+    template<typename T> COMPILER_FORCEINLINE Quaternion<T> operator +( const T             & a, const Quaternion<T>& b ) { return Quaternion<T>(a + b.r,  b.i,  b.j,  b.k); }
+    template<typename T> COMPILER_FORCEINLINE Quaternion<T> operator +( const Quaternion<T>& a, const T             & b ) { return Quaternion<T>(a.r + b, a.i, a.j, a.k); }
+    template<typename T> COMPILER_FORCEINLINE Quaternion<T> operator +( const Quaternion<T>& a, const Quaternion<T>& b ) { return Quaternion<T>(a.r + b.r, a.i + b.i, a.j + b.j, a.k + b.k); }
+    template<typename T> COMPILER_FORCEINLINE Quaternion<T> operator -( const T             & a, const Quaternion<T>& b ) { return Quaternion<T>(a - b.r, -b.i, -b.j, -b.k); }
+    template<typename T> COMPILER_FORCEINLINE Quaternion<T> operator -( const Quaternion<T>& a, const T             & b ) { return Quaternion<T>(a.r - b, a.i, a.j, a.k); }
+    template<typename T> COMPILER_FORCEINLINE Quaternion<T> operator -( const Quaternion<T>& a, const Quaternion<T>& b ) { return Quaternion<T>(a.r - b.r, a.i - b.i, a.j - b.j, a.k - b.k); }
 
-    template<typename T> FORCEINLINE Vector3<T>       operator *( const Quaternion<T>& a, const Vector3<T>      & b ) { return (a*Quaternion<T>(b)*Conjoint(a)).v(); }
-    template<typename T> FORCEINLINE Quaternion<T> operator *( const Quaternion<T>& a, const Quaternion<T>& b ) 
+    template<typename T> COMPILER_FORCEINLINE Vector3<T>       operator *( const Quaternion<T>& a, const Vector3<T>      & b ) { return (a*Quaternion<T>(b)*Conjoint(a)).v(); }
+    template<typename T> COMPILER_FORCEINLINE Quaternion<T> operator *( const Quaternion<T>& a, const Quaternion<T>& b ) 
     {
         return Quaternion<T>(a.r*b.r - a.i*b.i - a.j*b.j - a.k*b.k,
                               a.r*b.i + a.i*b.r + a.j*b.k - a.k*b.j,
                               a.r*b.j - a.i*b.k + a.j*b.r + a.k*b.i,
                               a.r*b.k + a.i*b.j - a.j*b.i + a.k*b.r);
     }
-    template<typename T> FORCEINLINE Quaternion<T> operator /( const T             & a, const Quaternion<T>& b ) { return a*Rcp(b); }
-    template<typename T> FORCEINLINE Quaternion<T> operator /( const Quaternion<T>& a, const T             & b ) { return a*Rcp(b); }
-    template<typename T> FORCEINLINE Quaternion<T> operator /( const Quaternion<T>& a, const Quaternion<T>& b ) { return a*Rcp(b); }
+    template<typename T> COMPILER_FORCEINLINE Quaternion<T> operator /( const T             & a, const Quaternion<T>& b ) { return a*Rcp(b); }
+    template<typename T> COMPILER_FORCEINLINE Quaternion<T> operator /( const Quaternion<T>& a, const T             & b ) { return a*Rcp(b); }
+    template<typename T> COMPILER_FORCEINLINE Quaternion<T> operator /( const Quaternion<T>& a, const Quaternion<T>& b ) { return a*Rcp(b); }
 
-    template<typename T> FORCEINLINE Quaternion<T>& operator +=( Quaternion<T>& a, const T             & b ) { return a = a+b; }
-    template<typename T> FORCEINLINE Quaternion<T>& operator +=( Quaternion<T>& a, const Quaternion<T>& b ) { return a = a+b; }
-    template<typename T> FORCEINLINE Quaternion<T>& operator -=( Quaternion<T>& a, const T             & b ) { return a = a-b; }
-    template<typename T> FORCEINLINE Quaternion<T>& operator -=( Quaternion<T>& a, const Quaternion<T>& b ) { return a = a-b; }
-    template<typename T> FORCEINLINE Quaternion<T>& operator *=( Quaternion<T>& a, const T             & b ) { return a = a*b; }
-    template<typename T> FORCEINLINE Quaternion<T>& operator *=( Quaternion<T>& a, const Quaternion<T>& b ) { return a = a*b; }
-    template<typename T> FORCEINLINE Quaternion<T>& operator /=( Quaternion<T>& a, const T             & b ) { return a = a*Rcp(b); }
-    template<typename T> FORCEINLINE Quaternion<T>& operator /=( Quaternion<T>& a, const Quaternion<T>& b ) { return a = a*Rcp(b); }
+    template<typename T> COMPILER_FORCEINLINE Quaternion<T>& operator +=( Quaternion<T>& a, const T             & b ) { return a = a+b; }
+    template<typename T> COMPILER_FORCEINLINE Quaternion<T>& operator +=( Quaternion<T>& a, const Quaternion<T>& b ) { return a = a+b; }
+    template<typename T> COMPILER_FORCEINLINE Quaternion<T>& operator -=( Quaternion<T>& a, const T             & b ) { return a = a-b; }
+    template<typename T> COMPILER_FORCEINLINE Quaternion<T>& operator -=( Quaternion<T>& a, const Quaternion<T>& b ) { return a = a-b; }
+    template<typename T> COMPILER_FORCEINLINE Quaternion<T>& operator *=( Quaternion<T>& a, const T             & b ) { return a = a*b; }
+    template<typename T> COMPILER_FORCEINLINE Quaternion<T>& operator *=( Quaternion<T>& a, const Quaternion<T>& b ) { return a = a*b; }
+    template<typename T> COMPILER_FORCEINLINE Quaternion<T>& operator /=( Quaternion<T>& a, const T             & b ) { return a = a*Rcp(b); }
+    template<typename T> COMPILER_FORCEINLINE Quaternion<T>& operator /=( Quaternion<T>& a, const Quaternion<T>& b ) { return a = a*Rcp(b); }
 
-    template<typename T> FORCEINLINE Vector3<T> XfmPoint ( const Quaternion<T>& a, const Vector3<T>&       b ) { return (a*Quaternion<T>(b)*Conjoint(a)).v(); }
-    template<typename T> FORCEINLINE Vector3<T> XfmVector( const Quaternion<T>& a, const Vector3<T>&       b ) { return (a*Quaternion<T>(b)*Conjoint(a)).v(); }
-    template<typename T> FORCEINLINE Vector3<T> XfmNormal( const Quaternion<T>& a, const Vector3<T>&       b ) { return (a*Quaternion<T>(b)*Conjoint(a)).v(); }
+    template<typename T> COMPILER_FORCEINLINE Vector3<T> XfmPoint ( const Quaternion<T>& a, const Vector3<T>&       b ) { return (a*Quaternion<T>(b)*Conjoint(a)).v(); }
+    template<typename T> COMPILER_FORCEINLINE Vector3<T> XfmVector( const Quaternion<T>& a, const Vector3<T>&       b ) { return (a*Quaternion<T>(b)*Conjoint(a)).v(); }
+    template<typename T> COMPILER_FORCEINLINE Vector3<T> XfmNormal( const Quaternion<T>& a, const Vector3<T>&       b ) { return (a*Quaternion<T>(b)*Conjoint(a)).v(); }
 
     ////////////////////////////////////////////////////////////////////////////////
     /// Comparison Operators
     ////////////////////////////////////////////////////////////////////////////////
 
-    template<typename T> FORCEINLINE bool operator ==( const Quaternion<T>& a, const Quaternion<T>& b ) { return a.r == b.r && a.i == b.i && a.j == b.j && a.k == b.k; }
-    template<typename T> FORCEINLINE bool operator !=( const Quaternion<T>& a, const Quaternion<T>& b ) { return a.r != b.r || a.i != b.i || a.j != b.j || a.k != b.k; }
+    template<typename T> COMPILER_FORCEINLINE bool operator ==( const Quaternion<T>& a, const Quaternion<T>& b ) { return a.r == b.r && a.i == b.i && a.j == b.j && a.k == b.k; }
+    template<typename T> COMPILER_FORCEINLINE bool operator !=( const Quaternion<T>& a, const Quaternion<T>& b ) { return a.r != b.r || a.i != b.i || a.j != b.j || a.k != b.k; }
 
 
     ////////////////////////////////////////////////////////////////////////////////

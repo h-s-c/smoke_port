@@ -16,14 +16,16 @@
 
 #pragma once
 
+#include <string>
+
 namespace Base
 {
   /*! loads a shared library */
-  void* openLibrary( const std::string& libName, const std::string& libPath);
+  void* OpenLibrary( const std::string& libName, const std::string& libPath);
 
   /*! returns address of a symbol from the library */
-  void* getSymbol(void* lib, const std::string& symName);
+  void* GetSymbol(void* lib, const std::string& symName);
 
   /*! unloads a shared library */
-  void closeLibrary(void* lib);
+  void CloseLibrary(void* lib);
 }

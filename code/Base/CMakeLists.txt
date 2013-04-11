@@ -17,8 +17,9 @@
 ## OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 project (Base)
-    set( BASE_SOURCE ${CMAKE_SOURCE_DIR}/Base/Library.cpp )
-    set( BASE_SOURCE ${CMAKE_SOURCE_DIR}/Base/Math.cpp )
+    set( BASE_SOURCE    ${CMAKE_SOURCE_DIR}/Base/Library.cpp
+                        ${CMAKE_SOURCE_DIR}/Base/Math.cpp 
+        )
     list(APPEND BASE_SOURCE ${BASE_SOURCE})
     list(APPEND BASE_INCLUDE_DIRS ${CMAKE_SOURCE_DIR})
     

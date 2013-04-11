@@ -43,7 +43,7 @@ DestroyBulletPhysicsSystem( ISystem* pSystem)
 
 extern "C" 
 {
-    DLLEXPORT struct SystemFuncs SystemPhysicsBULLET = {
+    COMPILER_DLLEXPORT struct SystemFuncs SystemPhysicsBULLET = {
         &InitBulletPhysicsSystem,
         &CreateBulletPhysicsSystem,
         &DestroyBulletPhysicsSystem

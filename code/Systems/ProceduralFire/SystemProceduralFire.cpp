@@ -43,7 +43,7 @@ DestroySystem( ISystem* pSystem)
 
 extern "C" 
 {
-    DLLEXPORT struct SystemFuncs SystemProceduralFire = {
+    COMPILER_DLLEXPORT struct SystemFuncs SystemProceduralFire = {
         &InitSystem,
         &CreateSystem,
         &DestroySystem
