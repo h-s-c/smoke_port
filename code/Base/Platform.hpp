@@ -267,17 +267,21 @@
 
 /* cross-platform macros */
 #if defined(COMPILER_MSVC) || (defined(COMPILER_ICC) && defined(COMPILER_HOST_MSVC))
-#define NOINLINE            __declspec(noinline)
-#define INLINE              __forceinline
-#define ALIGN(...)          __declspec(align(__VA_ARGS__))
-#define STDCALL             __stdcall
-#define DLLEXPORT           __declspec(dllexport)
+#   define NOFORCEINLINE        __declspec(noinline)
+#   define INLINE               __inline
+#   define FORCEINLINE          __forceinline
+#   define ALIGN(...)           __declspec(align(__VA_ARGS__))
+#   define STDCALL              __stdcall
+#   define DLLEXPORT            __declspec(dllexport)
+#   define MAYBE_UNUSED
 #else
-#define NOINLINE            __attribute__((noinline))
-#define INLINE              inline __attribute__((always_inline))
-#define ALIGN(...)          __attribute__((aligned(__VA_ARGS__)))
-#define STDCALL   
-#define DLLEXPORT            
+#   define NOFORCEINLINE        __attribute__((noinline))
+#   define INLINE               inline
+#   define FORCEINLINE          inline __attribute__((always_inline))
+#   define ALIGN(...)           __attribute__((aligned(__VA_ARGS__)))
+#   define STDCALL   
+#   define DLLEXPORT      
+#   define MAYBE_UNUSED         __attribute__((used))      
 #endif
 
 /* C++11 workarounds */
