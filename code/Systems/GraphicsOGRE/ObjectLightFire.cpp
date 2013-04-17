@@ -26,12 +26,12 @@ const Properties::Property OGREGraphicsObjectLightFire::sm_kaDefaultProperties[]
     Properties::Property( sm_kapszPropertyNames[ Property_Flare ],
                           Properties::Values::Color3,
                           Properties::Flags::Valid,
-                          "R", "G", "B", NULL,
+                          "R", "G", "B", nullptr,
                           Base::Color3::Black ),
     Properties::Property( sm_kapszPropertyNames[ Property_Flicker ],
                           Properties::Values::Float32,
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           0.0f ),
 };
 
@@ -73,7 +73,7 @@ void OGREGraphicsObjectLightFire::Update(
     f32 DeltaTime 
     )
 {
-    if ( m_pLight != NULL )
+    if ( m_pLight != nullptr )
     {
         if( m_Flicker > 0.0f && m_pLight->getVisible() )
         {
@@ -149,9 +149,9 @@ OGREGraphicsObjectLightFire::GetProperties(
     //
     Properties.reserve( Properties.size() + Property_Count );
 
-    for ( i32 i=0; i < Property_Count; i++ )
+    for (auto & property : sm_kaDefaultProperties)
     {
-        Properties.push_back( sm_kaDefaultProperties[ i ] );
+        Properties.push_back( property );
     }
 
     //
@@ -175,32 +175,32 @@ OGREGraphicsObjectLightFire::SetProperties(
     //
     // Read in the properties.
     //
-    for ( Properties::Iterator it=Properties.begin(); it != Properties.end(); it++ )
+    for (auto & property : Properties)
     {
-        if ( it->GetFlags() & Properties::Flags::Valid )
+        if ( property.GetFlags() & Properties::Flags::Valid )
         {
-            std::string sName = it->GetName();
+            std::string sName = property.GetName();
 
             if ( sName == sm_kapszPropertyNames[ Property_Flare ] )
             {
-                m_BaseFlare = Ogre::ColourValue( it->GetColor3().r, it->GetColor3().g, it->GetColor3().b );
+                m_BaseFlare = Ogre::ColourValue( property.GetColor3().r, property.GetColor3().g, property.GetColor3().b );
 
                 // Set this property to invalid since it's already been read
-                it->ClearFlag( Properties::Flags::Valid );
+                property.ClearFlag( Properties::Flags::Valid );
             }
             else if ( sName == sm_kapszPropertyNames[ Property_Flicker ] )
             {
-                m_Flicker = it->GetFloat32( 0 );
+                m_Flicker = property.GetFloat32( 0 );
 
                 // Set this property to invalid since it's already been read
-                it->ClearFlag( Properties::Flags::Valid );
+                property.ClearFlag( Properties::Flags::Valid );
             }
             else if ( sName == OGREGraphicsObjectLight::sm_kapszPropertyNames[ Property_Diffuse ] )
             {
                 // Store the original color (don't mark his property invalid because base class might use it)
-                m_BaseColor.r = it->GetColor3().r;
-                m_BaseColor.g = it->GetColor3().g;
-                m_BaseColor.b = it->GetColor3().b;
+                m_BaseColor.r = property.GetColor3().r;
+                m_BaseColor.g = property.GetColor3().g;
+                m_BaseColor.b = property.GetColor3().b;
             }
         }      
     }

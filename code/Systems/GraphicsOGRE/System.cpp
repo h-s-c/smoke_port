@@ -53,37 +53,37 @@ const Properties::Property OGREGraphicsSystem::sm_kaDefaultProperties[] =
     Properties::Property( sm_kapszPropertyNames[ Property_WindowName ],
                           VALUE1( Properties::Values::String ),
                           Properties::Flags::Valid | Properties::Flags::InitOnly,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           "" ),
     Properties::Property( sm_kapszPropertyNames[ Property_Resolution ],
                           VALUE1x2( Properties::Values::Int32 ),
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           1024, 768 ),
     Properties::Property( sm_kapszPropertyNames[ Property_ShadowTextureCount ],
                           VALUE1( Properties::Values::Int32 ),
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           1 ),
     Properties::Property( sm_kapszPropertyNames[ Property_ShadowTextureSize ],
                           VALUE1( Properties::Values::Int32 ),
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           1024 ),
     Properties::Property( sm_kapszPropertyNames[ Property_FullScreen ],
                           VALUE1( Properties::Values::Int32 ),
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           0 ),
     Properties::Property( sm_kapszPropertyNames[ Property_VerticalSync ],
                           VALUE1( Properties::Values::Int32 ),
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           0 ),
     Properties::Property( sm_kapszPropertyNames[ Property_FSAntiAliasing ],
                           VALUE1x2( Properties::Values::String),
                           Properties::Flags::Valid,
-                          "Type", "Quality", NULL, NULL,
+                          "Type", "Quality", nullptr, nullptr,
                           "0" /* D3DMULTISAMPLE_NONE */,
                           "0" /* Default Quality level offered by driver */ ),
 };
@@ -93,10 +93,10 @@ OGREGraphicsSystem::OGREGraphicsSystem(
     void
     )
     : ISystem()
-    , m_pRoot( NULL )
-    , m_pResourceGroupManager( NULL )
-    , m_pRenderSystem( NULL )
-    , m_pRenderWindow( NULL )
+    , m_pRoot( nullptr )
+    , m_pResourceGroupManager( nullptr )
+    , m_pRenderSystem( nullptr )
+    , m_pRenderWindow( nullptr )
     , m_uShadowTextureCount( 0 )
     , m_uShadowTextureSize( 0 )
 
@@ -202,7 +202,7 @@ OGREGraphicsSystem::Initialize(
     std::string     dFSAAQuality = "0";
     std::vector<std::string> resourcegroups;    
 
-    for ( Properties::Iterator it=Properties.begin(); it != Properties.end(); it++ )
+    for ( auto it=Properties.begin(); it != Properties.end(); it++ )
     {
         //
         // Make sure this property is valid.
@@ -334,15 +334,15 @@ OGREGraphicsSystem::GetProperties(
     //
     Properties.reserve( Properties.size() + Property_Count );
 
-    for ( i32 i=0; i < Property_Count; i++ )
+    for (auto & property : sm_kaDefaultProperties)
     {
-        Properties.push_back( sm_kaDefaultProperties[ i ] );
+        Properties.push_back( property );
     }
 
     //
     // Modify the default values if initialized.
     //
-    if ( m_pRenderWindow != NULL )
+    if ( m_pRenderWindow != nullptr )
     {
         Properties[ iProperty+Property_WindowName ].SetValue( 0, m_pRenderWindow->getName() );
 
@@ -364,16 +364,16 @@ OGREGraphicsSystem::SetProperties(
     //
     // Read in the properties.
     //
-    for ( Properties::Iterator it=Properties.begin(); it != Properties.end(); it++ )
+    for (auto & property : Properties)
     {
-        if ( it->GetFlags() & Properties::Flags::Valid )
+        if ( property.GetFlags() & Properties::Flags::Valid )
         {
-            std::string sName = it->GetName();
+            std::string sName = property.GetName();
 
             if ( sName == sm_kapszPropertyNames[ Property_Resolution ] )
             {
-                u32 Width  = static_cast<u32>(it->GetInt32( 0 ));
-                u32 Height = static_cast<u32>(it->GetInt32( 1 ));
+                u32 Width  = static_cast<u32>(property.GetInt32( 0 ));
+                u32 Height = static_cast<u32>(property.GetInt32( 1 ));
 
                 m_pRenderWindow->resize( Width, Height );
             }
@@ -385,7 +385,7 @@ OGREGraphicsSystem::SetProperties(
             //
             // Set this property to invalid since it's already been read.
             //
-            it->ClearFlag( Properties::Flags::Valid );
+            property.ClearFlag( Properties::Flags::Valid );
         }
     }
 }

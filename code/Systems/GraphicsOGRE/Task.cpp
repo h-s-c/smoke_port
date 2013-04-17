@@ -317,11 +317,11 @@ void OGREGraphicsTask::Update( f32 DeltaTime )
 
                 if( bShowCaptions )
                 {
-                   if(pMesh->m_pCaption == NULL)
+                   if(pMesh->m_pCaption == nullptr)
                     {
                         pMesh->SetupCaptions();
 
-                        if(pMesh->m_pCaption != NULL) 
+                        if(pMesh->m_pCaption != nullptr) 
                         {
                             Ogre::SceneNode* capNode;
 
@@ -344,7 +344,7 @@ void OGREGraphicsTask::Update( f32 DeltaTime )
                 } 
                 else 
                 {
-                    if(pMesh->m_pCaption != NULL) 
+                    if(pMesh->m_pCaption != nullptr) 
                     {
                         if( pMesh->m_pNode )
                         {
@@ -356,7 +356,7 @@ void OGREGraphicsTask::Update( f32 DeltaTime )
                                                         std::string(pMesh->m_pszName).append(sCaption) );
                         }
 
-                        pMesh->m_pCaption = NULL;
+                        pMesh->m_pCaption = nullptr;
                     }
                 }
             }

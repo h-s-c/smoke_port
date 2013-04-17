@@ -40,20 +40,20 @@ const Properties::Property OGREGraphicsObjectParticleSystem::sm_kaDefaultPropert
     Properties::Property( sm_kapszPropertyNames[ Property_PSystemType ],
     VALUE1( Properties::Values::String ),
     Properties::Flags::Valid | Properties::Flags::InitOnly,
-    NULL, NULL, NULL, NULL,
+    nullptr, nullptr, nullptr, nullptr,
     "" ),
 
     Properties::Property( sm_kapszPropertyNames[ Property_PSystemScripts ],
     VALUE2(
     Properties::Values::String, Properties::Values::String),
     Properties::Flags::Valid | Properties::Flags::InitOnly,
-    NULL, NULL, NULL, NULL,
+    nullptr, nullptr, nullptr, nullptr,
     "", "" ),
 };
 
 
 OGREGraphicsObjectParticleSystem::OGREGraphicsObjectParticleSystem( ISystemScene* pSystemScene, pcstr pszName )
-: OGREGraphicsObject( pSystemScene, pszName ), m_pParticleSystem( NULL ), m_strPSystemName( "" ), m_strPSystemSource( "" ), m_PSystemType( Type_Default )
+: OGREGraphicsObject( pSystemScene, pszName ), m_pParticleSystem( nullptr ), m_strPSystemName( "" ), m_strPSystemSource( "" ), m_PSystemType( Type_Default )
 {
     ASSERT( Property_Count == sizeof sm_kapszPropertyNames / sizeof sm_kapszPropertyNames[ 0 ] );
     ASSERT( Property_Count == sizeof sm_kaDefaultProperties / sizeof sm_kaDefaultProperties[ 0 ] );
@@ -82,16 +82,16 @@ Error OGREGraphicsObjectParticleSystem::Initialize( std::vector<Properties::Prop
     //
     // Read in the initialization only properties.
     //
-    for ( Properties::Iterator it=Properties.begin(); it != Properties.end(); it++ )
+    for (auto & property : Properties)
     {
-        if ( it->GetFlags() & Properties::Flags::Valid &&
-            it->GetFlags() & Properties::Flags::InitOnly )
+        if ( property.GetFlags() & Properties::Flags::Valid &&
+            property.GetFlags() & Properties::Flags::InitOnly )
         {
-            std::string sName = it->GetName();
+            std::string sName = property.GetName();
 
             if ( sName == sm_kapszPropertyNames[ Property_PSystemType ] )
             {
-                std::string strType = it->GetString( 0 );
+                std::string strType = property.GetString( 0 );
 
                 if( _stricmp( strType.c_str(), STR_DEFAULT ) == 0 )
                 {
@@ -109,13 +109,13 @@ Error OGREGraphicsObjectParticleSystem::Initialize( std::vector<Properties::Prop
             }
             else if ( sName == sm_kapszPropertyNames[ Property_PSystemScripts ] )
             {
-                m_strPSystemName = it->GetString( 0 );
-                m_strPSystemSource = it->GetString( 1 );
+                m_strPSystemName = property.GetString( 0 );
+                m_strPSystemSource = property.GetString( 1 );
 
                 //
                 // Set this property to invalid since it's already been read.
                 //
-                it->ClearFlag( Properties::Flags::Valid );
+                property.ClearFlag( Properties::Flags::Valid );
             }
         }
     }
@@ -170,9 +170,9 @@ OGREGraphicsObjectParticleSystem::GetProperties(
     //
     Properties.reserve( Properties.size() + Property_Count );
 
-    for ( i32 i=0; i < Property_Count; i++ )
+    for (auto & sm_kaDefaultPropertie : sm_kaDefaultProperties)
     {
-        Properties.push_back( sm_kaDefaultProperties[ i ] );
+        Properties.push_back( sm_kaDefaultPropertie );
     }
 
     //
@@ -191,15 +191,15 @@ void OGREGraphicsObjectParticleSystem::SetProperties( Properties::Array Properti
     //
     // Read in the properties.
     //
-    for ( Properties::Iterator it=Properties.begin(); it != Properties.end(); it++ )
+    for (auto & property : Properties)
     {
-        if ( it->GetFlags() & Properties::Flags::Valid )
+        if ( property.GetFlags() & Properties::Flags::Valid )
         {
-            std::string sName = it->GetName();
+            std::string sName = property.GetName();
 
             if ( sName == sm_kapszPropertyNames[ Property_PSystemType ] )
             {
-                std::string strType = it->GetString( 0 );
+                std::string strType = property.GetString( 0 );
 
                 if( _stricmp( strType.c_str(), STR_DEFAULT ) == 0 )
                 {
@@ -217,8 +217,8 @@ void OGREGraphicsObjectParticleSystem::SetProperties( Properties::Array Properti
             }
             else if ( sName == sm_kapszPropertyNames[ Property_PSystemScripts  ] )
             {
-                m_strPSystemName = it->GetString( 0 );
-                m_strPSystemSource = it->GetString( 1 );
+                m_strPSystemName = property.GetString( 0 );
+                m_strPSystemSource = property.GetString( 1 );
             }
             else
             {
@@ -228,7 +228,7 @@ void OGREGraphicsObjectParticleSystem::SetProperties( Properties::Array Properti
             //
             // Set this property to invalid since it's already been read.
             //
-            it->ClearFlag( Properties::Flags::Valid );
+            property.ClearFlag( Properties::Flags::Valid );
         }
     }
 }

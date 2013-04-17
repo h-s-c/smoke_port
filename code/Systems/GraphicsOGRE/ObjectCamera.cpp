@@ -20,7 +20,7 @@
 const pcstr OGREGraphicsObjectCamera::sm_kapszPolygonModeEnumOptions[] =
 {
     "Points", "WireFrame", "Solid",
-    NULL
+    nullptr
 };
 
 const pcstr OGREGraphicsObjectCamera::sm_kapszPropertyNames[] =
@@ -33,37 +33,37 @@ const Properties::Property OGREGraphicsObjectCamera::sm_kaDefaultProperties[] =
     Properties::Property( sm_kapszPropertyNames[ Property_FOVy ],
                           VALUE1( Properties::Values::Float32 ),
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           0.0f ),
     Properties::Property( sm_kapszPropertyNames[ Property_ClipDistances ],
                           VALUE1x2( Properties::Values::Float32 ),
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           0.0f, 0.0f ),
     Properties::Property( sm_kapszPropertyNames[ Property_Position ],
                           Properties::Values::Vector3,
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           Base::Vector3::Zero ),
     Properties::Property( sm_kapszPropertyNames[ Property_LookAt ],
                           Properties::Values::Vector3,
                           Properties::Flags::Valid | Properties::Flags::WriteOnly,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           Base::Vector3::Zero ),
     Properties::Property( sm_kapszPropertyNames[ Property_PolygonMode ],
                           Properties::Values::Enum,
                           Properties::Flags::Valid | Properties::Flags::WriteOnly,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           PolygonMode_Solid ),
     Properties::Property( sm_kapszPropertyNames[ Property_LockCamera ],
                           Properties::Values::Boolean,
                           Properties::Flags::Valid | Properties::Flags::WriteOnly,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           0 ),
     Properties::Property( sm_kapszPropertyNames[ Property_PagedGeometry ],
                           NULL,
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           0, 0),
 };
 
@@ -73,8 +73,8 @@ OGREGraphicsObjectCamera::OGREGraphicsObjectCamera(
     pcstr pszName
     )
     : OGREGraphicsObject( pSystemScene, pszName )
-    , m_pCamera( NULL )
-    , m_pViewport( NULL )
+    , m_pCamera( nullptr )
+    , m_pViewport( nullptr )
     , m_bLocked( false )
     , m_vLookAt( Base::Vector3::Zero )
 {
@@ -92,14 +92,14 @@ OGREGraphicsObjectCamera::~OGREGraphicsObjectCamera(
     ASSERT( m_pCamera != NULL );
     ASSERT( m_pViewport != NULL );
 
-    if ( m_pViewport != NULL )
+    if ( m_pViewport != nullptr )
     {
         auto pRenderWindow = PSYSTEM->GetOGRERenderWindow();
 
         pRenderWindow->removeViewport( m_pViewport->getZOrder() );
     }
 
-    if ( m_pCamera != NULL )
+    if ( m_pCamera != nullptr )
     {
         m_pNode->detachObject( m_pCamera );
         POGRESCENEMGR->destroyCamera( m_pCamera );
@@ -127,7 +127,7 @@ OGREGraphicsObjectCamera::Initialize(
     m_pCamera = POGRESCENEMGR->createCamera( m_pszName );
     ASSERT( m_pCamera != NULL );
 
-    if ( m_pCamera != NULL )
+    if ( m_pCamera != nullptr )
     {
         //
         // Create the viewport.
@@ -136,7 +136,7 @@ OGREGraphicsObjectCamera::Initialize(
         m_pViewport = pRenderWindow->addViewport( m_pCamera );
         ASSERT( m_pViewport != NULL );
 
-        if ( m_pViewport != NULL )
+        if ( m_pViewport != nullptr )
         {
             m_pViewport->setBackgroundColour( Ogre::ColourValue( 0, 0, 0 ) );
             m_PolygonMode = PolygonMode_Solid;
@@ -188,9 +188,9 @@ OGREGraphicsObjectCamera::GetProperties(
     //
     Properties.reserve( Properties.size() + Property_Count );
 
-    for ( i32 i=0; i < Property_Count; i++ )
+    for (auto & property : sm_kaDefaultProperties)
     {
-        Properties.push_back( sm_kaDefaultProperties[ i ] );
+        Properties.push_back( property );
     }
 
     //
@@ -201,7 +201,7 @@ OGREGraphicsObjectCamera::GetProperties(
     //
     // Modify the default values.
     //
-    if ( m_pCamera != NULL )
+    if ( m_pCamera != nullptr )
     {
         Properties[ iProperty+Property_FOVy ].SetValue( 0, m_pCamera->getFOVy().valueRadians() );
 
@@ -230,33 +230,33 @@ OGREGraphicsObjectCamera::SetProperties(
     //
     // Read in the properties.
     //
-    for ( Properties::Iterator it=Properties.begin(); it != Properties.end(); it++ )
+    for (auto & property : Properties)
     {
-        if ( it->GetFlags() & Properties::Flags::Valid )
+        if ( property.GetFlags() & Properties::Flags::Valid )
         {
-            std::string sName = it->GetName();
+            std::string sName = property.GetName();
 
             if ( sName == sm_kapszPropertyNames[ Property_FOVy ] )
             {
                 //
                 // Set the camera's field of view.
                 //
-                m_pCamera->setFOVy( Ogre::Radian( it->GetFloat32( 0 ) ) );
+                m_pCamera->setFOVy( Ogre::Radian( property.GetFloat32( 0 ) ) );
             }
             else if ( sName == sm_kapszPropertyNames[ Property_ClipDistances ] )
             {
                 //
                 // Set near and far clipping distances.
                 //
-                m_pCamera->setNearClipDistance( it->GetFloat32( 0 ) );
-                m_pCamera->setFarClipDistance( it->GetFloat32( 1 ) );
+                m_pCamera->setNearClipDistance( property.GetFloat32( 0 ) );
+                m_pCamera->setFarClipDistance( property.GetFloat32( 1 ) );
             }
             else if ( sName == sm_kapszPropertyNames[ Property_Position ] )
             {
                 //
                 // Set the camera's position.
                 //
-                const Base::Vector3& Position = it->GetVector3();
+                const Base::Vector3& Position = property.GetVector3();
                 m_pCamera->setPosition( Ogre::Vector3( Position.x, Position.y, Position.z ) );
             }
             else if ( sName == sm_kapszPropertyNames[ Property_LookAt ] )
@@ -264,7 +264,7 @@ OGREGraphicsObjectCamera::SetProperties(
                 //
                 // Set the point the camera is looking at.
                 //
-                m_vLookAt = it->GetVector3();
+                m_vLookAt = property.GetVector3();
                 m_pCamera->lookAt( TOOGREVEC( m_vLookAt ) );
             }
             else if ( sName == sm_kapszPropertyNames[ Property_PolygonMode ] )
@@ -272,12 +272,12 @@ OGREGraphicsObjectCamera::SetProperties(
                 //
                 // Get the polygon mode.
                 //
-                m_PolygonMode = static_cast<PolygonModes>(it->GetInt32( 0 ));
+                m_PolygonMode = static_cast<PolygonModes>(property.GetInt32( 0 ));
                 UpdatePolygonMode();
             }
             else if ( sName == sm_kapszPropertyNames[ Property_LockCamera ] )
             {
-                m_bLocked = (0 != it->GetBool( 0 ));
+                m_bLocked = (0 != property.GetBool( 0 ));
             }
             //
             // Here we associate the camera with the PagedGeometry module. SetDetailLevel can
@@ -296,7 +296,7 @@ OGREGraphicsObjectCamera::SetProperties(
             //
             // Set this property to invalid since it's already been read.
             //
-            it->ClearFlag( Properties::Flags::Valid );
+            property.ClearFlag( Properties::Flags::Valid );
         }
     }
 }

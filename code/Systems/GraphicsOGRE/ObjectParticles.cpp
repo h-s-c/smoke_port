@@ -32,22 +32,22 @@ const Properties::Property OGREGraphicsObjectParticles::sm_kaDefaultProperties[]
     Properties::Property( sm_kapszPropertyNames[ Property_PointList ],
                           VALUE1( Properties::Values::String ),
                           Properties::Flags::Valid | Properties::Flags::InitOnly,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           "" ),
     Properties::Property( sm_kapszPropertyNames[ Property_ProceduralPointList ],
                           VALUE1( Properties::Values::Boolean ),
                           Properties::Flags::Valid | Properties::Flags::InitOnly,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           False ),
     Properties::Property( sm_kapszPropertyNames[ Property_Material ],
                           VALUE1( Properties::Values::String ),
                           Properties::Flags::Valid | Properties::Flags::WriteOnly,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           "" ),
     Properties::Property( sm_kapszPropertyNames[ Property_CastShadows ],
                           VALUE1( Properties::Values::Int32 ),
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           0 ),
 };
 
@@ -57,7 +57,7 @@ OGREGraphicsObjectParticles::OGREGraphicsObjectParticles(
     pcstr pszName
     )
     : OGREGraphicsObject( pSystemScene, pszName )
-    , m_pDynamicObject( NULL )
+    , m_pDynamicObject( nullptr )
 {
     ASSERT( Property_Count == sizeof sm_kapszPropertyNames / sizeof sm_kapszPropertyNames[ 0 ] );
     ASSERT( Property_Count == sizeof sm_kaDefaultProperties / sizeof sm_kaDefaultProperties[ 0 ] );
@@ -96,20 +96,20 @@ OGREGraphicsObjectParticles::Initialize(
     // Read in the initialization only properties.
     //
 
-    for ( Properties::Iterator it=Properties.begin(); it != Properties.end(); it++ )
+    for (auto & property : Properties)
     {
-        if ( it->GetFlags() & Properties::Flags::Valid &&
-             it->GetFlags() & Properties::Flags::InitOnly )
+        if ( property.GetFlags() & Properties::Flags::Valid &&
+             property.GetFlags() & Properties::Flags::InitOnly )
         {
-            std::string sName = it->GetName();
+            std::string sName = property.GetName();
 
             if ( sName == sm_kapszPropertyNames[ Property_PointList ] )
             {
-                it->ClearFlag( Properties::Flags::Valid );
+                property.ClearFlag( Properties::Flags::Valid );
             }
             else if ( sName == sm_kapszPropertyNames[ Property_ProceduralPointList ] )
             {
-                 it->ClearFlag( Properties::Flags::Valid );
+                 property.ClearFlag( Properties::Flags::Valid );
             }
         }
     }
@@ -148,9 +148,9 @@ OGREGraphicsObjectParticles::GetProperties(
     //
     Properties.reserve( Properties.size() + Property_Count );
 
-    for ( i32 i=0; i < Property_Count; i++ )
+    for (auto & sm_kaDefaultPropertie : sm_kaDefaultProperties)
     {
-        Properties.push_back( sm_kaDefaultProperties[ i ] );
+        Properties.push_back( sm_kaDefaultPropertie );
     }
 }
 
@@ -165,17 +165,17 @@ OGREGraphicsObjectParticles::SetProperties(
     //
     // Read in the properties.
     //
-    for ( Properties::Iterator it=Properties.begin(); it != Properties.end(); it++ )
+    for (auto & property : Properties)
     {
-        if ( it->GetFlags() & Properties::Flags::Valid )
+        if ( property.GetFlags() & Properties::Flags::Valid )
         {
-            std::string sName = it->GetName();
+            std::string sName = property.GetName();
 
             if ( sName == sm_kapszPropertyNames[ Property_Material ] )
             {
-                if ( m_pDynamicObject != NULL )
+                if ( m_pDynamicObject != nullptr )
                 {
-                    m_pDynamicObject->setMaterial( it->GetStringPtr( 0 ) );
+                    m_pDynamicObject->setMaterial( property.GetStringPtr( 0 ) );
                 }
                 else
                 {
@@ -184,9 +184,9 @@ OGREGraphicsObjectParticles::SetProperties(
             }
             else if ( sName == sm_kapszPropertyNames[ Property_CastShadows ] )
             {
-                if ( m_pDynamicObject != NULL )
+                if ( m_pDynamicObject != nullptr )
                 {
-                    m_pDynamicObject->setCastShadows( it->GetBool( 0 ) != False );
+                    m_pDynamicObject->setCastShadows( property.GetBool( 0 ) != False );
                 }
                 else
                 {
@@ -201,7 +201,7 @@ OGREGraphicsObjectParticles::SetProperties(
             //
             // Set this property to invalid since it's already been read.
             //
-            it->ClearFlag( Properties::Flags::Valid );
+            property.ClearFlag( Properties::Flags::Valid );
         }
     }
 }
@@ -231,7 +231,7 @@ OGREGraphicsObjectParticles::ChangeOccurred(
         //
         // Get the vertex buffer from the graphics object.
         //
-        void* pVB = NULL;
+        void* pVB = nullptr;
         u32 vertexCount = pGfxObj->GetVertexCount();
         m_pDynamicObject->prepareHardwareBuffers(vertexCount);
         pVB = m_pDynamicObject->lockBuffer();
@@ -284,7 +284,7 @@ OGREGraphicsObjectParticles::ChangeOccurred(
         IGraphicsParticleObject* pParticleObject = dynamic_cast<IGraphicsParticleObject*>(pSubject);
 
         u32 VertexDeclCount = pGfxObj->GetVertexDeclarationCount();
-        VertexDecl::Element* pVertexDecl = new VertexDecl::Element[ VertexDeclCount ];
+        auto  pVertexDecl = new VertexDecl::Element[ VertexDeclCount ];
         ASSERT( pVertexDecl != NULL );
         pGfxObj->GetVertexDeclaration( pVertexDecl );
 

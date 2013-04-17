@@ -19,7 +19,7 @@
 const pcstr OGREGraphicsObjectLight::sm_kapszLightTypeEnumOptions[] =
 {
     "Point", "Spot",
-    NULL
+    nullptr
 };
 
 pcstr OGREGraphicsObjectLight::sm_kapszPropertyNames[] =
@@ -34,38 +34,38 @@ const Properties::Property OGREGraphicsObjectLight::sm_kaDefaultProperties[] =
     Properties::Property( sm_kapszPropertyNames[ Property_Type ],
                           VALUE1( Properties::Values::Enum ),
                           Properties::Flags::Valid | Properties::Flags::InitOnly,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           LightType_Point ),
     Properties::Property( sm_kapszPropertyNames[ Property_Position ],
                           Properties::Values::Vector3,
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           Base::Vector3::Zero ),
     Properties::Property( sm_kapszPropertyNames[ Property_Diffuse ],
                           Properties::Values::Color3,
                           Properties::Flags::Valid,
-                          "R", "G", "B", NULL,
+                          "R", "G", "B", nullptr,
                           Base::Color3::Black ),
     Properties::Property( sm_kapszPropertyNames[ Property_Specular ],
                           Properties::Values::Color3,
                           Properties::Flags::Valid,
-                          "R", "G", "B", NULL,
+                          "R", "G", "B", nullptr,
                           Base::Color3::Black ),
     Properties::Property( sm_kapszPropertyNames[ Property_Direction ],
                           Properties::Values::Vector3,
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           Base::Vector3::Zero ),
     Properties::Property( sm_kapszPropertyNames[ Property_Range ],
                           VALUE3( Properties::Values::Angle, Properties::Values::Angle,
                                   Properties::Values::Float32 ),
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           Base::Vector3::Zero ),
     Properties::Property( sm_kapszPropertyNames[ Property_Attenuation ],
                           VALUE1x4( Properties::Values::Float32 ),
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           Base::Vector3::Zero ),
 };
 
@@ -76,7 +76,7 @@ OGREGraphicsObjectLight::OGREGraphicsObjectLight(
     )
     : OGREGraphicsObject( pSystemScene, pszName )
     , m_LightType( LightType_Invalid )
-    , m_pLight( NULL )
+    , m_pLight( nullptr )
 {
     ASSERT( Property_Count == sizeof sm_kapszPropertyNames / sizeof sm_kapszPropertyNames[ 0 ] );
     ASSERT( Property_Count == sizeof sm_kaDefaultProperties / sizeof sm_kaDefaultProperties[ 0 ] );
@@ -89,7 +89,7 @@ OGREGraphicsObjectLight::~OGREGraphicsObjectLight(
     void
     )
 {
-    if ( m_pLight != NULL )
+    if ( m_pLight != nullptr )
     {
         m_pNode->detachObject( m_pLight );
         POGRESCENEMGR->destroyLight( m_pLight );
@@ -114,26 +114,26 @@ OGREGraphicsObjectLight::Initialize(
     //
     // Read in the initialization only properties.
     //
-    for ( Properties::Iterator it=Properties.begin(); it != Properties.end(); it++ )
+    for (auto & property : Properties)
     {
-        if ( it->GetFlags() & Properties::Flags::Valid &&
-             it->GetFlags() & Properties::Flags::InitOnly )
+        if ( property.GetFlags() & Properties::Flags::Valid &&
+             property.GetFlags() & Properties::Flags::InitOnly )
         {
-            std::string sName = it->GetName();
+            std::string sName = property.GetName();
 
             if ( sName == sm_kapszPropertyNames[ Property_Type ] )
             {
                 //
                 // Get the light type.
                 //
-                m_LightType = static_cast<LightTypes>(it->GetInt32( 0 ));
+                m_LightType = static_cast<LightTypes>(property.GetInt32( 0 ));
                 ASSERT( m_LightType > LightType_Invalid );
                 ASSERT( m_LightType < LightType_Count );
 
                 //
                 // Set this property to invalid since it's already been read.
                 //
-                it->ClearFlag( Properties::Flags::Valid );
+                property.ClearFlag( Properties::Flags::Valid );
             }
         }
     }
@@ -158,7 +158,7 @@ OGREGraphicsObjectLight::Initialize(
         ASSERT( False );
     };
 
-    if ( m_pLight != NULL )
+    if ( m_pLight != nullptr )
     {
         //
         // Set this set as initialized.
@@ -192,9 +192,9 @@ OGREGraphicsObjectLight::GetProperties(
     //
     Properties.reserve( Properties.size() + Property_Count );
 
-    for ( i32 i=0; i < Property_Count; i++ )
+    for (auto & property : sm_kaDefaultProperties)
     {
-        Properties.push_back( sm_kaDefaultProperties[ i ] );
+        Properties.push_back( property );
     }
 
     //
@@ -205,7 +205,7 @@ OGREGraphicsObjectLight::GetProperties(
     //
     // Modify the default values.
     //
-    if ( m_pLight != NULL )
+    if ( m_pLight != nullptr )
     {
         Properties[ iProperty+Property_Type ].SetValue( 0, m_LightType );
 
@@ -265,77 +265,77 @@ OGREGraphicsObjectLight::SetProperties(
     //
     // Read in the properties.
     //
-    for ( Properties::Iterator it=Properties.begin(); it != Properties.end(); it++ )
+    for (auto & property : Properties)
     {
-        if ( it->GetFlags() & Properties::Flags::Valid )
+        if ( property.GetFlags() & Properties::Flags::Valid )
         {
-            std::string sName = it->GetName();
+            std::string sName = property.GetName();
 
             if ( sName == sm_kapszPropertyNames[ Property_Position ] )
             {
                 ASSERT( m_pLight != NULL );
 
-                if ( m_pLight != NULL )
+                if ( m_pLight != nullptr )
                 {
-                    m_pLight->setPosition( it->GetVector3().x,
-                                           it->GetVector3().y,
-                                           it->GetVector3().z );
+                    m_pLight->setPosition( property.GetVector3().x,
+                                           property.GetVector3().y,
+                                           property.GetVector3().z );
                 }
             }
             else if ( sName == sm_kapszPropertyNames[ Property_Diffuse ] )
             {
                 ASSERT( m_pLight != NULL );
 
-                if ( m_pLight != NULL )
+                if ( m_pLight != nullptr )
                 {
-                    m_pLight->setDiffuseColour( it->GetColor3().r,
-                                                it->GetColor3().g,
-                                                it->GetColor3().b );
+                    m_pLight->setDiffuseColour( property.GetColor3().r,
+                                                property.GetColor3().g,
+                                                property.GetColor3().b );
                 }
             }
             else if ( sName == sm_kapszPropertyNames[ Property_Specular ] )
             {
                 ASSERT( m_pLight != NULL );
 
-                if ( m_pLight != NULL )
+                if ( m_pLight != nullptr )
                 {
-                    m_pLight->setSpecularColour( it->GetColor3().r,
-                                                 it->GetColor3().g,
-                                                 it->GetColor3().b );
+                    m_pLight->setSpecularColour( property.GetColor3().r,
+                                                 property.GetColor3().g,
+                                                 property.GetColor3().b );
                 }
             }
             else if ( sName == sm_kapszPropertyNames[ Property_Direction ] )
             {
                 ASSERT( m_pLight != NULL );
 
-                if ( m_pLight != NULL )
+                if ( m_pLight != nullptr )
                 {
-                    m_pLight->setDirection( it->GetVector3().x,
-                                            it->GetVector3().y,
-                                            it->GetVector3().z );
+                    m_pLight->setDirection( property.GetVector3().x,
+                                            property.GetVector3().y,
+                                            property.GetVector3().z );
                 }
             }
             else if ( sName == sm_kapszPropertyNames[ Property_Range ] )
             {
                 ASSERT( m_pLight != NULL );
 
-                if ( m_pLight != NULL )
+                if ( m_pLight != nullptr )
                 {
-                    m_pLight->setSpotlightRange( Ogre::Radian( it->GetFloat32( 0 ) ),
-                                                 Ogre::Radian( it->GetFloat32( 1 ) ),
-                                                 it->GetFloat32( 2 ) );
+                    m_pLight->setSpotlightRange( Ogre::Radian( property.GetFloat32( 0 ) ),
+                                                 Ogre::Radian( property.GetFloat32( 1 ) ),
+                                                 property.GetFloat32( 2 ) );
                 }
             }
             else if ( sName == sm_kapszPropertyNames[ Property_Attenuation ] )
             {
                 ASSERT( m_pLight != NULL );
 
-                if ( m_pLight != NULL )
+                if ( m_pLight != nullptr )
                 {
-                    m_pLight->setAttenuation( it->GetFloat32( 0 ),
-                                              it->GetFloat32( 1 ),
-                                              it->GetFloat32( 2 ),
-                                              it->GetFloat32( 3 ) );
+                    m_pLight->setAttenuation( property.GetFloat32( 0 ),
+                                              property.GetFloat32( 1 ),
+                                              property.GetFloat32( 2 ),
+                                              property.GetFloat32( 3 ) );
                 }
             }
             else
@@ -346,7 +346,7 @@ OGREGraphicsObjectLight::SetProperties(
             //
             // Set this property to invalid since it's already been read.
             //
-            it->ClearFlag( Properties::Flags::Valid );
+            property.ClearFlag( Properties::Flags::Valid );
         }        
     }
 }

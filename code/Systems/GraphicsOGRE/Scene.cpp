@@ -52,7 +52,7 @@ void ProcessObjects( void* Data );
 static float StaticTerrainHeightScene(const float a, const float b, void *userData)
 {
     UNREFERENCED_PARAM(userData);
-    return ((OGREGraphicsScene*)userData)->getTerrainHeightScene( a, b, NULL );
+    return ((OGREGraphicsScene*)userData)->getTerrainHeightScene( a, b, nullptr );
 }
 
 static const u32   UpdateGrainSize = 120;
@@ -81,53 +81,53 @@ const Properties::Property OGREGraphicsScene::sm_kaDefaultProperties[] =
     Properties::Property( sm_kapszPropertyNames[ Property_DelResourceLocation ],
                           VALUE1x2( Properties::Values::String ),
                           Properties::Flags::Valid | Properties::Flags::Multiple | Properties::Flags::InitOnly,
-                          "Path", "Group", NULL, NULL,
+                          "Path", "Group", nullptr, nullptr,
                           "", "" ),
 
     Properties::Property( sm_kapszPropertyNames[ Property_AmbientLight ],
                           Properties::Values::Color3,
                           Properties::Flags::Valid,
-                          "R", "G", "B", NULL,
+                          "R", "G", "B", nullptr,
                           Base::Color3::Black ),
     Properties::Property( sm_kapszPropertyNames[ Property_Shadows ],
                           VALUE1x2( Properties::Values::Boolean ),
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           0, 0 ),
     Properties::Property( sm_kapszPropertyNames[ Property_ShadowColor ],
                           Properties::Values::Color3,
                           Properties::Flags::Valid,
-                          "R", "G", "B", NULL,
+                          "R", "G", "B", nullptr,
                           Base::Color3::Black ),
     Properties::Property( sm_kapszPropertyNames[ Property_DrawBoundingBox ],
                           Properties::Values::Boolean,
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           0 ),
     Properties::Property( sm_kapszPropertyNames[ Property_ShowNormals ],
                           Properties::Values::Boolean,
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           0 ),
     Properties::Property( sm_kapszPropertyNames[ Property_ShowTangents ],
                           Properties::Values::Boolean,
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           0 ),
     Properties::Property( sm_kapszPropertyNames[ Property_UseStaticGeom ],
                           Properties::Values::Boolean,
                           Properties::Flags::Valid | Properties::Flags::InitOnly,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           1 ),
     Properties::Property( sm_kapszPropertyNames[ Property_UseInstancedGeom ],
                           Properties::Values::Boolean,
                           Properties::Flags::Valid | Properties::Flags::InitOnly,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           0 ),
     Properties::Property( sm_kapszPropertyNames[ Property_FogColor ],
                           Properties::Values::Color3,
                           Properties::Flags::Valid | Properties::Flags::InitOnly,
-                          "R", "G", "B", NULL,
+                          "R", "G", "B", nullptr,
                           0 ),
     Properties::Property( sm_kapszPropertyNames[ Property_Fog ],
                           VALUE4(
@@ -141,7 +141,7 @@ const Properties::Property OGREGraphicsScene::sm_kaDefaultProperties[] =
     Properties::Property( sm_kapszPropertyNames[ Property_Font ],
                           VALUE1x2(Properties::Values::String),
                           Properties::Flags::Valid | Properties::Flags::InitOnly,
-                          "FontPath", "FontName", NULL, NULL,
+                          "FontPath", "FontName", nullptr, nullptr,
                           "", "" ),
     Properties::Property( sm_kapszPropertyNames[ Property_PagedGeometry ],
                           VALUE4(Properties::Values::String,
@@ -154,12 +154,12 @@ const Properties::Property OGREGraphicsScene::sm_kaDefaultProperties[] =
     Properties::Property( sm_kapszPropertyNames[ Property_PagedGeometryTerrain ],
                           VALUE1x3(Properties::Values::Float32),
                           Properties::Flags::Valid | Properties::Flags::InitOnly,
-                          "Width", "Length", "Height", NULL,
+                          "Width", "Length", "Height", nullptr,
                           100.0, 100.0, 100.0),
     Properties::Property( sm_kapszPropertyNames[ Property_PagedGeometryTerrainOffset ],
                           VALUE1x3(Properties::Values::Float32),
                           Properties::Flags::Valid | Properties::Flags::InitOnly,
-                          "Width", "Length", "Height", NULL,
+                          "Width", "Length", "Height", nullptr,
                           0.0, 0.0, 0.0),
 };
 
@@ -168,8 +168,8 @@ OGREGraphicsScene::OGREGraphicsScene(
     )
     : ISystemScene( pSystem )
     , m_pTask( nullptr )
-    , m_pSceneManager( NULL )
-    , m_pRootNode( NULL )
+    , m_pSceneManager( nullptr )
+    , m_pRootNode( nullptr )
     , m_bUseStaticGeom( 1 )
     , m_bUseInstancedGeom( 0 )
     , m_FogColor( 1.0f, 1.0f, 1.0f, 1.0f)
@@ -177,8 +177,8 @@ OGREGraphicsScene::OGREGraphicsScene(
     , m_ExpDensity( .001f )
     , m_LinearStart( 0.0f )
     , m_LinearEnd( 1.0f )
-    , m_pPagedGeometry( NULL )
-    , m_pGrassLoader( NULL )
+    , m_pPagedGeometry( nullptr )
+    , m_pGrassLoader( nullptr )
     , m_bParallelize(False)
 {
     ASSERT( Property_Count == sizeof sm_kapszPropertyNames / sizeof sm_kapszPropertyNames[ 0 ] );
@@ -216,12 +216,12 @@ OGREGraphicsScene::Update(
         std::map< std::string, std::vector<Ogre::InstancedGeometry::InstancedObject**> > mapObjArray;
 
         // Now build every Instanced Geometry group
-        std::map< std::string, std::vector<Ogre::InstancedGeometry*> >::iterator itMap = m_InstancedGeoms.begin();
+        auto itMap = m_InstancedGeoms.begin();
         for ( itMap = m_InstancedGeoms.begin(); itMap != m_InstancedGeoms.end(); itMap++ )
         {
-            for( u32 i=0; i < itMap->second.size(); i++ )
+            for(auto & elem : itMap->second)
             {
-                Ogre::InstancedGeometry* pInstancedGeom = itMap->second[ i ];
+                Ogre::InstancedGeometry* pInstancedGeom = elem;
 
                 Ogre::InstancedGeometry::BatchInstance* pBatchInst = pInstancedGeom->getBatchInstanceIterator().getNext();
 
@@ -239,7 +239,7 @@ OGREGraphicsScene::Update(
         }
 
         // Set Position for each entity
-        ObjectsList::iterator it = m_Objects.begin();
+        auto it = m_Objects.begin();
         for ( it = m_Objects.begin(); it != m_Objects.end(); it++ )
         {
             // Only look for Mesh type Objects
@@ -283,7 +283,7 @@ OGREGraphicsScene::Update(
 
     u32         size = (u32)m_Objects.size();
 
-    if (m_bParallelize && ( g_Managers.pTask != NULL ) && ( UpdateGrainSize < size ))
+    if (m_bParallelize && ( g_Managers.pTask != nullptr ) && ( UpdateGrainSize < size ))
     {
         g_Managers.pTask->ParallelFor( m_pTask, UpdateCallback, this, 0, size, UpdateGrainSize );
     }
@@ -356,13 +356,13 @@ OGREGraphicsScene::GlobalSceneStatusChanged( GlobalSceneStatus Status )
         if( m_bUseStaticGeom )
         {
             // Check each object for Static options
-            for ( ObjectsList::iterator it = m_Objects.begin(); it != m_Objects.end(); it++ )
+            for (auto & object : m_Objects)
             {
                 // If Mesh is specified as part of a StaticGeom group
-                if( ((*it)->GetType() == OGREGraphicsObject::Type_Mesh) &&
-                    ((dynamic_cast<OGREGraphicsObjectMesh*>(*it)->m_strStaticGrpName).length() != 0) )
+                if( ((object)->GetType() == OGREGraphicsObject::Type_Mesh) &&
+                    ((dynamic_cast<OGREGraphicsObjectMesh*>(object)->m_strStaticGrpName).length() != 0) )
                 {
-                    OGREGraphicsObjectMesh* pObjMesh = dynamic_cast<OGREGraphicsObjectMesh*> (*it);
+                    OGREGraphicsObjectMesh* pObjMesh = dynamic_cast<OGREGraphicsObjectMesh*> (object);
 
                     // Create Static Geometry if not already created
                     if( !m_StaticGeoms[ pObjMesh->m_strStaticGrpName ] )
@@ -378,15 +378,15 @@ OGREGraphicsScene::GlobalSceneStatusChanged( GlobalSceneStatus Status )
                                                 TOOGREVEC ( pObjMesh->m_Scale ) );
                     pObjMesh->m_pNode->detachAllObjects();
                     m_pSceneManager->destroySceneNode( pObjMesh->m_pNode->getName() );
-                    pObjMesh->m_pNode = NULL;
+                    pObjMesh->m_pNode = nullptr;
                     m_pSceneManager->destroyEntity( pObjMesh->m_pEntity );
-                    pObjMesh->m_pEntity = NULL;
+                    pObjMesh->m_pEntity = nullptr;
                 }
             }
                     
             
             // Now build every Static Geometry group
-            std::map<std::string, Ogre::StaticGeometry*>::iterator itStat = m_StaticGeoms.begin();
+            auto itStat = m_StaticGeoms.begin();
             for ( itStat = m_StaticGeoms.begin(); itStat != m_StaticGeoms.end(); itStat++ )
             {
                 Ogre::StaticGeometry* pStaticGeom = itStat->second;
@@ -408,15 +408,15 @@ OGREGraphicsScene::GlobalSceneStatusChanged( GlobalSceneStatus Status )
             std::map<std::string, u32> groupCount;
 
             // Check each object for Static options
-            for ( ObjectsList::iterator it = m_Objects.begin(); it != m_Objects.end(); it++ )
+            for (auto & object : m_Objects)
             {
                 // Only look for Mesh type Objects
-                if( ((*it)->GetType() != OGREGraphicsObject::Type_Mesh)) 
+                if( ((object)->GetType() != OGREGraphicsObject::Type_Mesh)) 
                 {
                     continue;
                 }
 
-                OGREGraphicsObjectMesh* pObjMesh = dynamic_cast<OGREGraphicsObjectMesh*> (*it);
+                OGREGraphicsObjectMesh* pObjMesh = dynamic_cast<OGREGraphicsObjectMesh*> (object);
                 std::string&            grpName  = pObjMesh->m_strStaticGrpName;              
                 Ogre::Entity*           pEnt     = pObjMesh->m_pEntity;
 
@@ -458,9 +458,9 @@ OGREGraphicsScene::GlobalSceneStatusChanged( GlobalSceneStatus Status )
                                                 TOOGREVEC ( pObjMesh->m_Scale ) );
                     pObjMesh->m_pNode->detachAllObjects();
                     m_pSceneManager->destroySceneNode( pObjMesh->m_pNode->getName() );
-                    pObjMesh->m_pNode = NULL;
+                    pObjMesh->m_pNode = nullptr;
                     m_pSceneManager->destroyEntity( pObjMesh->m_pEntity );
-                    pObjMesh->m_pEntity = NULL;
+                    pObjMesh->m_pEntity = nullptr;
 
                     groupCount[ grpName ]++;
                 }
@@ -470,12 +470,12 @@ OGREGraphicsScene::GlobalSceneStatusChanged( GlobalSceneStatus Status )
             std::map< std::string, std::vector<Ogre::InstancedGeometry::InstancedObject**> > mapObjArray;
 
             // Now build every Instanced Geometry group
-            std::map< std::string, std::vector<Ogre::InstancedGeometry*> >::iterator itMap = m_InstancedGeoms.begin();
+            auto itMap = m_InstancedGeoms.begin();
             for ( itMap = m_InstancedGeoms.begin(); itMap != m_InstancedGeoms.end(); itMap++ )
             {
-                for( u32 i=0; i < itMap->second.size(); i++ )
+                for(auto & elem : itMap->second)
                 {
-                    Ogre::InstancedGeometry* pInstancedGeom = itMap->second[ i ];
+                    Ogre::InstancedGeometry* pInstancedGeom = elem;
                     pInstancedGeom->setCastShadows( true );
                     pInstancedGeom->setProvideWorldInverses( true );
                     pInstancedGeom->build();
@@ -501,15 +501,15 @@ OGREGraphicsScene::GlobalSceneStatusChanged( GlobalSceneStatus Status )
 
             // Set Position for each entity
             //std::list<OGREGraphicsObject*>::iterator it = m_Objects.begin();
-            for ( ObjectsList::iterator it = m_Objects.begin(); it != m_Objects.end(); it++ )
+            for (auto & object : m_Objects)
             {
                 // Only look for Mesh type Objects
-                if( ((*it)->GetType() != OGREGraphicsObject::Type_Mesh))
+                if( ((object)->GetType() != OGREGraphicsObject::Type_Mesh))
                 {
                     continue;
                 }
 
-                OGREGraphicsObjectMesh* pObjMesh = dynamic_cast<OGREGraphicsObjectMesh*> (*it);
+                OGREGraphicsObjectMesh* pObjMesh = dynamic_cast<OGREGraphicsObjectMesh*> (object);
                 std::string&            grpName  = pObjMesh->m_strStaticGrpName;              
 
                 if( grpName.length() != 0 )
@@ -634,18 +634,18 @@ OGREGraphicsScene::Initialize(
     //
     Ogre::ResourceGroupManager* pResourceGroupManager = Ogre::ResourceGroupManager::getSingletonPtr();
 
-    for ( Properties::Iterator it=Properties.begin(); it != Properties.end(); it++ )
+    for (auto & property : Properties)
     {
-        if ( it->GetFlags() & Properties::Flags::Valid &&
-            it->GetFlags() & Properties::Flags::InitOnly)
+        if ( property.GetFlags() & Properties::Flags::Valid &&
+            property.GetFlags() & Properties::Flags::InitOnly)
         {
-            std::string sName = it->GetName();
+            std::string sName = property.GetName();
             if ( sName == sm_kapszPropertyNames[ Property_ResourceLocation ] )
             {
-                pcstr pszName = it->GetStringPtr( 0 );
-                pcstr pszLocationType = it->GetStringPtr( 1 );
-                pcstr pszResourceGroup = it->GetStringPtr( 2 );
-                Bool  bRecursive = it->GetBool( 3 ); 
+                pcstr pszName = property.GetStringPtr( 0 );
+                pcstr pszLocationType = property.GetStringPtr( 1 );
+                pcstr pszResourceGroup = property.GetStringPtr( 2 );
+                Bool  bRecursive = property.GetBool( 3 ); 
                 
                 pResourceGroupManager->createResourceGroup( pszResourceGroup, true);
                 pResourceGroupManager->addResourceLocation( pszName, pszLocationType, pszResourceGroup, (bRecursive == True));
@@ -654,8 +654,8 @@ OGREGraphicsScene::Initialize(
             }
             else if ( sName == sm_kapszPropertyNames[ Property_DelResourceLocation ] )
             {
-                pcstr pszName = it->GetStringPtr( 0 );
-                pcstr pszResourceGroup = it->GetStringPtr( 1 );
+                pcstr pszName = property.GetStringPtr( 0 );
+                pcstr pszResourceGroup = property.GetStringPtr( 1 );
 
                 pResourceGroupManager->unloadResourceGroup( pszResourceGroup );
                 pResourceGroupManager->clearResourceGroup( pszResourceGroup );
@@ -666,21 +666,21 @@ OGREGraphicsScene::Initialize(
             }
             else if ( sName == sm_kapszPropertyNames[ Property_UseStaticGeom ] )
             {
-                m_bUseStaticGeom = it->GetBool( 0 );
+                m_bUseStaticGeom = property.GetBool( 0 );
             }
             else if ( sName == sm_kapszPropertyNames[ Property_UseInstancedGeom ] )
             {
-                m_bUseInstancedGeom = it->GetBool( 0 );
+                m_bUseInstancedGeom = property.GetBool( 0 );
             }
             else if ( sName == sm_kapszPropertyNames[ Property_FogColor ] )
             {
-                m_FogColor.r = it->GetColor3().r;
-                m_FogColor.g = it->GetColor3().g;
-                m_FogColor.b = it->GetColor3().b;
+                m_FogColor.r = property.GetColor3().r;
+                m_FogColor.g = property.GetColor3().g;
+                m_FogColor.b = property.GetColor3().b;
             }
             else if ( sName == sm_kapszPropertyNames[ Property_Fog ] )
             {
-                i32 mode = it->GetInt32(0);
+                i32 mode = property.GetInt32(0);
                 switch ( mode )
                 {
                 case 1:
@@ -696,9 +696,9 @@ OGREGraphicsScene::Initialize(
                     m_FogMode = Ogre::FOG_NONE;
                     break;
                 }
-                m_ExpDensity  = it->GetFloat32(1);
-                m_LinearStart = it->GetFloat32(2);
-                m_LinearEnd   = it->GetFloat32(3);
+                m_ExpDensity  = property.GetFloat32(1);
+                m_LinearStart = property.GetFloat32(2);
+                m_LinearEnd   = property.GetFloat32(3);
             }
             else if ( sName == sm_kapszPropertyNames[ Property_Font ] )
             {
@@ -707,8 +707,8 @@ OGREGraphicsScene::Initialize(
                 // to keep any references to the resource around as it will be accessed by name by anyone
                 // who needs the resource.
                 //
-                std::string sPath = it->GetString(0);
-                std::string sFile = it->GetString(1);
+                std::string sPath = property.GetString(0);
+                std::string sFile = property.GetString(1);
                 Ogre::ResourceGroupManager *pResGroupMgr = Ogre::ResourceGroupManager::getSingletonPtr();
                 pResGroupMgr->addResourceLocation(sPath, "FileSystem");
                 Ogre::FontManager &fontManager = Ogre::FontManager::getSingleton();
@@ -742,10 +742,10 @@ OGREGraphicsScene::Initialize(
                     return Err;
                 }
 
-                m_sHeightmap     = it->GetString(0);
-                m_sResourceGroup = it->GetStringPtr(1);
-                m_fPageSize      = it->GetFloat32(2);
-                m_fDrawDistance  = it->GetFloat32(3);
+                m_sHeightmap     = property.GetString(0);
+                m_sResourceGroup = property.GetStringPtr(1);
+                m_fPageSize      = property.GetFloat32(2);
+                m_fDrawDistance  = property.GetFloat32(3);
 
                 m_pPagedGeometry->setPageSize(m_fPageSize);
                 m_pPagedGeometry->setInfinite();
@@ -755,15 +755,15 @@ OGREGraphicsScene::Initialize(
             }
             else if ( sName == sm_kapszPropertyNames[ Property_PagedGeometryTerrainOffset ] )
             {
-                m_fTerrainWidth  = it->GetFloat32(0);
-                m_fTerrainLength = it->GetFloat32(1);
-                m_fTerrainHeight = it->GetFloat32(2);
+                m_fTerrainWidth  = property.GetFloat32(0);
+                m_fTerrainLength = property.GetFloat32(1);
+                m_fTerrainHeight = property.GetFloat32(2);
             }
             else if ( sName == sm_kapszPropertyNames[ Property_PagedGeometryTerrain ] )
             {
-                m_fTerrainWidthOffset  = it->GetFloat32(0);
-                m_fTerrainLengthOffset = it->GetFloat32(1);
-                m_fTerrainHeightOffset = it->GetFloat32(2);
+                m_fTerrainWidthOffset  = property.GetFloat32(0);
+                m_fTerrainLengthOffset = property.GetFloat32(1);
+                m_fTerrainHeightOffset = property.GetFloat32(2);
             }
             else
             {
@@ -772,7 +772,7 @@ OGREGraphicsScene::Initialize(
             //
             // Set this property to invalid since it's already been read.
             //
-            it->ClearFlag( Properties::Flags::Valid );
+            property.ClearFlag( Properties::Flags::Valid );
         }
     }
     //
@@ -815,7 +815,7 @@ OGREGraphicsScene::Initialize(
     m_pSceneManager->setFog(m_FogMode, m_FogColor, m_ExpDensity, m_LinearStart, m_LinearEnd);
 
     Bool bUseThreads = g_Managers.pEnvironment->Variables().GetAsBool( "Graphics::Parallel", True );
-    m_bParallelize = bUseThreads && ( g_Managers.pTask != NULL );
+    m_bParallelize = bUseThreads && ( g_Managers.pTask != nullptr );
 
     return Err;
 }
@@ -836,15 +836,15 @@ OGREGraphicsScene::GetProperties(
     //
     Properties.reserve( Properties.size() + Property_Count );
 
-    for ( i32 i=0; i < Property_Count; i++ )
+    for (auto & property : sm_kaDefaultProperties)
     {
-        Properties.push_back( sm_kaDefaultProperties[ i ] );
+        Properties.push_back( property );
     }
 
     //
     // Modify the default values.
     //
-    if ( m_pSceneManager != NULL )
+    if ( m_pSceneManager != nullptr )
     {
         Ogre::ColourValue AmbientColor = m_pSceneManager->getAmbientLight();
         Base::Vector3 vAmbientColor(AmbientColor.r, AmbientColor.g, AmbientColor.b);
@@ -884,11 +884,11 @@ OGREGraphicsScene::SetProperties(
     //
     // Read in the properties.
     //
-    for ( Properties::Iterator it=Properties.begin(); it != Properties.end(); it++ )
+    for (auto & property : Properties)
     {
-        if ( it->GetFlags() & Properties::Flags::Valid )
+        if ( property.GetFlags() & Properties::Flags::Valid )
         {
-            std::string sName = it->GetName();
+            std::string sName = property.GetName();
 
             
             if ( sName == sm_kapszPropertyNames[ Property_AmbientLight ] )
@@ -899,9 +899,9 @@ OGREGraphicsScene::SetProperties(
                 Ogre::ColourValue AmbientLight;
 
                 AmbientLight.a = 1.0f;
-                AmbientLight.r = it->GetColor3().r;
-                AmbientLight.g = it->GetColor3().g;
-                AmbientLight.b = it->GetColor3().b;
+                AmbientLight.r = property.GetColor3().r;
+                AmbientLight.g = property.GetColor3().g;
+                AmbientLight.b = property.GetColor3().b;
 
                 m_pSceneManager->setAmbientLight( AmbientLight );
             }
@@ -910,9 +910,9 @@ OGREGraphicsScene::SetProperties(
                 //
                 // Enable/disable shadows.
                 //
-                m_pSceneManager->setShadowTechnique( (Ogre::ShadowTechnique) (it->GetInt32( 0 )) );
+                m_pSceneManager->setShadowTechnique( (Ogre::ShadowTechnique) (property.GetInt32( 0 )) );
                 m_pSceneManager->setShadowTexturePixelFormat(Ogre::PF_FLOAT16_RGB);
-                m_pSceneManager->setShadowTextureSelfShadow( it->GetBool( 1 ) != 0 );
+                m_pSceneManager->setShadowTextureSelfShadow( property.GetBool( 1 ) != 0 );
             }
             else if ( sName == sm_kapszPropertyNames[ Property_ShadowColor ] )
             {
@@ -921,9 +921,9 @@ OGREGraphicsScene::SetProperties(
                 //
                 Ogre::ColourValue ShadowColor;
 
-                ShadowColor = Ogre::ColourValue( it->GetColor3().r,
-                                                 it->GetColor3().g,
-                                                 it->GetColor3().b );
+                ShadowColor = Ogre::ColourValue( property.GetColor3().r,
+                                                 property.GetColor3().g,
+                                                 property.GetColor3().b );
                 m_pSceneManager->setShadowColour( ShadowColor );
             }
             else if ( sName == sm_kapszPropertyNames[ Property_DrawBoundingBox ] )
@@ -931,7 +931,7 @@ OGREGraphicsScene::SetProperties(
                 //
                 // Enable/disable the drawing of Object BoundingBoxes.
                 //
-                m_pSceneManager->showBoundingBoxes( it->GetBool( 0 ) == True );
+                m_pSceneManager->showBoundingBoxes( property.GetBool( 0 ) == True );
             }
             else
             {
@@ -941,7 +941,7 @@ OGREGraphicsScene::SetProperties(
             //
             // Set this property to invalid since it's already been read.
             //
-            it->ClearFlag( Properties::Flags::Valid );
+            property.ClearFlag( Properties::Flags::Valid );
         }
     }
 
@@ -967,7 +967,7 @@ OGREGraphicsScene::CreateObject(
 {
     ASSERT( m_bInitialized );
 
-    OGREGraphicsObject* pObject = NULL;
+    OGREGraphicsObject* pObject = nullptr;
 
     if ( strcmp( pszType,
                       OGREGraphicsObject::sm_kapszTypeNames[ OGREGraphicsObject::Type_Mesh ] ) == 0 )
@@ -1089,7 +1089,7 @@ OGREGraphicsScene::CreateObject(
     //
     //  Store the newly created object for future access
     //
-    if ( pObject != NULL )
+    if ( pObject != nullptr )
     {
         m_Objects.push_back( pObject );
     }
@@ -1116,7 +1116,7 @@ OGREGraphicsScene::DestroyObject(
     OGREGraphicsObject* pObject =
         reinterpret_cast<OGREGraphicsObject*>(pSystemObject);
 
-    if ( pObject != NULL )
+    if ( pObject != nullptr )
     {
         //
         // Remove the object from the list and delete it.
@@ -1155,7 +1155,7 @@ OGREGraphicsScene::GetSystemChangeData(
 {
     UNREFERENCED_PARAM( SystemChange );
 
-    return NULL;
+    return nullptr;
 }
 
 void OGREGraphicsScene::UpdateCallback( void *param, u32 begin, u32 end )

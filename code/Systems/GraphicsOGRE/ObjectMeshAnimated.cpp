@@ -29,12 +29,12 @@ const Properties::Property OGREGraphicsObjectMeshAnimated::sm_kaAnimatedDefaultP
     Properties::Property( sm_kapszAnimatedPropertyNames[ Property_Skeleton ],
                           VALUE1( Properties::Values::String ),
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           "" ),
     Properties::Property( sm_kapszAnimatedPropertyNames[ Property_Animation ],
                           VALUE2( Properties::Values::String, Properties::Values::String ),
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           "", "" ),
 };
 
@@ -62,7 +62,7 @@ OGREGraphicsObjectMeshAnimated::~OGREGraphicsObjectMeshAnimated(
     )
 {
     // Clear animations
-    std::list<Animation*>::iterator it = m_Animations.begin();
+    auto it = m_Animations.begin();
     for ( it = m_Animations.begin(); it != m_Animations.end(); it++ )
     {
         delete *it;
@@ -102,7 +102,7 @@ OGREGraphicsObjectMeshAnimated::Update(
         Scale = 1.0f;
 
         // Enable all animations for the windmill
-        std::list<Animation*>::iterator it = m_Animations.begin();
+        auto it = m_Animations.begin();
         for ( it = m_Animations.begin(); it != m_Animations.end(); it++ )
         {
             (*it)->m_State->setEnabled( True );
@@ -110,7 +110,7 @@ OGREGraphicsObjectMeshAnimated::Update(
     }
 
     // Update all animations
-    std::list<Animation*>::iterator it = m_Animations.begin();
+    auto it = m_Animations.begin();
     for ( it = m_Animations.begin(); it != m_Animations.end(); it++ )
     {
         // Add time to the animation
@@ -181,9 +181,9 @@ OGREGraphicsObjectMeshAnimated::GetProperties(
     //
     Properties.reserve( Properties.size() + Property_Count );
 
-    for ( i32 i=0; i < Property_Count; i++ )
+    for (auto & property : sm_kaAnimatedDefaultProperties)
     {
-        Properties.push_back( sm_kaAnimatedDefaultProperties[ i ] );
+        Properties.push_back( property );
     }
 }
 
@@ -201,20 +201,20 @@ OGREGraphicsObjectMeshAnimated::SetProperties(
     //
     // Read in the properties.
     //
-    for( Properties::Iterator it=Properties.begin(); it != Properties.end(); it++ )
+    for(auto & property : Properties)
     {
-        if( it->GetFlags() & Properties::Flags::Valid )
+        if( property.GetFlags() & Properties::Flags::Valid )
         {
-            std::string sName = it->GetName();
+            std::string sName = property.GetName();
 
             if( sName == sm_kapszAnimatedPropertyNames[ Property_Skeleton ] )
             {
                 //
                 // Load a skeleton
                 //
-                if ( m_pEntity != NULL )
+                if ( m_pEntity != nullptr )
                 {
-                    m_pEntity->getMesh()->setSkeletonName( it->GetString( 0 ) );
+                    m_pEntity->getMesh()->setSkeletonName( property.GetString( 0 ) );
                 }
             }
             else if( sName == sm_kapszAnimatedPropertyNames[ Property_Animation ] )
@@ -222,22 +222,22 @@ OGREGraphicsObjectMeshAnimated::SetProperties(
                 //
                 // Create a new animation node
                 //
-                if ( m_pEntity != NULL )
+                if ( m_pEntity != nullptr )
                 {
-                    Animation* pAnimation = new Animation();
+                    auto  pAnimation = new Animation();
 
                     // Init animation
                     pAnimation->m_Transition = 0.0f;
                     pAnimation->m_Disable = False;
 
                     // Load animation state
-                    std::string AnimationName = it->GetString( 0 );
+                    std::string AnimationName = property.GetString( 0 );
 
                     pAnimation->m_State = m_pEntity->getAnimationState( AnimationName );
                     ASSERT( pAnimation->m_State );
                     
                     // Set associated behavior
-                    std::string BehaviorName = it->GetString( 1 );
+                    std::string BehaviorName = property.GetString( 1 );
                     if( BehaviorName == "Idle" || BehaviorName == "idle" )
                     {
                         pAnimation->m_Behavior = e_Behavior_Idle;
@@ -271,7 +271,7 @@ OGREGraphicsObjectMeshAnimated::SetProperties(
             //
             // Set this property to invalid since it's already been read.
             //
-            it->ClearFlag( Properties::Flags::Valid );
+            property.ClearFlag( Properties::Flags::Valid );
         }
     }
 }
@@ -306,7 +306,7 @@ OGREGraphicsObjectMeshAnimated::ChangeOccurred(
         ASSERT( pBehaviorObject );
 
         // Enable any animations associated with this behavior
-        std::list<Animation*>::iterator it = m_Animations.begin();
+        auto it = m_Animations.begin();
         for ( it = m_Animations.begin(); it != m_Animations.end(); it++ )
         {
             Animation* pAnimation = *it;

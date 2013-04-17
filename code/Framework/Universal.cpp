@@ -190,7 +190,7 @@ UScene::CreateObject(
     //
     // Create the new object.
     //
-    auto  pObject = new UObject( this, pszName );
+    auto   pObject = new UObject( this, pszName );
     if ( pObject == nullptr )
     {
         std::cerr << "pObject == NULL" << std::endl;

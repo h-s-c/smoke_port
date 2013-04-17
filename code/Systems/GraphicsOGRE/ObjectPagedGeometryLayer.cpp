@@ -24,12 +24,12 @@ const Properties::Property OGREGraphicsObjectLayer::sm_kaDefaultProperties[] =
     Properties::Property( sm_kapszPropertyNames[ Property_MinimumSize ],
                           VALUE1x2( Properties::Values::Float32 ),
                           Properties::Flags::Valid | Properties::Flags::InitOnly,
-                          "Width", "Height", NULL, NULL,
+                          "Width", "Height", nullptr, nullptr,
                           10.0, 10.0 ),
     Properties::Property( sm_kapszPropertyNames[ Property_MaximumSize ],
                           VALUE1x2(Properties::Values::Float32),
                           Properties::Flags::Valid | Properties::Flags::InitOnly,
-                          "Width", "Height", NULL, NULL,
+                          "Width", "Height", nullptr, nullptr,
                           10.0, 10.0 ),
     Properties::Property( sm_kapszPropertyNames[ Property_Animation ],
                           VALUE4(Properties::Values::Boolean,
@@ -43,28 +43,28 @@ const Properties::Property OGREGraphicsObjectLayer::sm_kaDefaultProperties[] =
                           VALUE2(Properties::Values::String,
                                  Properties::Values::Float32),
                           Properties::Flags::Valid | Properties::Flags::InitOnly,
-                          "Densitymap", "Density", NULL, NULL,
+                          "Densitymap", "Density", nullptr, nullptr,
                           "", 0.001 ),
     Properties::Property( sm_kapszPropertyNames[ Property_MapBounds ],
                           VALUE1x4(Properties::Values::Float32),
                           Properties::Flags::Valid | Properties::Flags::InitOnly,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           0.0, 0.0, 0.0, 0.0 ),
     Properties::Property( sm_kapszPropertyNames[ Property_MaterialName ],
                           VALUE1(Properties::Values::String),
                           Properties::Flags::Valid | Properties::Flags::InitOnly,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           "" ),
     Properties::Property( sm_kapszPropertyNames[ Property_Color ],
                           VALUE1(Properties::Values::String),
                           Properties::Flags::Valid | Properties::Flags::InitOnly,
-                          "Colormap", NULL, NULL, NULL,
+                          "Colormap", nullptr, nullptr, nullptr,
                           "" ),
     Properties::Property( sm_kapszPropertyNames[ Property_RenderTechnique ],
                           VALUE2(Properties::Values::Int32,
                                  Properties::Values::Boolean),
                           Properties::Flags::Valid | Properties::Flags::InitOnly,
-                          "Technique", "Fade", NULL, NULL,
+                          "Technique", "Fade", nullptr, nullptr,
                           "", 0 ),
 };
 
@@ -104,51 +104,51 @@ OGREGraphicsObjectLayer::Initialize(
     //
     // Read in the initialization only properties.
     //
-    for ( Properties::Iterator it=Properties.begin(); it != Properties.end(); it++ )
+    for (auto & property : Properties)
     {
-        if ( it->GetFlags() & Properties::Flags::Valid &&
-             it->GetFlags() & Properties::Flags::InitOnly )
+        if ( property.GetFlags() & Properties::Flags::Valid &&
+             property.GetFlags() & Properties::Flags::InitOnly )
         {
-            std::string sName = it->GetName();
+            std::string sName = property.GetName();
 
             if ( sName == sm_kapszPropertyNames[ Property_MinimumSize ] )
             {
-                m_pLayer->setMinimumSize(it->GetFloat32(0), it->GetFloat32(1));
+                m_pLayer->setMinimumSize(property.GetFloat32(0), property.GetFloat32(1));
             }
             else if ( sName == sm_kapszPropertyNames[ Property_MaximumSize ] )
             {
-                m_pLayer->setMaximumSize(it->GetFloat32(0), it->GetFloat32(1));
+                m_pLayer->setMaximumSize(property.GetFloat32(0), property.GetFloat32(1));
             }
             else if ( sName == sm_kapszPropertyNames[ Property_Animation ] )
             {
-                m_pLayer->setAnimationEnabled(it->GetBool(0) == True);
-                m_pLayer->setSwayDistribution(it->GetFloat32(1));
-                m_pLayer->setSwayLength(it->GetFloat32(2));
-                m_pLayer->setSwaySpeed(it->GetFloat32(3));
+                m_pLayer->setAnimationEnabled(property.GetBool(0) == True);
+                m_pLayer->setSwayDistribution(property.GetFloat32(1));
+                m_pLayer->setSwayLength(property.GetFloat32(2));
+                m_pLayer->setSwaySpeed(property.GetFloat32(3));
             }
             else if ( sName == sm_kapszPropertyNames[ Property_Density ] )
             {
-                m_pLayer->setDensityMap(it->GetString(0));
-                m_pLayer->setDensity(it->GetFloat32(1));
+                m_pLayer->setDensityMap(property.GetString(0));
+                m_pLayer->setDensity(property.GetFloat32(1));
             }
             else if ( sName == sm_kapszPropertyNames[ Property_MapBounds ] )
             {
-                m_pLayer->setMapBounds(Forests::TBounds(it->GetFloat32(0), it->GetFloat32(1), it->GetFloat32(2), it->GetFloat32(3)));
+                m_pLayer->setMapBounds(Forests::TBounds(property.GetFloat32(0), property.GetFloat32(1), property.GetFloat32(2), property.GetFloat32(3)));
             }
             else if ( sName == sm_kapszPropertyNames[ Property_MaterialName ] )
             {
                 //
                 // Load paged geometry layer
                 //
-                m_pLayer = PSCENE->GetGrassLoader()->addLayer(it->GetString(0));
+                m_pLayer = PSCENE->GetGrassLoader()->addLayer(property.GetString(0));
             }
             else if ( sName == sm_kapszPropertyNames[ Property_Color ] )
             {
-                m_pLayer->setColorMap(it->GetString(0));
+                m_pLayer->setColorMap(property.GetString(0));
             }
             else if ( sName == sm_kapszPropertyNames[ Property_RenderTechnique ] )
             {
-                m_pLayer->setRenderTechnique((Forests::GrassTechnique)it->GetInt32(0), it->GetBool(1) == True );
+                m_pLayer->setRenderTechnique((Forests::GrassTechnique)property.GetInt32(0), property.GetBool(1) == True );
             }
             else
             {
@@ -157,7 +157,7 @@ OGREGraphicsObjectLayer::Initialize(
             //
             // Set this property to invalid since it's already been read.
             //
-            it->ClearFlag( Properties::Flags::Valid );
+            property.ClearFlag( Properties::Flags::Valid );
         }
     }
 
@@ -185,9 +185,9 @@ OGREGraphicsObjectLayer::GetProperties(
     //
     Properties.reserve( Properties.size() + Property_Count );
 
-    for ( i32 i=0; i < Property_Count; i++ )
+    for (auto & property : sm_kaDefaultProperties)
     {
-        Properties.push_back( sm_kaDefaultProperties[ i ] );
+        Properties.push_back( property );
     }
 
     return;
@@ -204,12 +204,12 @@ OGREGraphicsObjectLayer::SetProperties(
     //
     // Read in the properties.
     //
-    for ( Properties::Iterator it=Properties.begin(); it != Properties.end(); it++ )
+    for (auto & property : Properties)
     {
         //
         // Set this property to invalid since it's already been read.
         //
-        it->ClearFlag( Properties::Flags::Valid );
+        property.ClearFlag( Properties::Flags::Valid );
     }
 
     return;

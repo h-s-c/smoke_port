@@ -33,19 +33,19 @@ const Properties::Property OGREGraphicsObjectWindow::sm_kaDefaultProperties[] =
     Properties::Property( sm_kapszPropertyNames[ Property_Color ],
                           VALUE1x4( Properties::Values::Int32 ),
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           0, 0, 255, 127),
 
     Properties::Property( sm_kapszPropertyNames[ Property_Position ],
                           VALUE1x2( Properties::Values::Float32 ),
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           0.0f ),
 
     Properties::Property( sm_kapszPropertyNames[ Property_Size ],
                           VALUE1x2( Properties::Values::Float32 ),
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           0.0f ),
 };
 
@@ -55,9 +55,9 @@ OGREGraphicsObjectWindow::OGREGraphicsObjectWindow(ISystemScene* pSystemScene, p
     ASSERT( Property_Count == sizeof sm_kaDefaultProperties / sizeof sm_kaDefaultProperties[ 0 ] );
 
     m_Type          = OGREGraphicsObject::Type_Window;
-    m_pWindow       = NULL;
-    m_pTextAreaBody = NULL;
-    m_pTextAreaBody = NULL;
+    m_pWindow       = nullptr;
+    m_pTextAreaBody = nullptr;
+    m_pTextAreaBody = nullptr;
     m_nRed          = 0;
     m_nGreen        = 0;
     m_nBlue         = 255;
@@ -316,9 +316,9 @@ void OGREGraphicsObjectWindow::GetProperties(
     //
     Properties.reserve( Properties.size() + Property_Count );
 
-    for ( i32 i=0; i < Property_Count; i++ )
+    for (auto & property : sm_kaDefaultProperties)
     {
-        Properties.push_back( sm_kaDefaultProperties[ i ] );
+        Properties.push_back( property );
     }
 
     //
@@ -345,28 +345,28 @@ void OGREGraphicsObjectWindow::SetProperties(Properties::Array Properties)
     //
     // Read in the properties.
     //
-    for ( Properties::Iterator it=Properties.begin(); it != Properties.end(); it++ )
+    for (auto & property : Properties)
     {
-        if ( it->GetFlags() & Properties::Flags::Valid )
+        if ( property.GetFlags() & Properties::Flags::Valid )
         {
-            std::string sName = it->GetName();
+            std::string sName = property.GetName();
  
             if ( sName == sm_kapszPropertyNames[Property_Color] )
             {
-                m_nRed   = it->GetInt32(0);
-                m_nGreen = it->GetInt32(1);
-                m_nBlue  = it->GetInt32(2);
-                m_nAlpha = it->GetInt32(3);
+                m_nRed   = property.GetInt32(0);
+                m_nGreen = property.GetInt32(1);
+                m_nBlue  = property.GetInt32(2);
+                m_nAlpha = property.GetInt32(3);
             }
             else if ( sName == sm_kapszPropertyNames[Property_Position] )
             {
-                m_Left = it->GetFloat32(0);
-                m_Top  = it->GetFloat32(1);
+                m_Left = property.GetFloat32(0);
+                m_Top  = property.GetFloat32(1);
             }
             else if ( sName == sm_kapszPropertyNames[Property_Size] )
             {
-                m_Width = it->GetFloat32(0);
-                m_Height = it->GetFloat32(1);
+                m_Width = property.GetFloat32(0);
+                m_Height = property.GetFloat32(1);
             }
             else
             {
@@ -376,7 +376,7 @@ void OGREGraphicsObjectWindow::SetProperties(Properties::Array Properties)
             //
             // Set this property to invalid since it's already been read.
             //
-            it->ClearFlag(Properties::Flags::Valid);
+            property.ClearFlag(Properties::Flags::Valid);
         }
     }
 }

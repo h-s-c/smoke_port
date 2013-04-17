@@ -34,62 +34,62 @@ const Properties::Property OGREGraphicsObjectMesh::sm_kaDefaultProperties[] =
     Properties::Property( sm_kapszPropertyNames[ Property_Mesh ],
                           VALUE1( Properties::Values::String ),
                           Properties::Flags::Valid | Properties::Flags::InitOnly,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           "" ),
     Properties::Property( sm_kapszPropertyNames[ Property_ProceduralMesh ],
                           VALUE1( Properties::Values::Boolean ),
                           Properties::Flags::Valid | Properties::Flags::InitOnly,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           False ),
     Properties::Property( sm_kapszPropertyNames[ Property_Material ],
                           VALUE1( Properties::Values::String ),
                           Properties::Flags::Valid | Properties::Flags::WriteOnly,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           "" ),
     Properties::Property( sm_kapszPropertyNames[ Property_CastShadows ],
                           VALUE1( Properties::Values::Int32 ),
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           0 ),
     Properties::Property( sm_kapszPropertyNames[ Property_DrawBoundingBox ],
                           Properties::Values::Boolean,
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           0 ),
     Properties::Property( sm_kapszPropertyNames[ Property_ShowNormals ],
                           Properties::Values::Boolean,
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           0 ),
     Properties::Property( sm_kapszPropertyNames[ Property_ShowTangents ],
                           Properties::Values::Boolean,
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           0 ),
     Properties::Property( sm_kapszPropertyNames[ Property_StaticGeom ],
                           Properties::Values::String,
                           Properties::Flags::Valid  | Properties::Flags::InitOnly,
-                          "Group", NULL, NULL, NULL,
+                          "Group", nullptr, nullptr, nullptr,
                           "" ),
     Properties::Property( sm_kapszPropertyNames[ Property_Instance ],
                           Properties::Values::String,
                           Properties::Flags::Valid,
-                          "Group", NULL, NULL, NULL,
+                          "Group", nullptr, nullptr, nullptr,
                           "" ),
     Properties::Property( sm_kapszPropertyNames[ Property_Position ],
                           Properties::Values::Vector3,
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           Base::Vector3::Zero ),
     Properties::Property( sm_kapszPropertyNames[ Property_Orientation ],
                           Properties::Values::Quaternion,
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           Base::Quaternion::Zero ),
     Properties::Property( sm_kapszPropertyNames[ Property_Scale ],
                           Properties::Values::Vector3,
                           Properties::Flags::Valid,
-                          NULL, NULL, NULL, NULL,
+                          nullptr, nullptr, nullptr, nullptr,
                           Base::Vector3::Zero ),
 };
 
@@ -236,8 +236,8 @@ OGREGraphicsObjectMesh::OGREGraphicsObjectMesh(
     , m_Position( Base::Vector3::Zero )
     , m_Orientation( Base::Quaternion::Zero )
     , m_Scale( Base::Vector3::One )
-    , m_pEntity( NULL )
-    , m_pCaption( NULL )
+    , m_pEntity( nullptr )
+    , m_pCaption( nullptr )
     , m_strStaticGrpName ( "" )
     , m_Dirty( True )    // Force Instanced Geom update initially
     , isProcedural( false )
@@ -253,7 +253,7 @@ OGREGraphicsObjectMesh::~OGREGraphicsObjectMesh(
     void
     )
 {
-    if ( m_pEntity != NULL )
+    if ( m_pEntity != nullptr )
     {
         m_pNode->detachObject( m_pEntity );
         POGRESCENEMGR->destroyEntity( m_pEntity );
@@ -297,18 +297,18 @@ OGREGraphicsObjectMesh::Initialize(
     //
     // Read in the initialization only properties.
     //
-    pcstr pszMeshName = NULL;
+    pcstr pszMeshName = nullptr;
 
-    for ( Properties::Iterator it=Properties.begin(); it != Properties.end(); it++ )
+    for (auto & property : Properties)
     {
-        if ( it->GetFlags() & Properties::Flags::Valid &&
-             it->GetFlags() & Properties::Flags::InitOnly )
+        if ( property.GetFlags() & Properties::Flags::Valid &&
+             property.GetFlags() & Properties::Flags::InitOnly )
         {
-            std::string sName = it->GetName();
+            std::string sName = property.GetName();
 
             if ( sName == sm_kapszPropertyNames[ Property_Mesh ] )
             {
-                pszMeshName = it->GetStringPtr( 0 );
+                pszMeshName = property.GetStringPtr( 0 );
 
                 PostChanges( System::Changes::Graphics::AllMesh |
                     System::Changes::Custom);
@@ -319,7 +319,7 @@ OGREGraphicsObjectMesh::Initialize(
             }
             else if ( sName == sm_kapszPropertyNames[ Property_StaticGeom ] )
             {
-                m_strStaticGrpName = it->GetString( 0 );
+                m_strStaticGrpName = property.GetString( 0 );
             }
             else
             {
@@ -328,13 +328,13 @@ OGREGraphicsObjectMesh::Initialize(
             //
             // Set this property to invalid since it's already been read.
             //
-            it->ClearFlag( Properties::Flags::Valid );
+            property.ClearFlag( Properties::Flags::Valid );
         }
     }
 
     ASSERT( pszMeshName != NULL  ||  isProcedural );
 
-    if ( pszMeshName != NULL )
+    if ( pszMeshName != nullptr )
     {
         //
         // Use the UObject's name for this entity.
@@ -345,7 +345,7 @@ OGREGraphicsObjectMesh::Initialize(
         m_pNode->attachObject( m_pEntity );
     }
 
-    if ( m_pEntity != NULL  ||  isProcedural )
+    if ( m_pEntity != nullptr  ||  isProcedural )
     {
         //
         // Set this set as initialized.
@@ -379,9 +379,9 @@ OGREGraphicsObjectMesh::GetProperties(
     //
     Properties.reserve( Properties.size() + Property_Count );
 
-    for ( i32 i=0; i < Property_Count; i++ )
+    for (auto & sm_kaDefaultPropertie : sm_kaDefaultProperties)
     {
-        Properties.push_back( sm_kaDefaultProperties[ i ] );
+        Properties.push_back( sm_kaDefaultPropertie );
     }
 
     //
@@ -391,7 +391,7 @@ OGREGraphicsObjectMesh::GetProperties(
     Properties[ iProperty+Property_Orientation ].SetValue( m_Orientation );
     Properties[ iProperty+Property_Scale ].SetValue( m_Scale );
 
-    if ( m_pEntity != NULL )
+    if ( m_pEntity != nullptr )
     {
         Properties[ iProperty+Property_Mesh ].SetValue( 0, m_pEntity->getMesh()->getName() );
 
@@ -420,21 +420,21 @@ OGREGraphicsObjectMesh::SetProperties(
     //
     // Read in the properties.
     //
-    for ( Properties::Iterator it=Properties.begin(); it != Properties.end(); it++ )
+    for (auto & property : Properties)
     {
-        if ( it->GetFlags() & Properties::Flags::Valid )
+        if ( property.GetFlags() & Properties::Flags::Valid )
         {
-            std::string sName = it->GetName();
+            std::string sName = property.GetName();
 
             if ( sName == sm_kapszPropertyNames[ Property_Material ] )
             {
-                if ( m_pEntity != NULL )
+                if ( m_pEntity != nullptr )
                 {
-                    m_pEntity->setMaterialName( it->GetStringPtr( 0 ) );
+                    m_pEntity->setMaterialName( property.GetStringPtr( 0 ) );
                 }
                 else if ( isProcedural )
                 {
-                    sMaterialName = it->GetStringPtr( 0 );
+                    sMaterialName = property.GetStringPtr( 0 );
                 }
                 else
                 {
@@ -443,13 +443,13 @@ OGREGraphicsObjectMesh::SetProperties(
             }
             else if ( sName == sm_kapszPropertyNames[ Property_CastShadows ] )
             {
-                if ( m_pEntity != NULL )
+                if ( m_pEntity != nullptr )
                 {
-                    m_pEntity->setCastShadows( it->GetBool( 0 ) != False );
+                    m_pEntity->setCastShadows( property.GetBool( 0 ) != False );
                 }
                 else if ( isProcedural )
                 {
-                    bCastShadows = it->GetBool( 0 ) != False;
+                    bCastShadows = property.GetBool( 0 ) != False;
                 }
                 else
                 {
@@ -458,15 +458,15 @@ OGREGraphicsObjectMesh::SetProperties(
             }
             else if ( sName == sm_kapszPropertyNames[ Property_Position ] )
             {
-                m_Position = it->GetVector3();
+                m_Position = property.GetVector3();
             }
             else if ( sName == sm_kapszPropertyNames[ Property_Orientation ] )
             {
-                m_Orientation = it->GetQuaternion();
+                m_Orientation = property.GetQuaternion();
             }
             else if ( sName == sm_kapszPropertyNames[ Property_Scale ] )
             {
-                m_Scale = it->GetVector3();
+                m_Scale = property.GetVector3();
             }
             else
             {
@@ -476,7 +476,7 @@ OGREGraphicsObjectMesh::SetProperties(
             //
             // Set this property to invalid since it's already been read.
             //
-            it->ClearFlag( Properties::Flags::Valid );
+            property.ClearFlag( Properties::Flags::Valid );
         }
     }
 }
@@ -542,7 +542,7 @@ OGREGraphicsObjectMesh::ChangeOccurred(
         {
             u32 IndexDecl = pGfxObj->GetIndexDeclaration();
             u32 VertexDeclCount = pGfxObj->GetVertexDeclarationCount();
-            VertexDecl::Element* pVertexDecl = new VertexDecl::Element[ VertexDeclCount ];
+            auto  pVertexDecl = new VertexDecl::Element[ VertexDeclCount ];
             ASSERT( pVertexDecl != NULL );
             pGfxObj->GetVertexDeclaration( pVertexDecl );
 
@@ -672,7 +672,7 @@ OGREGraphicsObjectMesh::ChangeOccurred(
             m_pEntity = POGRESCENEMGR->createEntity( m_pszName, szMeshName ); //Lock it, see THREAD SAFETY NOTE above
             ASSERT( m_pEntity != NULL );
 
-            if ( m_pEntity != NULL )
+            if ( m_pEntity != nullptr )
             {
                 m_pEntity->setMaterialName( sMaterialName );
                 m_pEntity->setCastShadows( bCastShadows );
@@ -885,7 +885,7 @@ OGREGraphicsObjectMesh::GetVertexDeclarationCount(
     Ogre::SubMesh* pSubMesh = m_pEntity->getMesh()->getSubMesh( nSubMeshIndex );
     ASSERT( pSubMesh != NULL );
 
-    Ogre::VertexDeclaration* pOgreVertexDecl = NULL;  
+    Ogre::VertexDeclaration* pOgreVertexDecl = nullptr;  
     if(pSubMesh->useSharedVertices)
     {
         pOgreVertexDecl = m_pEntity->getMesh()->sharedVertexData->vertexDeclaration;
@@ -913,7 +913,7 @@ OGREGraphicsObjectMesh::GetVertexDeclaration(
     Ogre::SubMesh* pSubMesh = m_pEntity->getMesh()->getSubMesh( nSubMeshIndex );
     ASSERT( pSubMesh != NULL );
 
-    Ogre::VertexDeclaration* pOgreVertexDecl = NULL;  
+    Ogre::VertexDeclaration* pOgreVertexDecl = nullptr;  
     if(pSubMesh->useSharedVertices)
     {
         pOgreVertexDecl = m_pEntity->getMesh()->sharedVertexData->vertexDeclaration;
@@ -1012,12 +1012,12 @@ OGREGraphicsObjectMesh::GetVertices(
 
     u8* pVertices = ( u8* ) pOutVertices;
     u32 nReqVertDeclCount = nOutVertDeclCount;
-    VertexDecl::Element* pReqVertDecl = NULL;
+    VertexDecl::Element* pReqVertDecl = nullptr;
 
     Ogre::SubMesh* pSubMesh = m_pEntity->getMesh()->getSubMesh( nSubMeshIndex );
     ASSERT( pSubMesh != NULL );
 
-    Ogre::VertexData* pVertData = NULL;
+    Ogre::VertexData* pVertData = nullptr;
     if(pSubMesh->useSharedVertices)
     {
         pVertData = m_pEntity->getMesh()->sharedVertexData;
@@ -1030,9 +1030,9 @@ OGREGraphicsObjectMesh::GetVertices(
     u32 NumBuffers = (u32) pVertData->vertexBufferBinding->getBufferCount();
     ASSERT( 0 != NumBuffers );
 
-    Ogre::HardwareVertexBufferSharedPtr *pHVB = new Ogre::HardwareVertexBufferSharedPtr[ NumBuffers ];
+    auto pHVB = new Ogre::HardwareVertexBufferSharedPtr[ NumBuffers ];
     ASSERT( pHVB != NULL );
-    u8** pVB = new u8*[ NumBuffers ];
+    auto  pVB = new u8*[ NumBuffers ];
     ASSERT( pVB != NULL );
 
     for( u32 i = 0; i < NumBuffers; i++ )
@@ -1148,14 +1148,14 @@ OGREGraphicsObjectMesh::BuildNormalsTemplate(
     Ogre::HardwareVertexBufferSharedPtr vbuf;
 
 
-    IdxType* pIndices = new IdxType [ m_pEntity->getSubEntity(nSubMesh)->getSubMesh()->indexData->indexCount ];
+    auto  pIndices = new IdxType [ m_pEntity->getSubEntity(nSubMesh)->getSubMesh()->indexData->indexCount ];
     void* pIB = ibuf->lock( 0, 0, Ogre::HardwareBuffer::HBL_READ_ONLY );
     ::memcpy_s( (void *)pIndices, ibuf->getSizeInBytes(), pIB, ibuf->getSizeInBytes() );
     ibuf->unlock();
    
 
     u32 VertexDeclCount = GetVertexDeclarationCount( nSubMesh );
-    VertexDecl::Element* pVertexDecl = new VertexDecl::Element[ VertexDeclCount ];
+    auto  pVertexDecl = new VertexDecl::Element[ VertexDeclCount ];
     GetVertexDeclaration( pVertexDecl, nSubMesh );
     
     //
@@ -1180,7 +1180,7 @@ OGREGraphicsObjectMesh::BuildNormalsTemplate(
 
     u32 VertPosSize = VertexDecl::CalculateSize( pVertexDecl, VertexDeclCount, uPosStream );
     u32 VertexCount = GetVertexCount( nSubMesh );
-    u8* pVertsPos = new u8[ VertexCount * VertPosSize ];
+    auto  pVertsPos = new u8[ VertexCount * VertPosSize ];
 
     void* pVB = vbuf->lock( Ogre::HardwareBuffer::LockOptions::HBL_READ_ONLY );
     ::memcpy_s( (void *)pVertsPos, vbuf->getSizeInBytes(), pVB, vbuf->getSizeInBytes() );
@@ -1298,7 +1298,7 @@ OGREGraphicsObjectMesh::BuildNormalsTemplate(
 
     if( bNormAvailable )
     {
-        NormalizedLines *pNormals = new NormalizedLines("NormalizedLines_Half_Red");
+        auto pNormals = new NormalizedLines("NormalizedLines_Half_Red");
         pNormals->setCastShadows(false);
 
         for (size_t i=0; i<ibuf->getNumIndexes(); i++) 
@@ -1320,7 +1320,7 @@ OGREGraphicsObjectMesh::BuildNormalsTemplate(
 
     if( bTangAvailable )
     {
-        NormalizedLines *pTangents = new NormalizedLines("NormalizedLines_Half_Green");
+        auto pTangents = new NormalizedLines("NormalizedLines_Half_Green");
         pTangents->setCastShadows(false);
         for (size_t i=0; i<ibuf->getNumIndexes(); i++) 
         {
@@ -1360,7 +1360,7 @@ OGREGraphicsObjectMesh::SetupNormalsAndTangentsDisplay(
     )
 {
     // skip Normals display for objects that got bucketed as Static or InstancedGeom
-    if( m_pEntity == NULL )
+    if( m_pEntity == nullptr )
     {
         return;
     }

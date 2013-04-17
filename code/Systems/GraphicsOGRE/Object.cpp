@@ -20,7 +20,7 @@ pcstr OGREGraphicsObject::sm_kapszTypeNames[] =
 {
     "Light", "LightFire", "Camera", "Mesh", "MeshAnimated", "PointList", "Window", "StatWindow", "Chart", "CPUChart", "WorkloadWindow", 
     "ParticleSystem", "PagedGeometryLayer",
-    NULL
+    nullptr
 };
 
 
