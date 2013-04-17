@@ -258,12 +258,12 @@ Framework::GetSystem( System::Type Type)
 Handle
 Framework::GetScene( pcstr pszSystemName)
 {
-    Handle hScene = NULL;
+    Handle hScene = nullptr;
 
     // Get the system from the system manager to get the type.
     ISystem* pSystem = SystemManager::getInstance().Get( pszSystemName );
 
-    if ( pSystem != NULL )
+    if ( pSystem != nullptr )
     {
         // Get the scene based on the type.
         hScene = GetScene( pSystem->GetSystemType() );
@@ -276,10 +276,10 @@ Framework::GetScene( pcstr pszSystemName)
 Handle
 Framework::GetScene( System::Type Type)
 {
-    Handle hScene = NULL;
+    Handle hScene = nullptr;
 
     // Find the scene extension in the universal scene.
-    UScene::SystemScenes::const_iterator it = m_pScene->GetSystemScenes().find( Type );
+    auto it = m_pScene->GetSystemScenes().find( Type );
 
     if ( it != m_pScene->GetSystemScenes().end() )
     {
@@ -293,12 +293,12 @@ Framework::GetScene( System::Type Type)
 Handle
 Framework::GetSystemObject( pcstr pszSystemName, pcstr pszName)
 {
-    Handle hObject = NULL;
+    Handle hObject = nullptr;
 
     // Get the system from the system manager to get the type.
     ISystem* pSystem = SystemManager::getInstance().Get( pszSystemName );
 
-    if ( pSystem != NULL )
+    if ( pSystem != nullptr )
     {
         hObject = GetSystemObject( pSystem->GetSystemType(), pszName );
     }
@@ -310,17 +310,17 @@ Framework::GetSystemObject( pcstr pszSystemName, pcstr pszName)
 Handle
 Framework::GetSystemObject( System::Type Type, pcstr pszName)
 {
-    Handle hObject = NULL;
+    Handle hObject = nullptr;
 
     // Find the universal object in the scene.
     UObject* pUObject = m_pScene->FindObject( pszName );
 
-    if ( pUObject != NULL )
+    if ( pUObject != nullptr )
     {
         // Get the system object extension of the universal object using the system type.
         ISystemObject* pObject = pUObject->GetExtension( Type );
 
-        if ( pObject != NULL )
+        if ( pObject != nullptr )
         {
             hObject = pObject;
         }
@@ -336,7 +336,7 @@ Framework::GetSystemProperty( Handle hSystem, InOut Properties::Property& Proper
     std::string sPropertyName = Property.GetName();
 
     // Reinterpret the handle as an ISystem.
-    if ( hSystem == NULL)
+    if ( hSystem == nullptr)
     {
         std::cerr << "hSystem == NULL" << std::endl;
     }
@@ -347,11 +347,11 @@ Framework::GetSystemProperty( Handle hSystem, InOut Properties::Property& Proper
     pSystem->GetProperties( aProperties );
 
     bool bFound = false;
-    for ( Properties::ConstIterator it=aProperties.begin(); it != aProperties.end(); it++ )
+    for (auto & aPropertie : aProperties)
     {
-        if ( sPropertyName == it->GetName() )
+        if ( sPropertyName == aPropertie.GetName() )
         {
-            Property = *it;
+            Property = aPropertie;
             bFound = true;
         }
     }
@@ -369,7 +369,7 @@ Framework::SetSystemProperty(
     )
 {
     // Reinterpret the handle as an ISystem.
-    if ( hSystem == NULL)
+    if ( hSystem == nullptr)
     {
         std::cerr << "hSystem == NULL" << std::endl;
     }
@@ -397,7 +397,7 @@ Framework::GetSceneProperty(
     std::string sPropertyName = Property.GetName();
 
     // Reinterpret the handle as an ISystem.
-    if ( hScene == NULL)
+    if ( hScene == nullptr)
     {
         std::cerr << "hScene == NULL" << std::endl;
     }
@@ -408,11 +408,11 @@ Framework::GetSceneProperty(
     pSystemScene->GetProperties( aProperties );
 
     Bool bFound = False;
-    for ( Properties::ConstIterator it=aProperties.begin(); it != aProperties.end(); it++ )
+    for (auto & aPropertie : aProperties)
     {
-        if ( sPropertyName == it->GetName() )
+        if ( sPropertyName == aPropertie.GetName() )
         {
-            Property = *it;
+            Property = aPropertie;
             bFound = True;
         }
     }
@@ -430,7 +430,7 @@ Framework::SetSceneProperty(
     )
 {
     // Reinterpret the handle as an ISystemScene.
-    if ( hScene == NULL)
+    if ( hScene == nullptr)
     {
         std::cerr << "hScene == NULL" << std::endl;
     }
@@ -460,7 +460,7 @@ Framework::GetObjectProperty(
     std::string sPropertyName = Property.GetName();
 
     // Reinterpret the handle as an ISystemScene.
-    if ( hObject == NULL)
+    if ( hObject == nullptr)
     {
         std::cerr << "hObject == NULL" << std::endl;
     }
@@ -473,11 +473,11 @@ Framework::GetObjectProperty(
     pSystemObject->GetProperties( aProperties );
 
     Bool bFound = False;
-    for ( Properties::ConstIterator it=aProperties.begin(); it != aProperties.end(); it++ )
+    for (auto & aPropertie : aProperties)
     {
-        if ( sPropertyName == it->GetName() )
+        if ( sPropertyName == aPropertie.GetName() )
         {
-            Property = *it;
+            Property = aPropertie;
             bFound = True;
         }
     }
@@ -495,7 +495,7 @@ Framework::SetObjectProperty(
     )
 {
     // Reinterpret the handle as an ISystemObject.
-    if ( hObject == NULL)
+    if ( hObject == nullptr)
     {
         std::cerr << "hObject == NULL" << std::endl;
     }
@@ -528,12 +528,12 @@ Framework::IssuePendingSystemPropertyChanges(
     //
     // Iterate through all the properties to issue.
     //
-    for ( PropertyIssuesIt it=m_PropertyIssues.begin(); it != m_PropertyIssues.end(); it++ )
+    for (auto & pi : m_PropertyIssues)
     {
         //
         // Get the property to issue.
         //
-        const PropertyIssue& pi = *it;
+        
 
         //
         // Check if the schuler will allow issuing the property change.
@@ -592,7 +592,7 @@ Framework::GDFParser::ParseEnvironment( std::string sGDF)
 
     // Find the "environment" element.
     TiXmlElement* pElement = XmlDoc.FirstChildElement();
-    if ( pElement == NULL )
+    if ( pElement == nullptr )
     {
         std::cerr << "Parser could not load the first element in the GDF." << std::endl;
     }
@@ -605,12 +605,12 @@ Framework::GDFParser::ParseEnvironment( std::string sGDF)
 
     pElement = pElement->FirstChildElement();
 
-    while ( pElement != NULL && strcmp( pElement->Value(), "Environment" ) != 0 )
+    while ( pElement != nullptr && strcmp( pElement->Value(), "Environment" ) != 0 )
     {
         pElement = pElement->NextSiblingElement();
     }
 
-    if ( pElement != NULL )
+    if ( pElement != nullptr )
     {
         m_GdfMarker = GDFM_Gdf;
         ParseElement( pElement, False );
@@ -634,7 +634,7 @@ Framework::GDFParser::Parse( std::string sGDF)
 
     // Get each element and attribute.
     TiXmlElement* pElement = XmlDoc.FirstChildElement();
-    if ( pElement == NULL )
+    if ( pElement == nullptr )
     {
         std::cerr << "Parser could not load the first element in the GDF." << std::endl;
     }
@@ -663,7 +663,7 @@ Framework::GDFParser::ParseScene( std::string sGDF, std::string sScene)
 
     // Find the "scenes" element.
     TiXmlElement* pElement = XmlDoc.FirstChildElement();
-    if ( pElement == NULL )
+    if ( pElement == nullptr )
     {
         std::cerr << "Parser could not load the first element in the GDF." << std::endl;
     }
@@ -676,18 +676,18 @@ Framework::GDFParser::ParseScene( std::string sGDF, std::string sScene)
 
     pElement = pElement->FirstChildElement();
 
-    while ( pElement != NULL && strcmp( pElement->Value(), "Scenes" ) != 0 )
+    while ( pElement != nullptr && strcmp( pElement->Value(), "Scenes" ) != 0 )
     {
         pElement = pElement->NextSiblingElement();
     }
 
-    if ( pElement != NULL )
+    if ( pElement != nullptr )
     {
         m_FirstObjectsMarker = True;
 
         // Find the selected scene.
         pElement = pElement->FirstChildElement();
-        if ( pElement == NULL )
+        if ( pElement == nullptr )
         {
             std::cerr << "Parser could not load the first element in the GDF." << std::endl;
         }
@@ -699,11 +699,11 @@ Framework::GDFParser::ParseScene( std::string sGDF, std::string sScene)
                         << std::endl;
         }
 
-        while ( pElement != NULL )
+        while ( pElement != nullptr )
         {
             pcstr pszName = pElement->Attribute( "Name" );
 
-            if ( pszName != NULL && sScene == pszName )
+            if ( pszName != nullptr && sScene == pszName )
             {
                 m_GdfMarker = GDFM_Scenes;
                 m_SceneLevel = 0;
@@ -732,7 +732,7 @@ Framework::GDFParser::ParseElement( void* pElement, Bool bAllowProcessSiblings)
     // Get the element's attributes and parse them.
     TiXmlAttribute* pXmlAttrib = pXmlElement->FirstAttribute();
 
-    if ( pXmlAttrib != NULL )
+    if ( pXmlAttrib != nullptr )
     {
         ReadAttributes( pXmlElement, pXmlElement->FirstAttribute() );
     }
@@ -742,7 +742,7 @@ Framework::GDFParser::ParseElement( void* pElement, Bool bAllowProcessSiblings)
         // Get the element's first child and parse it.
         TiXmlElement* pXmlChildElement = pXmlElement->FirstChildElement();
 
-        if ( pXmlChildElement != NULL )
+        if ( pXmlChildElement != nullptr )
         {
             ParseElement( pXmlChildElement );
         }
@@ -756,7 +756,7 @@ Framework::GDFParser::ParseElement( void* pElement, Bool bAllowProcessSiblings)
         // Get the next element and parse it.
         TiXmlElement* pXmlNextElement = pXmlElement->NextSiblingElement();
 
-        if ( pXmlNextElement != NULL )
+        if ( pXmlNextElement != nullptr )
         {
             ParseElement( pXmlNextElement );
         }
@@ -836,9 +836,9 @@ Framework::GDFParser::BeginElement( void* pElement)
         if ( m_SystemLevel == 0 )
         {
             m_pszSystemType = "";
-            m_pSystem = NULL;
+            m_pSystem = nullptr;
         }
-        if (m_pSystem != NULL)
+        if (m_pSystem != nullptr)
         {
             std::cerr << "Parser identified an error with using the CDF." << std::endl;
         }
@@ -878,7 +878,7 @@ Framework::GDFParser::BeginElement( void* pElement)
             //
             ISystem* pSystem = SystemManager::getInstance().GetFirst();
 
-            while ( pSystem != NULL )
+            while ( pSystem != nullptr )
             {
                 m_pScene->Extend( pSystem );
 
@@ -915,9 +915,9 @@ Framework::GDFParser::BeginElement( void* pElement)
             m_FirstObjectsMarker = False;
 
             const UScene::SystemScenes Scenes = m_pScene->GetSystemScenes();
-            for ( UScene::SystemScenesConstIt it=Scenes.begin(); it != Scenes.end(); it++ )
+            for (auto & Scene : Scenes)
             {
-                it->second->GlobalSceneStatusChanged(
+                Scene.second->GlobalSceneStatusChanged(
                     ISystemScene::GlobalSceneStatus::PreLoadingObjects
                     );
             }
@@ -936,18 +936,18 @@ Framework::GDFParser::BeginElement( void* pElement)
         {
             if ( m_ObjectLevel == 0 )
             {
-                m_pszObjectName = NULL;
+                m_pszObjectName = nullptr;
 
                 //
                 // Create the object and add the required geometry extension.
                 //
                 m_pUObject = m_pScene->CreateObject();
-                if (m_pUObject == NULL)
+                if (m_pUObject == nullptr)
                 {
                     std::cerr << "m_pUObject == NULL" << std::endl;
                 }
 
-                UScene::SystemScenesConstIt it = m_pScene->GetSystemScenes().find( System::Types::Geometry );
+                auto it = m_pScene->GetSystemScenes().find( System::Types::Geometry );
                     
                 if (it == m_pScene->GetSystemScenes().end())
                 {
@@ -955,12 +955,12 @@ Framework::GDFParser::BeginElement( void* pElement)
                 }
 
                 ISystemScene* pGeometryScene = it->second;
-                if (pGeometryScene == NULL)
+                if (pGeometryScene == nullptr)
                 {
                     std::cerr << "pGeometryScene == NULL" << std::endl;
                 }
 
-                m_pUObject->Extend( pGeometryScene, NULL );
+                m_pUObject->Extend( pGeometryScene, nullptr );
 
                 //
                 // Ready the propeties map for setting the properties.
@@ -986,7 +986,7 @@ Framework::GDFParser::BeginElement( void* pElement)
         {
             if ( m_GdfMarker == GDFM_System )
             {
-                if (m_pSystem == NULL)
+                if (m_pSystem == nullptr)
                 {
                     std::cerr << "Parser could not find an instantiated system." << std::endl;
                 }
@@ -997,7 +997,7 @@ Framework::GDFParser::BeginElement( void* pElement)
             }
             else if ( m_GdfMarker == GDFM_Scene )
             {
-                if (m_pSystem == NULL)
+                if (m_pSystem == nullptr)
                 {
                     std::cerr << "Parser could not find an instantiated system." << std::endl;
                 }
@@ -1008,8 +1008,8 @@ Framework::GDFParser::BeginElement( void* pElement)
             }
             else if ( m_GdfMarker == GDFM_Object )
             {
-                m_pszObjectType = NULL;
-                m_pSystemObject = NULL;
+                m_pszObjectType = nullptr;
+                m_pSystemObject = nullptr;
 
                 m_GdfMarker = GDFM_ObjectProperties;
             }
@@ -1228,20 +1228,17 @@ Framework::GDFParser::EndElement(
                 //
                 // Initialize all the objects at once.
                 //
-                for ( std::map< UObject*,std::map<u32,Properties::Array> >::iterator
-                       itAll=m_AllObjectProperties.begin();
-                      itAll != m_AllObjectProperties.end(); itAll++ )
+                for (auto & elem : m_AllObjectProperties)
                 {
-                    UObject* pUObject = itAll->first;
+                    UObject* pUObject = elem.first;
 
-                    for ( std::map<u32,Properties::Array>::iterator it = itAll->second.begin();
-                          it != itAll->second.end(); it++ )
+                    for (auto & _it : elem.second)
                     {
                         //
                         // Get the extension.
                         //
-                        ISystemObject* pObject = pUObject->GetExtension( it->first );
-                        if ( pObject == NULL)
+                        ISystemObject* pObject = pUObject->GetExtension( _it.first );
+                        if ( pObject == nullptr)
                         {
                             std::cerr << "pObject == NULL" << std::endl;
                         }
@@ -1249,23 +1246,23 @@ Framework::GDFParser::EndElement(
                         //
                         // Initialize the extension.
                         //
-                        if ( pObject != NULL )
+                        if ( pObject != nullptr )
                         {
-                            pObject->Initialize( it->second );
+                            pObject->Initialize( _it.second );
                         }
 
                         //
                         // Remove all the properties.
                         //
-                        it->second.clear();
+                        _it.second.clear();
                     }
                 }
                 m_AllObjectProperties.clear();
 
                 const UScene::SystemScenes Scenes = m_pScene->GetSystemScenes();
-                for ( UScene::SystemScenesConstIt it=Scenes.begin(); it != Scenes.end(); it++ )
+                for (auto & Scene : Scenes)
                 {
-                    it->second->GlobalSceneStatusChanged(
+                    Scene.second->GlobalSceneStatusChanged(
                         ISystemScene::GlobalSceneStatus::PostLoadingObjects
                         );
                 }
@@ -1316,7 +1313,7 @@ Framework::GDFParser::EndElement(
         {
             if ( m_ObjectLevel == 0 )
             {
-                if ( m_pUObject == NULL)
+                if ( m_pUObject == nullptr)
                 {
                     std::cerr << "A UObject should have already been created by this point." << std::endl;
                 }
@@ -1330,7 +1327,7 @@ Framework::GDFParser::EndElement(
                 //
                 // We're done manipulating this object.
                 //
-                m_pUObject = NULL;
+                m_pUObject = nullptr;
             }
 
             m_GdfMarker = GDFM_Objects;
@@ -1363,7 +1360,7 @@ Framework::GDFParser::EndElement(
                 }
                 else
                 {
-                    if ( m_pSystemScene == NULL)
+                    if ( m_pSystemScene == nullptr)
                     {
                         std::cerr << "m_pSystemScene == NULL" << std::endl;
                     }
@@ -1379,7 +1376,7 @@ Framework::GDFParser::EndElement(
             }
             else if ( m_GdfMarker == GDFM_ObjectProperties )
             {
-                if ( m_pSystemObject == NULL)
+                if ( m_pSystemObject == nullptr)
                 {
                     std::cerr << "m_pSystemObject == NULL" << std::endl;
                 }
@@ -1482,7 +1479,7 @@ Framework::GDFParser::ReadAttributes(
 
     if ( m_GdfMarker == GDFM_System )
     {
-        while ( pXmlAttrib != NULL )
+        while ( pXmlAttrib != nullptr )
         {
             pcstr pszName = pXmlAttrib->Name();
 
@@ -1507,7 +1504,7 @@ Framework::GDFParser::ReadAttributes(
                 //
                 SystemManager::getInstance().LoadSystemLibrary(std::string(pXmlAttrib->Value()), m_sOldpath, &m_pSystem);
                     
-                if (m_pSystem == NULL)
+                if (m_pSystem == nullptr)
                 {
                     std::cerr << "Parser could not load the system " <<  pXmlAttrib->Value()
                                 << ". (" << pXmlElement->GetDocument()->Value() << " ,row "  
@@ -1531,7 +1528,7 @@ Framework::GDFParser::ReadAttributes(
             }
             else if ( strcmp( pszName, "SDF" ) == 0 )
             {
-                if ( m_pSystem != NULL )
+                if ( m_pSystem != nullptr )
                 {
                     std::cerr << "m_pSystem != NULL"<< std::endl;
                 }
@@ -1571,16 +1568,16 @@ Framework::GDFParser::ReadAttributes(
     }
     else if ( m_GdfMarker == GDFM_EnvVar )
     {
-        pcstr pszVariableName = NULL;
-        pcstr pszVariableValue = NULL;
+        pcstr pszVariableName = nullptr;
+        pcstr pszVariableValue = nullptr;
 
-        while ( pXmlAttrib != NULL )
+        while ( pXmlAttrib != nullptr )
         {
             pcstr pszName = pXmlAttrib->Name();
 
             if ( strcmp( pszName, "Name" ) == 0 )
             {
-                if ( pszVariableName != NULL)
+                if ( pszVariableName != nullptr)
                 {
                     std::cerr << "Duplicate attribute found '" << pszName << "'."
                                 << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
@@ -1592,7 +1589,7 @@ Framework::GDFParser::ReadAttributes(
             }
             else if ( strcmp( pszName, "Value" ) == 0 )
             {
-                if ( pszVariableValue != NULL)
+                if ( pszVariableValue != nullptr)
                 {
                     std::cerr << "Duplicate attribute found '" << pszName << "'."
                                 << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
@@ -1612,7 +1609,7 @@ Framework::GDFParser::ReadAttributes(
 
             pXmlAttrib = pXmlAttrib->Next();
         }
-        if ( pszVariableName == NULL || pszVariableValue == NULL)
+        if ( pszVariableName == nullptr || pszVariableValue == nullptr)
         {
             std::cerr << "pszVariableName == NULL || pszVariableValue == NULL" << std::endl;
         }
@@ -1635,7 +1632,7 @@ Framework::GDFParser::ReadAttributes(
     }
     else if ( m_GdfMarker == GDFM_Scenes )
     {
-        while ( pXmlAttrib != NULL )
+        while ( pXmlAttrib != nullptr )
         {
             pcstr pszName = pXmlAttrib->Name();
 
@@ -1656,7 +1653,7 @@ Framework::GDFParser::ReadAttributes(
     }
     else if ( m_GdfMarker == GDFM_Scene )
     {
-        while ( pXmlAttrib != NULL )
+        while ( pXmlAttrib != nullptr )
         {
             pcstr pszName = pXmlAttrib->Name();
             pcstr pszValue = pXmlAttrib->Value();
@@ -1749,7 +1746,7 @@ Framework::GDFParser::ReadAttributes(
     }
     else if ( m_GdfMarker == GDFM_SceneProperties )
     {
-        while ( pXmlAttrib != NULL )
+        while ( pXmlAttrib != nullptr )
         {
             pcstr pszName = pXmlAttrib->Name();
             pcstr pszValue = pXmlAttrib->Value();
@@ -1757,7 +1754,7 @@ Framework::GDFParser::ReadAttributes(
             if ( strcmp( pszName, "SystemType" ) == 0 )
             {
                 m_pSystem = SystemManager::getInstance().Get( pszValue );
-                if ( m_pSystem == NULL)
+                if ( m_pSystem == nullptr)
                 {
                     std::cerr << "Parser was unable to get system " << pszValue
                                 << ". (" << pXmlElement->GetDocument()->Value() << ", Row " 
@@ -1769,7 +1766,7 @@ Framework::GDFParser::ReadAttributes(
                     m_GetProperties.clear();
                     m_SetProperties.clear();
 
-                    UScene::SystemScenesConstIt it = m_pScene->GetSystemScenes().find( m_pSystem->GetSystemType() );
+                    auto it = m_pScene->GetSystemScenes().find( m_pSystem->GetSystemType() );
                     if ( it == m_pScene->GetSystemScenes().end())
                     {
                         std::cerr << "Parser was unable to find a scene for system " << pszValue
@@ -1779,7 +1776,7 @@ Framework::GDFParser::ReadAttributes(
                     }
                     
                     m_pSystemScene = it->second;
-                    if ( m_pSystemScene == NULL)
+                    if ( m_pSystemScene == nullptr)
                     {
                         std::cerr << "m_pSystemScene == NULL" << std::endl;
                     }
@@ -1815,7 +1812,7 @@ Framework::GDFParser::ReadAttributes(
     }
     else if ( m_GdfMarker == GDFM_Object )
     {
-        if ( m_pUObject == NULL)
+        if ( m_pUObject == nullptr)
         {
             std::cerr << "Parser does not have a UObject to work with."
                         << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
@@ -1823,7 +1820,7 @@ Framework::GDFParser::ReadAttributes(
                         << std::endl;
         } 
 
-        while ( pXmlAttrib != NULL )
+        while ( pXmlAttrib != nullptr )
         {
             pcstr pszName = pXmlAttrib->Name();
             pcstr pszValue = pXmlAttrib->Value();
@@ -1834,7 +1831,7 @@ Framework::GDFParser::ReadAttributes(
                 {
                     m_pszObjectName = pszValue;
 
-                    if ( m_pszObjectName != NULL )
+                    if ( m_pszObjectName != nullptr )
                     {
                         m_pUObject->SetName( m_pszObjectName );
                     }
@@ -1882,7 +1879,7 @@ Framework::GDFParser::ReadAttributes(
     }
     else if ( m_GdfMarker == GDFM_ObjectProperties )
     {
-        if ( m_pUObject == NULL)
+        if ( m_pUObject == nullptr)
         {
             std::cerr << "Parser does not have a UObject to work with."
                         << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
@@ -1896,7 +1893,7 @@ Framework::GDFParser::ReadAttributes(
         m_GetProperties.clear();
         m_SetProperties.clear();
 
-        while ( pXmlAttrib != NULL )
+        while ( pXmlAttrib != nullptr )
         {
             pcstr pszName = pXmlAttrib->Name();
             pcstr pszValue = pXmlAttrib->Value();
@@ -1904,7 +1901,7 @@ Framework::GDFParser::ReadAttributes(
             if ( strcmp( pszName, "SystemType" ) == 0 )
             {
                 m_pSystem = SystemManager::getInstance().Get( pszValue );
-                if ( m_pSystem == NULL)
+                if ( m_pSystem == nullptr)
                 {
                     std::cerr << "Parser was unable to get system " << pszValue
                                 << ". (" << pXmlElement->GetDocument()->Value() << ", Row " 
@@ -1915,7 +1912,7 @@ Framework::GDFParser::ReadAttributes(
                 {
                     m_pSystemObject = m_pUObject->GetExtension( m_pSystem->GetSystemType() );
 
-                    if ( m_pSystemObject != NULL )
+                    if ( m_pSystemObject != nullptr )
                     {
                         m_pSystemObject->GetProperties( m_GetProperties );
                     }
@@ -1939,12 +1936,11 @@ Framework::GDFParser::ReadAttributes(
         //
         // Create the object if there isn't one yet.
         //
-        if ( m_pSystemObject == NULL )
+        if ( m_pSystemObject == nullptr )
         {
-            if ( m_pSystem != NULL )
+            if ( m_pSystem != nullptr )
             {
-                UScene::SystemScenesConstIt it =
-                    m_pScene->GetSystemScenes().find( m_pSystem->GetSystemType() );
+                auto it = m_pScene->GetSystemScenes().find( m_pSystem->GetSystemType() );
                 if ( it == m_pScene->GetSystemScenes().end())
                 {
                     std::cerr << "Parser was unable to find a scene for this system."
@@ -1955,7 +1951,7 @@ Framework::GDFParser::ReadAttributes(
                 else
                 {
                     m_pSystemObject = m_pUObject->Extend( it->second, m_pszObjectType );
-                    if ( m_pSystemObject == NULL )
+                    if ( m_pSystemObject == nullptr )
                     {
                         std::cerr << "m_pSystemObject == NULL" << std::endl;
                     }
@@ -2011,12 +2007,12 @@ Framework::GDFParser::ReadAttributes(
     }
     else if ( m_GdfMarker == GDFM_Link )
     {
-        UObject* pSubject = NULL;
-        UObject* pObserver = NULL;
+        UObject* pSubject = nullptr;
+        UObject* pObserver = nullptr;
         std::string sSystemSubject;
         std::string sSystemObserver;
 
-        while ( pXmlAttrib != NULL )
+        while ( pXmlAttrib != nullptr )
         {
             pcstr pszName = pXmlAttrib->Name();
             pcstr pszValue = pXmlAttrib->Value();
@@ -2040,14 +2036,14 @@ Framework::GDFParser::ReadAttributes(
 
             pXmlAttrib = pXmlAttrib->Next();
         }
-        if ( pSubject == NULL)
+        if ( pSubject == nullptr)
         {
             std::cerr << "Parser did not find the UObject subject."
                         << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
                         << pXmlElement->Row() << ", Column " << pXmlElement->Column() << ")" 
                         << std::endl;
         }
-        else if ( pObserver == NULL)
+        else if ( pObserver == nullptr)
         {
             std::cerr << "Parser did not find the UObject observer."
                         << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
@@ -2070,8 +2066,8 @@ Framework::GDFParser::ReadAttributes(
         }
         else 
         {
-            ISystemObject* pSystemSubject = NULL;
-            ISystemObject* pSystemObserver = NULL;
+            ISystemObject* pSystemSubject = nullptr;
+            ISystemObject* pSystemObserver = nullptr;
 
             ISystem* pSystem;
 
@@ -2081,7 +2077,7 @@ Framework::GDFParser::ReadAttributes(
             if ( !sSystemSubject.empty() )
             {
                 pSystem = SystemManager::getInstance().Get( sSystemSubject.c_str() );
-                if ( pSystem == NULL )
+                if ( pSystem == nullptr )
                 {
                     std::cerr << "Parser identified system " << sSystemSubject.c_str() << " as not loaded."
                                 << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
@@ -2091,7 +2087,7 @@ Framework::GDFParser::ReadAttributes(
                 else
                 {
                     pSystemSubject = pSubject->GetExtension( pSystem->GetSystemType() );
-                    if ( pSystemSubject == NULL )
+                    if ( pSystemSubject == nullptr )
                     {
                         std::cerr << "Parser identifed subject system as not extending subject object."
                                     << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
@@ -2105,7 +2101,7 @@ Framework::GDFParser::ReadAttributes(
             // Get the extension for the object.
             //
             pSystem = SystemManager::getInstance().Get( sSystemObserver.c_str() );
-            if ( pSystem == NULL )
+            if ( pSystem == nullptr )
             {
                 std::cerr << "Parser identified system " << sSystemObserver.c_str() << " as not loaded."
                             << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
@@ -2115,7 +2111,7 @@ Framework::GDFParser::ReadAttributes(
             else
             {
                 pSystemObserver = pObserver->GetExtension( pSystem->GetSystemType() );
-                if ( pSystemObserver == NULL )
+                if ( pSystemObserver == nullptr )
                 {
                     std::cerr << "Parser identifed observer system as not extending observer object."
                                 << " (" << pXmlElement->GetDocument()->Value() << ", Row " 
@@ -2127,7 +2123,7 @@ Framework::GDFParser::ReadAttributes(
                     //
                     // Call the scene to register the links.
                     //
-                    if ( pSystemSubject != NULL )
+                    if ( pSystemSubject != nullptr )
                     {
                         m_pScene->CreateObjectLink( pSystemSubject, pSystemObserver );
                     }
@@ -2141,7 +2137,7 @@ Framework::GDFParser::ReadAttributes(
     }
     else if ( m_GdfMarker == GDFM_Include )
     {
-        while ( pXmlAttrib != NULL )
+        while ( pXmlAttrib != nullptr )
         {
             pcstr pszName = pXmlAttrib->Name();
             pcstr pszValue = pXmlAttrib->Value();
@@ -2210,7 +2206,7 @@ Framework::GDFParser::ReadPropertyAttributes(
     Properties::ConstIterator GetPropIt = GetProperties.end();
     size_t iProp = 0xFFFFFFFF;
 
-    while ( pXmlAttrib != NULL )
+    while ( pXmlAttrib != nullptr )
     {
         pcstr pszName = pXmlAttrib->Name();
 
@@ -2295,7 +2291,7 @@ Framework::GDFParser::ReadPropertyAttributes(
                     {
                         pcstr pszEnumOption = pXmlAttrib->Value();
 
-                        for ( i32 i=0; GetPropIt->GetEnumOption( i ) != NULL; i++ )
+                        for ( i32 i=0; GetPropIt->GetEnumOption( i ) != nullptr; i++ )
                         {
                             if ( strcmp( pszEnumOption, GetPropIt->GetEnumOption( i ) ) == 0 )
                             {

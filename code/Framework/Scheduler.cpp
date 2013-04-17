@@ -58,13 +58,12 @@ Scheduler::SetScene(
     // Copy over all the system scenes.
     const UScene::SystemScenes& SystemScenes = pScene->GetSystemScenes();
 
-    for ( UScene::SystemScenesConstIt it = SystemScenes.begin();
-          it != SystemScenes.end(); it++ )
+    for (auto & SystemScene : SystemScenes)
     {
         // Make sure the system has a task.
-        if ( it->second->GetSystemTask() != nullptr )
+        if ( SystemScene.second->GetSystemTask() != nullptr )
         {
-            m_SceneExecs[ it->first ] = it->second;
+            m_SceneExecs[ SystemScene.first ] = SystemScene.second;
         }
     }
     

@@ -36,7 +36,7 @@ ServiceManager::SystemAccess(
     void
     )
 {
-    if ( m_pSystemAccess == NULL )
+    if ( m_pSystemAccess == nullptr )
     {
         std::cerr << "m_pSystemAccess == NULL" << std::endl;
     }
@@ -49,7 +49,7 @@ ServiceManager::RegisterSystemAccessProvider(
     ISystemAccess* pSystemAccess
     )
 {
-    if ( m_pSystemAccess != NULL )
+    if ( m_pSystemAccess != nullptr )
     {
         std::cerr << "There is already an existing system access provider." << std::endl;
     }
@@ -64,7 +64,7 @@ ServiceManager::UnregisterSystemAccessProvider(
 {
     if ( m_pSystemAccess == pSystemAccess )
     {
-        m_pSystemAccess = NULL;
+        m_pSystemAccess = nullptr;
     }
     else
     {
@@ -78,7 +78,7 @@ ServiceManager::Collision(
     void
     )
 {
-    if ( m_pCollision == NULL )
+    if ( m_pCollision == nullptr )
     {
         std::cerr << "m_pCollision == NULL." << std::endl;
     }
@@ -92,7 +92,7 @@ ServiceManager::RegisterCollisionProvider(
     ICollision* pCollision
     )
 {
-    if ( m_pCollision != NULL )
+    if ( m_pCollision != nullptr )
     {
         std::cerr << "There is already an existing collision provider." << std::endl;
     }
@@ -108,7 +108,7 @@ ServiceManager::UnregisterCollisionProvider(
 {
     if ( m_pCollision == pCollision )
     {
-        m_pCollision = NULL;
+        m_pCollision = nullptr;
     }
     else
     {

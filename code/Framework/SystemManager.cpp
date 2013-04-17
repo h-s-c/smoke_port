@@ -121,7 +121,7 @@ SystemManager::Remove(
 {
     Error   Err = Errors::Success;
 
-    SystemMapIter it = m_Systems.find( SystemType );
+    auto it = m_Systems.find( SystemType );
 
     if ( it != m_Systems.end() )
     {
@@ -137,7 +137,7 @@ SystemManager::Get(
     const System::Type SystemType
     )
 {
-    ISystem* pSystem = NULL;
+    ISystem* pSystem = nullptr;
 
     SystemMapConstIter it = m_Systems.find( SystemType );
 
@@ -156,7 +156,7 @@ SystemManager::Get(
     pcstr pszName
     )
 {
-    ISystem* pSystem = NULL;
+    ISystem* pSystem = nullptr;
 
     for ( SystemMapConstIter it = m_Systems.begin();
           it != m_Systems.end(); it++ )
@@ -177,7 +177,7 @@ SystemManager::GetFirst(
     void
     )
 {
-    ISystem* pSystem = NULL;
+    ISystem* pSystem = nullptr;
 
     m_SystemIt = m_Systems.begin();
 
@@ -195,7 +195,7 @@ SystemManager::GetNext(
     void
     )
 {
-    ISystem* pSystem = NULL;
+    ISystem* pSystem = nullptr;
 
     if ( ++m_SystemIt != m_Systems.end() )
     {

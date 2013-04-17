@@ -167,7 +167,7 @@ ChangeManager::Unregister(
         }
 
         ObserversList &observersList = m_subjectsList[uID].m_observersList;
-        ObserversList::iterator itObs = std::find( observersList.begin(), observersList.end(), pInObserver );
+        auto itObs = std::find( observersList.begin(), observersList.end(), pInObserver );
 
         if( itObs != observersList.end() )
         {
@@ -219,7 +219,7 @@ ChangeManager::RemoveSubject (
         curError = Errors::Success;
     }
 
-    ObserversList::iterator itObs = observersList.begin();
+    auto itObs = observersList.begin();
     for( ; itObs != observersList.end(); ++itObs )
     {
         pSubject->Detach( itObs->m_pObserver );

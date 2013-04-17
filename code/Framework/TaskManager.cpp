@@ -73,7 +73,7 @@ void Worker::operator()()
         }   // release lock
  
         // execute the task
-        if (task != nullptr && task != NULL)
+        if (task != nullptr)
         {
             task();
         }
@@ -107,9 +107,9 @@ TaskManager::~TaskManager()
     WaitForAllTasks();
  
     // join them
-    for(size_t i = 0;i<this->workers.size();++i)
+    for(auto & worker : this->workers)
     {
-        this->workers[i].join();
+        worker.join();
     }
 }
 

@@ -55,10 +55,8 @@ UScene::~UScene(
     //
     // Get rid of all the links.
     //
-    for ( ObjectLinksIt it=m_ObjectLinks.begin(); it != m_ObjectLinks.end(); it++ )
+    for (auto & old : m_ObjectLinks)
     {
-        const ObjectLinkData& old = *it;
-
         m_pObjectCCM->Unregister( old.pSubject, old.pObserver );
     }
     m_ObjectLinks.clear();
@@ -67,9 +65,9 @@ UScene::~UScene(
     // Get rid of all the objects.
     //
     Objects Objs = m_Objects;
-    for ( ObjectsIt it=Objs.begin(); it != Objs.end(); it++ )
+    for (auto & Obj : Objs)
     {
-        DestroyObject( *it );
+        DestroyObject( Obj );
     }
     m_Objects.clear();
 
@@ -77,9 +75,9 @@ UScene::~UScene(
     // Send "post-destroying objects" message to the scene extensions then delete the scene.
     //
     SystemScenes SysScenes = m_SystemScenes;
-    for ( SystemScenesIt it=SysScenes.begin(); it != SysScenes.end(); it++ )
+    for (auto & SysScene : SysScenes)
     {
-        ISystemScene* pSystemScene = it->second;
+        ISystemScene* pSystemScene = SysScene.second;
 
         pSystemScene->GlobalSceneStatusChanged(
             ISystemScene::GlobalSceneStatus::PostDestroyingObjects
@@ -96,7 +94,7 @@ UScene::Extend(
     ISystem* pSystem
     )
 {
-    if ( pSystem == NULL )
+    if ( pSystem == nullptr )
     {
         std::cerr << "pSystem == NULL" << std::endl;
     }
@@ -114,7 +112,7 @@ UScene::Extend(
     // Have the system create it's scene.
     //
     ISystemScene* pScene = pSystem->CreateScene();
-    if ( pScene != NULL )
+    if ( pScene != nullptr )
     {
         //
         // Add the scene to the collection.
@@ -140,7 +138,7 @@ UScene::Unextend(
     ISystemScene* pScene
     )
 {
-    if ( pScene == NULL )
+    if ( pScene == nullptr )
     {
         std::cerr << "pScene == NULL" << std::endl;
     }
@@ -149,7 +147,7 @@ UScene::Unextend(
     // Get the system.
     //
     ISystem* pSystem = pScene->GetSystem();
-    if ( pSystem == NULL )
+    if ( pSystem == nullptr )
     {
         std::cerr << "pSystem == NULL" << std::endl;
     }
@@ -162,7 +160,7 @@ UScene::Unextend(
     //
     // Find the system scene in the collection and remove it.
     //
-    SystemScenesIt it = m_SystemScenes.find( SystemType );
+    auto it = m_SystemScenes.find( SystemType );
     if ( it == m_SystemScenes.end() )
     {
         std::cerr << "it == m_SystemScenes.end()" << std::endl;
@@ -192,8 +190,8 @@ UScene::CreateObject(
     //
     // Create the new object.
     //
-    UObject* pObject = new UObject( this, pszName );
-    if ( pObject == NULL )
+    auto  pObject = new UObject( this, pszName );
+    if ( pObject == nullptr )
     {
         std::cerr << "pObject == NULL" << std::endl;
     }
@@ -221,7 +219,7 @@ UScene::DestroyObject(
     UObject* pObject
     )
 {
-    if ( pObject == NULL )
+    if ( pObject == nullptr )
     {
         std::cerr << "pObject == NULL" << std::endl;
     }
@@ -239,7 +237,7 @@ UScene::FindObject(
     pcstr pszName
     )
 {
-    UObject* pObject = NULL;
+    UObject* pObject = nullptr;
 
     for ( UScene::ObjectsConstIt it=m_Objects.begin(); it != m_Objects.end(); it++ )
     {
@@ -328,27 +326,26 @@ UScene::ChangeOccurred(
         IGenericScene::CreateObjectDataArray aObjectsToCreate;
         pScene->GetCreateObjects( aObjectsToCreate );
 
-        for ( IGenericScene::CreateObjectDataArrayConstIt it=aObjectsToCreate.begin();
-              it != aObjectsToCreate.end(); it++ )
+        for (auto & object : aObjectsToCreate)
         {
-            if ( FindObject( it->pszName ) != NULL )
+            if ( FindObject( object.pszName ) != nullptr )
             {
                 std::cerr << "FindObject( it->pszName ) != NULL" << std::endl;
             }
 
-            UObject* pObject = CreateObject( it->pszName );
+            UObject* pObject = CreateObject( object.pszName );
 
-            if ( pObject != NULL )
+            if ( pObject != nullptr )
             {
                 System::Types::BitMask Type = 1;
                 for ( u32 i=0; i < System::Types::MAX; i++ )
                 {
-                    if ( it->Types & Type )
+                    if ( object.Types & Type )
                     {
-                        SystemScenesIt ssIt = m_SystemScenes.find( Type );
+                        auto ssIt = m_SystemScenes.find( Type );
                         if ( ssIt != m_SystemScenes.end() )
                         {
-                            pObject->Extend( ssIt->second, NULL );
+                            pObject->Extend( ssIt->second, nullptr );
                         }
                         else
                         {
@@ -374,10 +371,9 @@ UScene::ChangeOccurred(
         IGenericScene::DestroyObjectDataArray aObjectsToDestroy;
         pScene->GetDestroyObjects( aObjectsToDestroy );
 
-        for ( IGenericScene::DestroyObjectDataArrayConstIt it=aObjectsToDestroy.begin();
-              it != aObjectsToDestroy.end(); it++ )
+        for (auto & object : aObjectsToDestroy)
         {
-            UObject* pObject = FindObject( *it );
+            UObject* pObject = FindObject( object );
             DestroyObject( pObject );
         }
         break;
@@ -390,14 +386,13 @@ UScene::ChangeOccurred(
         IGenericScene::ExtendObjectDataArray aObjectsToExtend;
         pScene->GetExtendObjects( aObjectsToExtend );
 
-        for ( IGenericScene::ExtendObjectDataArrayConstIt it=aObjectsToExtend.begin();
-              it != aObjectsToExtend.end(); it++ )
+        for (auto & object : aObjectsToExtend)
         {
-            UObject* pObject = FindObject( it->pszName );
+            UObject* pObject = FindObject( object.pszName );
 
-            if ( pObject != NULL )
+            if ( pObject != nullptr )
             {
-                pObject->Extend( pScene->ExtendObject( it->pszName, it->pUserData ) );
+                pObject->Extend( pScene->ExtendObject( object.pszName, object.pUserData ) );
             }
         }
         break;
@@ -410,13 +405,12 @@ UScene::ChangeOccurred(
         std::vector<pcstr> aObjectsToUnextend;
         pScene->GetUnextendObjects( aObjectsToUnextend );
 
-        for ( std::vector<pcstr>::const_iterator it=aObjectsToUnextend.begin();
-              it != aObjectsToUnextend.end(); it++ )
+        for (auto & object : aObjectsToUnextend)
         {
-            UObject* pObject = FindObject( *it );
-            if ( pObject != NULL )
+            UObject* pObject = FindObject( object );
+            if ( pObject != nullptr )
             {
-                pObject->Unextend( pScene->UnextendObject( *it )->GetSystemScene() );
+                pObject->Unextend( pScene->UnextendObject( object )->GetSystemScene() );
             }
         }
         break;
@@ -436,8 +430,8 @@ UObject::UObject(
     pcstr pszName
     )
     : m_pScene( pScene )
-    , m_pGeometryObject( NULL )
-    , m_pGraphicsObject( NULL )
+    , m_pGeometryObject( nullptr )
+    , m_pGraphicsObject( nullptr )
 {
     //
     // Copy the name.
@@ -454,9 +448,9 @@ UObject::~UObject(
     // Remove all the extensions.
     //
     SystemObjects SysObjs = m_ObjectExtensions;
-    for ( SystemObjectsIt it=SysObjs.begin(); it != SysObjs.end(); it++ )
+    for (auto & SysObj : SysObjs)
     {
-        Unextend( it->second->GetSystemScene() );
+        Unextend( SysObj.second->GetSystemScene() );
     }
     m_ObjectExtensions.clear();
 }
@@ -468,7 +462,7 @@ UObject::Extend(
     pcstr pszSystemObjectType
     )
 {
-    if ( pSystemScene == NULL )
+    if ( pSystemScene == nullptr )
     {
         std::cerr << "pSystemScene == NULL" << std::endl;
     }
@@ -477,13 +471,13 @@ UObject::Extend(
         std::cerr << "m_ObjectExtensions.find( pSystemScene->GetSystemType() ) != m_ObjectExtensions.end()" << std::endl;
     }
 
-    ISystemObject* pSystemObject = NULL;
+    ISystemObject* pSystemObject = nullptr;
 
     //
     // Create the system object.
     //
     pSystemObject = pSystemScene->CreateObject( m_sName.c_str(), pszSystemObjectType );
-    if ( pSystemObject == NULL )
+    if ( pSystemObject == nullptr )
     {
         std::cerr << "pSystemObject == NULL" << std::endl;
     }
@@ -502,7 +496,7 @@ UObject::Extend(
 {
     Bool bSuccess = False;
     
-    if ( pSystemObject == NULL )
+    if ( pSystemObject == nullptr )
     {
         std::cerr << "pSystemObject == NULL" << std::endl;
     }
@@ -537,9 +531,9 @@ UObject::Extend(
         // Register each object with scenes that care about the object's changes.
         //
         UScene::SystemScenes pScenes = m_pScene->GetSystemScenes();
-        for ( UScene::SystemScenesIt it = pScenes.begin(); it != pScenes.end(); it++ )
+        for (auto & pScenes_it : pScenes)
         {
-            ISystemScene* pScene = it->second;
+            ISystemScene* pScene = pScenes_it.second;
             if ( pSystemObject->GetPotentialSystemChanges() & pScene->GetDesiredSystemChanges() )
             {
                 m_pObjectCCM->Register( pSystemObject, pScene->GetDesiredSystemChanges(), pScene );
@@ -550,10 +544,9 @@ UObject::Extend(
         // Register each of the systems with each other.
         //
         System::Changes::BitMask Changes = pSystemObject->GetDesiredSystemChanges();
-        for ( std::map<System::Type, ISystemObject*>::iterator it=m_ObjectExtensions.begin();
-              it != m_ObjectExtensions.end(); it++ )
+        for (auto & object : m_ObjectExtensions)
         {
-            ISystemObject* pObj = it->second;
+            ISystemObject* pObj = object.second;
             if ( pObj->GetPotentialSystemChanges() & SysObjDesiredChanges )
             {
                 m_pObjectCCM->Register( pObj, Changes, pSystemObject );
@@ -605,7 +598,7 @@ UObject::Unextend(
     ISystemScene* pSystemScene
     )
 {
-    if ( pSystemScene  == NULL )
+    if ( pSystemScene  == nullptr )
     {
         std::cerr << "UObject::Unextend - pSystemScene  == NULL" << std::endl;
     }
@@ -615,7 +608,7 @@ UObject::Unextend(
     //
     System::Type SystemType = pSystemScene->GetSystem()->GetSystemType();
 
-    SystemObjectsIt SysObjIt = m_ObjectExtensions.find( SystemType );
+    auto SysObjIt = m_ObjectExtensions.find( SystemType );
     if ( SysObjIt == m_ObjectExtensions.end() )
     {
         std::cerr << "UObject::Unextend - The object to delete doesn't exist in the scene." << std::endl;
@@ -627,10 +620,9 @@ UObject::Unextend(
     // Go through all the other systems and unregister them with this as subject and observer.
     //  The CCM should know if the objects are registered or not, and if not won't do anything.
     //
-    for ( std::map<System::Type, ISystemObject*>::iterator it=m_ObjectExtensions.begin();
-          it != m_ObjectExtensions.end(); it++ )
+    for (auto & object : m_ObjectExtensions)
     {
-        ISystemObject* pObj = it->second;
+        ISystemObject* pObj = object.second;
 
         //
         // Make sure he system object is not unregistering as an observer of itself.
@@ -646,9 +638,9 @@ UObject::Unextend(
     // Unregister each object with scenes that cared about the object's changes.
     //
     UScene::SystemScenes pScenes = m_pScene->GetSystemScenes();
-    for ( UScene::SystemScenesIt it = pScenes.begin(); it != pScenes.end(); it++ )
+    for (auto & pScenes_it : pScenes)
     {
-        ISystemScene* pScene = it->second;
+        ISystemScene* pScene = pScenes_it.second;
 
         if ( pSystemObject->GetPotentialSystemChanges() & pScene->GetDesiredSystemChanges() )
         {
@@ -687,7 +679,7 @@ UObject::GetExtension(
     System::Type SystemType
     )
 {
-    ISystemObject* pSystemObject = NULL;
+    ISystemObject* pSystemObject = nullptr;
 
     SystemObjectsConstIt it = m_ObjectExtensions.find( SystemType );
 
@@ -742,7 +734,7 @@ UObject::GetPosition(
     void
     )
 {
-    if ( m_pGeometryObject == NULL )
+    if ( m_pGeometryObject == nullptr )
     {
         std::cerr << "UObject::GetPosition - m_pGeometryObject == NULL" << std::endl;
     }
@@ -756,7 +748,7 @@ UObject::GetOrientation(
     void
     )
 {
-    if ( m_pGeometryObject == NULL )
+    if ( m_pGeometryObject == nullptr )
     {
         std::cerr << "UObject::GetOrientation - m_pGeometryObject == NULL" << std::endl;
     }
@@ -770,7 +762,7 @@ UObject::GetScale(
     void
     )
 {
-    if ( m_pGeometryObject == NULL )
+    if ( m_pGeometryObject == nullptr )
     {
         std::cerr << "UObject::GetScale - m_pGeometryObject == NULL" << std::endl;
     }
@@ -878,7 +870,7 @@ UObject::GetAABB(
     Out Base::Vector3& Max
     )
 {
-    if ( m_pGraphicsObject == NULL )
+    if ( m_pGraphicsObject == nullptr )
     {
         std::cerr << "UObject::GetAABB - m_pGraphicsObject == NULL" << std::endl;
     }

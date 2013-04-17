@@ -3,7 +3,7 @@
 //
 // Permission is granted to use, copy, distribute and prepare derivative works of this
 // software for any purpose and without fee, provided, that the above copyright notice
-// and this statement appear in all copies.  Intel makes no representations about the
+// and this statement appear in all copies.  In_GLIBCXX_USE_SCHED_YIELDtel makes no representations about the
 // suitability of this software for any purpose.  THIS SOFTWARE IS PROVIDED "AS IS."
 // INTEL SPECIFICALLY DISCLAIMS ALL WARRANTIES, EXPRESS OR IMPLIED, AND ALL LIABILITY,
 // INCLUDING CONSEQUENTIAL AND OTHER INDIRECT DAMAGES, FOR THE USE OF THIS SOFTWARE,
@@ -14,9 +14,6 @@
 
 #pragma once
 
-// workaround for gcc4.7
-#define _GLIBCXX_USE_SCHED_YIELD
-#include <future>
 #include <thread>
 #include <deque>
 #include <vector>
@@ -24,6 +21,7 @@
 #include <chrono>
 #include <functional>
 #include <type_traits>
+#include <future>
 
 /* Thanks to https://github.com/greyfade/workqueue.*/
 class TaskManager;

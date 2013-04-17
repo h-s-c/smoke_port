@@ -48,10 +48,8 @@ EnvironmentManager::Variables::SetValue(
     In pcstr pszValue
     )
 {
-    for ( PairsIt it=m_Pairs.begin(); it != m_Pairs.end(); it++ )
+    for (auto & vp : m_Pairs)
     {
-        Pair& vp = *it;
-
         if ( vp.sName == pszName )
         {
             vp.sValue = pszValue;
@@ -83,10 +81,10 @@ EnvironmentManager::Variables::IsString(
     )
 {
     Bool bValue = False;
-    pcstr pszValue = NULL;
+    pcstr pszValue = nullptr;
 
     GetValue( pszName, pszValue );
-    if( pszValue != NULL )
+    if( pszValue != nullptr )
     {
         bValue = ( _stricmp( pszValue, pszCompareValue ) == 0 );
     }
@@ -161,10 +159,8 @@ EnvironmentManager::Variables::GetValue(
 {
     Bool bFound = False;
 
-    for ( PairsIt it=m_Pairs.begin(); it != m_Pairs.end(); it++ )
+    for (auto & vp : m_Pairs)
     {
-        const Pair& vp = *it;
-
         if ( vp.sName == pszName )
         {
             pszValue = vp.sValue.c_str();
