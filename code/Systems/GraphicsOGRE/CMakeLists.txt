@@ -74,16 +74,25 @@ endif()
     ##ogre
     find_package(OGRE REQUIRED)
     list(APPEND SYSTEM_INCLUDE_DIRS ${OGRE_INCLUDE_DIR})
+    list(APPEND SYSTEM_INCLUDE_DIRS ${OGRE_INCLUDE_DIR}/../../boost)
     list(APPEND SYSTEM_INCLUDE_DIRS ${OGRE_RenderSystem_GL_INCLUDE_DIRS})
     list(APPEND SYSTEM_INCLUDE_DIRS ${OGRE_Plugin_ParticleFX_INCLUDE_DIRS})
+    list(APPEND SYSTEM_INCLUDE_DIRS ${OGRE_Overlay_INCLUDE_DIRS})
     list(APPEND SYSTEM_LIBRARIES ${OGRE_LIBRARIES}) 
     list(APPEND SYSTEM_LIBRARIES ${OGRE_RenderSystem_GL_LIBRARIES})
     list(APPEND SYSTEM_LIBRARIES ${OGRE_Plugin_ParticleFX_LIBRARIES})
+    list(APPEND SYSTEM_LIBRARIES ${OGRE_Overlay_LIBRARIES})
 if(WIN32)  
     ##list(APPEND SYSTEM_INCLUDE_DIRS ${OGRE_RenderSystem_Direct3D9_INCLUDE_DIRS})
     ##list(APPEND SYSTEM_LIBRARIES ${OGRE_RenderSystem_Direct3D9_LIBRARIES})
     list(APPEND SYSTEM_INCLUDE_DIRS ${OGRE_Plugin_CgProgramManager_INCLUDE_DIRS})
     list(APPEND SYSTEM_LIBRARIES ${OGRE_Plugin_CgProgramManager_LIBRARIES})
+	set(Boost_ADDITIONAL_VERSIONS "1.54" "1.54.0" "1.53" "1.53.0" "1.52" "1.52.0" "1.51" "1.51.0" "1.50" "1.50.0" "1.49" "1.49.0" "1.48" "1.48.0" "1.47" "1.47.0" "1.46" "1.46.0" "1.45" "1.45.0" "1.44" "1.44.0" "1.42" "1.42.0" "1.41.0" "1.41" "1.40.0" "1.40")
+	set(BOOST_ROOT "${CMAKE_SOURCE_DIR}/External/ogre/boost")
+	set(Boost_USE_STATIC_LIBS TRUE)
+    find_package(Boost COMPONENTS thread system date_time chrono QUIET)
+    list(APPEND SYSTEM_INCLUDE_DIRS ${Boost_INCLUDE_DIRS})
+    list(APPEND SYSTEM_LIBRARIES ${Boost_LIBRARIES})
 endif()
 if(UNIX)  
     ## cg
@@ -113,6 +122,7 @@ endif()
 if(WIN32)    
     install(FILES
         ${OGRE_PLUGIN_DIR_REL}/OgreMain.dll
+        ${OGRE_PLUGIN_DIR_REL}/OgreOverlay.dll
         ${OGRE_PLUGIN_DIR_REL}/RenderSystem_GL.dll
         ##${OGRE_PLUGIN_DIR_REL}/RenderSystem_Direct3D9.dll
         ${OGRE_PLUGIN_DIR_REL}/Plugin_CgProgramManager.dll
@@ -122,6 +132,7 @@ if(WIN32)
     )
     install(FILES
         ${OGRE_PLUGIN_DIR_DBG}/OgreMain_d.dll
+        ${OGRE_PLUGIN_DIR_DBG}/OgreOverlay_d.dll
         ${OGRE_PLUGIN_DIR_DBG}/RenderSystem_GL_d.dll
         ##${OGRE_PLUGIN_DIR_DBG}/RenderSystem_Direct3D9_d.dll
         ${OGRE_PLUGIN_DIR_DBG}/Plugin_CgProgramManager_d.dll

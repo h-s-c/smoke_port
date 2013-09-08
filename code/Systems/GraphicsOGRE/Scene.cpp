@@ -611,6 +611,9 @@ OGREGraphicsScene::Initialize(
         return Errors::Failure;
     }
 
+	m_pOverlaySystem = new Ogre::OverlaySystem();
+	m_pSceneManager->addRenderQueueListener(m_pOverlaySystem);
+
     //
     // Get the root node.
     //

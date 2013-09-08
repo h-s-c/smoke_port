@@ -2,6 +2,9 @@
 
 #include <mutex>
 
+#include <OgreOverlay.h>
+#include <OgreOverlayManager.h>
+#include <OgreOverlaySystem.h>
 #include "Systems/GraphicsOGRE/Extras/PagedGeometry.hpp"
 #include "Systems/GraphicsOGRE/Extras/GrassLoader.hpp"
 
@@ -246,6 +249,7 @@ protected:
     Ogre::SceneManager*                 m_pSceneManager;
     Ogre::SceneNode*                    m_pRootNode;
 
+	Ogre::OverlaySystem*				m_pOverlaySystem;
     Ogre::OverlayManager*               m_pOverlayManager;
     Ogre::Overlay*                      m_pOverlay;
 

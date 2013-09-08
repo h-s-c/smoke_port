@@ -28,11 +28,11 @@ getenv_path(OGRE_DEPENDENCIES_DIR)
 # construct search paths
 set(OIS_PREFIX_PATH ${OIS_HOME} ${ENV_OIS_HOME} 
   ${OGRE_DEPENDENCIES_DIR} ${ENV_OGRE_DEPENDENCIES_DIR}
-  ${OGRE_SOURCE}/iPhoneDependencies ${ENV_OGRE_SOURCE}/iPhoneDependencies
+  ${OGRE_SOURCE}/iOSDependencies ${ENV_OGRE_SOURCE}/iOSDependencies
   ${OGRE_SOURCE}/Dependencies ${ENV_OGRE_SOURCE}/Dependencies
   ${OGRE_SDK} ${ENV_OGRE_SDK}
-  ${OGRE_HOME} ${ENV_OGRE_HOME}   
-  "$ENV{PROGRAMFILES}/OGRE" C:/OgreSDK)
+  ${OGRE_HOME} ${ENV_OGRE_HOME}
+  ${CMAKE_SOURCE_DIR}/External/ogre)
 create_search_paths(OIS)
 # redo search if prefix path changed
 clear_if_changed(OIS_PREFIX_PATH
@@ -61,8 +61,9 @@ if (APPLE AND OIS_HOME)
   set(OIS_LIB_SEARCH_PATH ${OIS_LIB_SEARCH_PATH} ${OIS_HOME}/Mac/XCode-2.2/build)
 endif()
 find_path(OIS_INCLUDE_DIR NAMES OIS.h HINTS ${OIS_INC_SEARCH_PATH} ${OIS_PKGC_INCLUDE_DIRS} PATH_SUFFIXES OIS)
-find_library(OIS_LIBRARY_REL NAMES ${OIS_LIBRARY_NAMES} HINTS ${OIS_LIB_SEARCH_PATH} ${OIS_PKGC_LIBRARY_DIRS} PATH_SUFFIXES "" release relwithdebinfo minsizerel)
-find_library(OIS_LIBRARY_DBG NAMES ${OIS_LIBRARY_NAMES_DBG} HINTS ${OIS_LIB_SEARCH_PATH} ${OIS_PKGC_LIBRARY_DIRS} PATH_SUFFIXES "" debug)
+find_library(OIS_LIBRARY_REL NAMES ${OIS_LIBRARY_NAMES} HINTS ${OIS_LIB_SEARCH_PATH} ${OIS_PKGC_LIBRARY_DIRS} PATH_SUFFIXES "" Release RelWithDebInfo MinSizeRel)
+find_library(OIS_LIBRARY_DBG NAMES ${OIS_LIBRARY_NAMES_DBG} HINTS ${OIS_LIB_SEARCH_PATH} ${OIS_PKGC_LIBRARY_DIRS} PATH_SUFFIXES "" Debug)
+
 make_library_set(OIS_LIBRARY)
 
 if (WIN32)
@@ -70,12 +71,11 @@ if (WIN32)
 		${OGRE_DEPENDENCIES_DIR}/bin ${ENV_OGRE_DEPENDENCIES_DIR}/bin
 		${OGRE_SOURCE}/Dependencies/bin ${ENV_OGRE_SOURCE}/Dependencies/bin
 		${OGRE_SDK}/bin ${ENV_OGRE_SDK}/bin
-		${OGRE_HOME}/bin ${ENV_OGRE_HOME}/bin
-		"$ENV{PROGRAMFILES}/OGRE/bin" C:/OgreSDK/bin)
+		${OGRE_HOME}/bin ${ENV_OGRE_HOME}/bin)
 	find_file(OIS_BINARY_REL NAMES "OIS.dll" HINTS ${OIS_BIN_SEARCH_PATH}
-	  PATH_SUFFIXES "" release relwithdebinfo minsizerel)
+	  PATH_SUFFIXES "" Release RelWithDebInfo MinSizeRel)
 	find_file(OIS_BINARY_DBG NAMES "OIS_d.dll" HINTS ${OIS_BIN_SEARCH_PATH}
-	  PATH_SUFFIXES "" debug )
+	  PATH_SUFFIXES "" Debug )
 endif()
 mark_as_advanced(OIS_BINARY_REL OIS_BINARY_DBG)
 
