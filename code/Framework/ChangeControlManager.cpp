@@ -27,7 +27,7 @@
 #include "Framework/TaskManager.hpp"
 #include "Framework/PlatformManager.hpp"
 
-thread_local ChangeManager::NotifyList* ChangeManager::m_tlsNotifyList = nullptr;
+__thread_local ChangeManager::NotifyList* ChangeManager::m_tlsNotifyList = nullptr;
 
 ///////////////////////////////////////////////////////////////////////////////
 // ChangeManager - Default constructor 

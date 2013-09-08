@@ -163,7 +163,7 @@ protected:
     ///   TLS slot that store pointers to NotifyListInfo values, containing pointer 
     ///   to thread local notification lists with fast search ability and .
     /// </summary>
-    static thread_local NotifyList*  m_tlsNotifyList;
+    static __thread_local NotifyList*  m_tlsNotifyList;
 
     struct MappedNotification
     {

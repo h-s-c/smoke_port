@@ -12,8 +12,8 @@
 #include <Common/Base/Memory/System/hkMemorySystem.h>
 #include <Common/Base/Memory/Allocator/Malloc/hkMallocAllocator.h>
 #include <Common/Base/Container/String/hkStringBuf.h>
-#include <Physics\Dynamics\World\hkpWorld.h>
-#include <Physics\Utilities\Destruction\BreakOffParts\hkpBreakOffPartsUtil.h>
+#include <Physics2012\Dynamics\World\hkpWorld.h>
+#include <Physics2012\Utilities\Destruction\BreakOffParts\hkpBreakOffPartsUtil.h>
 // Platform initialization
 #include <Common/Base/System/Init/PlatformInit.cxx>
 // System

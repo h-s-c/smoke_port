@@ -3,9 +3,6 @@
 #include "Systems/PhysicsHAVOK/System.hpp"
 
 #include <Common/Base/keycode.cxx>
-#if !defined HK_FEATURE_PRODUCT_PHYSICS
-#error Havok physics is needed to build this system. It is included in the common havok package for reference only.
-#endif
 #include <Common/Base/Config/hkProductFeatures.cxx>
 
 ManagerInterfaces   g_Managers;

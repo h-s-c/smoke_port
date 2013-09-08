@@ -285,8 +285,10 @@
 /* C++11 workarounds */
 #if !defined(thread_local)
 #   if defined(COMPILER_GCC) || defined(COMPILER_CLANG) || (defined(COMPILER_ICC) && defined(COMPILER_HOST_GCC))
-#       define thread_local __thread
+#       define __thread_local __thread
 #   elif defined(COMPILER_MSVC) || (defined(COMPILER_ICC) && defined(COMPILER_HOST_MSVC))
-#       define thread_local __declspec(thread)
+#       define __thread_local __declspec(thread)
 #   endif
+#else
+#   define __thread_local thread_local
 #endif

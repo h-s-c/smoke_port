@@ -3,6 +3,6 @@ build/
 docs/
 media/
 code/External/backward-cpp/
-code/External/hk550/
-code/External/hk2012_2_0_r1/
+code/External/hk2013_1_0_r1/
+code/External/ogre/
 tools/OgreMeshUpgrade.log

@@ -45,8 +45,7 @@ project (Smoke)
         add_definitions(-D_GLIBCXX_USE_CLOCK_REALTIME)
         add_definitions(-D_GLIBCXX_USE_SCHED_YIELD)
     elseif (${CMAKE_CXX_COMPILER_ID} EQUAL "MSVC")
-        ## /wd4251 silences warnings in OGRE headers
-        set(CMAKE_CXX_FLAGS                "/EHsc /wd4251 /D_CRT_SECURE_NO_WARNINGS")
+        set(CMAKE_CXX_FLAGS                "/EHsc")
         ##set(CMAKE_CXX_FLAGS_DEBUG          "")
         ##set(CMAKE_CXX_FLAGS_MINSIZEREL     "")
         ##set(CMAKE_CXX_FLAGS_RELEASE        "")
@@ -80,7 +79,7 @@ project (Smoke)
 
     ##dlfcn-win32
     if(WIN32)
-        set(USE_DLFCN_WIN32 FALSE CACHE BOOL "Use dlfcn-win32?" FORCE)
+        set(USE_DLFCN_WIN32 FALSE CACHE BOOL "Use dlfcn-win32?")
     endif()
     
     add_subdirectory(Base)
@@ -92,7 +91,7 @@ project (Smoke)
     add_subdirectory(Systems)
    
     if(UNIX)
-        set(USE_PRETTY_TRACE FALSE CACHE BOOL "Use backward-cpp?" FORCE)
+        set(USE_PRETTY_TRACE FALSE CACHE BOOL "Use backward-cpp?")
         if(USE_PRETTY_TRACE)
             find_package(LibBfd)
             if (LIBBFD_FOUND)

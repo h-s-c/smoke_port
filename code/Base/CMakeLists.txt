@@ -26,11 +26,13 @@ project (Base)
     if (UNIX) 
         ##dlfcn
         list(APPEND BASE_LIBRARIES ${CMAKE_DL_LIBS})
-    else (MSVC AND USE_DLFCN_WIN32) 
-        ##dlfcn-win32
-        add_definitions(-DUSE_DLFCN_WIN32)
-        list(APPEND BASE_SOURCE ${CMAKE_SOURCE_DIR}/External/dlfcn-win32/dlfcn.c)
-        list(APPEND BASE_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/External/dlfcn-win32)
+    else (WIN32) 
+		if(USE_DLFCN_WIN32)
+			##dlfcn-win32
+			add_definitions(-DUSE_DLFCN_WIN32)
+			list(APPEND BASE_SOURCE ${CMAKE_SOURCE_DIR}/External/dlfcn-win32/dlfcn.c)
+			list(APPEND BASE_INCLUDE_DIRS ${CMAKE_SOURCE_DIR}/External/dlfcn-win32)
+        endif()
     endif () 
     
     include_directories(${BASE_INCLUDE_DIRS} )

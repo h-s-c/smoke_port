@@ -18,8 +18,8 @@
 // Standard Library
 #include <map>
 // External
-#include <Physics/Collide/Shape/Compound/Collection/SimpleMesh/hkpSimpleMeshShape.h>
-#include <Physics/Utilities/Destruction/BreakOffParts/hkpBreakOffPartsUtil.h>
+#include <Physics2012/Collide/Shape/Compound/Collection/SimpleMesh/hkpSimpleMeshShape.h>
+#include <Physics2012/Utilities/Destruction/BreakOffParts/hkpBreakOffPartsUtil.h>
 
 
 class HavokPhysicsSystem;

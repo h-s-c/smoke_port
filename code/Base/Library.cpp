@@ -17,7 +17,8 @@
 #include "Base/Platform.hpp"
 #include "Base/Library.hpp"
 
-#include <iostream>
+#include <stdexcept>
+#include <string>
 
 ////////////////////////////////////////////////////////////////////////////////
 /// Windows Platform
@@ -30,35 +31,61 @@
 
 namespace Base
 {
+	namespace detail
+	{
+		/* Create a string with last error message */
+		std::string GetLastErrorStdStr()
+		{
+		  DWORD error = GetLastError();
+		  if (error)
+		  {
+			LPVOID lpMsgBuf;
+			DWORD bufLen = FormatMessage(
+				FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+				FORMAT_MESSAGE_FROM_SYSTEM |
+				FORMAT_MESSAGE_IGNORE_INSERTS,
+				NULL,
+				error,
+				MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+				(LPTSTR) &lpMsgBuf,
+				0, NULL );
+			if (bufLen)
+			{
+			  LPCSTR lpMsgStr = (LPCSTR)lpMsgBuf;
+			  std::string result(lpMsgStr, lpMsgStr+bufLen);
+			  
+			  LocalFree(lpMsgBuf);
+
+			  return result;
+			}
+		  }
+		  return std::string();
+		}
+	}
+	
     /* opens a shared library */
     void* OpenLibrary( const std::string& libName, const std::string& libPath)
     {
         std::string fullName = std::string(libPath + "/" + libName + ".dll");
         HMODULE handle = LoadLibraryA(fullName.c_str());
-        if (handle) 
+        if (!handle) 
         {
-            return void*(handle);
+            std::runtime_error e(detail::GetLastErrorStdStr());
+            throw e;
         }
-        else
-        {
-            //std::cerr << dlerror() << std::endl;
-            return nullptr;
-        }
+        return handle;
     }
 
     /* returns address of a symbol from the library */
     void* GetSymbol(void* lib, const std::string& symName) 
     {
         void* sym = GetProcAddress(HMODULE(lib),symName.c_str());
-        if (sym) 
+        if (!sym) 
         {
-            return sym;
+            std::runtime_error e(detail::GetLastErrorStdStr());
+            throw e;
         }
-        else
-        {
-            //std::cerr << dlerror() << std::endl;
-            return nullptr;
-        }
+        return sym;
     }
 
     /* closes the shared library */
@@ -89,31 +116,25 @@ namespace Base
         #elif defined(PLATFORM_OS_WINDOWS)
         std::string fullName = std::string(libPath + "/" + libName + ".dll");
         #endif
-        void* handle = dlopen(fullName.c_str(),RTLD_NOW);
-        if (handle) 
+        void* handle = dlopen(fullName.c_str(),RTLD_LAZY);
+        if (!handle) 
         {
-            return handle;
+            std::runtime_error e(dlerror());
+            throw e;
         }
-        else
-        {
-            std::cerr << dlerror() << std::endl;
-            return nullptr;
-        }
+        return handle;
     }
 
     /* returns address of a symbol from the library */
     void* GetSymbol(void* lib, const std::string& symName) 
     {
         void* sym = dlsym(lib,symName.c_str());
-        if (sym) 
+        if (!sym) 
         {
-            return sym;
+            std::runtime_error e(dlerror());
+            throw e;
         }
-        else
-        {
-            std::cerr << dlerror() << std::endl;
-            return nullptr;
-        }
+        return sym;
     }
 
     /* closes the shared library */
