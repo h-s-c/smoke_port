@@ -1,8 +1,7 @@
-**Unfinished cross-platform port of Intel Smoke - Game Technology Demo.**   
+**Cross-platform port of Intel Smoke - Game Technology Demo.**   
 
-####Data files  
+####Modified assets 
 [Download](https://dl.dropboxusercontent.com/u/30267148/Smoke_nonversioned.7z)   
 
-####Todo:
--   Physics (Havok for linux is not publicly available)
--   Bugs
+####Blocker:
+-   Havok middleware for other platforms than windows is not freely available
